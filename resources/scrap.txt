@@ -1,0 +1,79 @@
+entropy based decision trees, ensemble methods, particle filters, Bayes nets, 
+            <br><br>
+
+
+
+Experienced developing a variety of AI/ML models from scratch, including
+            neural networks (backpropagation and gradient descent too!), softmax regression, PCA, 
+            simulated annealing, A* search, Kalman filters, and more. Made heavy use of linear algebra/numpy.
+            For a more detailed list, check out my projects below.
+            <br><br>
+            Exposure to reinforcement learning in both the tabular and deep learning settings.
+            Familiar with DQN and SARSA varieties, policy gradients, off policy importance sampling, etc.
+            Primarily used OpenAI Gym.
+
+
+Comments:
+# python
+// lots of languages
+/* other languages, especially multi line */
+<!-- This is a comment in HTML -->
+
+projects
+
+Featured
+Amino Amigo
+LexChat -- include a link
+
+ML
+Rotobrush clone -- big with lots of pics. Link and talk about outdated research paper and say "what a time to be alive"
+Panorama stitching
+CMSC 422 -- implementations of various core ML algorithms (more info needed)
+CMSC 421 -- AI and search stuff (more info needed)
+    - Kalman filters and particle filters for racing a car around a simulated track -- big with lots of pics
+
+Other
+CMSC 411 -- 
+    - branch predictors
+    - tomasulo's algorithm
+    - cache coherency protocols
+route tracker
+Video sharing
+MATH 401 -- implementations of Fast Fourier Transform, other matrix operations, etc (more info needed)
+
+
+
+
+
+
+
+
+iOS
+Threes clone
+Budget tracker
+Watchlist
+
+ML
+GMMs for object segmentation -- big with lots of pics
+Guess the Elo -- big with lots of pics
+
+Other
+CMSC 132 -- all the datastructures and algorithms, multithreading, etc in Java (more info needed)
+CMSC 216 -- C projects, makefiles, etc (more info needed?)
+CMSC 320 -- data analysis projects (more info needed)
+
+
+
+
+
+
+
+
+
+
+
+Works Cited:
+https://jacekjeznach.com
+https://tamalsen.dev
+https://brittanychiang.com
+https://dunks1980.com
