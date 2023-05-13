@@ -19,6 +19,10 @@ Comments:
 /* other languages, especially multi line */
 <!-- This is a comment in HTML -->
 
+Personal Logo ideas:
+TensorFlow
+Keras style -- "D" inside an app icon, followed by "awson"
+
 projects
 
 Featured
@@ -28,19 +32,29 @@ LexChat -- include a link
 ML
 Rotobrush clone -- big with lots of pics. Link and talk about outdated research paper and say "what a time to be alive"
 Panorama stitching
-CMSC 422 -- implementations of various core ML algorithms (more info needed)
-CMSC 421 -- AI and search stuff (more info needed)
-    - Kalman filters and particle filters for racing a car around a simulated track -- big with lots of pics
+CMSC 422 and 421 -- 
+    - 422 -- implementations of various core ML algorithms (more info needed)
+    - 421 -- AI and search stuff (more info needed)
+        - Kalman filters and particle filters for racing a car around a simulated track -- big with lots of pics
+
+- racecar from kalman and particle filters
+sgd graphs
+3d graphs
 
 Other
+CMSC 330 -- 
+    - Microcaml -- lexer, parser, interpreter from CFG, 
+    - Regex engine -- 
 CMSC 411 -- 
     - branch predictors
     - tomasulo's algorithm
     - cache coherency protocols
-route tracker
-Video sharing
-MATH 401 -- implementations of Fast Fourier Transform, other matrix operations, etc (more info needed)
-
+And More -- 
+     - MATH 401 -- implementations of Fast Fourier Transform, other matrix operations, etc (more info needed)
+     - CMSC 132 -- all the datastructures and algorithms, multithreading, etc in Java (more info needed)
+     - CMSC 320 -- data analysis projects (more info needed)?
+     - route tracker
+     - Video sharing
 
 
 
@@ -58,9 +72,7 @@ GMMs for object segmentation -- big with lots of pics
 Guess the Elo -- big with lots of pics
 
 Other
-CMSC 132 -- all the datastructures and algorithms, multithreading, etc in Java (more info needed)
 CMSC 216 -- C projects, makefiles, etc (more info needed?)
-CMSC 320 -- data analysis projects (more info needed)
 
 
 
@@ -71,6 +83,7 @@ CMSC 320 -- data analysis projects (more info needed)
 
 
 
+Animate blue cursor transition to big when hovering over clickable menu item
 
 Works Cited:
 https://jacekjeznach.com
