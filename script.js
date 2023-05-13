@@ -67,8 +67,12 @@ function cursorFollow() {
   var cursorY = 0;
   
   document.addEventListener("mousemove", function (event) {
-    mouseX = event.clientX;
-    mouseY = event.clientY;
+    // mouseX = event.clientX;
+    // mouseY = event.clientY;
+    var adjustment = 8;
+    var body = document.body.getBoundingClientRect();
+    mouseX = event.clientX - body.left - window.scrollX  + adjustment;
+    mouseY = event.clientY - body.top - window.scrollY  + adjustment;
   });
   
   function animate() {
@@ -142,6 +146,23 @@ window.addEventListener('scroll', () => {
     lastScrollTop = currentScrollTop;
 });
 }
+
+$(document).ready(function() {
+  $('.menu-item').on('click', function(event) {
+    event.preventDefault();
+    var target = this.hash;
+    $('html, body').animate(
+      {
+        scrollTop: $(target).offset().top,
+      },
+      500,
+      'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
+      function() {
+        window.location.hash = target;
+      }
+    );
+  });
+});
 
 
 cursorFollow();

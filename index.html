@@ -8,31 +8,8 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <nav class="menu">
-    <ul class="menu-list">
-      <li><a class="menu-item" href="#">About</a></li>
-      <li><a class="menu-spacer"></a></li>
-      <li><a class="menu-item" href="#">Projects</a></li>
-      <li><a class="menu-spacer"></a></li>
-      <li><a class="menu-item" href="#">Experience</a></li>
-      <li><a class="menu-spacer"></a></li>
-      <li><a class="menu-item" href="#">Contact</a></li>
-      <li><a class="menu-spacer"></a></li>
-      <li><a class="menu-item" href="#">Resume</a></li>
-    </ul>
-  </nav>
-
-  <div id="cursor-container">
-    <div class="cursor-follow"></div>
-    <div class="circle-follow"></div>
-  </div>
-  <div class="header-menu-container">
-    <div class="name-logo">
-      <!-- <p class="name1">D</p>
-      <p class="name2">Dawson</p> -->
-      <p class="name3">stuff . _</p>
-    </div>
-    <nav class="menu-static">
+  <div id="walls">
+    <nav class="menu">
       <ul class="menu-list">
         <li><a class="menu-item" href="#">About</a></li>
         <li><a class="menu-spacer"></a></li>
@@ -42,221 +19,247 @@
         <li><a class="menu-spacer"></a></li>
         <li><a class="menu-item" href="#">Contact</a></li>
         <li><a class="menu-spacer"></a></li>
-        <li><a class="menu-item" href="#">Resume</a></li>
+        <li><a class="menu-item" href="resources/Resume.pdf" download>Resume</a></li>
       </ul>
     </nav>
-  </div>
-    
 
-
-    <div class="header-container">
-      <div class="header-right">
-        <img class="header-image" src="resources/profile_photo.jpeg" alt="Dawson.jpeg">
-      </div>
-      <div class="header-left">
-        <h1 id="header" data-text="Hi,&#10;I'm Dawson,&#10;Software engineer."></h1>
-        <p class="gray-text">Full Stack / iOS and Mobile / ML and RL</p>
-      </div>
+    <div id="cursor-container">
+      <div class="cursor-follow"></div>
+      <div class="circle-follow"></div>
     </div>
-    <br><br><br>
-
-
-
-
-    <div class="double-view-container">
-      <div class="double-view-left">
-        <h2 class="about-header">About Me</h2>
-        <p class="about-text">
-          I am a recent graduate from the University of Maryland with a dual degree; 
-          a B.S. in Computer Science - with a concentration in machine learning - and a B.S. in Finance. 
-          I have experience developing across the full application stack, and the full machine learning lifecycle.
-          <!--I want to say something about the full ML cycle, ie data gathering/scraping, data preprocessing and exploratory data analysis, training, and analysis afterwards -->
-          For more information about my experience, check out my projects below.
-          <br><br>
-          I'm interested in building apps that solve real world problems, 
-          applied machine learning (especially to finance), and pushing the boundaries of RL algorithms. 
-          I love learning, and am always looking for opportunities to develop my skills.
-          <br><br>
-          I'm currently working at Visual Language Associates, but am open to the 
-          right software engineering opportunity. If you think I'd be a good fit for 
-          your team or have any questions at all, feel free to reach out!
-          <br>
-        </p>
+    <div class="header-menu-container">
+      <div class="name-logo">
+        <!-- <p class="name1">D</p>
+        <p class="name2">Dawson</p> -->
+        <p class="name3">stuff . _</p>
       </div>
-
-      <div class="double-view-right">
-        <h2 class="skills-header">Skills</h2>
-        <h2 class="skills-section-header" style="/*color: rgb(244, 199, 115);*/">Full Stack</h2>
-        <p class="skills-text">
-          Experienced in both OOP and functional: Python, Matlab, Java, OCaml, Ruby, etc.
-          Familiar with designing and implementing low latency systems architecture with C and C++.
-          Experience with frontend web development with HTML, CSS, and JavaScript, as well as some exposure to React and Node.js.
-        </p>
-        <h2 class="skills-section-header" style="/*color: rgb(118, 255, 127);*/">iOS and Mobile</h2>
-        <p class="skills-text">
-          iOS development experience with Swift and SwiftUI. Familiar with frameworks and libraries such as
-          Firebase, CoreData, MusicKit, MapKit, CoreLocation, etc.
-          Some exposure to cross-platform and Android development with Kotlin, Java, and React Native.
-        </p>
-        <h2 class="skills-section-header" style="/*color: rgb(134, 158, 252);*/">ML and RL</h2>
-        <p style="line-height: 1.5;">
-          Experienced with frameworks such as TensorFlow/Keras, PyTorch, and scikit-learn.
-          I've also developed a variety of ML models from scratch, including 
-          neural networks - including backpropagation and gradient descent.
-          I've worked with embeddings, CNNs, autoencoders, and more.
-          For a much more detailed list, check out my projects below.
-          <br><br>
-          I've had some exposure to deep reinforcement learning and loved it.
-          I've implemented some of the core algorithms: DQN and SARSA varieties, some policy gradients, off policy importance sampling, etc.
-          I mainly use OpenAI Gym.
-        </p>
-      </div>
+      <nav class="menu-static">
+        <ul class="menu-list">
+          <li><a class="menu-item" href="#double-view-container">About</a></li>
+          <li><a class="menu-spacer"></a></li>
+          <li><a class="menu-item" href="#project-header">Projects</a></li>
+          <li><a class="menu-spacer"></a></li>
+          <li><a class="menu-item" href="#">Experience</a></li>
+          <li><a class="menu-spacer"></a></li>
+          <li><a class="menu-item" href="#">Contact</a></li>
+          <li><a class="menu-spacer"></a></li>
+          <li><a class="menu-item" href="resources/Resume.pdf" download>Resume</a></li>
+        </ul>
+      </nav>
     </div>
-    <br><br><br>
+      
+
+
+      <div class="header-container">
+        <div class="header-right">
+          <img class="header-image" src="resources/profile_photo.jpeg" alt="Dawson.jpeg">
+        </div>
+        <div class="header-left">
+          <h1 id="header" data-text="Hi,&#10;I'm Dawson,&#10;Software engineer."></h1>
+          <p class="gray-text">Full Stack / iOS and Mobile / ML and RL</p>
+        </div>
+      </div>
+      <br><br><br>
 
 
 
 
-    <h2 id="project-header">My Projects</h2>
-    <div id="project-wrapper">
-      <div id="project-content">
-
-        <div id="content-1" class="hidden">
-          <div class="image-container">
-            <img class="project-image" src="resources/Amino_Media.png" alt="Project Image">
-            <!-- style="width: 500px;;"> -->
-            <div class="project-tools">Swift &nbsp;&nbsp; SwiftUI &nbsp;&nbsp; Xcode</div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Amino Amigo</h1>
-            <p class="project-description">This is where my description will go
-              alkjflasdjlfkjlkjsdf alj lkadj laj ladj flasdjf ladjladj ldasjflasdjf lasdjflaksdj
-              lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br><br>
-              and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              <br><br>
-              I just need to say a bunch of stuff lasdflasdjlfjasl 
-              <br><br>
-            </p>
-          </div>
+      <div id="double-view-container">
+        <div class="double-view-left">
+          <h2 class="about-header">About Me</h2>
+          <p class="about-text">
+            I am a recent graduate from the University of Maryland with a dual degree; 
+            a B.S. in Computer Science - with a concentration in machine learning - and a B.S. in Finance. 
+            I have experience developing across the full application stack, and the full machine learning lifecycle.
+            <!--I want to say something about the full ML cycle, ie data gathering/scraping, data preprocessing and exploratory data analysis, training, and analysis afterwards -->
+            For more information about my experience, check out my projects below.
+            <br><br>
+            I'm interested in building apps that solve real world problems, 
+            applied machine learning (especially to finance), and pushing the boundaries of RL algorithms. 
+            I love learning, and am always looking for opportunities to develop my skills.
+            <br><br>
+            I'm currently working at Visual Language Associates, but am open to the 
+            right software engineering opportunity. If you think I'd be a good fit for 
+            your team or have any questions at all, feel free to reach out!
+            <br>
+          </p>
         </div>
 
-        <div id="content-2" class="hidden">
+        <div class="double-view-right">
+          <h2 class="skills-header">Skills</h2>
+          <h2 class="skills-section-header" style="/*color: rgb(244, 199, 115);*/">Full Stack</h2>
+          <p class="skills-text">
+            Experienced in both OOP and functional: Python, Matlab, Java, OCaml, Ruby, etc.
+            Familiar with designing and implementing low latency systems architecture with C and C++.
+            Experience with frontend web development with HTML, CSS, and JavaScript, as well as some exposure to React and Node.js.
+          </p>
+          <h2 class="skills-section-header" style="/*color: rgb(118, 255, 127);*/">iOS and Mobile</h2>
+          <p class="skills-text">
+            iOS development experience with Swift and SwiftUI. Familiar with frameworks and libraries such as
+            Firebase, CoreData, MusicKit, MapKit, CoreLocation, etc.
+            Some exposure to cross-platform and Android development with Kotlin, Java, and React Native.
+          </p>
+          <h2 class="skills-section-header" style="/*color: rgb(134, 158, 252);*/">ML and RL</h2>
+          <p style="line-height: 1.5;">
+            Experienced with frameworks such as TensorFlow/Keras, PyTorch, and scikit-learn.
+            I've also developed a variety of ML models from scratch, including 
+            neural networks - including backpropagation and gradient descent.
+            I've worked with embeddings, CNNs, autoencoders, and more.
+            For a much more detailed list, check out my projects below.
+            <br><br>
+            I've had some exposure to deep reinforcement learning and loved it.
+            I've implemented some of the core algorithms: DQN and SARSA varieties, some policy gradients, off policy importance sampling, etc.
+            I mainly use OpenAI Gym.
+          </p>
+        </div>
+      </div>
+      <br><br><br>
+
+
+
+
+      <h2 id="project-header">My Projects</h2>
+      <div id="project-wrapper">
+        <div id="project-content">
+
+          <div id="content-1" class="hidden">
+            <div class="image-container">
+              <img class="project-image" src="resources/Amino_Media.png" alt="Project Image">
+              <!-- style="width: 500px;;"> -->
+              <div class="project-tools">Swift &nbsp;&nbsp; SwiftUI &nbsp;&nbsp; Xcode</div>
+            </div>
+            <div class="project-info">
+              <h1 class="project-title">Amino Amigo</h1>
+              <p class="project-description">This is where my description will go
+                alkjflasdjlfkjlkjsdf alj lkadj laj ladj flasdjf ladjladj ldasjflasdjf lasdjflaksdj
+                lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
+                <br><br>
+                and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
+                <br><br>
+                I just need to say a bunch of stuff lasdflasdjlfjasl 
+                <br><br>
+              </p>
+            </div>
+          </div>
+
+          <div id="content-2" class="hidden">
+            <div class="image-container">
+              <img class="project-image" src="resources/LexChat_Media.jpeg" alt="Project Image">
+              <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI &nbsp;&nbsp; BeautifulSoup</div>
+            </div>
+            <div class="project-info">
+              <h1 class="project-title">LexChat</h1>
+              <p class="project-description">Some different text here. It might be shorter
+                lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
+                <br><br>
+                and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
+                alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf.  lets go bro
+              </p>
+            </div>
+          </div>
+
+          <div id="content-3" class="hidden">
+            <div class="image-container">
+              <video id="rotobrush-video" class="project-image" style="border-radius: 20px; margin-right: -10px; object-fit: fill;" autoplay loop>
+                <source src="resources/Rotobrush_Media.mp4" type="video/mp4">
+              </video>
+              <!-- <img id="rotobrush-image" class="project-image" src="resources/Rotobrush_Media.png" alt="Project Image"> -->
+              <div class="project-tools">Matlab</div>
+            </div>
+            <div id="content-4" class="project-info">
+              <h1 class="project-title">Rotobrush</h1>
+              <p class="project-description">Hmm what should I talk about. kajsdfkajsdf
+                lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
+                <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
+                <br>
+                <br>
+                and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
+                alskdj flka dsjflka dsjflkaj dfaj aksjf jadsfj dksafj sldkf jasldfk asdkfj asdkf jadsfj
+                alksdjfla. adsfklja. kjoij.
+              </p>
+            </div>
+          </div>
+
+        <div id="content-4" class="hidden">
           <div class="image-container">
-            <img class="project-image" src="resources/LexChat_Media.jpeg" alt="Project Image">
-            <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI &nbsp;&nbsp; BeautifulSoup</div>
+            <img class="project-image" src="resources/Panorama_Media.png" alt="Project Image">
+            <div class="project-tools">Matlab</div>
           </div>
           <div class="project-info">
-            <h1 class="project-title">LexChat</h1>
+            <h1 class="project-title">Panorama Stitch</h1>
             <p class="project-description">Some different text here. It might be shorter
               lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
               <br><br>
               and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf.  lets go bro
+              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
             </p>
           </div>
         </div>
 
-        <div id="content-3" class="hidden">
+        <div id="content-5" class="hidden">
           <div class="image-container">
-            <video id="rotobrush-video" class="project-image" style="border-radius: 20px; margin-right: -10px; object-fit: fill;" autoplay loop onerror="handleVideoError()">
-              <source src="resources/Rotobrush_Media.mp4" type="video/mp4">
-            </video>
-            <img id="rotobrush-image" class="project-image" src="resources/Rotobrush_Media.png" alt="Project Image" style="display: none;">
+            <img class="project-image" src="resources/ML_Media.png" alt="Project Image">
             <div class="project-tools">Matlab</div>
           </div>
-          <div id="content-4" class="project-info">
-            <h1 class="project-title">Rotobrush</h1>
-            <p class="project-description">Hmm what should I talk about. kajsdfkajsdf
+          <div class="project-info">
+            <h1 class="project-title">Other ML</h1>
+            <p class="project-description">ML soooooo cool brl
               lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>
-              <br>
+              <br><br>
               and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              alskdj flka dsjflka dsjflkaj dfaj aksjf jadsfj dksafj sldkf jasldfk asdkfj asdkf jadsfj
-              alksdjfla. adsfklja. kjoij.
+              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
             </p>
           </div>
         </div>
 
-      <div id="content-4" class="hidden">
-        <div class="image-container">
-          <img class="project-image" src="resources/Panorama_Media.png" alt="Project Image">
-          <div class="project-tools">Matlab</div>
-        </div>
-        <div class="project-info">
-          <h1 class="project-title">Panorama Stitch</h1>
-          <p class="project-description">Some different text here. It might be shorter
-            lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-            <br><br>
-            and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-            alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
-          </p>
-        </div>
-      </div>
-
-      <div id="content-5" class="hidden">
-        <div class="image-container">
-          <img class="project-image" src="resources/ML_Media.png" alt="Project Image">
-          <div class="project-tools">Matlab</div>
-        </div>
-        <div class="project-info">
-          <h1 class="project-title">Other ML</h1>
-          <p class="project-description">ML soooooo cool brl
-            lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-            <br><br>
-            and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-            alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
-          </p>
+        <div id="content-7" class="hidden">
+          <div class="image-container">
+            <img class="project-image" src="resources/Microcaml_Media.png" alt="Project Image">
+            <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI</div>
+          </div>
+          <div class="project-info">
+            <h1 class="project-title">MicroCaml</h1>
+            <p class="project-description">So its a mini version of ocaml
+              lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
+              <br><br>
+              and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
+              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
+            </p>
+          </div>
         </div>
       </div>
 
-      <div id="content-7" class="hidden">
-        <div class="image-container">
-          <img class="project-image" src="resources/Microcaml1.png" alt="Project Image">
-          <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI</div>
-        </div>
-        <div class="project-info">
-          <h1 class="project-title">MicroCaml</h1>
-          <p class="project-description">So its a mini version of ocaml
-            lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-            <br><br>
-            and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-            alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
-          </p>
-        </div>
+      <div id="project-menu">
+        <!-- make the style have no top border -->
+        <p class="project-menu-heading" style="border-top: 0px; padding-top: 0px; /* margin-top: 0px; */">Featured</p>
+        <div class="project-menu-item" data-content-id="content-1">Amino Amigo</div>
+        <div class="project-menu-item" data-content-id="content-2">LexChat</div>
+        <p class="project-menu-heading">ML</p>
+        <div class="project-menu-item" data-content-id="content-3">Rotobrush</div>
+        <div class="project-menu-item" data-content-id="content-4">Panorama Stitch</div>
+        <div class="project-menu-item" data-content-id="content-5">Other ML</div>
+        <p class="project-menu-heading">Other</p>
+        <div class="project-menu-item" data-content-id="content-7">MicroCaml</div>
+        <div class="project-menu-item" data-content-id="content-1">Architecture</div>
+        <div class="project-menu-item" data-content-id="content-1">And More</div>
       </div>
     </div>
 
-    <div id="project-menu">
-      <!-- make the style have no top border -->
-      <p class="project-menu-heading" style="border-top: 0px; padding-top: 0px; /* margin-top: 0px; */">Featured</p>
-      <div class="project-menu-item" data-content-id="content-1">Amino Amigo</div>
-      <div class="project-menu-item" data-content-id="content-2">LexChat</div>
-      <p class="project-menu-heading">ML</p>
-      <div class="project-menu-item" data-content-id="content-3">Rotobrush</div>
-      <div class="project-menu-item" data-content-id="content-4">Panorama Stitch</div>
-      <div class="project-menu-item" data-content-id="content-5">Other ML</div>
-      <p class="project-menu-heading">Other</p>
-      <div class="project-menu-item" data-content-id="content-7">MicroCaml</div>
-      <div class="project-menu-item" data-content-id="content-1">Architecture</div>
-      <div class="project-menu-item" data-content-id="content-1">And More</div>
-    </div>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+      <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+      <!-- work experience -->
+      <!-- contact me (with testimonials maybe?) -->
+
+      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+      <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+      <script src="script.js"></script>
   </div>
-
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-
-    <!-- work experience -->
-    <!-- contact me (with testimonials maybe?) -->
-
-    
-    <script src="script.js"></script>
-  </body>
+</body>
   
 </html>

@@ -31,11 +31,40 @@ body {
     /* font-family: 'Fira Code', monospace; */
     /* font-family: 'Roboto Mono', monospace; */
     /* font-family: 'Courier New', Courier, monospace; */
+    scroll-behavior: smooth;
     color: var(--myWhite);
     background: rgb(var(--myBlack));
     overflow-x: hidden;
     padding: 20px;
+    /* create a max width and center the body, so if i display the website 
+    on a really huge screen it wont be weird */
+    max-width: 1200px;
+    min-width: 950px;
+    margin: 0 auto;
+    position: relative;
+
   }
+  
+  #walls::before,
+  #walls::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100vw;
+    background: rgb(var(--myBlack));
+    z-index: 3;
+  }
+  
+  #walls::before {
+    left: -100vw;
+  } 
+  
+  #walls::after {
+    right: -100vw;
+  }
+
+
   
   .cursor {
     background-color: var(--myBlue);
@@ -343,7 +372,7 @@ body {
 
 
 
-  .double-view-container {
+  #double-view-container {
     display: flex;
   }
 
@@ -640,7 +669,6 @@ body {
 
 .circle-follow {
   position: absolute;
-  /* transform: translate(-140%, -143.5%); */
   transform: translate(-28.5px, -29.5px);
   width: 28px;
   height: 28px;
@@ -652,8 +680,7 @@ body {
 
 .cursor-follow-clickable {
   /* make the width 60px */
-  /* transform: translate(-189.5%, -195%); */
-  transform: translate(-28.5px, -29.5px);
+  /* transform: translate(-28.5px, -29.5px); */
   width: 20px;
   height: 20px;
   opacity: 0.5;
