@@ -27,14 +27,19 @@
 }
 
 body {
+  background-color: rgb(var(--myBlack));
+  z-index: 3;
+}
+
+#main-body {
     font-family: sans-serif;
     /* font-family: 'Fira Code', monospace; */
     /* font-family: 'Roboto Mono', monospace; */
     /* font-family: 'Courier New', Courier, monospace; */
-    scroll-behavior: smooth;
+    /* scroll-behavior: smooth; */
     color: var(--myWhite);
     background: rgb(var(--myBlack));
-    overflow-x: hidden;
+
     padding: 20px;
     /* create a max width and center the body, so if i display the website 
     on a really huge screen it wont be weird */
@@ -42,26 +47,8 @@ body {
     min-width: 950px;
     margin: 0 auto;
     position: relative;
-
-  }
-  
-  #walls::before,
-  #walls::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 100vw;
-    background: rgb(var(--myBlack));
-    z-index: 3;
-  }
-  
-  #walls::before {
-    left: -100vw;
-  } 
-  
-  #walls::after {
-    right: -100vw;
+    /* overflow-x: scroll; */
+    overflow-x: hidden;
   }
 
 
