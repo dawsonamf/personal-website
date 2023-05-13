@@ -149,7 +149,9 @@ window.addEventListener('scroll', () => {
 
 $(document).ready(function() {
   $('.menu-item').on('click', function(event) {
-    event.preventDefault();
+    if (!$(this).is("#resume-link")) {
+      event.preventDefault();
+    }
     var target = this.hash;
     $('html, body').animate(
       {
@@ -163,6 +165,7 @@ $(document).ready(function() {
     );
   });
 });
+
 
 
 cursorFollow();
