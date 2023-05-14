@@ -163,26 +163,29 @@ function setupHeaderMenu() {
 
       lastScrollTop = currentScrollTop;
   });
-
-  $(document).ready(function() {
-    $('.menu-item').on('click', function(event) {
-      if (!$(this).is("#resume-link")) {
-        event.preventDefault();
-      }
-      var target = this.hash;
-      $('html, body').animate(
-        {
-          scrollTop: $(target).offset().top,
-        },
-        500,
-        'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
-        function() {
-          window.location.hash = target;
-        }
-      );
-    });
-  });
 }
+
+
+
+
+$(document).ready(function() {
+  $('.menu-item').on('click', function(event) {
+    if (!$(this).is("#resume-link")) {
+      event.preventDefault();
+    }
+    var target = this.hash;
+    $('html, body').animate(
+      {
+        scrollTop: $(target).offset().top,
+      },
+      500,
+      'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
+      function() {
+        window.location.hash = target;
+      }
+    );
+  });
+});
 
 
 
