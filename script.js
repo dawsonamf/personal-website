@@ -130,6 +130,16 @@ function cursorFollow() {
     });
   });
 
+  document.querySelectorAll('.socials-item').forEach(item => {
+    item.addEventListener('mouseover', () => {
+      document.querySelector('.cursor-follow').classList.add('cursor-follow-clickable');
+    });
+  
+    item.addEventListener('mouseout', () => {
+      document.querySelector('.cursor-follow').classList.remove('cursor-follow-clickable');
+    });
+  });
+
   document.addEventListener("DOMContentLoaded", function() {
     document.addEventListener("mousemove", function () {
       var cursorContainer = document.querySelector("#cursor-container");
