@@ -1,4 +1,4 @@
-/* make the background gray */
+
 :root {
   --border-radius: 20px;
   --project-text-overlap: 250px;
@@ -26,6 +26,14 @@
   --project-color3: #c3de29;
 }
 
+
+
+
+
+
+
+
+/* defining the overall layout of the page */
 body {
   background-color: rgb(var(--myBlack));
   z-index: 3;
@@ -36,13 +44,9 @@ body {
     /* font-family: 'Fira Code', monospace; */
     /* font-family: 'Roboto Mono', monospace; */
     /* font-family: 'Courier New', Courier, monospace; */
-    /* scroll-behavior: smooth; */
     color: var(--myWhite);
     background: rgb(var(--myBlack));
-
     padding: 20px;
-    /* create a max width and center the body, so if i display the website 
-    on a really huge screen it wont be weird */
     max-width: 1200px;
     min-width: 950px;
     margin: 0 auto;
@@ -52,7 +56,198 @@ body {
   }
 
 
+
+
+
+
+
+
+  /* cursor follow stuff */
+
+#cursor-container {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 9999;
+}
+
+
+.cursor-follow {
+  position: absolute;
+  /* transform: translate(-610%, -635%); */
+  transform: translate(-28.5px, -29.5px);
+  width: 6px;
+  height: 6px;
+  background-color: var(--myBlue);
+  opacity: 0.8;
+  border-radius: 50%;
+  /* transition: width 0.2s ease-in-out, height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
+}
+
+.circle-follow {
+  position: absolute;
+  transform: translate(-28.5px, -29.5px);
+  width: 28px;
+  height: 28px;
+  border: 0.8px solid var(--myBlue);
+  border-radius: 50%;
+  opacity: 0.75;
+  background-color: transparent;
+}
+
+.cursor-follow-clickable {
+  /* make the width 60px */
+  /* transform: translate(-28.5px, -29.5px); */
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  /* animation: bounce 0.5s ease-in-out; */
+  /* transition: width 0.2s ease-in-out, height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
+}
+
+/* @keyframes bounce {
+  0% {
+    width: 5px;
+    height: 5px;
+  }
+  30% {
+    width: 22px;
+    height: 22px;
+  }
+  60% {
+    width: 18px;
+    height: 18px;
+  }
+  100% {
+    width: 20px;
+    height: 20px;
+  }
+} */
+
+
+
+
+
+
+
+
+  /* defining the header and header menus */
+  .static-menu {
+    background-color: rgba(var(--myBlack), 0.5);
+    border-radius: var(--border-radius);
+    width: 500px;
+    z-index: 1;
+    margin-right: 10px;
+    margin-left: auto;
+    position: static;
+    right: 10px;
+    opacity: 0;
+    animation: fadein 0.8s ease-out;
+    animation-delay: 3.7s;
+    animation-fill-mode: forwards;
+  }
+
+  .moving-menu {
+    background-color: rgba(var(--myBlack), 0.5);
+    border-radius: var(--border-radius);
+    width: 500px;
+    z-index: 1;
+    margin-right: 27px;
+    margin-left: auto;
+    position: fixed;
+    right: calc(50% - 617px);
+    opacity: 1;
+    
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+    top: -70px;
+    transition: top 0.3s ease-in-out;
+
+  }
+
+  @media screen and (max-width: 1250px) {
+    .moving-menu {
+      right: 10px;
+    }
+  }
+
+  /* for when the menu pops down when scrolling up */
+  .menu-sticky {
+    position: fixed;
+    top: 20px;
+    opacity: 1;
+    transition: top 0.3s ease-in-out;
+  }
+
+  /* to make the moving menu disappear when close to the top */
+  .menu-invisible {
+    opacity: 0;
+  }
   
+  /* the list of menu items */
+  .menu-list {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    height: 3.5em;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  
+  /* the menu items themselves */
+  .menu-item {
+    color: var(--myGray1);
+    text-decoration: none;
+  }
+
+  .menu-item:hover {
+    color: var(--myBlue);
+    transition: 0.3s ease-in-out;
+  }
+
+  /* the vertical line between the menu items */
+  .menu-spacer {
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: var(--myGray1);
+    border-top-width: 8px;
+    border-bottom-width: 8px;
+  }
+
+  #name-logo {
+    margin: 10px;
+    font-size: 20px;
+    /* font-family: Arial, sans-serif; */
+    /* font-family: Consolas,monaco,monospace;  */
+    /* font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; */
+    /* font-family: Andale Mono,AndaleMono,monospace;  */
+    font-weight: bold;
+    color: var(--myBlue);
+    border: 2px solid var(--myBlue);
+    padding: 10px;
+    border-radius: var(--border-radius);
+    width: fit-content;
+    height: fit-content;
+    margin-left: 20px;
+  }
+
+    /* this contains the static menu and the name-logo */
+  .header-menu-container {
+    display: flex;
+  }
+
+
+
+
+
+
+
+
+  /* the typing cursor */
   .cursor {
     background-color: var(--myBlue);
     width: 4px;
@@ -68,131 +263,33 @@ body {
     }
   }
 
-  .header-menu-container {
-    /* make the elements in it apear horizontally not vertically */
+
+
+
+
+
+
+
+  #typing-container {
     display: flex;
-  }
-
-  /* .name-logo {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  } */
-
-
-  .name1 {
-    margin: 10px;
-    font-size: 75px;
-    /* font-weight: bold; */
-    color: var(--myBlue);
-    /* border: 7px solid var(--myBlue); */
-    padding: 10px;
-    /* border-radius: var(--border-radius); */
-    /* specify each border radius individually, in one line */
-    border-radius: 0% 50% 50% 0%;
-    /* width: 0.4em;
-    height: 0.67em; */
-    width: fit-content;
-    height: fit-content;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* rotate the border 45 degrees, but not the text */
-    /* transform: rotate(0deg); */
-
-  }
-
-  .name2 {
-    margin: 10px;
-    font-size: 10px;
-    /* font-family: Arial, sans-serif; */
-    font-weight: bold;
-    /* color: var(--myRed); */
-    color: var(--myGray1);
-    border: 2px solid var(--myGray1);
-    padding: 7px;
-    border-radius: var(--border-radius);
-    width: fit-content;
-    height: fit-content;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    /* margin-left: 0px; */
-
-    margin-top: -30px;
-  }
-
-  .name3 {
-    margin: 10px;
-    font-size: 20px;
-    /* font-family: Arial, sans-serif; */
-        /* font-family: Consolas,monaco,monospace;  */
-    /* font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; */
-    /* font-family: Andale Mono,AndaleMono,monospace;  */
-    font-weight: bold;
-    /* color: var(--myRed); */
-    color: var(--myBlue);
-    border: 2px solid var(--myBlue);
-    padding: 10px;
-    border-radius: var(--border-radius);
-    width: fit-content;
-    height: fit-content;
-    margin-left: 20px;
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  .header-container {
-    display: flex;
-    /* visibility: hidden; */
-    /* translate x -250% */
-    /* shift it left by x pixels */
     transform: translateX(-290px);
     animation: slidein 0.8s ease-out;
     animation-delay: 3s;
     animation-fill-mode: forwards;
   }
   
-  .header-left {
-    /* margin-top: -100px; */
-    /* width: 70vw; */
+  #typing-left {
     border-radius: var(--border-radius);
     text-align: left;
-    /* background-color: #26a491; */
   }
   
-  .header-right {
-    /* width: 1%; */
-    /* make margin left top and right 60px */
+  #typing-right {
     padding: 60px 60px 0px 20px;
     justify-content: center;
-    /* align-items: center; */
     display: flex;
-    /* background-color: #08fdd8; */
-    /* height: 100%; */
-    /* width: 30vw; */
   }
   
-  .header-image {
+  #typing-image {
     height: 400px;
     width: 225px;
     border-radius: var(--border-radius);
@@ -202,19 +299,17 @@ body {
   
   @keyframes slidein {
     from {
-      /* current location */
-      /* visibility: visible; show the image when the animation starts */
+
     }
     to {
       transform: translateX(0);
-      /* visibility: visible; */
     }
   }
 
   @keyframes slideInLeft {
     from {
       transform: translateX(-250%);
-      visibility: visible; /* show the image when the animation starts */
+      visibility: visible;
     }
     to {
       transform: translateX(0);
@@ -225,7 +320,7 @@ body {
   @keyframes slideInRight {
     from {
       transform: translateX(250%);
-      visibility: visible; /* show the image when the animation starts */
+      visibility: visible;
     }
     to {
       transform: translateX(0);
@@ -233,7 +328,7 @@ body {
     }
   }
   
-  #header {
+  #typing-text {
     font-size: 70px;
     margin: 0;
     line-height: 1.2;
@@ -243,9 +338,8 @@ body {
     padding-top: 2.25em;
   }
   
-  .gray-text {
+  #sub-text {
     color: var(--myGray1);
-    /* color: #08fdd8; */
     letter-spacing: 3px;
     font-size: 14px;
     position: relative;
@@ -266,80 +360,6 @@ body {
     }
   }
   
-  .menu-static {
-    background-color: rgba(var(--myBlack), 0.5);
-    border-radius: var(--border-radius);
-    width: 500px;
-    z-index: 1;
-    margin-right: 10px;
-    margin-left: auto;
-    position: static;
-    right: 10px;
-    opacity: 0;
-    animation: fadein 0.8s ease-out;
-    animation-delay: 3.7s;
-    animation-fill-mode: forwards;
-  }
-
-  .menu {
-    background-color: rgba(var(--myBlack), 0.5);
-    border-radius: var(--border-radius);
-    width: 500px;
-    z-index: 1;
-    margin-right: 27px;
-    margin-left: auto;
-    position: fixed;
-    right: 10px;
-    opacity: 1;
-    
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
-    top: -70px;
-    transition: top 0.3s ease-in-out;
-  }
-  
-  .menu-sticky {
-    position: fixed;
-    top: 20px;
-    opacity: 1;
-    transition: top 0.3s ease-in-out;
-  }
-
-  .menu-invisible {
-    opacity: 0;
-  }
-  
-  .menu-list {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    height: 3.5em;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    /* make there be a shadow all around, but make sure it has rounded corners too */
-    /* border-radius: var(--border-radius); */
-  }
-  
-  .menu-item {
-    color: var(--myGray1);
-    text-decoration: none;
-  }
-
-  .menu-item:hover {
-    color: var(--myBlue);
-    transition: 0.3s ease-in-out;
-  }
-
-  .menu-spacer {
-    /* border-left: 1px solid var(--myGray1); */
-    border-width: 0.5px;
-    border-style: solid;
-    border-color: var(--myGray1);
-    border-top-width: 8px;
-    border-bottom-width: 8px;
-  }
 
 
 
@@ -347,26 +367,12 @@ body {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+  /* the about and skills section */
   #double-view-container {
     display: flex;
   }
 
   .double-view-left, .double-view-right {
-    /* width: 50%; */
-    /* slide in */
     padding: 20px;
     margin: 10px;
     margin-bottom: 0px;
@@ -401,25 +407,20 @@ body {
   
   
   .about-header {
-    /* color: #08fdd8; */
     color: var(--myBlue);
     font-size: 40px;
   }
 
   .about-text {
-    /* color: #a2a2a3; */
-    /* font-size: 20px; */
     line-height: 1.5;
   }
 
   .skills-header{
-    /* color: #08fdd8; */
     color: var(--myBlue);
     font-size: 40px;
   }
 
   .skills-section-header {
-    /* color: #08fdd8; */
     color: var(--myLightSlate);
     font-size: 23px;
   }
@@ -441,13 +442,7 @@ body {
 
 
 
-
-
-
-
-
-
-/* make the item with id project-header be aligned right, font size 40, light blue in color, and with the same padding and margin as other elements */
+  /* the project section */
 #project-header {
   color: var(--project-color1);
   font-size: 40px;
@@ -456,7 +451,6 @@ body {
   margin: 10px;
   margin-bottom: 0px;
 }
-
 
 #project-wrapper {
     display: flex;
@@ -499,10 +493,8 @@ body {
   /* font-weight: bold; */
   color: var(--project-color1);
   padding-top: 15px; 
-  /* margin-top: 10px; */
   margin-bottom: 5px;
   border-top: 1px solid var(--myGray1);
-  /* border-top: 1px solid var(--project-color1); */
   width: 100%;
   text-align: center;
 }
@@ -517,9 +509,7 @@ body {
 }
 
 .project-menu-item:hover {
-  /* make the foregroundcolor var myblue */
   color: var(--myBlue);
-  /* transition the color slowly */
   transition: color 0.3s ease-in-out;
 }
 
@@ -530,22 +520,16 @@ body {
 .showing {
   display: flex;
   align-items: center;
-  /* border: 1px solid #dfdbdb; */
   width: 100%;
   height: 100%;
-  /* align top */
   align-items: flex-start;
-  /* flex-grow: 1; */
-  /* flex: 1; */
 }
-
 
 .project-title {
   color: var(--project-color1);
   font-size: 30px;
   text-align: right;
   margin-top: 60px;
-  /* margin-bottom: -10px; */
 }
 
 .project-image {
@@ -554,8 +538,6 @@ body {
   border-radius: var(--border-radius);
   box-shadow: 0 0 0 rgba(0,0,0,0);
   transition: transform 0.3s ease-in-out;
-  /* transform the z index back to the back */
-  /* position: relative; */
 }
 
 /* on hover,bring the image forward using transform */
@@ -563,16 +545,11 @@ body {
   transform: scale(1.025);
   box-shadow: 0 0 10px rgba(0,0,0,1);
   transition: transform 0.3s ease-in-out;
-  /* transform the z index back to the back */
-  /* position: relative; */
 }
-
 
 .image-container {
   width: 70%;
   min-width: 70%;
-  /* min-height: 100%; */
-  /* flex-direction: column; */
 }
 
 .project-tools {
@@ -580,17 +557,12 @@ body {
   color: var(--myGray1);
   margin-top: 10px;
   margin-right: calc(var(--project-text-overlap) + +10px);
-  /* bring it to the front z axis */
-  /* position: relative; */
-  /* make it go to multiple lines */
   flex-wrap: wrap;
   
 }
 
 .project-info {
-  /* flex-grow: 1; */
-  /* min-width: calc(100% - 650px); Subtract the width of the .project-image */
-  /* vertical align center */
+  /* nothing here at the moment */
 }
 
 .project-description {
@@ -603,13 +575,7 @@ body {
   z-index: 4;
 }
 
-
-
-
-
-
-
-
+/* defining the colors of each project */
 #content-1 {
   --project-color1: rgb(162, 78, 245);
   --project-color2: rgb(0, 22, 37);
@@ -632,79 +598,3 @@ body {
 
 
 
-
-#cursor-container {
-  position: fixed;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0;
-  z-index: 9999;
-}
-
-
-.cursor-follow {
-  position: absolute;
-  /* transform: translate(-610%, -635%); */
-  transform: translate(-28.5px, -29.5px);
-  width: 6px;
-  height: 6px;
-  background-color: var(--myBlue);
-  opacity: 0.8;
-  border-radius: 50%;
-  /* transition: width 0.2s ease-in-out, height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
-}
-
-.circle-follow {
-  position: absolute;
-  transform: translate(-28.5px, -29.5px);
-  width: 28px;
-  height: 28px;
-  border: 0.8px solid var(--myBlue);
-  border-radius: 50%;
-  opacity: 0.75;
-  background-color: transparent;
-}
-
-.cursor-follow-clickable {
-  /* make the width 60px */
-  /* transform: translate(-28.5px, -29.5px); */
-  width: 20px;
-  height: 20px;
-  opacity: 0.5;
-  /* transition: width 0.2s ease-in-out, height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
-}
-
-
-
-
-
-
-
-
-
-
-
-/* @keyframes bounce {
-  0% {
-    width: 5px;
-    height: 5px;
-  }
-  30% {
-    width: 22px;
-    height: 22px;
-  }
-  60% {
-    width: 18px;
-    height: 18px;
-  }
-  100% {
-    width: 20px;
-    height: 20px;
-  }
-}
-
-.cursor-follow-clickable {
-  opacity: 0.5;
-  animation: bounce 0.5s ease-in-out;
-} */
