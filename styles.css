@@ -196,6 +196,7 @@ body {
     height: 400px;
     width: 225px;
     border-radius: var(--border-radius);
+    /* translate x so its off the view width to the left */
     /* hide the image initially */
   }
   

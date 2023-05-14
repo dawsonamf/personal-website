@@ -71,8 +71,22 @@ function cursorFollow() {
     // mouseY = event.clientY;
     var adjustment = 8;
     var body = document.body.getBoundingClientRect();
-    mouseX = event.clientX - body.left - window.scrollX  + adjustment;
-    mouseY = event.clientY - body.top - window.scrollY  + adjustment;
+    // get bounding rect of the div id main-body
+    var mainBody = document.getElementById("main-body").getBoundingClientRect();
+    // get the width difference between the body and the main-body
+    var widthDifference = body.width - mainBody.width;
+    // divide it by 2
+    widthDifference = widthDifference / 2;
+    adjustment = 8 - widthDifference;
+
+    // if width difference is 0 or less, set adjustment to 0
+    if (widthDifference <= 0) {
+      adjustment = 8;
+    }
+
+
+    mouseX = event.clientX - body.left - window.scrollX + adjustment;
+    mouseY = event.clientY - body.top - window.scrollY  + 8;
   });
   
   function animate() {
