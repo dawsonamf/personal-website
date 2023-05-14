@@ -26,6 +26,9 @@ function createTypingAnimation(id) {
   type();
 }
 
+
+
+
 function loadDynamicContent() {
   const contentDivs = document.querySelectorAll('#project-content > div');
   const menuItems = document.querySelectorAll('.project-menu-item');
@@ -55,6 +58,9 @@ function loadDynamicContent() {
   });
 }
 
+
+
+
 function cursorFollow() {
   var cursor = document.querySelector(".cursor-follow");
   var circle = document.querySelector(".circle-follow");
@@ -71,19 +77,15 @@ function cursorFollow() {
     // mouseY = event.clientY;
     var adjustment = 8;
     var body = document.body.getBoundingClientRect();
-    // get bounding rect of the div id main-body
     var mainBody = document.getElementById("main-body").getBoundingClientRect();
-    // get the width difference between the body and the main-body
     var widthDifference = body.width - mainBody.width;
-    // divide it by 2
     widthDifference = widthDifference / 2;
     adjustment = 8 - widthDifference;
 
-    // if width difference is 0 or less, set adjustment to 0
+    // default adjustment value is 8
     if (widthDifference <= 0) {
       adjustment = 8;
     }
-
 
     mouseX = event.clientX - body.left - window.scrollX + adjustment;
     mouseY = event.clientY - body.top - window.scrollY  + 8;
@@ -134,51 +136,54 @@ function cursorFollow() {
       cursorContainer.style.opacity = "1";
     }, { once: true });
   });
-
-
-
-const menu = document.querySelector('.menu');
-const distanceThreshold = 300; // Change this value to your desired threshold
-let lastScrollTop = 0;
-window.addEventListener('scroll', () => {
-    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-    const isScrollingUp = currentScrollTop < lastScrollTop;
-    const isPastThreshold = currentScrollTop > distanceThreshold;
-
-    if (currentScrollTop < (distanceThreshold / 3)) {
-      menu.classList.add('menu-invisible');
-    } else {
-      menu.classList.remove('menu-invisible');
-    }
-
-    if (isScrollingUp && isPastThreshold) {
-        menu.classList.add('menu-sticky');
-    } else {
-      menu.classList.remove('menu-sticky');
-    }
-
-    lastScrollTop = currentScrollTop;
-});
 }
 
-$(document).ready(function() {
-  $('.menu-item').on('click', function(event) {
-    if (!$(this).is("#resume-link")) {
-      event.preventDefault();
-    }
-    var target = this.hash;
-    $('html, body').animate(
-      {
-        scrollTop: $(target).offset().top,
-      },
-      500,
-      'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
-      function() {
-        window.location.hash = target;
+
+
+function setupHeaderMenu() {
+  const menu = document.querySelector('.moving-menu');
+  const distanceThreshold = 300; // Change this value to your desired threshold
+  let lastScrollTop = 0;
+  window.addEventListener('scroll', () => {
+      const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const isScrollingUp = currentScrollTop < lastScrollTop;
+      const isPastThreshold = currentScrollTop > distanceThreshold;
+
+      if (currentScrollTop < (distanceThreshold / 3)) {
+        menu.classList.add('menu-invisible');
+      } else {
+        menu.classList.remove('menu-invisible');
       }
-    );
+
+      if (isScrollingUp && isPastThreshold) {
+          menu.classList.add('menu-sticky');
+      } else {
+        menu.classList.remove('menu-sticky');
+      }
+
+      lastScrollTop = currentScrollTop;
   });
-});
+
+  $(document).ready(function() {
+    $('.menu-item').on('click', function(event) {
+      if (!$(this).is("#resume-link")) {
+        event.preventDefault();
+      }
+      var target = this.hash;
+      $('html, body').animate(
+        {
+          scrollTop: $(target).offset().top,
+        },
+        500,
+        'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
+        function() {
+          window.location.hash = target;
+        }
+      );
+    });
+  });
+}
+
 
 
 
@@ -186,9 +191,10 @@ cursorFollow();
 
 loadDynamicContent();  
 
+setupHeaderMenu();
 
 window.addEventListener('load', function() {
-  createTypingAnimation('header');
+  createTypingAnimation('typing-text');
 });
 
 const menuItems = document.querySelectorAll('.project-menu-item');
