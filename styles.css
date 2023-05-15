@@ -10,6 +10,8 @@
   --myGray1: #a2a2a3;
   --myGray2: #2c2c2c;
   --myBlack: 29, 29, 29;
+  --test: #1d1d1d;
+  --myBlackColor: rgb(var(--myBlack));
   /* --myWhite: rgb(255, 255, 255); */
 
   --myNavy: #0a192f;
@@ -47,7 +49,7 @@ body {
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap'); */
 
 #main-body {
-  /* font-family: 'Roboto', sans-serif; */
+  font-family: 'Roboto', sans-serif;
   font-family: 'Open Sans', sans-serif;
   font-family: sans-serif;
   /* font-family: 'Montserrat', sans-serif; */
@@ -56,7 +58,6 @@ body {
   /* font-family: 'Fira Code', monospace; */
   /* font-family: 'Roboto Mono', monospace; */
   /* font-family: 'Courier New', Courier, monospace; */
-  /* font-family: 'Montserrat', sans-serif; */
   /* font-family: Helvetica, sans-serif; */
 
   color: var(--myWhite);
@@ -172,7 +173,7 @@ body {
   .static-menu {
     background-color: rgba(var(--myBlack), 0.5);
     border-radius: var(--border-radius);
-    width: 500px;
+    width: 400px;
     z-index: 1;
     margin-right: 10px;
     margin-left: auto;
@@ -190,7 +191,7 @@ body {
   .moving-menu {
     background-color: rgba(var(--myBlack), 0.5);
     border-radius: var(--border-radius);
-    width: 500px;
+    width: 400px;
     z-index: 1;
     margin-right: 27px;
     margin-left: auto;
@@ -257,22 +258,59 @@ body {
     border-bottom-width: 8px;
   }
 
-  #name-logo {
-    margin: 10px;
-    font-size: 20px;
-    /* font-family: Arial, sans-serif; */
-    /* font-family: Consolas,monaco,monospace;  */
-    /* font-family: Century Gothic,CenturyGothic,AppleGothic,sans-serif; */
-    /* font-family: Andale Mono,AndaleMono,monospace;  */
-    font-weight: bold;
+  .name-logo {
+    text-decoration: none;
+    margin: 20px;
+    margin-top: 10px;
+    font-size: 22px;
+    /* font-weight: bold; */
     color: var(--myBlue);
-    border: 2px solid var(--myBlue);
-    padding: 10px;
     border-radius: var(--border-radius);
-    width: fit-content;
-    height: fit-content;
-    margin-left: 20px;
+    border-radius: 10px;
+    width: 37px;
+    height: 37px;
+    border: 1px solid var(--myBlue);
+    /* background-color: var(--myBlue); */
+    /* center the element horizontally and vertically */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+
+    animation: fadein 0.8s ease-out;
+    /* animation-delay: 3.76s; */
+    animation-delay: 3.38s;
+    animation-fill-mode: forwards;
+
+    /* bring it back y */
+    transform: translate(0, 0);
+    transition: 0.3s ease-in-out;
   }
+
+  /* on hover, make it rise by 3.5px */
+  .name-logo:hover {
+    transform: translateY(-3.5px);
+    /* border: 2px solid var(--myBlue); */
+    /* font-weight: bold; */
+    background-color: var(--myBlue);
+    color: rgb(var(--myBlack));
+    transition: 0.3s ease-in-out;
+  }
+
+  /* .name-logo2 {
+    margin: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color: rgb(var(--myBlack));
+    border-radius: var(--border-radius);
+    border-radius: 10px;
+    width: 37px;
+    height: 37px;
+    background-color: var(--myBlue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  } */
 
     /* this contains the static menu and the name-logo */
   .header-menu-container {
