@@ -3,7 +3,7 @@
   --border-radius: 20px;
   --project-text-overlap: 250px;
   --project-menu-spacer-width: 25px;
-  --socials-menu-spacer-height: 90px; /* max is 105 */
+  --socials-menu-spacer-height: 80px; /* max is 105 */
   --myBlue: #08fdd8;
   /* --myRed: #fe1251; */
   
@@ -84,6 +84,7 @@ body {
   background-color: var(--myBlue);
   opacity: 0.8;
   border-radius: 50%;
+  animation: bounceOff 0.5s;
   /* transition: width 0.2s ease-in-out, height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
 }
 
@@ -104,11 +105,11 @@ body {
   width: 20px;
   height: 20px;
   opacity: 0.5;
-  /* animation: bounce 0.5s ease-in-out; */
+  animation: bounceOn 0.5s;
   /* transition: width 0.2s ease-in-out, height 0.2s ease-in-out, opacity 0.2s ease-in-out; */
 }
 
-/* @keyframes bounce {
+@keyframes bounceOn {
   0% {
     width: 5px;
     height: 5px;
@@ -125,7 +126,26 @@ body {
     width: 20px;
     height: 20px;
   }
-} */
+}
+
+@keyframes bounceOff {
+  0% {
+    width: 20px;
+    height: 20px;
+  }
+  30% {
+    width: 3px;
+    height: 3px;
+  }
+  60% {
+    width: 7px;
+    height: 7px;
+  }
+  100% {
+    width: 5px;
+    height: 5px;
+  }
+}
 
 
 
@@ -361,6 +381,67 @@ body {
       opacity: 1;
     }
   }
+
+/* socials stuff now */
+#socials-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 10px;
+  height: 100%;
+
+  /* uncommenting this will align it with the bottom of the parent div */
+  /* commenting it will center it with the image (ish) */
+  top: 0;
+  padding-top: calc(136.5px - var(--socials-menu-spacer-height));
+  padding-top: calc(105px - var(--socials-menu-spacer-height));
+
+  opacity: 0;
+  animation: fadein 0.8s ease-out;
+  animation-delay: 3.76s;
+  animation-fill-mode: forwards;
+}
+
+.socials-menu-spacer {
+  border-width: 0.5px;
+  border-style: solid;
+  border-color: var(--myGray1);
+  border-top-width: var(--socials-menu-spacer-height);
+  border-bottom-width: 0px;
+}
+
+.socials-item {
+  /* margin: 10px; */
+  /* padding: 10px; */
+  height: 50px;
+  width: 50px;
+  border-radius: var(--border-radius);
+  color: var(--myWhite);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  
+}
+
+.socials-item i {
+  font-size: 24px;
+  transform: translateY(0px);
+  transition: color 0.3s ease-in-out;
+  transition: transform 0.3s ease-in-out;
+}
+
+.socials-item:hover i {
+  color: var(--myBlue);
+  transform: translateY(-3.5px);
+  transition: 0.3s ease-in-out;
+}
+
+.socials-item:hover {
+  /* nothing here at the moment */
+}
   
 
 
@@ -601,85 +682,145 @@ body {
 
 
 
-#socials-list {
-  /* make the elements within vertically aligned */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* background: blue; */
-  /* verticlly center each item */
-  justify-content: center;
-  /* put the div to the right in its parent */
-  position: absolute;
-  right: 10px;
-  top: 0;
-  height: 100%;
-  /* padding-top: calc(105px - var(--socials-menu-spacer-height)); */
-  padding-top: calc(136.5px - var(--socials-menu-spacer-height));
-
-  opacity: 0;
-  animation: fadein 0.8s ease-out;
-  animation-delay: 3.76s;
-  animation-fill-mode: forwards;
-
-}
-
-.socials-menu-spacer {
-  border-width: 0.5px;
-  border-style: solid;
-  border-color: var(--myGray1);
-  border-top-width: var(--socials-menu-spacer-height);
-  /* border-top-width: 100px; */
-  border-bottom-width: 0px;
-}
-
-.socials-item {
-  /* margin: 10px;
-  padding: 10px; */
-  height: 50px;
-  width: 50px;
-  border-radius: var(--border-radius);
-  /* background-color: #f1f1f1; */
-  color: var(--myWhite);
-  /* background-color: #08fdd8; */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-}
-
-.socials-item i {
-  /* color: #555555; */
-  font-size: 24px;
-  transition: color 0.3s ease-in-out;
-}
-
-.socials-item:hover i {
-  color: var(--myBlue); /* Change the color to your desired value when hovered */
-  transition: 0.3s ease-in-out;
-}
-
-.socials-item:hover {
-  /* background-color: #e0e0e0; */
-}
 
 
 
 
 
-.contact-container {
+
+
+
+
+
+
+
+  .contact-view-left, .contact-view-right {
+    padding: 20px;
+    margin: 10px;
+    margin-bottom: 0px;
+    background-color: var(--myGray2);
+    border-radius: var(--border-radius);
+  }
+  
+  .contact-view-left {
+    width: 50%;
+    float: left;
+  }
+  
+  .contact-view-right {
+    width: 50%;
+    float: right;
+  }
+  
+  .contact-header {
+    color: var(--myBlue);
+    font-size: 40px;
+  }
+
+  .contact-text {
+    line-height: 1.5;
+  }
+
+  .contact-image {
+    width: 50%;
+    /* height: 300px; */
+    float: right;
+    margin: 10px;
+    margin-bottom: 0px;
+    border-radius: var(--border-radius);
+  }
+
+
+/* .contact-container {
   background-color: var(--myGray2);
   padding: 20px;
   margin: 10px;
   margin-bottom: 0px;
   border-radius: var(--border-radius);
-}
+} */
 
-.contact-header {
+.email-link, .linkedin-link {
+  text-decoration: none;
   color: var(--myBlue);
-  font-size: 40px;
+  transition: color 0.3s ease-in-out;
 }
 
-.contact-text {
-  line-height: 1.5;
+.email-link:hover, .linkedin-link:hover {
+  color: var(--myBlue);
+  transition: color 0.3s ease-in-out;
 }
+
+
+
+
+
+
+
+
+
+.references-text {
+  line-height: 1.5;
+  color: var(--myWhite);
+  /* font-size: 14px; */
+
+}
+
+.text-link {
+  text-decoration: none;
+  color: var(--myBlue);
+  transition: color 0.25s ease-in-out;
+  position: relative; /* Required for absolute positioning of pseudo-element */
+}
+
+.text-link::before {
+  content: '';
+  position: absolute;
+  bottom: -1px; /* Adjust the position of the underline */
+  left: 0;
+  width: 0;
+  height: 0.5px; /* Adjust the thickness of the underline */
+  opacity: 0.7;
+  background-color: var(--myBlue);
+  transition: width 0.25s ease-in-out;
+}
+
+.text-link:hover::before {
+  width: 100%; /* Width set to 100% to make the underline expand from left to right */
+}
+
+
+
+
+.footer-container {
+  /* align elements inside horizontally */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  /* background: blue; */
+}
+
+.footer-text {
+  /* center it */
+  text-align: center;
+  color: var(--myGray1);
+  font-size: 12px;
+  line-height: 1.5;
+  /* width to fit content without going on a new line */
+  /* width: 270px; */
+
+
+}
+
+.footer-spacer {
+  margin: 20px;
+  padding: 0;
+  border-width: 0.5px;
+  border-style: solid;
+  border-color: var(--myGray1);
+  width: 80px;
+  /* width: calc((100% - 270px - 75px) / 2); */
+
+}
+
+/* for the footer text, I want a line left and right of it that extends to the edge */
