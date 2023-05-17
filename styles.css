@@ -20,8 +20,8 @@
   --mySlate: #8892b0;
   --myLightSlate: #a8b2d1;
   --myLightestSlate : #ccd6f6;
-  --myWhite: #e6f1ff;
-  --myBlue: #64ffda;
+  --myWhite: rgb(230, 241, 255);
+  --myBlue: rgb(100, 255, 218);
 
 
   --project-color1: #31fd08;
@@ -677,6 +677,7 @@ body {
 
 .project-image {
   width: 100%;
+  position: relative;
   object-fit: cover;
   border-radius: var(--border-radius);
   box-shadow: 0 0 0 rgba(0,0,0,0);
@@ -688,6 +689,7 @@ body {
   transform: scale(1.025);
   box-shadow: 0 0 10px rgba(0,0,0,1);
   transition: transform 0.3s ease-in-out;
+  z-index: 3;
 }
 
 .image-container {
@@ -710,12 +712,13 @@ body {
 
 .project-description {
   color: var(--project-color3);
+  position: relative;
   line-height: 1.5;
   background-color: var(--project-color2);
   margin-left: calc(var(--project-text-overlap) * -1);
   padding: 20px;
   border-radius: var(--border-radius);
-  z-index: 4;
+  z-index: 1;
   /* text-align: right; */
 }
 
@@ -862,6 +865,7 @@ body {
   color: var(--myBlue);
   transition: color 0.25s ease-in-out;
   position: relative; /* Required for absolute positioning of pseudo-element */
+  /* z-index: 1; */
 }
 
 .text-link::before {
@@ -915,4 +919,17 @@ body {
 
 }
 
-/* for the footer text, I want a line left and right of it that extends to the edge */
+
+.lexchat-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  border: none;
+  /* border-radius: var(--border-radius); */
+  /* background-color: var(--myBlue); */
+}
