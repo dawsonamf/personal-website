@@ -79,12 +79,5 @@ CMSC 216 -- C projects, makefiles, etc (more info needed?)
 
 
 
-
-
-
-
-Animate blue cursor transition to big when hovering over clickable menu item
-
-Works Cited:
-
+uncomment works cited?
 

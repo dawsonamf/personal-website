@@ -198,6 +198,7 @@ body {
     position: fixed;
     right: calc(50% - 617px);
     opacity: 1;
+    z-index: 4;
     
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
@@ -218,6 +219,7 @@ body {
     position: fixed;
     top: 20px;
     opacity: 1;
+    /* z-index: 4; */
     transition: top 0.3s ease-in-out;
   }
 
@@ -675,21 +677,21 @@ body {
   margin-top: 60px;
 }
 
+
 .project-image {
   width: 100%;
-  position: relative;
   object-fit: cover;
   border-radius: var(--border-radius);
   box-shadow: 0 0 0 rgba(0,0,0,0);
-  transition: transform 0.3s ease-in-out;
+  position: relative;
+  z-index: 1; /* Lower than project-description normal state */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
-/* on hover,bring the image forward using transform */
 .project-image:hover {
   transform: scale(1.025);
   box-shadow: 0 0 10px rgba(0,0,0,1);
-  transition: transform 0.3s ease-in-out;
-  z-index: 3;
+  z-index: 3; /* Higher than both during hover state */
 }
 
 .image-container {
@@ -712,13 +714,13 @@ body {
 
 .project-description {
   color: var(--project-color3);
-  position: relative;
   line-height: 1.5;
   background-color: var(--project-color2);
   margin-left: calc(var(--project-text-overlap) * -1);
   padding: 20px;
   border-radius: var(--border-radius);
-  z-index: 1;
+  position: relative; /* Ensure position is set for z-index to work */
+  z-index: 2; /* Higher than project-image normal state */
   /* text-align: right; */
 }
 
@@ -864,8 +866,8 @@ body {
   text-decoration: none;
   color: var(--myBlue);
   transition: color 0.25s ease-in-out;
-  position: relative; /* Required for absolute positioning of pseudo-element */
-  /* z-index: 1; */
+  position: relative;
+  z-index: 2; /* Higher z-index for normal state */
 }
 
 .text-link::before {
@@ -932,4 +934,45 @@ body {
   border: none;
   /* border-radius: var(--border-radius); */
   /* background-color: var(--myBlue); */
+}
+
+
+.button-link {
+  text-decoration: none;
+  /* margin: 20px;
+  margin-top: 10px; */
+  padding: 7px;
+  /* font-size: 22px; */
+  /* font-weight: bold; */
+  color: var(--myBlue);
+  border-radius: var(--border-radius);
+  border-radius: 10px;
+  width: fit-content;
+  border: 1px solid var(--myBlue);
+  /* background-color: var(--myBlue); */
+  /* center the element horizontally and vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* opacity: 0; */
+
+
+  /* animation: fadein 0.8s ease-out; */
+  /* animation-delay: 3.76s; */
+  /* animation-delay: 3.38s; */
+  /* animation-fill-mode: forwards; */
+
+  /* bring it back y */
+  transform: translate(0, 0);
+  transition: 0.3s ease-in-out;
+}
+
+/* on hover, make it rise by 3.5px */
+.button-link:hover {
+  transform: translateY(-3.5px);
+  /* border: 2px solid var(--myBlue); */
+  /* font-weight: bold; */
+  background-color: var(--myBlue);
+  color: rgb(var(--myBlack));
+  transition: 0.3s ease-in-out;
 }
