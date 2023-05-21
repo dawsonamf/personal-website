@@ -198,16 +198,20 @@
           </div>
           <div id="content-4" class="project-info">
             <h1 class="project-title">Rotobrush</h1>
-            <p class="project-description">Hmm what should I talk about. kajsdfkajsdf
-              lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - some bullets
-              <br>
-              <br>
-              and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              alskdj flka dsjflka dsjflkaj dfaj aksjf jadsfj dksafj sldkf jasldfk asdkfj asdkf jadsfj
-              alksdjfla. adsfklja. kjoij.
+            <p class="project-description">
+              With Rotobrush, a user can manually mark the border of an object in the first 
+              frame of a video, and Rotobrush will automatically propagate that border across 
+              all subsequent frames. This method combines a variety of techniques such as overlapping 
+              localized boundary classifiers, local color and shape models, color and shape model 
+              integration, boundary deformation and motion estimation, and more.
+              <br><br>
+              This project was based on a paper called “Video SnapCut” (Bai et al.) that was revolutionary 
+              at the time of its release in 2009. SnapCut was immediately included by Adobe Systems in 
+              Photoshop, and was only recently replaced by more modern techniques. I am proud that my 
+              implementation achieves superior performance to the 2009 version - though this is likely 
+              due to increased compute.
+              <br><br>
+              <a class="button-link" href="resources/SnapCut.pdf" target="_blank">Read the Paper</a>
             </p>
           </div>
         </div>
@@ -219,11 +223,13 @@
           </div>
           <div class="project-info">
             <h1 class="project-title">Panorama Stitch</h1>
-            <p class="project-description">Some different text here. It might be shorter
-              lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
-              <br><br>
-              and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
+            <p class="project-description">
+              This project is a panorama stitching application. Given a few overlapping images 
+              taken from the same location, the program stitches them together into a coherent 
+              single image. This project used a variety of techniques including alternate color 
+              spaces (YCbCr), GMMs and ANMS for feature recognition, convolution, RANSAC for feature 
+              matching and homography estimation, cylindrical projection, bilinear interpolation for 
+              image blending, and more. 
             </p>
           </div>
         </div>
@@ -235,11 +241,37 @@
           </div>
           <div class="project-info">
             <h1 class="project-title">Other ML</h1>
-            <p class="project-description">ML soooooo cool brl
-              lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
+            <p class="project-description">
+              My computer science concentration was in machine learning, so I’ve had exposure to the 
+              full machine learning lifecycle. This includes scraping data, preprocessing and preparing 
+              data, data analysis and presentation, designing, training, debugging, and testing model 
+              architectures, and integrating the results into existing programs. 
               <br><br>
-              and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
+              I’ve also developed a variety of traditional models from scratch, including neural 
+              networks (backpropagation and gradient descent too), CNNs, autoencoders, softmax 
+              regression and classification, embeddings, PCA, simulated annealing, A* search, particle 
+              filters, Kalman filters, entropy based decision trees, Bayes nets, GMMs, ensemble methods, 
+              and more. I’ve also used techniques to support model development such as 
+              ANMS, RANSAC, SfM, SLAM, factor graphs, GTSAM, importance sampling, and more.
+            </p>
+          </div>
+        </div>
+
+        <div id="content-6" class="hidden">
+          <div class="image-container">
+            <img class="project-image" src="resources/Microcaml_Media.png" alt="Project Image">
+            <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI</div>
+          </div>
+          <div class="project-info">
+            <h1 class="project-title">MicroCaml</h1>
+            <p class="project-description">
+              MicroCaml is my own - albeit simple - programming language. It's Turing complete, and has 
+              many of the features of OCaml. I designed the lexer, parser, and interpreter from scratch using 
+              CFG (LINK?), and created an interactive shell to interface with the programming language 
+              from the command line.
+              <br><br>
+              As a precursor to designing MicroCaml, I familiarized myself with CFG by creating a regular 
+              expression (LINK) engine using NFAs and DFAs. 
             </p>
           </div>
         </div>
@@ -250,12 +282,29 @@
             <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI</div>
           </div>
           <div class="project-info">
-            <h1 class="project-title">MicroCaml</h1>
-            <p class="project-description">So its a mini version of ocaml
-              lasjflakdsjflka djflakjf alsjdaflkad sjklfalsdjfl adsjflajds lfjaslkdj flkasdjf lkadsjfk lakjflk asdjfaldsjf
+            <h1 class="project-title">Systems Architecture</h1>
+            <p class="project-description">
+              My computer systems architecture experience revolves around optimizing performance 
+              of multithreaded and networked systems. I implemented Tomasulo’s algorithm LINK, four 
+              branch predictors LINK (G-share, Two-Level Adaptive, etc), and three cache coherency protocols 
+              (MOESI LINK, etc) for parallelized processors ranging from 4 to 16 cores. Testing my 
+              implementations and finding the best hyper-parameters for various processors involved 
+              extensive scripting. Some of these projects involved working directly in MIPS Assembly.
+            </p>
+          </div>
+        </div>
+
+        <div id="content-8" class="hidden">
+          <div class="image-container">
+            <img class="project-image" src="resources/Microcaml_Media.png" alt="Project Image">
+            <div class="project-tools">Python &nbsp;&nbsp; Pinecone &nbsp;&nbsp; Streamlit &nbsp;&nbsp; OpenAI</div>
+          </div>
+          <div class="project-info">
+            <h1 class="project-title">And More</h1>
+            <p class="project-description">
+              Ever since I was in high school, I have noticed problems in my life that could be solved by simple - and sometimes not so simple - pieces of software. While sometimes these applications were just a Google search away, many times no such application existed at all. So, I found myself to trying to create these applications myself. I wrote bill-splitting apps, one of which my friends and I still use on a regular basis. I wrote a budgeting app that I used personally to manage my finances in college. I created a vector embedding based video recommendation algorithm, and so much more.
               <br><br>
-              and more stuff will go here too. I'm talking adjslfajsdlfjasdl jfldsa adkjaf ssdlj.
-              alsjflasdjfkadjfadsf.fdaks j. fdaksjfsdjf. 
+              In short, I love building things and solving real world problems. If you have a problem, project, or idea you’re working on, chances are I’d be excited to hear about it, and maybe work on it too. Don’t hesitate to reach out!
             </p>
           </div>
         </div>
@@ -270,9 +319,9 @@
         <div class="project-menu-item" data-content-id="content-4">Panorama Stitch</div>
         <div class="project-menu-item" data-content-id="content-5">Other ML</div>
         <p class="project-menu-heading">Other</p>
-        <div class="project-menu-item" data-content-id="content-7">MicroCaml</div>
-        <div class="project-menu-item" data-content-id="content-1">Architecture</div>
-        <div class="project-menu-item" data-content-id="content-1">And More</div>
+        <div class="project-menu-item" data-content-id="content-6">MicroCaml</div>
+        <div class="project-menu-item" data-content-id="content-7">Architecture</div>
+        <div class="project-menu-item" data-content-id="content-8">And More</div>
       </div>
     </div>
     <br><br><br><br><br><br><br><br>

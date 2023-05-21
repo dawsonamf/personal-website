@@ -58,6 +58,63 @@ function loadDynamicContent() {
   });
 }
 
+// function loadDynamicContent() {
+//   const contentDivs = document.querySelectorAll('#project-content > div');
+//   const menuItems = document.querySelectorAll('.project-menu-item');
+//   // menuItems[0].click();
+  
+//   menuItems.forEach(item => {
+//     item.addEventListener('click', () => {
+//       contentDivs.forEach(div => {
+//         // div.classList.toggle('hidden', div.id !== item.dataset.contentId);
+//         if (div.id !== item.dataset.contentId) {
+//           div.classList.add('visuallyhidden');
+//           div.addEventListener('transitionend', function(e) {
+//             div.classList.remove('showing');
+//             div.classList.add('hidden');
+//             div.classList.remove('visuallyhidden');
+//           }, {
+//             capture: false,
+//             once: true,
+//             passive: false
+//           });
+//         } else {
+//           div.classList.remove('hidden');
+//           div.classList.add('showing');
+//         }
+//         if (div.id === item.dataset.contentId) {
+//           const color1 = getComputedStyle(div).getPropertyValue('--project-color1');
+//           const color2 = getComputedStyle(div).getPropertyValue('--project-color2');
+//           const color3 = getComputedStyle(div).getPropertyValue('--project-color3');
+//           document.documentElement.style.setProperty('--project-color1', color1);
+//           document.documentElement.style.setProperty('--project-color2', color2);
+//           document.documentElement.style.setProperty('--project-color3', color3);
+//         }
+//       });
+//     });
+//   });
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
