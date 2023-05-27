@@ -4,15 +4,13 @@
   --project-text-overlap: 250px;
   --project-menu-spacer-width: 25px;
   --socials-menu-spacer-height: 80px; /* max is 105 */
-  --myBlue: #08fdd8;
+  /* --myBlue: #08fdd8; */
   /* --myRed: #fe1251; */
   
   --myGray1: #a2a2a3;
   --myGray2: #2c2c2c;
   --myBlack: 29, 29, 29;
-  --test: #1d1d1d;
   --myBlackColor: rgb(var(--myBlack));
-  /* --myWhite: rgb(255, 255, 255); */
 
   --myNavy: #0a192f;
   --myLightNavy: #112240;
@@ -21,14 +19,17 @@
   --myLightSlate: #a8b2d1;
   --myLightestSlate : #ccd6f6;
   --myWhite: rgb(230, 241, 255);
-  --myBlue: rgb(100, 255, 218);
+  --myBlue: rgb(97, 255, 218);
 
+  /* --myLightSlate: #2B4162; */
+  /* --myLightSlate: #D62839; */
+  /* --myLightSlate: rgb(76, 199, 229); */
 
+  
   --project-color1: #31fd08;
   --project-color2: #8eb143;
   --project-color3: #c3de29;
 }
-
 
 
 
@@ -570,6 +571,7 @@ body {
 
   .skills-section-header {
     color: var(--myLightSlate);
+    /* color: var(--myNavy); */
     font-size: 23px;
   }
 
@@ -628,6 +630,12 @@ body {
   min-width: fit-content;
   border-radius: var(--border-radius);
   background-color: var(--myGray2);
+  height: fit-content;
+  padding-bottom: 40px;
+  /* center it in it's parent div */
+  /* margin: auto; */
+
+
   /* make the elements evenly spaced */
   /* justify-content: space-between; */
 }
@@ -662,10 +670,6 @@ body {
   /* animation: slideOutRight2 0.4s ease-out forwards; */
 }
 
-.visuallyhidden {
-  opacity: 0;
-}
-
 .showing {
   display: flex;
   align-items: center;
@@ -676,36 +680,47 @@ body {
   animation-delay: 0.6s; */
 }
 
-/* .slideOut {
-  animation: slideOutRight2 0.4s ease-out;
-  animation-fill-mode: forwards;
+.outRight {
+  transform: translateX(750px);
+  transition: transform 0.5s ease-in-out;
+}
+
+.outLeft {
+  transform: translateX(-750px);
+  transition: transform 0.5s ease-in-out;
+}
+
+.inRight {
+  transform: translateX(-750px);
+  transition: transform 0.5s;
+  animation: slideInRight2 0.5s forwards ease-in-out;
+}
+
+.inLeft {
+  transform: translateX(750px);
+  transition: transform 0.5s;
+  animation: slideInLeft2 0.5s forwards ease-in-out;
+}
+
+@keyframes slideInRight2 {
+  0% {
+    transform: translateX(750px);
+  }
+  100% {
+    transform: translateX(0);
+  }
 }
 
 @keyframes slideInLeft2 {
   0% {
-    transform: translateX(-100%);
-    
+    transform: translateX(-750px);
   }
   100% {
-    transform: translateX(0%);
-    visibility: visible;
-
+    transform: translateX(0);
   }
 }
 
-@keyframes slideOutRight2 {
-  0% {
-    transform: translateX(0%);
-  }
-  99% {
-    transform: translateX(100%);
-  }
-  100% {
-    width: 0;
-    height: 0;
-    visibility: hidden;
-  }
-} */
+
 
 
 
@@ -766,6 +781,9 @@ body {
   position: relative; /* Ensure position is set for z-index to work */
   z-index: 2; /* Higher than project-image normal state */
   /* text-align: right; */
+  background: var(--project-color2);
+  /* background: linear-gradient(120deg, var(--project-color1) 0%, var(--project-color2) 100%); */
+
 }
 
 
@@ -774,26 +792,6 @@ body {
 
 
 
-
-
-/* defining the colors of each project */
-#content-1 {
-  --project-color1: rgb(162, 78, 245);
-  --project-color2: rgb(0, 22, 37);
-  --project-color3: white;
-}
-
-#content-2 {
-  --project-color1: rgb(8, 253, 12);
-  --project-color2: rgb(0, 34, 1);
-  --project-color3: white;
-}
-
-#content-3 {
-  --project-color1: rgb(233, 0, 0);
-  --project-color2: rgb(46, 0, 0);
-  --project-color3: white;
-}
 
 
 
@@ -1022,3 +1020,67 @@ body {
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* defining the colors of each project */
+
+/* Amingo Amigo */
+#content-1 {
+  --project-color1: rgb(162, 78, 245);
+  --project-color2: rgb(17, 9, 26);
+  --project-color3: white;
+
+}
+
+#content-2 {
+  --project-color1: rgb(76, 199, 229);
+  --project-color2: rgb(9, 26, 39);
+  --project-color3: white;
+}
+
+#content-3 {
+  /* --project-color1: rgb(233, 0, 0); */
+  --project-color1: #e41c30;
+  --project-color2: #220b0b;
+  --project-color3: white;
+}
+
+#content-4 {
+  --project-color1: rgb(255, 217, 0);
+  --project-color2: rgb(68, 41, 21);
+  --project-color3: white;
+}
+
+/* #content-5 {
+} */
+
+#content-6 {
+  --project-color1: rgb(48, 231, 73);
+  --project-color2: rgb(6, 29, 9);
+  --project-color3: white;
+}
+
+#content-7 {
+  --project-color1: rgb(33, 191, 230);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: white;
+
+}
+
+  /* --myLightSlate: #2B4162; */
+  /* --myLightSlate: #D62839; */

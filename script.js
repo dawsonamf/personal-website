@@ -29,35 +29,6 @@ function createTypingAnimation(id) {
 
 
 
-function loadDynamicContent() {
-  const contentDivs = document.querySelectorAll('#project-content > div');
-  const menuItems = document.querySelectorAll('.project-menu-item');
-  // menuItems[0].click();
-  
-  menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-      contentDivs.forEach(div => {
-        // div.classList.toggle('hidden', div.id !== item.dataset.contentId);
-        if (div.id !== item.dataset.contentId) {
-          div.classList.remove('showing');
-          div.classList.add('hidden');
-        } else {
-          div.classList.remove('hidden');
-          div.classList.add('showing');
-        }
-        if (div.id === item.dataset.contentId) {
-          const color1 = getComputedStyle(div).getPropertyValue('--project-color1');
-          const color2 = getComputedStyle(div).getPropertyValue('--project-color2');
-          const color3 = getComputedStyle(div).getPropertyValue('--project-color3');
-          document.documentElement.style.setProperty('--project-color1', color1);
-          document.documentElement.style.setProperty('--project-color2', color2);
-          document.documentElement.style.setProperty('--project-color3', color3);
-        }
-      });
-    });
-  });
-}
-
 // function loadDynamicContent() {
 //   const contentDivs = document.querySelectorAll('#project-content > div');
 //   const menuItems = document.querySelectorAll('.project-menu-item');
@@ -68,16 +39,8 @@ function loadDynamicContent() {
 //       contentDivs.forEach(div => {
 //         // div.classList.toggle('hidden', div.id !== item.dataset.contentId);
 //         if (div.id !== item.dataset.contentId) {
-//           div.classList.add('visuallyhidden');
-//           div.addEventListener('transitionend', function(e) {
-//             div.classList.remove('showing');
-//             div.classList.add('hidden');
-//             div.classList.remove('visuallyhidden');
-//           }, {
-//             capture: false,
-//             once: true,
-//             passive: false
-//           });
+//           div.classList.remove('showing');
+//           div.classList.add('hidden');
 //         } else {
 //           div.classList.remove('hidden');
 //           div.classList.add('showing');
@@ -94,6 +57,72 @@ function loadDynamicContent() {
 //     });
 //   });
 // }
+
+
+function loadDynamicContent() {
+  const contentDivs = document.querySelectorAll('#project-content > div');
+  const menuItems = document.querySelectorAll('.project-menu-item');
+  let isAnimating = false;
+
+  menuItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const currentShowing = document.querySelector('#project-content > div.showing');
+
+      if (currentShowing && currentShowing.id === item.dataset.contentId) {
+        return;
+      }
+
+      if (isAnimating) return;
+
+      isAnimating = true;
+      contentDivs.forEach(div => {
+        const imageContainer = div.querySelector('.image-container');
+        const projectInfo = div.querySelector('.project-info');
+
+        if (div.id !== item.dataset.contentId) {
+          if (div.classList.contains('showing')) {
+            projectInfo.classList.add('outRight');
+            imageContainer.classList.add('outLeft');
+            setTimeout(() => {
+              projectInfo.classList.remove('outRight');
+              imageContainer.classList.remove('outLeft');
+              div.classList.remove('showing');
+              div.classList.add('hidden');
+            }, 500);
+          } else {
+            div.classList.add('hidden');
+          }
+        } else {
+          setTimeout(() => {
+            projectInfo.classList.add('inRight');
+            imageContainer.classList.add('inLeft');
+            div.classList.remove('hidden');
+            div.classList.add('showing');
+            
+            setTimeout(() => {
+              projectInfo.classList.remove('inRight');
+              imageContainer.classList.remove('inLeft');
+              isAnimating = false;
+            }, 500);
+          }, 500);
+        }
+
+        if (div.id === item.dataset.contentId) {
+          const color1 = getComputedStyle(div).getPropertyValue('--project-color1');
+          const color2 = getComputedStyle(div).getPropertyValue('--project-color2');
+          const color3 = getComputedStyle(div).getPropertyValue('--project-color3');
+          document.documentElement.style.setProperty('--project-color1', color1);
+          document.documentElement.style.setProperty('--project-color2', color2);
+          document.documentElement.style.setProperty('--project-color3', color3);
+        }
+      });
+    });
+  });
+}
+
+
+
+
 
 
 
@@ -271,14 +300,15 @@ $(document).ready(function() {
       event.preventDefault();
     }
     var target = this.hash;
+    var offset = (target === "#project-header" || target === "#contact") ? 80 : 40;
     $('html, body').animate(
       {
-        scrollTop: $(target).offset().top,
+        scrollTop: $(target).offset().top - offset,
       },
       500,
       'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
       function() {
-        window.location.hash = target;
+        window.location.hash = target - offset;
       }
     );
   });
