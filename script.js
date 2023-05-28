@@ -111,16 +111,52 @@ function loadDynamicContent() {
           const color1 = getComputedStyle(div).getPropertyValue('--project-color1');
           const color2 = getComputedStyle(div).getPropertyValue('--project-color2');
           const color3 = getComputedStyle(div).getPropertyValue('--project-color3');
-          document.documentElement.style.setProperty('--project-color1', color1);
-          document.documentElement.style.setProperty('--project-color2', color2);
-          document.documentElement.style.setProperty('--project-color3', color3);
+          
+          gsap.to("html", {"--project-color1": color1, duration: 1});
+          gsap.to("html", {"--project-color2": color2, duration: 1});
+          gsap.to("html", {"--project-color3": color3, duration: 1});
         }
+        
       });
     });
   });
 }
 
 
+function parseColor(color) {
+  let arr = color.match(/[.0-9]+/g).map(Number);
+  return { r: arr[0], g: arr[1], b: arr[2] };
+}
+
+function transitionColor(startColor, endColor, duration) {
+  const start = parseColor(startColor);
+  const end = parseColor(endColor);
+  const diff = {
+    r: end.r - start.r,
+    g: end.g - start.g,
+    b: end.b - start.b
+  };
+
+  const steps = duration * 60; // 60 fps
+  let step = 0;
+  
+  return new Promise(resolve => {
+    const interval = setInterval(() => {
+      const progress = step++ / steps;
+      if (progress > 1) {
+        clearInterval(interval);
+        resolve();
+      } else {
+        const current = {
+          r: start.r + diff.r * progress,
+          g: start.g + diff.g * progress,
+          b: start.b + diff.b * progress
+        };
+        document.documentElement.style.setProperty('--project-color1', `rgb(${current.r}, ${current.g}, ${current.b})`);
+      }
+    }, 1000 / 60); // 60 fps
+  });
+}
 
 
 
