@@ -26,9 +26,9 @@
   /* --myLightSlate: rgb(76, 199, 229); */
 
   
-  --project-color1: #31fd08;
-  --project-color2: #8eb143;
-  --project-color3: #c3de29;
+  --project-color1: rgb(49, 253, 8);
+  --project-color2: rgb(142, 177, 67);
+  --project-color3: rgb(195, 222, 41);
 }
 
 
@@ -632,6 +632,7 @@ body {
   background-color: var(--myGray2);
   height: fit-content;
   padding-bottom: 40px;
+  /* z-index: 5; */
   /* center it in it's parent div */
   /* margin: auto; */
 
@@ -681,30 +682,30 @@ body {
 }
 
 .outRight {
-  transform: translateX(750px);
+  transform: translateX(800px);
   transition: transform 0.5s ease-in-out;
 }
 
 .outLeft {
-  transform: translateX(-750px);
+  transform: translateX(-800px);
   transition: transform 0.5s ease-in-out;
 }
 
 .inRight {
-  transform: translateX(-750px);
+  transform: translateX(-800px);
   transition: transform 0.5s;
   animation: slideInRight2 0.5s forwards ease-in-out;
 }
 
 .inLeft {
-  transform: translateX(750px);
+  transform: translateX(800px);
   transition: transform 0.5s;
   animation: slideInLeft2 0.5s forwards ease-in-out;
 }
 
 @keyframes slideInRight2 {
   0% {
-    transform: translateX(750px);
+    transform: translateX(800px);
   }
   100% {
     transform: translateX(0);
@@ -713,7 +714,7 @@ body {
 
 @keyframes slideInLeft2 {
   0% {
-    transform: translateX(-750px);
+    transform: translateX(-800px);
   }
   100% {
     transform: translateX(0);
@@ -1043,27 +1044,27 @@ body {
 #content-1 {
   --project-color1: rgb(162, 78, 245);
   --project-color2: rgb(17, 9, 26);
-  --project-color3: white;
+  --project-color3: rgb(255, 255, 255);
 
 }
 
 #content-2 {
   --project-color1: rgb(76, 199, 229);
   --project-color2: rgb(9, 26, 39);
-  --project-color3: white;
+  --project-color3: rgb(255, 255, 255);
 }
 
 #content-3 {
   /* --project-color1: rgb(233, 0, 0); */
-  --project-color1: #e41c30;
-  --project-color2: #220b0b;
-  --project-color3: white;
+  --project-color1: rgb(228, 28, 48);
+  --project-color2: rgb(34, 11, 11);
+  --project-color3: rgb(255, 255, 255);
 }
 
 #content-4 {
   --project-color1: rgb(255, 217, 0);
   --project-color2: rgb(68, 41, 21);
-  --project-color3: white;
+  --project-color3: rgb(255, 255, 255);
 }
 
 /* #content-5 {
@@ -1072,13 +1073,13 @@ body {
 #content-6 {
   --project-color1: rgb(48, 231, 73);
   --project-color2: rgb(6, 29, 9);
-  --project-color3: white;
+  --project-color3: rgb(255, 255, 255);
 }
 
 #content-7 {
   --project-color1: rgb(33, 191, 230);
   --project-color2: rgb(0, 0, 0);
-  --project-color3: white;
+  --project-color3: rgb(255, 255, 255);
 
 }
 
