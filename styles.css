@@ -846,6 +846,8 @@ body {
     border-radius: var(--border-radius);
 
     width: 50%;
+    object-fit: cover;
+    /* height: fit-content; */
     /* height: 300px; */
   }
 
@@ -861,6 +863,7 @@ body {
     margin-left: auto; /* Horizontally center in its parent */
     position: static;
   }
+  
   
 
 
