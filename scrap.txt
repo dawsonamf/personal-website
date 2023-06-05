@@ -83,3 +83,8 @@ CMSC 216 -- C projects, makefiles, etc (more info needed?)
 
 uncomment works cited?
 
+different font for skills section headers
+different font for project headings
+highlight things in the text with --myBlue
+center the project menu elements and add more space between them
+add project header description
