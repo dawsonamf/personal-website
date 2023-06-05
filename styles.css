@@ -18,17 +18,17 @@
   --mySlate: #8892b0;
   --myLightSlate: #a8b2d1;
   --myLightestSlate : #ccd6f6;
-  --myWhite: rgb(230, 241, 255);
-  --myBlue: rgb(97, 255, 218);
+  --myWhite: #e6f1ff;
+  --myBlue: #61ffda;
 
   /* --myLightSlate: #2B4162; */
   /* --myLightSlate: #D62839; */
   /* --myLightSlate: rgb(76, 199, 229); */
 
   
-  --project-color1: rgb(49, 253, 8);
-  --project-color2: rgb(142, 177, 67);
-  --project-color3: rgb(195, 222, 41);
+  --project-color1: rgb(162, 78, 245);;
+  --project-color2: var(--myGray2);
+  --project-color3: rgb(255, 255, 255);
 }
 
 
@@ -41,6 +41,8 @@
 body {
   background-color: rgb(var(--myBlack));
   z-index: 3;
+  /* background: linear-gradient(var(--myNavy) 0%, rgb(var(--myBlack)) 33%); */
+
 }
 
 /* @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
@@ -70,6 +72,8 @@ body {
   position: relative;
   /* overflow-x: scroll; */
   overflow-x: hidden;
+
+
 }
 
 
@@ -427,6 +431,9 @@ body {
     animation: fadein 0.8s ease-out;
     animation-delay: 1.31s;
     animation-fill-mode: forwards;
+
+    color: var(--myBlue);
+    font-family: 'Roboto Mono', monospace;
   }
 
   @keyframes fadein {
@@ -570,9 +577,11 @@ body {
   }
 
   .skills-section-header {
-    color: var(--myLightSlate);
-    /* color: var(--myNavy); */
+    /* color: var(--myLightSlate); */
+    font-family: 'SF Mono', monospace;
+    color: #61ffda;
     font-size: 23px;
+    /* font-family: 'Montserrat', sans-serif; */
   }
 
   .skills-text {
@@ -587,16 +596,50 @@ body {
 
 
 
-
+/* .project-section-wrapper {
+    padding: 20px;
+    border-radius: var(--border-radius);
+    background-color: var(--project-color1);
+} */
 
   /* the project section */
 #project-header {
   color: var(--project-color1);
   font-size: 40px;
-  /* text-align: right; */
+  /* text-align: center; */
   padding: 20px;
   margin: 10px;
   margin-bottom: 0px;
+
+
+  /* border-radius: var(--border-radius);
+  background-color: var(--myGray2); */
+  /* text-align: center; */
+  /* margin-bottom: 20px; */
+}
+
+#project-header-wrapper {
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  /* border-radius: var(--border-radius);
+  background-color: var(--myGray2); */
+  /* text-align: center; */
+  margin-bottom: 20px;
+}
+
+#project-header-spacer {
+  background-color: var(--myGray1);
+  width: 73%;
+  height: 1px;
+  /* align right */
+  margin-right: 10px;
+  margin-left: auto;
+
+  /* center verticlly */
+  transform: translateY(5px);
+
+
 }
 
 #project-wrapper {
@@ -632,9 +675,20 @@ body {
   background-color: var(--myGray2);
   height: fit-content;
   padding-bottom: 40px;
+
+  padding-bottom: 50px;
+  padding-top: 30px;
   /* z-index: 5; */
+
   /* center it in it's parent div */
   /* margin: auto; */
+
+  /* height: 110%; */
+
+  /* line-height: 2em; */
+
+
+  /* margin-top: -50px; */
 
 
   /* make the elements evenly spaced */
@@ -645,8 +699,8 @@ body {
   font-size: 20px;
   /* font-weight: bold; */
   color: var(--project-color1);
-  padding-top: 15px; 
-  margin-bottom: 5px;
+  padding-top: 22.5px; 
+  margin-bottom: 7.5px;
   border-top: 1px solid var(--myGray1);
   width: 100%;
   text-align: center;
@@ -656,7 +710,8 @@ body {
   cursor: pointer;
   background-color: transparent;
   transition: color 0.3s ease-in-out;
-  padding: 5px;
+  padding: 7.5px;
+  /* line height 2 em */
   /* center the text */
   text-align: center;
 }
@@ -730,6 +785,7 @@ body {
 
 
 .project-title {
+  /* font-family: 'SF Mono', monospace; */
   color: var(--project-color1);
   font-size: 30px;
   text-align: right;
@@ -759,6 +815,8 @@ body {
 }
 
 .project-tools {
+  font-family: 'SF Mono', monospace;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--myGray1);
   margin-top: 10px;
@@ -1000,15 +1058,12 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* opacity: 0; */
+
+  color: var(--project-color1);
+  border: 1px solid var(--project-color1);
 
 
-  /* animation: fadein 0.8s ease-out; */
-  /* animation-delay: 3.76s; */
-  /* animation-delay: 3.38s; */
-  /* animation-fill-mode: forwards; */
 
-  /* bring it back y */
   transform: translate(0, 0);
   transition: 0.3s ease-in-out;
 }
@@ -1020,6 +1075,10 @@ body {
   /* font-weight: bold; */
   background-color: var(--myBlue);
   color: rgb(var(--myBlack));
+
+  background-color: var(--project-color1);
+
+
   transition: 0.3s ease-in-out;
 }
 
@@ -1045,46 +1104,70 @@ body {
 
 /* Amingo Amigo */
 #content-1 {
+  /* --project-color1: rgb(162, 78, 245); */
   --project-color1: rgb(162, 78, 245);
   --project-color2: rgb(17, 9, 26);
   --project-color3: rgb(255, 255, 255);
 
+  --project-color2: var(--myGray2);
+
 }
 
+/* LexChat */
 #content-2 {
-  --project-color1: rgb(76, 199, 229);
+  --project-color1: #0084ff;
   --project-color2: rgb(9, 26, 39);
   --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
 }
 
+/* RotoBrush */
 #content-3 {
   /* --project-color1: rgb(233, 0, 0); */
-  --project-color1: rgb(228, 28, 48);
-  --project-color2: rgb(34, 11, 11);
+  --project-color1: #4cc7e5;
+  --project-color2: rgb(9, 26, 39);
   --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
 }
 
+/* Panorama Stitch */
 #content-4 {
-  --project-color1: rgb(255, 217, 0);
-  --project-color2: rgb(68, 41, 21);
+  --project-color1: #ff386d;
+  --project-color2: rgb(17, 9, 26);
   --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
 }
 
-/* #content-5 {
-} */
+#content-5 {
+  --project-color1: hsl(63, 100%, 70%);
+  --project-color2: rgb(17, 9, 26);
+  --project-color3: rgb(255, 255, 255);
 
+  --project-color2: var(--myGray2);
+}
+
+/* MicroCaml */
 #content-6 {
-  --project-color1: rgb(48, 231, 73);
+  --project-color1: #5af8a1;
   --project-color2: rgb(6, 29, 9);
   --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
 }
 
+/* Architecture */
 #content-7 {
-  --project-color1: rgb(33, 191, 230);
+  --project-color1: rgb(255, 174, 43);
   --project-color2: rgb(0, 0, 0);
   --project-color3: rgb(255, 255, 255);
 
-}
+  --project-color1: #ff8a2b;
+  --project-color2: var(--myGray2);
 
+}
+  /* an interesting orange: #FF6B2B; */
   /* --myLightSlate: #2B4162; */
   /* --myLightSlate: #D62839; */
