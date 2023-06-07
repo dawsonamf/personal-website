@@ -2,13 +2,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dawson Metzger-Fleetwood</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dawson Metzger-Fleetwood</title>
 
-    <link rel="stylesheet" href="styles.css">
+  <!-- Styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"> 
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <link rel="stylesheet" href="styles.css">
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js" defer></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" defer></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
   <div id="main-body">
@@ -17,7 +26,7 @@
       <ul class="menu-list">
         <li><a class="menu-item" href="#about">About</a></li>
         <li><a class="menu-spacer"></a></li>
-        <li><a class="menu-item" href="#project-header">Projects</a></li>
+        <li><a class="menu-item" href="#project-header-static">Projects</a></li>
         <li><a class="menu-spacer"></a></li>
         <!-- <li><a class="menu-item" href="#">Experience</a></li>
         <li><a class="menu-spacer"></a></li> -->
@@ -36,7 +45,7 @@
         <ul class="menu-list">
           <li><a class="menu-item" href="#about">About</a></li>
           <li><a class="menu-spacer"></a></li>
-          <li><a class="menu-item" href="#project-header">Projects</a></li>
+          <li><a class="menu-item" href="#project-header-static">Projects</a></li>
           <li><a class="menu-spacer"></a></li>
           <!-- <li><a class="menu-item" href="#">Experience</a></li>
           <li><a class="menu-spacer"></a></li> -->
@@ -113,7 +122,9 @@
         <p class="skills-text">
           Experienced in both OOP and functional: Python, Matlab, Java, OCaml, Ruby, etc.
           Familiar with designing and implementing low latency systems architecture with C and C++.
-          Experience with frontend web development with HTML, CSS, and JavaScript, as well as some exposure to React and Node.js.
+          Experience with frontend web development with HTML, CSS, JavaScript, 
+          jQuery, and Tailwind as well as some exposure to React and Node.js. I've hosted 
+          projects on Vercel, Github Pages, and Streamlit.
         </p>
         <h2 class="skills-section-header" style="/*color: rgb(118, 255, 127);*/">iOS and Mobile</h2>
         <p class="skills-text">
@@ -141,7 +152,11 @@
 
     
     <!-- projects -->
-    <div class="project-section-wrapper">
+    <div id="project-header-static"></div>
+    <div class="project-section-wrapper" 
+      data-aos="fade-up" 
+      data-aos-easing="ease-in-out"
+      data-aos-once="true">
     <div id="project-header-wrapper">
       <h2 id="project-header">My Projects</h2>
       <a id="project-header-spacer"></a>
@@ -342,7 +357,9 @@
 
     <!-- contact me -->
     <div class="double-view-container", id="contact">
-      <div class="contact-view-left">
+      <div class="contact-view-left" 
+        data-aos="fade-right"
+        data-aos-once="true">
         <h2 class="contact-header">Contact Me</h2>
         <p class="contact-text">My inbox is always open. If you're interested in working together, 
           have a question, or just want to say hi, feel free 
@@ -376,7 +393,16 @@
         </div>
       </div>
 
-      <img class="contact-image" src="resources/location.png" alt="Map">
+      <img class="contact-image" src="resources/location.png" alt="Map" 
+        data-aos="fade-left" 
+        data-aos-easing="ease-in-out"
+        data-aos-once="true">
+      <!-- <img class="contact-image" src="resources/location.png" alt="Map" 
+        data-aos="slide-left" 
+        data-aos-duration="500" 
+        data-aos-easing="ease-in-out" 
+        data-aos-offset="300"> -->
+
     </div>
     <br><br><br><br><br><br><br><br>
     
@@ -411,10 +437,6 @@
       <!-- work experience -->
       <!-- contact me (with testimonials maybe?) -->
   </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
-  <script src="script.js"></script>
 </body>
   
 </html>

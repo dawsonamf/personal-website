@@ -17,7 +17,7 @@ function createTypingAnimation(id) {
         element.insertBefore(document.createTextNode(text.charAt(charIndex)), cursor);
       }
       charIndex++;
-      setTimeout(type, 75); // Adjust the typing speed by changing the value (100ms)
+      setTimeout(type, 75); // Adjust the typing speed by changing the value (ms)
     } else {
       cursor.style.animation = "blink 1s infinite"
     }
@@ -328,27 +328,137 @@ function setupHeaderMenu() {
 }
 
 
+function startAnimations() {
+  // Add animation classes to elements
+  document.querySelector('.static-menu').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('.static-menu').style.animationDelay = "3.76s";
+  document.querySelector('.static-menu').style.animationFillMode = "forwards";
+
+  document.querySelector('.name-logo').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('.name-logo').style.animationDelay = "3.38s";
+  document.querySelector('.name-logo').style.animationFillMode = "forwards";
+
+  document.querySelector('#typing-container').style.animation = "slidein 0.8s ease-out";
+  document.querySelector('#typing-container').style.animationDelay = "3s";
+  document.querySelector('#typing-container').style.animationFillMode = "forwards";
+
+  document.querySelector('#sub-text').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('#sub-text').style.animationDelay = "1.31s";
+  document.querySelector('#sub-text').style.animationFillMode = "forwards";
+
+  document.querySelector('#socials-list').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('#socials-list').style.animationDelay = "3.76s";
+  document.querySelector('#socials-list').style.animationFillMode = "forwards";
+
+  let doubleViewLeftElements = document.querySelectorAll('.double-view-left');
+  for (let elem of doubleViewLeftElements) {
+    elem.style.animation = "slideInLeft 1.5s ease-out";
+    elem.style.animationDelay = "3.04s";
+    elem.style.animationFillMode = "forwards";
+  }
+
+  let doubleViewRightElements = document.querySelectorAll('.double-view-right');
+  for (let elem of doubleViewRightElements) {
+    elem.style.animation = "slideInRight 1.5s ease-out";
+    elem.style.animationDelay = "3.34s";
+    elem.style.animationFillMode = "forwards";
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+AOS.init();
+// var elementVisibility = {};
+// document.addEventListener('aos:in', ({ detail }) => {
+//   elementVisibility[$(detail).attr('id')] = true;
+// });
+// document.addEventListener('aos:out', ({ detail }) => {
+//   elementVisibility[$(detail).attr('id')] = false;
+// });
+
+// function isElementVisible(elementId) {
+//   return elementVisibility[elementId] === true;
+// }
+
+// function isDivVisible(id) {
+//   var div = document.getElementById(id);
+//   return div.classList.contains('aos-animate');
+// }
+
+
+
 
 
 $(document).ready(function() {
   $('.menu-item').on('click', function(event) {
+    // console.log(isDivVisible('project-header'));
     if (!$(this).is("#resume-link")) {
       event.preventDefault();
     }
     var target = this.hash;
-    var offset = (target === "#project-header" || target === "#contact") ? 80 : 40;
+    // var offset = (target === "#contact") ? 80 : 40;
+    var offset = 40;
+    switch (target) {
+      case "#project-header-static":
+        offset = 60;
+        break;
+      case "#contact":
+        offset = 80;
+        break;
+      default:
+        offset = 40;
+    }
+
+    // make timing a function of the distance to scroll, with a max and min
+    // var distance = Math.abs($(target).offset().top - $(window).scrollTop());
+    // var timing = distance / 2;
+
+    var distance = Math.abs($(target).offset().top - $(window).scrollTop());
+    var timing = 100 * Math.log(distance);
+
+    timing = Math.max(timing, 300);
+    timing = Math.min(timing, 1000);
+
+
+
+    
     $('html, body').animate(
       {
         scrollTop: $(target).offset().top - offset,
       },
-      500,
-      'easeInOutCubic', // Add this easing function for 'ease-in-out' effect
+      timing,
+      'easeInOutQuad', // Add this easing function for 'ease-in-out' effect
       function() {
         window.location.hash = target - offset;
       }
     );
   });
 });
+
+
+
 
 
 
@@ -365,6 +475,17 @@ window.addEventListener('load', function() {
 
 const menuItems = document.querySelectorAll('.project-menu-item');
 menuItems[0].click();
+
+// wait for timed animations until the js is fully loaded to start the animations
+startAnimations();
+
+
+// document.addEventListener('DOMContentLoaded', function() {
+//   const linkElements = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+//   Promise.all(linkElements.map(link => {
+//     return new Promise(resolve => link.addEventListener('load', resolve));
+//   })).then(startAnimations);
+// });
 
 
 
