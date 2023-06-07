@@ -1,8 +1,47 @@
+function startAnimations() {
+  const delayAdjustment = 3; // The amount to subtract from all animation delays
+
+  // Add animation classes to elements
+  document.querySelector('.static-menu').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('.static-menu').style.animationDelay = `${3.76 - delayAdjustment}s`;
+  document.querySelector('.static-menu').style.animationFillMode = "forwards";
+
+  document.querySelector('.name-logo').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('.name-logo').style.animationDelay = `${3.38 - delayAdjustment}s`;
+  document.querySelector('.name-logo').style.animationFillMode = "forwards";
+
+  document.querySelector('#typing-container').style.animation = "slidein 0.8s ease-out";
+  document.querySelector('#typing-container').style.animationDelay = `${3 - delayAdjustment}s`;
+  document.querySelector('#typing-container').style.animationFillMode = "forwards";
+
+  document.querySelector('#socials-list').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('#socials-list').style.animationDelay = `${3.76 - delayAdjustment}s`;
+  document.querySelector('#socials-list').style.animationFillMode = "forwards";
+
+  let doubleViewLeftElements = document.querySelectorAll('.double-view-left');
+  for (let elem of doubleViewLeftElements) {
+    elem.style.animation = "slideInLeft 1.5s ease-out";
+    elem.style.animationDelay = `${3.04 - delayAdjustment}s`;
+    elem.style.animationFillMode = "forwards";
+  }
+
+  let doubleViewRightElements = document.querySelectorAll('.double-view-right');
+  for (let elem of doubleViewRightElements) {
+    elem.style.animation = "slideInRight 1.5s ease-out";
+    elem.style.animationDelay = `${3.34 - delayAdjustment}s`;
+    elem.style.animationFillMode = "forwards";
+  }
+}
+
+
+
+
 function createTypingAnimation(id) {
   const element = document.getElementById(id);
   const text = element.getAttribute('data-text').replace(/&#10;/g, '\n');
   
   let charIndex = 0;
+  let newlineCount = 0;
 
   // Add cursor element
   const cursor = document.createElement('span');
@@ -10,21 +49,38 @@ function createTypingAnimation(id) {
   element.appendChild(cursor);
   
   function type() {
-    if (charIndex < text.length) {
-      if (text.charAt(charIndex) === '\n') {
-        element.insertBefore(document.createElement('br'), cursor);
-      } else {
-        element.insertBefore(document.createTextNode(text.charAt(charIndex)), cursor);
+    return new Promise((resolve, reject) => {
+      function typeCharacter() {
+        if (charIndex < text.length) {
+          if (text.charAt(charIndex) === '\n') {
+            element.insertBefore(document.createElement('br'), cursor);
+            newlineCount++;
+            // Start the #sub-text animation after the second newline character
+            if (newlineCount === 2) {
+              document.querySelector('#sub-text').style.animation = "fadein 0.8s ease-out";
+              document.querySelector('#sub-text').style.animationDelay = `0.01s`;
+              document.querySelector('#sub-text').style.animationFillMode = "forwards";
+            }
+          } else {
+            element.insertBefore(document.createTextNode(text.charAt(charIndex)), cursor);
+          }
+          charIndex++;
+          setTimeout(typeCharacter, 75); // Adjust the typing speed by changing the value (ms)
+        } else {
+          cursor.style.animation = "blink 1s infinite";
+          resolve(); // resolve the promise when the typing is finished
+        }
       }
-      charIndex++;
-      setTimeout(type, 75); // Adjust the typing speed by changing the value (ms)
-    } else {
-      cursor.style.animation = "blink 1s infinite"
-    }
+
+      typeCharacter(); // start typing
+    });
   }
-  
-  type();
+
+  // run the type animation, when it is done, run the startAnimations function
+  type().then(startAnimations); // startAnimations will be called when the promise returned by type resolves
 }
+
+
 
 
 
@@ -137,7 +193,8 @@ function transitionColor(startColor, endColor, duration) {
     b: end.b - start.b
   };
 
-  const steps = duration * 60; // 60 fps
+  let fps = 60;
+  const steps = duration * fps;
   let step = 0;
   
   return new Promise(resolve => {
@@ -154,7 +211,7 @@ function transitionColor(startColor, endColor, duration) {
         };
         document.documentElement.style.setProperty('--project-color1', `rgb(${current.r}, ${current.g}, ${current.b})`);
       }
-    }, 1000 / 60); // 60 fps
+    }, 1000 / fps);
   });
 }
 
@@ -328,42 +385,7 @@ function setupHeaderMenu() {
 }
 
 
-function startAnimations() {
-  // Add animation classes to elements
-  document.querySelector('.static-menu').style.animation = "fadein 0.8s ease-out";
-  document.querySelector('.static-menu').style.animationDelay = "3.76s";
-  document.querySelector('.static-menu').style.animationFillMode = "forwards";
 
-  document.querySelector('.name-logo').style.animation = "fadein 0.8s ease-out";
-  document.querySelector('.name-logo').style.animationDelay = "3.38s";
-  document.querySelector('.name-logo').style.animationFillMode = "forwards";
-
-  document.querySelector('#typing-container').style.animation = "slidein 0.8s ease-out";
-  document.querySelector('#typing-container').style.animationDelay = "3s";
-  document.querySelector('#typing-container').style.animationFillMode = "forwards";
-
-  document.querySelector('#sub-text').style.animation = "fadein 0.8s ease-out";
-  document.querySelector('#sub-text').style.animationDelay = "1.31s";
-  document.querySelector('#sub-text').style.animationFillMode = "forwards";
-
-  document.querySelector('#socials-list').style.animation = "fadein 0.8s ease-out";
-  document.querySelector('#socials-list').style.animationDelay = "3.76s";
-  document.querySelector('#socials-list').style.animationFillMode = "forwards";
-
-  let doubleViewLeftElements = document.querySelectorAll('.double-view-left');
-  for (let elem of doubleViewLeftElements) {
-    elem.style.animation = "slideInLeft 1.5s ease-out";
-    elem.style.animationDelay = "3.04s";
-    elem.style.animationFillMode = "forwards";
-  }
-
-  let doubleViewRightElements = document.querySelectorAll('.double-view-right');
-  for (let elem of doubleViewRightElements) {
-    elem.style.animation = "slideInRight 1.5s ease-out";
-    elem.style.animationDelay = "3.34s";
-    elem.style.animationFillMode = "forwards";
-  }
-}
 
 
 
@@ -418,7 +440,6 @@ $(document).ready(function() {
       event.preventDefault();
     }
     var target = this.hash;
-    // var offset = (target === "#contact") ? 80 : 40;
     var offset = 40;
     switch (target) {
       case "#project-header-static":
@@ -431,19 +452,12 @@ $(document).ready(function() {
         offset = 40;
     }
 
-    // make timing a function of the distance to scroll, with a max and min
-    // var distance = Math.abs($(target).offset().top - $(window).scrollTop());
-    // var timing = distance / 2;
-
+    // timing is a function of the distance to scroll, with a max and min
     var distance = Math.abs($(target).offset().top - $(window).scrollTop());
     var timing = 100 * Math.log(distance);
-
     timing = Math.max(timing, 300);
     timing = Math.min(timing, 1000);
 
-
-
-    
     $('html, body').animate(
       {
         scrollTop: $(target).offset().top - offset,
@@ -469,15 +483,20 @@ loadDynamicContent();
 
 setupHeaderMenu();
 
-window.addEventListener('load', function() {
-  createTypingAnimation('typing-text');
-});
-
 const menuItems = document.querySelectorAll('.project-menu-item');
 menuItems[0].click();
 
-// wait for timed animations until the js is fully loaded to start the animations
-startAnimations();
+// window.addEventListener('load', function() {
+//   createTypingAnimation('typing-text');
+// });
+
+// // wait for timed animations until the js is fully loaded to start the animations
+// startAnimations();
+createTypingAnimation('typing-text');
+
+
+
+
 
 
 // document.addEventListener('DOMContentLoaded', function() {
@@ -491,3 +510,5 @@ startAnimations();
 
 
 
+// Legacy stuff
+// var offset = (target === "#contact") ? 80 : 40;
