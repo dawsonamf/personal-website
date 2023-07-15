@@ -1,4 +1,3 @@
-
 :root {
   --border-radius: 20px;
   --project-text-overlap: 250px;
@@ -300,21 +299,6 @@ body {
     color: rgb(var(--myBlack));
     transition: 0.3s ease-in-out;
   }
-
-  /* .name-logo2 {
-    margin: 20px;
-    font-size: 22px;
-    font-weight: bold;
-    color: rgb(var(--myBlack));
-    border-radius: var(--border-radius);
-    border-radius: 10px;
-    width: 37px;
-    height: 37px;
-    background-color: var(--myBlue);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  } */
 
     /* this contains the static menu and the name-logo */
   .header-menu-container {
@@ -1167,6 +1151,13 @@ body {
   /* an interesting orange: #FF6B2B; */
   /* --myLightSlate: #2B4162; */
   /* --myLightSlate: #D62839; */
+
+#project-menu-mobile {
+  display: none;
+}
+
+
+
 
 
 

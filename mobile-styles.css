@@ -1,0 +1,502 @@
+
+@media screen and (max-width: 750px) {
+/* @media screen and (max-width: 550px) { */
+    body {
+      background-color: darkblue;
+      background-color: rgb(var(--myBlack));
+    }
+  
+    #main-body {
+      max-width: 450px;
+      min-width: 319px;
+    }
+  
+    #cursor-container {
+      display: none;
+    }
+  
+    /* make the static menu and moving menu, sticky menyu, etc display to be none */
+    .static-menu {
+      display: none;
+    }
+  
+    .moving-menu {
+      display: none;
+    }
+  
+    .name-logo {
+      margin: 10px;
+    }
+  
+    .name-logo:hover {
+      transform: none;
+      background-color: inherit;
+      color: var(--myBlue);
+      transition: none;
+    }
+  
+    .name-logo:active {
+      background-color: var(--myBlue);
+      color: rgb(var(--myBlack));
+    }
+  
+  
+      /* the typing cursor */
+      .cursor {
+        background-color: var(--myBlue);
+        width: 4px;
+        display: inline-block;
+        height: 1em;
+        margin-left: 2px;
+        animation: none;
+      }
+      
+      @keyframes blink {
+        50% {
+          background-color: transparent;
+        }
+      }
+    
+    
+    
+    
+  
+  
+  
+  
+    
+    
+      #typing-container {
+        position: relative;
+        display: flex;
+        height: 125px;
+        transform: translateX(0px) translateY(calc(50vh - 200px));
+  
+        /* for aligning */
+        /* margin-left: -100px;
+        transform: translateX(0px);
+        top: calc(50vh - 220px); */
+      }
+    
+      /* #typing-container {
+        display: flex;
+        height: 200px;
+        transform: translateX(0px) translateY(90%);
+    
+      } */
+      
+      #typing-left {
+        border-radius: var(--border-radius);
+        text-align: left;
+      }
+      
+      #typing-right {
+        padding: 10px 0px 0px 10px;
+        justify-content: center;
+        display: flex;
+      }
+      
+      #typing-image {
+        display: none;
+        /* height: 300px;
+        width: 168.75px;
+        border-radius: var(--border-radius); */
+        /* translate x so its off the view width to the left */
+        /* hide the image initially */
+      }
+      
+      
+      #typing-text {
+        font-size: 34px;
+        margin: 0;
+        line-height: 1.2;
+        font-weight: bold;
+        position: relative;
+        /* margin-top: 3em; */
+        padding-top: 1.125em;
+      }
+      
+      #sub-text {
+        color: var(--myGray1);
+        letter-spacing: 3px;
+        font-size: 8px;
+        position: relative;
+        opacity: 0;
+        /* animation: fadein 0.8s ease-out;
+        animation-delay: 1.31s;
+        animation-fill-mode: forwards; */
+    
+        color: var(--myBlue);
+        font-family: 'Roboto Mono', monospace;
+      }
+  
+      #socials-list {
+        display: none;
+      }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+      /* the about and skills section */
+    .double-view-container {
+      flex-direction: column;
+      margin-top: -40px;
+      padding-right: 20px;
+    }
+  
+    .double-view-left, .double-view-right {
+      padding: 20px;
+      margin: 10px;
+      /* margin-bottom: 0px; */
+      border-radius: var(--border-radius);
+      box-sizing: border-box;
+    }
+    
+    .double-view-left {
+      width: 100%;
+      /* float: left; */
+      background-color: var(--myGray2);
+  
+      visibility: hidden;
+      /* animation: slideInLeft 1.5s ease-out;
+      animation-delay: 3.04s;
+      animation-fill-mode: forwards; */
+    }
+    
+    .double-view-right {
+      margin-top: 40px;
+      width: 100%;
+      /* float: right; */
+      background-color: var(--myGray2);
+  
+      visibility: hidden;
+      /* animation: slideInRight 1.5s ease-out;
+      animation-delay: 3.34s;
+      animation-fill-mode: forwards; */
+    }
+    
+    
+    .about-header {
+      color: var(--myBlue);
+      font-size: 25px;
+    }
+  
+    .about-text {
+      line-height: 1.5;
+    }
+  
+    .skills-header {
+      color: var(--myBlue);
+      font-size: 25px;
+    }
+  
+    .skills-section-header {
+      /* color: var(--myLightSlate); */
+      font-family: 'SF Mono', monospace;
+      color: #61ffda;
+      font-size: 18px;
+      /* font-family: 'Montserrat', sans-serif; */
+    }
+  
+    .skills-text {
+      line-height: 1.5;
+      margin-top: -10px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--myGray1);
+    }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  .project-section-wrapper {
+    /* display: none; */
+  }
+  
+  #project-header-static {
+    /* make it invisible */
+    /* display: none; */
+    visibility: hidden;
+  
+  }
+  
+    /* the project section */
+  #project-header {
+    color: var(--project-color1);
+    font-size: 40px;
+    padding: 20px;
+    margin: 10px;
+    margin-bottom: 0px;
+  }
+  
+  #project-header-wrapper {
+    display: flex;
+    /* justify-content: center; */
+    align-items: center;
+    /* border-radius: var(--border-radius);
+    background-color: var(--myGray2); */
+    /* text-align: center; */
+    margin-bottom: 20px;
+  }
+  
+  #project-header-spacer {
+    /* display: none; */
+    background-color: var(--myGray1);
+    width: 73%;
+    height: 1px;
+    /* align right */
+    margin-right: 10px;
+    margin-left: auto;
+  
+    /* center verticlly */
+    transform: translateY(5px);
+  
+  
+  }
+  
+  #project-wrapper {
+      display: flex;
+      height: 500px;
+  }
+  
+  #project-content, #project-menu {
+      box-sizing: border-box;
+      height: 100%;
+      margin: 10px;
+      margin-bottom: 0px;
+      padding: 20px;
+  }
+  
+  #project-content {
+    vertical-align: middle;
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 0px;
+  }
+  
+  
+  #project-menu {
+    display: none;
+  }
+
+  #project-menu-mobile {
+    display: flex;
+    overflow-x: scroll; /* To make the scrollbar always visible */
+    overflow-y: hidden;
+    margin: 20px;
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+  
+  /* Customize the scrollbar style for Webkit browsers */
+  #project-menu-mobile::-webkit-scrollbar {
+    height: 10px;
+    background: transparent; /* To make scrollbar background transparent */
+}
+  
+  #project-menu-mobile::-webkit-scrollbar-thumb {
+    background: #888; /* Change to match your design */
+    border-radius: 20px; /* Adjust as needed */
+  }
+  
+  /* #project-menu-mobile::-webkit-scrollbar-thumb:hover {
+    background: #888;
+  } */
+  
+  .project-menu-item {
+    cursor: pointer;
+    background-color: transparent;
+    transition: color 0.3s ease-in-out;
+    padding: 20px;
+    /* padding-top: 15px;
+    padding-bottom: 15px; */
+    /* line height 2 em */
+    /* center the text */
+    text-align: center;
+    white-space: nowrap;
+    /* make the top two corners the --border radius but the other two nothing */
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: 2px solid var(--myGray2); /* Adjust thickness as needed */
+  }
+
+  .project-menu-item-container {
+    padding-bottom: 4px; /* adjust this as needed */
+  }
+
+  .project-menu-item:hover {
+    color: var(--myWhite);
+  }
+
+/* when clicked make the color red of the item */
+    .project-menu-item:active {
+        color: var(--myBlue);
+        background-color: var(--myGray2);
+        transition: color 0.001s;
+        transition: background-color 0.001;
+    }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .showing {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    align-items: flex-start;
+  }
+  
+  .outRight {
+    transform: translateX(800px);
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .outLeft {
+    transform: translateX(-800px);
+    transition: transform 0.5s ease-in-out;
+  }
+  
+  .inRight {
+    transform: translateX(-800px);
+    transition: transform 0.5s;
+    animation: slideInRight2 0.5s forwards ease-in-out;
+  }
+  
+  .inLeft {
+    transform: translateX(800px);
+    transition: transform 0.5s;
+    animation: slideInLeft2 0.5s forwards ease-in-out;
+  }
+  
+  @keyframes slideInRight2 {
+    0% {
+      transform: translateX(800px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+  @keyframes slideInLeft2 {
+    0% {
+      transform: translateX(-800px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  .project-title {
+    /* font-family: 'SF Mono', monospace; */
+    color: var(--project-color1);
+    font-size: 30px;
+    text-align: right;
+    margin-top: 60px;
+  }
+  
+  
+  .project-image {
+    width: 100%;
+    object-fit: cover;
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 0 rgba(0,0,0,0);
+    position: relative;
+    z-index: 1; /* Lower than project-description normal state */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  }
+  
+  .project-image:hover {
+    transform: scale(1.025);
+    box-shadow: 0 0 10px rgba(0,0,0,1);
+    z-index: 3; /* Higher than both during hover state */
+  }
+  
+  .image-container {
+    width: 70%;
+    min-width: 70%;
+  }
+  
+  .project-tools {
+    font-family: 'SF Mono', monospace;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--myGray1);
+    margin-top: 10px;
+    margin-right: calc(var(--project-text-overlap) + +10px);
+    flex-wrap: wrap;
+    
+  }
+  
+  .project-info {
+    /* nothing here at the moment */
+  }
+  
+  .project-description {
+    color: var(--project-color3);
+    font-size: 16px;
+    line-height: 1.5;
+    background-color: var(--project-color2);
+    margin-left: calc(var(--project-text-overlap) * -1);
+    padding: 20px;
+    border-radius: var(--border-radius);
+    position: relative; /* Ensure position is set for z-index to work */
+    z-index: 2; /* Higher than project-image normal state */
+    /* text-align: right; */
+    background: var(--project-color2);
+    /* background: linear-gradient(120deg, var(--project-color1) 0%, var(--project-color2) 100%); */
+  
+  }
+  
+  
+  
+  
+  }
+  
+  
+  
+  
+  @media screen and (max-width: 500px) {
+    body {
+      background-color: rgb(var(--myBlack));
+    }
+  }
