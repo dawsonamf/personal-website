@@ -365,12 +365,21 @@
   .project-menu-selected {
     color: var(--project-color1); /* Replace 'yourSelectedColor' with your desired hex color or color name for selected item. */
     background-color: var(--myGray2);
-    border-bottom: 1px solid var(--project-color1); /* Adjust thickness as needed */
+    border-bottom: 2px solid var(--project-color1); /* Adjust thickness as needed */
 }
 
   .project-menu-item:hover {
     color: var(--myWhite);
+    transition: color 86400s;
   }
+
+  #underline {
+    position: absolute;
+    height: 2px; /* Height of the underline */
+    background-color: var(--project-color1); /* Underline color */
+    transition: all 0.3s ease-in-out; /* Adjust as needed */
+  }
+
 
 /* when clicked make the color red of the item */
     .project-menu-item:active {
@@ -379,6 +388,8 @@
         transition: color 0.001s;
         transition: background-color 0.001;
     }
+
+
   
   .hidden {
     display: none;
