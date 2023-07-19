@@ -359,7 +359,14 @@
 
   .project-menu-item-container {
     padding-bottom: 4px; /* adjust this as needed */
+    /* background-color: #yourColor; */
   }
+
+  .project-menu-selected {
+    color: var(--project-color1); /* Replace 'yourSelectedColor' with your desired hex color or color name for selected item. */
+    background-color: var(--myGray2);
+    border-bottom: 1px solid var(--project-color1); /* Adjust thickness as needed */
+}
 
   .project-menu-item:hover {
     color: var(--myWhite);
@@ -367,7 +374,7 @@
 
 /* when clicked make the color red of the item */
     .project-menu-item:active {
-        color: var(--myBlue);
+        color: var(--project-color1);
         background-color: var(--myGray2);
         transition: color 0.001s;
         transition: background-color 0.001;
@@ -452,11 +459,12 @@
     padding-top: 60px;
     padding-bottom: 10px;
     transform: translateY(-40px);
-    border-radius: var(--border-radius) var(--border-radius) 0 0;
+    border-radius: var(--border-radius) var(--border-radius) 0px 0px;
   }
   
   
   .project-image {
+    /* display: none; */
     width: 100%;
     object-fit: cover;
     border-radius: var(--border-radius);
@@ -740,16 +748,10 @@
 
 /* on hover, make it rise by 3.5px */
 .button-link:hover {
-  transform: translateY(-3.5px);
-  /* border: 2px solid var(--myBlue); */
-  /* font-weight: bold; */
-  background-color: var(--myBlue);
-  color: rgb(var(--myBlack));
-
-  background-color: var(--project-color1);
-
-
-  transition: 0.3s ease-in-out;
+    transform: none;
+    background-color: inherit;
+    color: var(--project-color1);
+    transition: none;
 }
 
   
