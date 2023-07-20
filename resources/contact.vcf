@@ -1,0 +1,9 @@
+BEGIN:VCARD
+VERSION:3.0
+N:Metzger-Fleetwood;Dawson
+FN:Dawson Metzger-Fleetwood
+ORG:About Objects
+TITLE:Software Engineer
+EMAIL;type=WORK,INTERNET:dawson.metzger-fleetwood@aboutobjects.com
+EMAIL;type=HOME,INTERNET:dawsonamf@icloud.com
+END:VCARD
