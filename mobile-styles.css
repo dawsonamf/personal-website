@@ -148,7 +148,7 @@
       /* the about and skills section */
     .double-view-container {
       flex-direction: column;
-      margin-top: -40px;
+      /* margin-top: -40px; */
       padding-right: 20px;
     }
   
@@ -291,7 +291,7 @@
   
   #project-wrapper {
       display: flex;
-      height: 500px;
+      height: fit-content;
   }
   
   #project-content, #project-menu {
@@ -319,7 +319,8 @@
 
   #project-menu-mobile {
     display: flex;
-    overflow-x: scroll; /* To make the scrollbar always visible */
+    /* overflow-x: scroll;  */
+        /* To make the scrollbar always visible */
     overflow-y: hidden;
     margin: 20px;
     margin-left: 0px;
@@ -328,8 +329,9 @@
   
   /* Customize the scrollbar style for Webkit browsers */
   #project-menu-mobile::-webkit-scrollbar {
-    height: 10px;
-    background: transparent; /* To make scrollbar background transparent */
+    display: none;
+    /* height: 10px;
+    background: transparent;  */
 }
   
   #project-menu-mobile::-webkit-scrollbar-thumb {
@@ -552,12 +554,15 @@
 
 
 
-
-
-
-
-  .contact-view-left, .contact-view-right {
+  .contact-view-right {
     display: none;
+  }
+
+
+  .contact-view-left {
+    /* display: none; */
+    box-sizing: border-box;
+    width: 100%;
     padding: 20px;
     margin: 10px;
     margin-bottom: 0px;
@@ -565,15 +570,7 @@
     border-radius: var(--border-radius);
   }
   
-  .contact-view-left {
-    width: 50%;
-    float: left;
-  }
-  
-  .contact-view-right {
-    width: 50%;
-    float: right;
-  }
+
   
   .contact-header {
     color: var(--myBlue);
@@ -598,19 +595,40 @@
     /* height: 300px; */
   }
 
+
+
+
   .contact-menu {
-    /* background-color: var(--myLightNavy); */
-    /* background-color: rgb(0, 84, 180); */
-    border-radius: var(--border-radius);
-    min-width: 300px;
-    width: auto; /* Allow the width to grow as needed between the min and max values */
-    z-index: 1;
-    margin: 10px;
-    margin-right: auto; /* Horizontally center in its parent */
-    margin-left: auto; /* Horizontally center in its parent */
-    position: static;
+    display: none;
   }
-  
+
+  .contact-menu-mobile {
+    display: inline;
+  }
+
+  .socials-menu-spacer-mobile-top {
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: var(--myGray1);
+    border-top-width: 20px;
+    border-bottom-width: 30px;
+  }
+  .socials-menu-spacer-mobile-bottom {
+    border-width: 0.5px;
+    border-style: solid;
+    border-color: var(--myGray1);
+    border-top-width: 30px;
+    border-bottom-width: 20px;
+  }
+
+  .horizontal-line {
+    border: 0.5px solid var(--myGray1);
+    width: 85%;
+    margin: 0 auto;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
   
 
 
@@ -781,6 +799,6 @@
   }
 
   /* 
-    - make project image bigger when tapped, with an X in the corner to close it
+    - add project tools
 
   */

@@ -2,7 +2,7 @@
   --border-radius: 20px;
   --project-text-overlap: 250px;
   --project-menu-spacer-width: 25px;
-  --socials-menu-spacer-height: 80px; /* max is 105 */
+  --socials-menu-spacer-height: 45px; /* max is 105, 80 was what I liked most*/
   /* --myBlue: #08fdd8; */
   /* --myRed: #fe1251; */
   
@@ -441,8 +441,9 @@ body {
   /* uncommenting this will align it with the bottom of the parent div */
   /* commenting it will center it with the image (ish) */
   top: 0;
-  padding-top: calc(136.5px - var(--socials-menu-spacer-height));
+  /* padding-top: calc(136.5px - var(--socials-menu-spacer-height)); */
   padding-top: calc(105px - var(--socials-menu-spacer-height));
+  padding-top: calc(75px - var(--socials-menu-spacer-height));
 
   opacity: 0;
   /* animation: fadein 0.8s ease-out;
@@ -1156,7 +1157,9 @@ body {
   display: none;
 }
 
-
+.contact-menu-mobile {
+  display: none;
+}
 
 
 

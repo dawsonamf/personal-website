@@ -490,6 +490,82 @@ $(document).ready(function() {
 
 
 
+
+
+
+// $(document).ready(function() {
+//   $('.project-menu-item:first').addClass('project-menu-selected'); // Select the first menu item initially.
+
+//   // Initially position the underline
+//   var firstItem = $('.project-menu-item:first');
+//   var firstItemPosition = firstItem.position();
+//   var firstItemWidth = firstItem.outerWidth(); // Use outerWidth to include padding and border
+//   $('#underline').css({
+//       'width': firstItemWidth,
+//       'left': firstItemPosition.left + firstItem.offsetParent().scrollLeft() // Add scrollLeft to account for scrolling
+//   });
+
+//   // Define an event that fires after the transition ends
+//   $('#underline').on('transitionend', function() {
+//       $(this).css('display', 'none');
+//       $('.project-menu-item.selected').css('border-bottom', '2px solid red');
+//   });
+
+//   $('.project-menu-item').click(function() {
+//       $('.project-menu-item').removeClass('project-menu-selected').removeClass('selected').css('border-bottom', 'none');
+//       $(this).addClass('project-menu-selected').addClass('selected');
+
+//       // Add transition
+//       $('#underline').css({
+//           'display': 'block',
+//           'transition': 'left 0.3s, width 0.3s'
+//       });
+
+//       // Update the underline position and width
+//       var itemPosition = $(this).position().left + $(this).offsetParent().scrollLeft(); // Add scrollLeft to account for scrolling
+//       var itemWidth = $(this).outerWidth(); // Use outerWidth to include padding and border
+//       $('#underline').css({
+//           'width': itemWidth,
+//           'left': itemPosition
+//       });
+//   });
+
+//   // Update the position of the underline when the menu is scrolled
+//   $('#project-menu-mobile').on('scroll', function() {
+//       var underline = $('#underline');
+//       var transitionIsFinished = underline.css('transition-duration') === '0s';
+      
+//       if (transitionIsFinished) {
+//           // If transition has finished, remove transition and trigger 'transitionend'
+//           underline.css('transition', 'none');
+//           underline.trigger('transitionend');
+//       }
+
+//       var selectedItem = $('.project-menu-selected');
+//       var itemPosition = selectedItem.position().left + selectedItem.offsetParent().scrollLeft(); // Add scrollLeft to account for scrolling
+//       underline.css({
+//           'left': itemPosition
+//       });
+//   });
+// });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 cursorFollow();
 
 loadDynamicContent();  
