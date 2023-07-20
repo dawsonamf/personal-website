@@ -1,3 +1,33 @@
+mobile site update todo
+    - add project tools to mobile site
+    - add scheduling link to resume
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 entropy based decision trees, ensemble methods, particle filters, Bayes nets, 
             <br><br>
 
