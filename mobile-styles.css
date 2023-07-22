@@ -19,6 +19,37 @@
     .static-menu {
       display: none;
     }
+
+    .static-menu-mobile {
+        display: flex;
+        /* background-color: red; */
+        border-radius: var(--border-radius);
+        /* width: 400px; */
+        /* width: 200px; */
+        z-index: 1;
+        margin-right: 10px;
+        margin-left: auto;
+        position: static;
+        right: 10px;
+        opacity: 0;
+    }
+
+    .menu-item {
+        color: var(--myGray1);
+        text-decoration: none;
+        padding-left: 15px;
+        transition: 0.3s ease-in-out;
+      }
+
+      .menu-spacer {
+        border-width: 0.5px;
+        border-style: solid;
+        border-color: var(--myGray1);
+        border-top-width: 8px;
+        border-bottom-width: 8px;
+        margin: 10px;
+      }
+      
   
     .moving-menu {
       display: none;
@@ -798,7 +829,3 @@
     }
   }
 
-  /* 
-    - add project tools
-
-  */

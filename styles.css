@@ -1153,6 +1153,11 @@ body {
   /* --myLightSlate: #2B4162; */
   /* --myLightSlate: #D62839; */
 
+
+.static-menu-mobile {
+  display: none;
+}
+
 #project-menu-mobile {
   display: none;
 }

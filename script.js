@@ -18,6 +18,11 @@ function startAnimations() {
   document.querySelector('#socials-list').style.animationDelay = `${3.76 - delayAdjustment}s`;
   document.querySelector('#socials-list').style.animationFillMode = "forwards";
 
+  // for mobile
+  document.querySelector('.static-menu-mobile').style.animation = "fadein 0.8s ease-out";
+  document.querySelector('.static-menu-mobile').style.animationDelay = `${3.76 - delayAdjustment}s`;
+  document.querySelector('.static-menu-mobile').style.animationFillMode = "forwards";
+
   let doubleViewLeftElements = document.querySelectorAll('.double-view-left');
   for (let elem of doubleViewLeftElements) {
     elem.style.animation = "slideInLeft 1.5s ease-out";
