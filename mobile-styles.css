@@ -737,35 +737,26 @@
 
 
 .footer-container {
-  /* align elements inside horizontally */
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  /* background: blue; */
+  display: none !important;
 }
 
-.footer-text {
-  /* center it */
-  text-align: center;
-  color: var(--myGray1);
-  font-size: 14px;
-  line-height: 1.5;
-  /* width to fit content without going on a new line */
-  /* width: 270px; */
-
-
+.footer-container-mobile {
+    display: block;
+    margin: 0px auto;
+    padding: 0px;
+    width: calc(100% - 20px);
 }
 
-.footer-spacer {
-  margin: 20px;
-  padding: 0;
-  border-width: 0.5px;
-  border-style: solid;
-  border-color: var(--myGray1);
-  width: 80px;
-  /* width: calc((100% - 270px - 75px) / 2); */
-
+.footer-text-mobile {
+    width: fit-content;
+    text-align: center;
+    color: var(--myGray1);
+    font-size: 13px;
+    /* line-height: 1.5; */
+    /* margin: 0; */
+    /* center it horizontally in parent div */
+    margin: 0px auto;
+    padding: 0px;
 }
 
 
