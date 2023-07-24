@@ -1,6 +1,7 @@
 mobile site update todo
-    - add project tools to mobile site
     - add scheduling link to resume
+    - add intranet and harvest extension to resume
+    - add photo and test .vcf
 
 
 
