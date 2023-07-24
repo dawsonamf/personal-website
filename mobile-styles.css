@@ -184,8 +184,9 @@
       /* the about and skills section */
     .double-view-container {
       flex-direction: column;
-      /* margin-top: -40px; */
+      margin-top: -40px;
       padding-right: 20px;
+      box-sizing: border-box;
     }
   
     .double-view-left, .double-view-right {
@@ -278,6 +279,7 @@
   
   .project-section-wrapper {
     /* display: none; */
+    margin-top: -80px;
   }
   
   #project-header-static {
@@ -536,15 +538,19 @@
     width: 100%;
     min-width: 100%;
   }
-  
+
   .project-tools {
     display: none;
+  }
+  
+  .project-tools-mobile {
+    display: block;
     font-family: 'SF Mono', monospace;
     font-size: 15px;
     line-height: 1.5;
     color: var(--myGray1);
-    margin-top: 10px;
-    margin-right: calc(var(--project-text-overlap) + +10px);
+    margin-top: -40px;
+    margin-right: 10px;
     flex-wrap: wrap;
     
   }
@@ -601,6 +607,7 @@
     width: 100%;
     padding: 20px;
     margin: 10px;
+    margin-top: -80px;
     margin-bottom: 0px;
     background-color: var(--myGray2);
     border-radius: var(--border-radius);
@@ -611,6 +618,7 @@
   .contact-header {
     color: var(--myBlue);
     font-size: 40px;
+    
   }
 
   .contact-text {

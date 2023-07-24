@@ -1162,6 +1162,10 @@ body {
   display: none;
 }
 
+.project-tools-mobile {
+  display: none;
+}
+
 .contact-menu-mobile {
   display: none;
 }
