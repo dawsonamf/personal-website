@@ -1,5 +1,5 @@
 
-@media screen and (max-width: 1000px) {
+@media screen and (max-width: 1100px) {
 /* @media screen and (max-width: 550px) { */
     body {
       background-color: darkblue;
@@ -7,7 +7,7 @@
     }
   
     #main-body {
-      max-width: 450px;
+      max-width: 500px;
       min-width: 319px;
     }
   
@@ -825,11 +825,3 @@
   }
   
   
-  
-  
-  @media screen and (max-width: 500px) {
-    body {
-      background-color: rgb(var(--myBlack));
-    }
-  }
-
