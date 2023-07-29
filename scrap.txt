@@ -1,7 +1,10 @@
 mobile site update todo
-    - add scheduling link to resume
+    - add calendly link to resume
+    - add calendly link to website
     - add intranet and harvest extension to resume
     - add photo and test .vcf
+    - make colored bar under project selector on mobile smoothly transition
+    - on mobile, maybe make About Me and Skills sections side by side with menu on top or bottom
 
 
 
