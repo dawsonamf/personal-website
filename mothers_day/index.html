@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dynamic Image Display</title>
+<style>
+    /* root styles for vars */
+    :root {
+      /* --primary-color: #68ACE5;
+      --secondary-color: #002D72;
+      --tertiary-color: #E6E6E6; 
+      --text-color: #FFFFFF;*/
+      --primary-color: #111316;
+      --secondary-color: #5892d8;
+      --tertiary-color: #000000;
+      --text-color: #ffffff;
+
+    }
+
+  /* index.html */
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, var(--primary-color) 100%, var(--secondary-color) 100%);
+  }
+  #imageDisplay {
+    width: 300px;
+    height: 300px;
+    background: var(--tertiary-color) url('placeholder.jpg'); /* Default placeholder image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    border-radius: 10px;
+  }
+  #controls {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+  }
+  input, button {
+    padding: 10px;
+    margin: 5px;
+    font-size: 16px;
+    border-radius: 7px;
+    outline: none;
+    border: none;
+    background-color: var(--tertiary-color);
+    color: var(--text-color)
+  }
+  button {
+    cursor: pointer;
+    background-color: var(--secondary-color);
+    color: var(--primary-color);
+    font-weight: bold;
+    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); */
+  }
+
+</style>
+</head>
+<body>
+<div id="imageDisplay"></div>
+<div id="controls">
+  <input id="inputWord" type="text" placeholder="Enter word here">
+  <input id="inputDelay" type="number" placeholder="Delay in ms">
+  <button onclick="displayImages()">Submit</button>
+</div>
+
+<script>
+  const mappings = {
+    'a': 'asl_images/a.jpeg',
+    'b': 'asl_images/b.jpeg',
+    'c': 'asl_images/c.jpeg',
+    'd': 'asl_images/d.jpeg',
+    'e': 'asl_images/e.jpeg',
+    'f': 'asl_images/f.jpeg',
+    'g': 'asl_images/g.jpeg',
+    'h': 'asl_images/h.jpeg',
+    'i': 'asl_images/i.jpeg',
+    'j': 'asl_images/j.jpeg',
+    'k': 'asl_images/k.jpeg',
+    'l': 'asl_images/l.jpeg',
+    'm': 'asl_images/m.jpeg',
+    'n': 'asl_images/n.jpeg',
+    'o': 'asl_images/o.jpeg',
+    'p': 'asl_images/p.jpeg',
+    'q': 'asl_images/q.jpeg',
+    'r': 'asl_images/r.jpeg',
+    's': 'asl_images/s.jpeg',
+    't': 'asl_images/t.jpeg',
+    'u': 'asl_images/u.jpeg',
+    'v': 'asl_images/v.jpeg',
+    'w': 'asl_images/w.jpeg',
+    'x': 'asl_images/x.jpeg',
+    'y': 'asl_images/y.jpeg',
+    'z': 'asl_images/z.jpeg',
+
+    // capital letters
+    'A': 'asl_images/a.jpeg',
+    'B': 'asl_images/b.jpeg',
+    'C': 'asl_images/c.jpeg',
+    'D': 'asl_images/d.jpeg',
+    'E': 'asl_images/e.jpeg',
+    'F': 'asl_images/f.jpeg',
+    'G': 'asl_images/g.jpeg',
+    'H': 'asl_images/h.jpeg',
+    'I': 'asl_images/i.jpeg',
+    'J': 'asl_images/j.jpeg',
+    'K': 'asl_images/k.jpeg',
+    'L': 'asl_images/l.jpeg',
+    'M': 'asl_images/m.jpeg',
+    'N': 'asl_images/n.jpeg',
+    'O': 'asl_images/o.jpeg',
+    'P': 'asl_images/p.jpeg',
+    'Q': 'asl_images/q.jpeg',
+    'R': 'asl_images/r.jpeg',
+    'S': 'asl_images/s.jpeg',
+    'T': 'asl_images/t.jpeg',
+    'U': 'asl_images/u.jpeg',
+    'V': 'asl_images/v.jpeg',
+    'W': 'asl_images/w.jpeg',
+    'X': 'asl_images/x.jpeg',
+    'Y': 'asl_images/y.jpeg',
+    'Z': 'asl_images/z.jpeg',
+  };
+
+  // Preload images
+  function preloadImages() {
+    for (let key in mappings) {
+      const img = new Image();
+      img.src = mappings[key];
+    }
+  }
+
+  function displayImages() {
+    const word = document.getElementById('inputWord').value;
+    const delayInput = document.getElementById('inputDelay').value;
+    const delay = parseInt(delayInput);
+    if (isNaN(delay) || delay < 0) {
+      alert("Please enter a valid positive number for the delay.");
+      return;
+    }
+
+    const imageDisplay = document.getElementById('imageDisplay');
+    let currentPos = 0;
+    let lastValidImage = 'placeholder.jpg'; // Default start image
+
+    function updateImage(substring) {
+      if (mappings[substring]) {
+        imageDisplay.style.backgroundImage = `url('${mappings[substring]}')`;
+        lastValidImage = mappings[substring]; // Update last valid image
+      } else {
+        imageDisplay.style.backgroundImage = `url('${lastValidImage}')`; // Maintain last valid image
+      }
+      setTimeout(() => updateImageQueue(), delay);
+    }
+
+    function updateImageQueue() {
+      if (currentPos >= word.length) return;
+
+      let maxMatchLength = 0;
+      let maxMatch = '';
+      for (let key in mappings) {
+        if (word.substr(currentPos, key.length) === key && key.length > maxMatchLength) {
+          maxMatch = key;
+          maxMatchLength = key.length;
+        }
+      }
+
+      if (maxMatch) {
+        updateImage(maxMatch);
+        currentPos += maxMatchLength; // Move past this substring
+      } else {
+        updateImage(word[currentPos]);
+        currentPos++; // Move to the next character
+      }
+    }
+
+    updateImageQueue(); // Start the image display process
+  }
+
+  // Call the preload function on page load
+  window.onload = preloadImages;
+</script>
+</body>
+</html>
