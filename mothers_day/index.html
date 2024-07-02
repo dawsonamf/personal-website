@@ -3,22 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Happy Mother's Day!</title>
+<title>ASL Fingerspelling</title>
 <style>
-    /* root styles for vars */
     :root {
-      /* --primary-color: #68ACE5;
-      --secondary-color: #002D72;
-      --tertiary-color: #E6E6E6; 
-      --text-color: #FFFFFF;*/
       --primary-color: #111316;
       --secondary-color: #5892d8;
       --tertiary-color: #000000;
       --text-color: #ffffff;
-
     }
 
-  /* index.html */
   body, html {
     height: 100%;
     margin: 0;
@@ -32,7 +25,7 @@
   #imageDisplay {
     width: 300px;
     height: 300px;
-    background: var(--tertiary-color) url('placeholder.jpg'); /* Default placeholder image */
+    background: var(--tertiary-color) url('placeholder.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -54,14 +47,18 @@
     outline: none;
     border: none;
     background-color: var(--tertiary-color);
-    color: var(--text-color)
+    color: var(--text-color);
   }
   button {
     cursor: pointer;
     background-color: var(--secondary-color);
     color: var(--primary-color);
     font-weight: bold;
-    /* box-shadow: 0 0 5px rgba(0, 0, 0, 0.3); */
+  }
+
+  #feedback {
+    font-size: 18px;
+    font-weight: bold;
   }
 
 </style>
@@ -69,70 +66,87 @@
 <body>
 <div id="imageDisplay"></div>
 <div id="controls">
-  <input id="inputWord" type="text" placeholder="Enter word here">
-  <input id="inputDelay" type="number" placeholder="Delay in ms">
-  <button onclick="displayImages()">Submit</button>
+  <input id="inputDelay" type="number" placeholder="Delay in ms" onchange="updateDelay()">
+  <input id="inputGuess" type="text" placeholder="Enter your guess">
+  <button onclick="checkGuess()">Submit Guess</button>
+  <div id="feedback"></div>
+  <button onclick="replay()">Replay</button>
+  <button onclick="nextWord()">Next Word</button>
 </div>
 
 <script>
-  const mappings = {
-    'a': 'asl_images/a.jpeg',
-    'b': 'asl_images/b.jpeg',
-    'c': 'asl_images/c.jpeg',
-    'd': 'asl_images/d.jpeg',
-    'e': 'asl_images/e.jpeg',
-    'f': 'asl_images/f.jpeg',
-    'g': 'asl_images/g.jpeg',
-    'h': 'asl_images/h.jpeg',
-    'i': 'asl_images/i.jpeg',
-    'j': 'asl_images/j.jpeg',
-    'k': 'asl_images/k.jpeg',
-    'l': 'asl_images/l.jpeg',
-    'm': 'asl_images/m.jpeg',
-    'n': 'asl_images/n.jpeg',
-    'o': 'asl_images/o.jpeg',
-    'p': 'asl_images/p.jpeg',
-    'q': 'asl_images/q.jpeg',
-    'r': 'asl_images/r.jpeg',
-    's': 'asl_images/s.jpeg',
-    't': 'asl_images/t.jpeg',
-    'u': 'asl_images/u.jpeg',
-    'v': 'asl_images/v.jpeg',
-    'w': 'asl_images/w.jpeg',
-    'x': 'asl_images/x.jpeg',
-    'y': 'asl_images/y.jpeg',
-    'z': 'asl_images/z.jpeg',
+  const words = [
+    "Phonetics", "Phonology", "Morphology", "Syntax", "Semantics", "Pragmatics", "Sociolinguistics", 
+    "Psycholinguistics", "Historical Linguistics", "Applied Linguistics", "Phoneme", "Allophone", 
+    "Morpheme", "Lexeme", "Syntax Tree", "Transformational Grammar", "Generative Grammar", 
+    "Descriptive Linguistics", "Prescriptive Linguistics", "Language Acquisition", "Bilingualism", 
+    "Code-Switching", "Dialect", "Accent", "Pidgin", "Creole", "Language Family", "Etymology", 
+    "Orthography", "Phonological Rules", "Derivational Morphology", "Inflectional Morphology", 
+    "Syntactic Ambiguity", "Word Order", "Subject-Verb Agreement", "Case Marking", "Tense", 
+    "Aspect", "Modality", "Speech Act Theory", "Pragmatic Inference", "Deixis", "Anaphora", 
+    "Cohesion", "Corpus Linguistics", "Language Universals", "Typology"
+  ];
 
-    // capital letters
-    'A': 'asl_images/a.jpeg',
-    'B': 'asl_images/b.jpeg',
-    'C': 'asl_images/c.jpeg',
-    'D': 'asl_images/d.jpeg',
-    'E': 'asl_images/e.jpeg',
-    'F': 'asl_images/f.jpeg',
-    'G': 'asl_images/g.jpeg',
-    'H': 'asl_images/h.jpeg',
-    'I': 'asl_images/i.jpeg',
-    'J': 'asl_images/j.jpeg',
-    'K': 'asl_images/k.jpeg',
-    'L': 'asl_images/l.jpeg',
-    'M': 'asl_images/m.jpeg',
-    'N': 'asl_images/n.jpeg',
-    'O': 'asl_images/o.jpeg',
-    'P': 'asl_images/p.jpeg',
-    'Q': 'asl_images/q.jpeg',
-    'R': 'asl_images/r.jpeg',
-    'S': 'asl_images/s.jpeg',
-    'T': 'asl_images/t.jpeg',
-    'U': 'asl_images/u.jpeg',
-    'V': 'asl_images/v.jpeg',
-    'W': 'asl_images/w.jpeg',
-    'X': 'asl_images/x.jpeg',
-    'Y': 'asl_images/y.jpeg',
-    'Z': 'asl_images/z.jpeg',
+  const mappings = {
+    'a': 'https://www.dawsonamf.com/mothers_day/asl_images/a.jpeg',
+    'b': 'https://www.dawsonamf.com/mothers_day/asl_images/b.jpeg',
+    'c': 'https://www.dawsonamf.com/mothers_day/asl_images/c.jpeg',
+    'd': 'https://www.dawsonamf.com/mothers_day/asl_images/d.jpeg',
+    'e': 'https://www.dawsonamf.com/mothers_day/asl_images/e.jpeg',
+    'f': 'https://www.dawsonamf.com/mothers_day/asl_images/f.jpeg',
+    'g': 'https://www.dawsonamf.com/mothers_day/asl_images/g.jpeg',
+    'h': 'https://www.dawsonamf.com/mothers_day/asl_images/h.jpeg',
+    'i': 'https://www.dawsonamf.com/mothers_day/asl_images/i.jpeg',
+    'j': 'https://www.dawsonamf.com/mothers_day/asl_images/j.jpeg',
+    'k': 'https://www.dawsonamf.com/mothers_day/asl_images/k.jpeg',
+    'l': 'https://www.dawsonamf.com/mothers_day/asl_images/l.jpeg',
+    'm': 'https://www.dawsonamf.com/mothers_day/asl_images/m.jpeg',
+    'n': 'https://www.dawsonamf.com/mothers_day/asl_images/n.jpeg',
+    'o': 'https://www.dawsonamf.com/mothers_day/asl_images/o.jpeg',
+    'p': 'https://www.dawsonamf.com/mothers_day/asl_images/p.jpeg',
+    'q': 'https://www.dawsonamf.com/mothers_day/asl_images/q.jpeg',
+    'r': 'https://www.dawsonamf.com/mothers_day/asl_images/r.jpeg',
+    's': 'https://www.dawsonamf.com/mothers_day/asl_images/s.jpeg',
+    't': 'https://www.dawsonamf.com/mothers_day/asl_images/t.jpeg',
+    'u': 'https://www.dawsonamf.com/mothers_day/asl_images/u.jpeg',
+    'v': 'https://www.dawsonamf.com/mothers_day/asl_images/v.jpeg',
+    'w': 'https://www.dawsonamf.com/mothers_day/asl_images/w.jpeg',
+    'x': 'https://www.dawsonamf.com/mothers_day/asl_images/x.jpeg',
+    'y': 'https://www.dawsonamf.com/mothers_day/asl_images/y.jpeg',
+    'z': 'https://www.dawsonamf.com/mothers_day/asl_images/z.jpeg',
+    'A': 'https://www.dawsonamf.com/mothers_day/asl_images/a.jpeg',
+    'B': 'https://www.dawsonamf.com/mothers_day/asl_images/b.jpeg',
+    'C': 'https://www.dawsonamf.com/mothers_day/asl_images/c.jpeg',
+    'D': 'https://www.dawsonamf.com/mothers_day/asl_images/d.jpeg',
+    'E': 'https://www.dawsonamf.com/mothers_day/asl_images/e.jpeg',
+    'F': 'https://www.dawsonamf.com/mothers_day/asl_images/f.jpeg',
+    'G': 'https://www.dawsonamf.com/mothers_day/asl_images/g.jpeg',
+    'H': 'https://www.dawsonamf.com/mothers_day/asl_images/h.jpeg',
+    'I': 'https://www.dawsonamf.com/mothers_day/asl_images/i.jpeg',
+    'J': 'https://www.dawsonamf.com/mothers_day/asl_images/j.jpeg',
+    'K': 'https://www.dawsonamf.com/mothers_day/asl_images/k.jpeg',
+    'L': 'https://www.dawsonamf.com/mothers_day/asl_images/l.jpeg',
+    'M': 'https://www.dawsonamf.com/mothers_day/asl_images/m.jpeg',
+    'N': 'https://www.dawsonamf.com/mothers_day/asl_images/n.jpeg',
+    'O': 'https://www.dawsonamf.com/mothers_day/asl_images/o.jpeg',
+    'P': 'https://www.dawsonamf.com/mothers_day/asl_images/p.jpeg',
+    'Q': 'https://www.dawsonamf.com/mothers_day/asl_images/q.jpeg',
+    'R': 'https://www.dawsonamf.com/mothers_day/asl_images/r.jpeg',
+    'S': 'https://www.dawsonamf.com/mothers_day/asl_images/s.jpeg',
+    'T': 'https://www.dawsonamf.com/mothers_day/asl_images/t.jpeg',
+    'U': 'https://www.dawsonamf.com/mothers_day/asl_images/u.jpeg',
+    'V': 'https://www.dawsonamf.com/mothers_day/asl_images/v.jpeg',
+    'W': 'https://www.dawsonamf.com/mothers_day/asl_images/w.jpeg',
+    'X': 'https://www.dawsonamf.com/mothers_day/asl_images/x.jpeg',
+    'Y': 'https://www.dawsonamf.com/mothers_day/asl_images/y.jpeg',
+    'Z': 'https://www.dawsonamf.com/mothers_day/asl_images/z.jpeg',
   };
 
-  // Preload images
+  let currentWord = '';
+  let usedWords = [];
+  let delay = 1000;
+  let currentTimeout; // Variable to store the timeout
+
   function preloadImages() {
     for (let key in mappings) {
       const img = new Image();
@@ -140,27 +154,36 @@
     }
   }
 
-  function displayImages() {
-    const word = document.getElementById('inputWord').value;
-    const delayInput = document.getElementById('inputDelay').value;
-    const delay = parseInt(delayInput);
-    if (isNaN(delay) || delay < 0) {
-      alert("Please enter a valid positive number for the delay.");
-      return;
+  function getRandomWord() {
+    if (usedWords.length === words.length) {
+      usedWords = [];
     }
+    let word;
+    do {
+      word = words[Math.floor(Math.random() * words.length)];
+    } while (usedWords.includes(word));
+    usedWords.push(word);
+    return word;
+  }
 
+  function startGame() {
+    currentWord = getRandomWord();
+    displayImages(currentWord);
+  }
+
+  function displayImages(word) {
     const imageDisplay = document.getElementById('imageDisplay');
     let currentPos = 0;
-    let lastValidImage = 'placeholder.jpg'; // Default start image
+    let lastValidImage = 'placeholder.jpg';
 
     function updateImage(substring) {
       if (mappings[substring]) {
         imageDisplay.style.backgroundImage = `url('${mappings[substring]}')`;
-        lastValidImage = mappings[substring]; // Update last valid image
+        lastValidImage = mappings[substring];
       } else {
-        imageDisplay.style.backgroundImage = `url('${lastValidImage}')`; // Maintain last valid image
+        imageDisplay.style.backgroundImage = `url('${lastValidImage}')`;
       }
-      setTimeout(() => updateImageQueue(), delay);
+      currentTimeout = setTimeout(() => updateImageQueue(), delay);
     }
 
     function updateImageQueue() {
@@ -177,18 +200,57 @@
 
       if (maxMatch) {
         updateImage(maxMatch);
-        currentPos += maxMatchLength; // Move past this substring
+        currentPos += maxMatchLength;
       } else {
         updateImage(word[currentPos]);
-        currentPos++; // Move to the next character
+        currentPos++;
       }
     }
 
-    updateImageQueue(); // Start the image display process
+    // Clear any ongoing timeout to stop previous fingerspelling
+    clearTimeout(currentTimeout);
+    updateImageQueue();
   }
 
-  // Call the preload function on page load
-  window.onload = preloadImages;
+  function updateDelay() {
+    const delayInput = document.getElementById('inputDelay').value;
+    delay = parseInt(delayInput);
+    if (isNaN(delay) || delay < 0) {
+      alert("Please enter a valid positive number for the delay.");
+      delay = 400; // Reset to default if invalid
+      document.getElementById('inputDelay').value = 400; // Reset input value
+    }
+    replay(); // Replay current word with new delay
+  }
+
+  function checkGuess() {
+    const guess = document.getElementById('inputGuess').value;
+    const feedback = document.getElementById('feedback');
+    if (guess.toLowerCase() === currentWord.toLowerCase()) {
+      feedback.textContent = 'Correct!';
+      feedback.style.color = 'green';
+    } else {
+      feedback.textContent = 'Try Again!';
+      feedback.style.color = 'red';
+    }
+  }
+
+  function replay() {
+    displayImages(currentWord);
+  }
+
+  function nextWord() {
+    startGame();
+    document.getElementById('inputGuess').value = '';
+    document.getElementById('feedback').textContent = '';
+  }
+
+  window.onload = function() {
+    preloadImages();
+    document.getElementById('inputDelay').value = 400;
+    delay = 400; // Initialize the delay variable to 400 ms
+    startGame();
+  };
 </script>
 </body>
 </html>
