@@ -505,22 +505,23 @@ body {
 
 
 
-  /* the about and skills section */
-  .double-view-container {
-    display: flex;
-  }
-
-  .double-view-left, .double-view-right {
+  /* cards */
+  .card-style {
     padding: 20px;
     margin: 10px;
     margin-bottom: 0px;
     border-radius: var(--border-radius);
+    background-color: var(--myGray2);
+  }
+
+  /* the about and skills section */
+  .double-view-container {
+    display: flex;
   }
   
   .double-view-left {
     width: 31%;
     float: left;
-    background-color: var(--myGray2);
 
     visibility: hidden;
     /* animation: slideInLeft 1.5s ease-out;
@@ -531,7 +532,6 @@ body {
   .double-view-right {
     width: 69%;
     float: right;
-    background-color: var(--myGray2);
 
     visibility: hidden;
     /* animation: slideInRight 1.5s ease-out;
