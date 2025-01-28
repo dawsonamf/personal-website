@@ -373,11 +373,11 @@ body {
 
   @keyframes slideInLeft {
     from {
-      transform: translateX(-250%);
+      transform: translate3d(-250%, 0, 0);
       visibility: visible;
     }
     to {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
       visibility: visible;
     }
   }
