@@ -488,6 +488,23 @@ $(document).ready(function() {
 });
 
 
+// Initialize Vanilla Tilt for all card elements
+$(document).ready(function() {
+  // Convert jQuery object to an array of DOM elements
+  var cards = $('.card').get();
+  console.log(cards)
+  VanillaTilt.init(cards, {
+    max: 10,                  // Maximum tilt rotation (degrees)
+    speed: 7500,               // Speed of the enter/exit transition
+    perspective: 1250,        // Transform perspective, lower = more extreme tilt
+    scale: 1.02,              // 1.05 = 105% scaling on hover
+    glare: false,             // Enable glare effect
+    "max-glare": 0.3,         // Maximum glare opacity (0 to 1)
+    gyroscope: true           // Enable tilt based on device orientation
+  });
+});
+
+
 
 
 
