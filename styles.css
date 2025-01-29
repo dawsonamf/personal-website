@@ -177,7 +177,7 @@ body {
   .static-menu {
     background-color: rgba(var(--myBlack), 0.5);
     border-radius: var(--border-radius);
-    width: 400px;
+    width: 500px;
     z-index: 1;
     margin-right: 10px;
     margin-left: auto;
@@ -193,7 +193,7 @@ body {
   .moving-menu {
     background-color: rgba(var(--myBlack), 0.5);
     border-radius: var(--border-radius);
-    width: 400px;
+    width: 500px;
     z-index: 1;
     margin-right: 27px;
     margin-left: auto;
@@ -614,9 +614,8 @@ body {
 
 #project-header-spacer {
   background-color: var(--myGray1);
-  width: 73%;
+  flex-grow: 1;
   height: 1px;
-  /* align right */
   margin-right: 10px;
   margin-left: auto;
 
@@ -1147,7 +1146,42 @@ body {
 
   --project-color1: #ff8a2b;
   --project-color2: var(--myGray2);
+}
 
+/* FieldOps */
+#content-8 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
+}
+
+/* AO Website */
+#content-9 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
+}
+
+/* Pipeline */
+#content-10 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
+}
+
+/* Deep RL */
+#content-11 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
 }
   /* an interesting orange: #FF6B2B; */
   /* --myLightSlate: #2B4162; */
@@ -1174,7 +1208,164 @@ body {
   display: none;
 }
 
-
+/* COPYLLM */
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************
+  Jobs Section
+******************************************/
+.jobs-section-wrapper {
+  margin: 40px 10px; /* Adjust as you like */
+}
+
+#jobs-header-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+#jobs-header {
+  color: var(--project-color1);
+  font-size: 40px;
+  padding: 20px;
+  margin: 10px;
+  margin-left: 0;
+  margin-bottom: 0px;
+
+  /* I might like the style when this is removed better */
+  /* padding-left: 0;  */
+}
+
+#jobs-header-spacer {
+  background-color: var(--myGray1);
+  flex-grow: 1;
+  height: 1px;
+  margin-right: 10px;
+  margin-left: auto;
+  transform: translateY(5px);
+}
+
+/* The main wrapper that holds the left menu + job content */
+#jobs-wrapper {
+  display: flex;
+  flex-direction: row; /* left menu, right content */
+  align-items: flex-start; 
+}
+
+/* Left-side menu */
+#jobs-menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px; /* Feel free to adjust */
+  border-radius: var(--border-radius);
+  background-color: var(--myGray2);
+  padding: 20px 0;
+  margin: 10px;
+  margin-left: 0;
+  height: fit-content;
+}
+
+.jobs-menu-heading {
+  font-size: 20px;
+  color: var(--project-color1);
+  margin-bottom: 7.5px;
+  border-top: 1px solid var(--myGray1);
+  width: 100%;
+  text-align: center;
+  padding-top: 22.5px; 
+}
+
+.jobs-menu-item {
+  cursor: pointer;
+  background-color: transparent;
+  transition: color 0.3s ease-in-out;
+  padding: 7.5px;
+  text-align: center;
+}
+
+.jobs-menu-item:hover {
+  color: var(--myBlue);
+}
+
+/* Right-side content wrapper */
+#jobs-content {
+  flex: 1; /* take up remaining space */
+  margin: 10px;
+  padding-right: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Each job item: hidden by default, or displayed if selected */
+.jobs-hidden {
+  display: none;
+}
+
+.jobs-showing {
+  display: block;
+}
+
+/* The "card" that holds the job title + description */
+.job-info {
+  border-radius: var(--border-radius);
+  background-color: var(--myGray2);
+  padding: 20px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  /* fill up the space, remove max-width so it’s wide */
+}
+
+/* Put the job title on the left (instead of right) */
+.job-title {
+  color: var(--project-color1);
+  font-size: 30px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.job-description {
+  color: var(--myWhite);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Animations for sliding text out/in from right */
+.jobs-outRight {
+  transform: translateX(1100px);
+  transition: transform 0.5s ease-in-out;
+}
+
+.jobs-inRight {
+  transform: translateX(-1100px);
+  transition: transform 0.5s;
+  animation: jobs-slideInRight 0.5s forwards ease-in-out;
+}
+
+@keyframes jobs-slideInRight {
+  0% {
+    transform: translateX(1100px);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
