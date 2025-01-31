@@ -147,7 +147,7 @@
     <br><br><br><br><br><br><br><br>
 
     <!-- Jobs Section -->
-    <div id="jobs-header-static"></div>
+    <!-- <div id="jobs-header-static"></div>
     <div class="jobs-section-wrapper"
         data-aos="fade-up"
         data-aos-easing="ease-in-out"
@@ -158,21 +158,23 @@
       </div>
 
       <div id="jobs-wrapper">
-        <!-- Left Menu -->
-        <div id="jobs-menu">
+        <div id="jobs-menuu">
           <div class="jobs-menu-item" data-content-id="job-1">About Objects</div>
-          <div class="jobs-menu-item" data-content-id="job-2">Johns Hopkins University</div>
+          <div class="jobs-menu-item" data-content-id="job-2" style="
+          background-color: var(--project-color1);
+          border-radius: 7.5px;
+          ">Johns Hopkins University</div>
           <div class="jobs-menu-item" data-content-id="job-3">Visual Language Associates</div>
           <div class="jobs-menu-item" data-content-id="job-4">Startup Shell</div>
         </div>
 
-        <!-- Right Content -->
+
         <div id="jobs-content">
 
-          <!-- Sample Job #1 -->
           <div id="job-1" class="jobs-hidden">
             <div class="job-info">
               <h1 class="job-title">Software Engineer @ About Objects</h1>
+              <p class="job-dates">July 2023 - Present</p>
               <p class="job-description">
                 Worked on building scalable web apps and microservices. 
                 Focused on backend (Node + Express), performance optimization, 
@@ -182,10 +184,10 @@
             </div>
           </div>
 
-          <!-- Sample Job #2 -->
           <div id="job-2" class="jobs-hidden">
             <div class="job-info">
               <h1 class="job-title">Guest Lecturer @ Johns Hopkins University</h1>
+              <p class="job-dates">Spring 2024</p>
               <p class="job-description">
                 Contributed to the iOS/visionOS team, implementing AR features 
                 using RealityKit. Collaborated on bug fixes and new feature rollouts 
@@ -194,10 +196,10 @@
             </div>
           </div>
 
-          <!-- Sample Job #3 -->
           <div id="job-3" class="jobs-hidden">
             <div class="job-info">
               <h1 class="job-title">Technical Co-Founder @ Visual Language Associates</h1>
+              <p class="job-dates">September 2019 - July 2023</p>
               <p class="job-description">
                 Built custom websites for small businesses, focusing on 
                 performance and SEO. Integrated e-commerce solutions and 
@@ -207,10 +209,9 @@
             </div>
           </div>
 
-          <!-- Sample Job #4 -->
           <div id="job-4" class="jobs-hidden">
             <div class="job-info">
-              <h1 class="job-title">Fellow @ Startup Shell</h1>
+              <h1 class="job-title">September 2022 - June 2023</h1>
               <p class="job-description">
                 Provided technical consulting for startup projects. 
                 Advised on software architecture, cloud deployment strategies, 
@@ -223,7 +224,7 @@
         </div>
       </div>
     </div>
-    <br><br><br><br><br><br><br><br>
+    <br><br><br><br><br><br><br><br> -->
     
     <!-- projects -->
     <div id="project-header-static"></div>
@@ -630,6 +631,103 @@
         Designed and built by Dawson Metzger-Fleetwood
       </p>
     </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- ============================
+     JOBS SECTION (HTML ONLY)
+     ============================ -->
+<div id="jobs-header-static"></div>
+<div class="jobs-section-wrapper" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-once="true">
+  <div class="jobs-card">
+    <div id="jobs-header-wrapper">
+      <h2 id="jobs-header">Where I've Worked</h2>
+      <a id="jobs-header-spacer"></a>
+    </div>
+
+    <div id="jobs-wrapper">
+      <!-- Left Menu (with sliding indicator + highlight) -->
+      <div id="jobs-menu">
+        <div class="jobs-menu-indicator"></div>
+        <div class="jobs-menu-item" data-content-id="job-1">About Objects</div>
+        <!-- Removed purple background on second item -->
+        <div class="jobs-menu-item" data-content-id="job-2">Johns Hopkins University</div>
+        <div class="jobs-menu-item" data-content-id="job-3">Visual Language Associates</div>
+        <div class="jobs-menu-item" data-content-id="job-4">Startup Shell</div>
+      </div>
+
+      <!-- Right Content (fades in/out) -->
+      <div id="jobs-content">
+        <div id="job-1" class="jobs-hidden">
+          <div class="job-info">
+            <h1 class="job-title">Software Engineer @ About Objects</h1>
+            <p class="job-dates">July 2023 - Present</p>
+            <p class="job-description">
+              Worked on building scalable web apps and microservices. 
+              Focused on backend (Node + Express), performance optimization, 
+              and cross-functional collaboration with front-end teams. 
+              Coordinated with QA, product managers, and DevOps on multiple releases.
+            </p>
+          </div>
+        </div>
+
+        <div id="job-2" class="jobs-hidden">
+          <div class="job-info">
+            <h1 class="job-title">Guest Lecturer @ Johns Hopkins University</h1>
+            <p class="job-dates">Spring 2024</p>
+            <p class="job-description">
+              Contributed to the iOS/visionOS team, implementing AR features 
+              using RealityKit. Collaborated on bug fixes and new feature rollouts 
+              under tight deadlines. Learned the fundamentals of Swift concurrency.
+            </p>
+          </div>
+        </div>
+
+        <div id="job-3" class="jobs-hidden">
+          <div class="job-info">
+            <h1 class="job-title">Technical Co-Founder @ Visual Language Associates</h1>
+            <p class="job-dates">September 2019 - July 2023</p>
+            <p class="job-description">
+              Built custom websites for small businesses, focusing on 
+              performance and SEO. Integrated e-commerce solutions and 
+              set up CI/CD pipelines for smooth deployments. Learned a lot 
+              about client communication and requirements gathering.
+            </p>
+          </div>
+        </div>
+
+        <div id="job-4" class="jobs-hidden">
+          <div class="job-info">
+            <h1 class="job-title">September 2022 - June 2023</h1>
+            <p class="job-description">
+              Provided technical consulting for startup projects. 
+              Advised on software architecture, cloud deployment strategies, 
+              and cost-effective solutions. Conducted code reviews and 
+              technology stack evaluations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 
       <!-- work experience -->
       <!-- contact me (with testimonials maybe?) -->
