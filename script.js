@@ -620,65 +620,59 @@ createTypingAnimation('typing-text');
 
 
 
-function loadJobsContent() {
-  const jobDivs = document.querySelectorAll('#jobs-content > div');
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================
+// JOBS SECTION (JS ONLY)
+// ============================
+function initJobsSection() {
   const menuItems = document.querySelectorAll('.jobs-menu-item');
-  let isAnimating = false;
+  const allJobs = document.querySelectorAll('#jobs-content > div');
+  const indicator = document.querySelector('.jobs-menu-indicator');
+  let activeItem = null;
 
   menuItems.forEach(item => {
     item.addEventListener('click', () => {
-      const currentlyShowing = document.querySelector('#jobs-content > div.jobs-showing');
-      if (currentlyShowing && currentlyShowing.id === item.dataset.contentId) {
-        return; // same item, do nothing
-      }
-      if (isAnimating) return;
+      // Highlight the chosen menu item
+      if (activeItem) activeItem.classList.remove('jobs-menu-item-selected');
+      item.classList.add('jobs-menu-item-selected');
+      activeItem = item;
 
-      isAnimating = true;
-      jobDivs.forEach(div => {
-        if (div.id !== item.dataset.contentId) {
-          if (div.classList.contains('jobs-showing')) {
-            // Slide out any currently showing job
-            div.classList.add('jobs-outRight');
-            setTimeout(() => {
-              div.classList.remove('jobs-showing', 'jobs-outRight');
-              div.classList.add('jobs-hidden');
-            }, 500);
-          } else {
-            // Make sure it’s hidden if not relevant
-            div.classList.add('jobs-hidden');
-          }
-        } else {
-          // Slide in the newly selected job
+      // Slide the indicator to match the clicked item’s vertical position
+      indicator.style.transform = `translateY(${item.offsetTop}px)`;
+
+      // Fade out any currently visible job, then fade in the new one
+      allJobs.forEach(job => {
+        if (job.classList.contains('jobs-showing')) {
+          job.classList.remove('jobs-fade-in');
+          job.classList.add('jobs-fade-out');
           setTimeout(() => {
-            div.classList.remove('jobs-hidden');
-            div.classList.add('jobs-showing', 'jobs-inRight');
-            setTimeout(() => {
-              div.classList.remove('jobs-inRight');
-              isAnimating = false;
-            }, 500);
-          }, 500);
+            job.classList.remove('jobs-fade-out', 'jobs-showing');
+            job.classList.add('jobs-hidden');
+          }, 350);
+        }
+        if (job.id === item.dataset.contentId) {
+          setTimeout(() => {
+            job.classList.remove('jobs-hidden');
+            job.classList.add('jobs-showing', 'jobs-fade-in');
+          }, 350);
         }
       });
     });
   });
+
+  // Auto-select the first job by default (optional):
+  // if (menuItems.length) menuItems[0].click();
 }
 
-// Also extend your "cursorFollow" logic to include .jobs-menu-item
-document.addEventListener('DOMContentLoaded', () => {
-  // existing code ...
-  
-  // Make .jobs-menu-item clickable for your custom cursor
-  document.querySelectorAll('.jobs-menu-item').forEach(item => {
-    item.addEventListener('mouseover', () => {
-      document.querySelector('.cursor-follow').classList.add('cursor-follow-clickable');
-    });
-    item.addEventListener('mouseout', () => {
-      document.querySelector('.cursor-follow').classList.remove('cursor-follow-clickable');
-    });
-  });
-
-  loadJobsContent();  
-  // Optionally auto-select the first job item:
-  const firstJobItem = document.querySelector('.jobs-menu-item');
-  if (firstJobItem) firstJobItem.click();
-});
+document.addEventListener('DOMContentLoaded', initJobsSection);
