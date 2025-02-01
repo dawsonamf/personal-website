@@ -146,85 +146,545 @@
     </div>
     <br><br><br><br><br><br><br><br>
 
-    <!-- Jobs Section -->
-    <!-- <div id="jobs-header-static"></div>
-    <div class="jobs-section-wrapper"
-        data-aos="fade-up"
-        data-aos-easing="ease-in-out"
-        data-aos-once="true">
-      <div id="jobs-header-wrapper">
-        <h2 id="jobs-header">Where I've Worked</h2>
-        <a id="jobs-header-spacer"></a>
-      </div>
-
-      <div id="jobs-wrapper">
-        <div id="jobs-menuu">
-          <div class="jobs-menu-item" data-content-id="job-1">About Objects</div>
-          <div class="jobs-menu-item" data-content-id="job-2" style="
-          background-color: var(--project-color1);
-          border-radius: 7.5px;
-          ">Johns Hopkins University</div>
-          <div class="jobs-menu-item" data-content-id="job-3">Visual Language Associates</div>
-          <div class="jobs-menu-item" data-content-id="job-4">Startup Shell</div>
-        </div>
 
 
-        <div id="jobs-content">
 
-          <div id="job-1" class="jobs-hidden">
-            <div class="job-info">
-              <h1 class="job-title">Software Engineer @ About Objects</h1>
-              <p class="job-dates">July 2023 - Present</p>
-              <p class="job-description">
-                Worked on building scalable web apps and microservices. 
-                Focused on backend (Node + Express), performance optimization, 
-                and cross-functional collaboration with front-end teams. 
-                Coordinated with QA, product managers, and DevOps on multiple releases.
-              </p>
-            </div>
-          </div>
 
-          <div id="job-2" class="jobs-hidden">
-            <div class="job-info">
-              <h1 class="job-title">Guest Lecturer @ Johns Hopkins University</h1>
-              <p class="job-dates">Spring 2024</p>
-              <p class="job-description">
-                Contributed to the iOS/visionOS team, implementing AR features 
-                using RealityKit. Collaborated on bug fixes and new feature rollouts 
-                under tight deadlines. Learned the fundamentals of Swift concurrency.
-              </p>
-            </div>
-          </div>
 
-          <div id="job-3" class="jobs-hidden">
-            <div class="job-info">
-              <h1 class="job-title">Technical Co-Founder @ Visual Language Associates</h1>
-              <p class="job-dates">September 2019 - July 2023</p>
-              <p class="job-description">
-                Built custom websites for small businesses, focusing on 
-                performance and SEO. Integrated e-commerce solutions and 
-                set up CI/CD pipelines for smooth deployments. Learned a lot 
-                about client communication and requirements gathering.
-              </p>
-            </div>
-          </div>
 
-          <div id="job-4" class="jobs-hidden">
-            <div class="job-info">
-              <h1 class="job-title">September 2022 - June 2023</h1>
-              <p class="job-description">
-                Provided technical consulting for startup projects. 
-                Advised on software architecture, cloud deployment strategies, 
-                and cost-effective solutions. Conducted code reviews and 
-                technology stack evaluations.
-              </p>
-            </div>
-          </div>
 
-        </div>
-      </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- Jobs Section -->
+<div id="jobs-section">
+  <style>
+    /* Container for the entire jobs section */
+    #jobs-section {
+      position: relative;
+      max-width: 1180px;
+      margin: 0 auto;
+      width: 100%;
+      font-family: 'Roboto', sans-serif;
+      /* Content remains white */
+      color: #e6f1ff;
+    }
+    @media (min-width: 1101px) {
+      #jobs-section {
+        display: flex;
+        flex-direction: row;
+        gap: 40px;
+      }
+    }
+    @media (max-width: 1100px) {
+      #jobs-section {
+        display: block;
+      }
+    }
+    /* Navigation container: force height to menu content only and allow scrolling */
+    .nav-container {
+      position: relative;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      flex-shrink: 0;
+      border-left: 3px solid #253347;
+      z-index: 1;
+      align-self: flex-start;
+    }
+    .nav-container::-webkit-scrollbar {
+      display: none;
+    }
+    .menu {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      width: 200px;
+      position: relative;
+    }
+    .menu li {
+      margin: 0;
+      cursor: pointer;
+      color: #7B8A9A;
+      padding: 12px 16px;
+      font-size: 16px;
+      transition: background-color 0.2s, color 0.2s;
+    }
+    @media (min-width: 1101px) {
+      .menu li {
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+      }
+    }
+    @media (max-width: 1100px) {
+      .menu li {
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+      }
+    }
+    .menu li:hover {
+      background: #253347;
+    }
+    .menu li.selected {
+      background: #192232;
+      color: #61ffda;
+    }
+    .highlight {
+      position: absolute;
+      background: #61ffda;
+      box-shadow: 0 0 8px #61ffda;
+      transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
+      pointer-events: none;
+      z-index: 999; /* Increased z-index so it sits on top */
+    }
+    @media (max-width: 1100px) {
+      .nav-container {
+        border-left: none;
+        border-bottom: 2px solid #253347;
+      }
+      .menu {
+        display: inline-flex;
+        min-width: 100%;
+        width: auto;
+      }
+      .menu li {
+        display: inline-block;
+      }
+      .highlight {
+        height: 2px;
+        border-radius: 0;
+      }
+    }
+    /* Job details container: height auto */
+    #jobs-content-wrapper {
+      position: relative;
+      flex: 1;
+    }
+    @media (max-width: 1100px) {
+      #jobs-content-wrapper {
+        margin-top: 20px;
+      }
+    }
+    /* Job content card */
+    .job-content {
+      position: relative;
+      width: 100%;
+      background-color: #2c2c2c;
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin: 0;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      overflow: hidden;
+      color: #e6f1ff;
+    }
+    .job-content.hidden {
+      display: none;
+    }
+    .job-content.showing {
+      display: flex;
+      z-index: 1;
+    }
+    .jobOutRight {
+      transform: translateX(1100px);
+      transition: transform 0.5s ease-in-out;
+    }
+    .jobInRight {
+      transform: translateX(1100px);
+      animation: jobSlideInRight 0.5s forwards ease-in-out;
+    }
+    @keyframes jobSlideInRight {
+      0%   { transform: translateX(1100px); }
+      100% { transform: translateX(0); }
+    }
+    .job-title {
+      font-size: 24px;
+      color: #61ffda;
+      margin-bottom: 5px;
+    }
+    .job-dates {
+      font-size: 15px;
+      color: #8892b0;
+      margin-bottom: 10px;
+    }
+    .job-bullets {
+      list-style-type: disc;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+  </style>
+  <!-- Left nav menu -->
+  <div class="nav-container" id="navContainer">
+    <ul class="menu" id="menuList">
+      <li class="selected" data-job="job-1">Upstatement</li>
+      <li data-job="job-2">Apple</li>
+      <li data-job="job-3">Scout Studio</li>
+      <li data-job="job-4">Starry</li>
+      <li data-job="job-5">MullenLowe</li>
+    </ul>
+    <div class="highlight" id="highlight"></div>
+  </div>
+  <!-- Right side job details -->
+  <div id="jobs-content-wrapper">
+    <div class="job-content showing" id="job-1">
+      <h3 class="job-title">Software Engineer @ Upstatement</h3>
+      <div class="job-dates">Jan 2021 – Present</div>
+      <ul class="job-bullets">
+        <li>Built custom WordPress themes and React-based frontends.</li>
+        <li>Led performance optimization efforts, cutting load times by 40%.</li>
+        <li>Built custom WordPress themes and React-based frontends.</li>
+        <li>Led performance optimization efforts, cutting load times by 40%.</li>
+        <li>Built custom WordPress themes and React-based frontends.</li>
+        <li>Led performance optimization efforts, cutting load times by 40%.</li>
+        <li>Built custom WordPress themes and React-based frontends.</li>
+        <li>Led performance optimization efforts, cutting load times by 40%.</li>
+        <li>Built custom WordPress themes and React-based frontends.</li>
+        <li>Led performance optimization efforts, cutting load times by 40%.</li>
+      </ul>
     </div>
-    <br><br><br><br><br><br><br><br> -->
+    <div class="job-content hidden" id="job-2">
+      <h3 class="job-title">Frontend Engineer @ Apple</h3>
+      <div class="job-dates">Jun 2019 – Dec 2020</div>
+      <ul class="job-bullets">
+        <li>Developed new UI features in Swift and JavaScript.</li>
+        <li>Maintained complex build pipelines and CI/CD processes.</li>
+      </ul>
+    </div>
+    <div class="job-content hidden" id="job-3">
+      <h3 class="job-title">Developer @ Scout Studio</h3>
+      <div class="job-dates">Jan 2018 – May 2019</div>
+      <ul class="job-bullets">
+        <li>Managed multiple client sites using Node.js and Express.</li>
+        <li>Implemented real-time chat functionality with WebSockets.</li>
+      </ul>
+    </div>
+    <div class="job-content hidden" id="job-4">
+      <h3 class="job-title">Software Intern @ Starry</h3>
+      <div class="job-dates">Jun 2017 – Aug 2017</div>
+      <ul class="job-bullets">
+        <li>Created internal tools to automate recurring engineering tasks.</li>
+        <li>Collaborated on a small agile team to deliver new product features.</li>
+      </ul>
+    </div>
+    <div class="job-content hidden" id="job-5">
+      <h3 class="job-title">Web Developer @ MullenLowe</h3>
+      <div class="job-dates">Jan 2016 – May 2017</div>
+      <ul class="job-bullets">
+        <li>Worked on marketing sites, ensuring brand consistency across pages.</li>
+        <li>Optimized images and styles for minimal load times.</li>
+      </ul>
+    </div>
+  </div>
+  <script>
+    const menuList = document.getElementById("menuList");
+    const highlight = document.getElementById("highlight");
+    let selectedItem = document.querySelector(".menu li.selected");
+    let isAnimating = false;
+    function isMobileLayout() {
+      return window.innerWidth <= 1100;
+    }
+    function moveHighlight(target) {
+      if (isMobileLayout()) {
+        highlight.style.left = target.offsetLeft + "px";
+        highlight.style.width = target.offsetWidth + "px";
+        // Position highlight at the bottom of the menu list
+        highlight.style.top = (menuList.offsetTop + menuList.offsetHeight) + "px";
+        highlight.style.height = "2px";
+        highlight.style.borderRadius = "0";
+      } else {
+        highlight.style.top = target.offsetTop + "px";
+        highlight.style.height = target.offsetHeight + "px";
+        highlight.style.left = "-" + 3 + "px";
+        highlight.style.width = "3px";
+        highlight.style.borderRadius = "6px";
+      }
+    }
+    window.addEventListener("resize", () => {
+      if (selectedItem) moveHighlight(selectedItem);
+    });
+    window.addEventListener("load", () => {
+      if (selectedItem) moveHighlight(selectedItem);
+    });
+    menuList.addEventListener("click", (e) => {
+      if (e.target.tagName.toLowerCase() === "li") {
+        if (isAnimating) return;
+        selectedItem.classList.remove("selected");
+        e.target.classList.add("selected");
+        selectedItem = e.target;
+        moveHighlight(selectedItem);
+      }
+    });
+    menuList.addEventListener("click", (e) => {
+      if (e.target.tagName.toLowerCase() !== "li") return;
+      if (isAnimating) return;
+      isAnimating = true;
+      const newJobID = e.target.getAttribute("data-job");
+      const currentlyShowing = document.querySelector(".job-content.showing");
+      if (!currentlyShowing || currentlyShowing.id === newJobID) {
+        isAnimating = false;
+        return;
+      }
+      currentlyShowing.classList.add("jobOutRight");
+      setTimeout(() => {
+        currentlyShowing.classList.remove("jobOutRight", "showing");
+        currentlyShowing.classList.add("hidden");
+      }, 500);
+      const newJob = document.getElementById(newJobID);
+      setTimeout(() => {
+        newJob.classList.remove("hidden");
+        newJob.classList.add("jobInRight");
+        setTimeout(() => {
+          newJob.classList.remove("jobInRight");
+          newJob.classList.add("showing");
+          isAnimating = false;
+        }, 500);
+      }, 500);
+    });
+  </script>
+</div>
+
+<br><br><br><br><br><br><br><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
     
     <!-- projects -->
     <div id="project-header-static"></div>
@@ -631,104 +1091,6 @@
         Designed and built by Dawson Metzger-Fleetwood
       </p>
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <!-- ============================
-     JOBS SECTION (HTML ONLY)
-     ============================ -->
-<div id="jobs-header-static"></div>
-<div class="jobs-section-wrapper" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-once="true">
-  <div class="jobs-card">
-    <div id="jobs-header-wrapper">
-      <h2 id="jobs-header">Where I've Worked</h2>
-      <a id="jobs-header-spacer"></a>
-    </div>
-
-    <div id="jobs-wrapper">
-      <!-- Left Menu (with sliding indicator + highlight) -->
-      <div id="jobs-menu">
-        <div class="jobs-menu-indicator"></div>
-        <div class="jobs-menu-item" data-content-id="job-1">About Objects</div>
-        <!-- Removed purple background on second item -->
-        <div class="jobs-menu-item" data-content-id="job-2">Johns Hopkins University</div>
-        <div class="jobs-menu-item" data-content-id="job-3">Visual Language Associates</div>
-        <div class="jobs-menu-item" data-content-id="job-4">Startup Shell</div>
-      </div>
-
-      <!-- Right Content (fades in/out) -->
-      <div id="jobs-content">
-        <div id="job-1" class="jobs-hidden">
-          <div class="job-info">
-            <h1 class="job-title">Software Engineer @ About Objects</h1>
-            <p class="job-dates">July 2023 - Present</p>
-            <p class="job-description">
-              Worked on building scalable web apps and microservices. 
-              Focused on backend (Node + Express), performance optimization, 
-              and cross-functional collaboration with front-end teams. 
-              Coordinated with QA, product managers, and DevOps on multiple releases.
-            </p>
-          </div>
-        </div>
-
-        <div id="job-2" class="jobs-hidden">
-          <div class="job-info">
-            <h1 class="job-title">Guest Lecturer @ Johns Hopkins University</h1>
-            <p class="job-dates">Spring 2024</p>
-            <p class="job-description">
-              Contributed to the iOS/visionOS team, implementing AR features 
-              using RealityKit. Collaborated on bug fixes and new feature rollouts 
-              under tight deadlines. Learned the fundamentals of Swift concurrency.
-            </p>
-          </div>
-        </div>
-
-        <div id="job-3" class="jobs-hidden">
-          <div class="job-info">
-            <h1 class="job-title">Technical Co-Founder @ Visual Language Associates</h1>
-            <p class="job-dates">September 2019 - July 2023</p>
-            <p class="job-description">
-              Built custom websites for small businesses, focusing on 
-              performance and SEO. Integrated e-commerce solutions and 
-              set up CI/CD pipelines for smooth deployments. Learned a lot 
-              about client communication and requirements gathering.
-            </p>
-          </div>
-        </div>
-
-        <div id="job-4" class="jobs-hidden">
-          <div class="job-info">
-            <h1 class="job-title">September 2022 - June 2023</h1>
-            <p class="job-description">
-              Provided technical consulting for startup projects. 
-              Advised on software architecture, cloud deployment strategies, 
-              and cost-effective solutions. Conducted code reviews and 
-              technology stack evaluations.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-
       <!-- work experience -->
       <!-- contact me (with testimonials maybe?) -->
   </div>

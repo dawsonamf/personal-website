@@ -632,47 +632,6 @@ createTypingAnimation('typing-text');
 
 
 
-// ============================
-// JOBS SECTION (JS ONLY)
-// ============================
-function initJobsSection() {
-  const menuItems = document.querySelectorAll('.jobs-menu-item');
-  const allJobs = document.querySelectorAll('#jobs-content > div');
-  const indicator = document.querySelector('.jobs-menu-indicator');
-  let activeItem = null;
 
-  menuItems.forEach(item => {
-    item.addEventListener('click', () => {
-      // Highlight the chosen menu item
-      if (activeItem) activeItem.classList.remove('jobs-menu-item-selected');
-      item.classList.add('jobs-menu-item-selected');
-      activeItem = item;
 
-      // Slide the indicator to match the clicked item’s vertical position
-      indicator.style.transform = `translateY(${item.offsetTop}px)`;
 
-      // Fade out any currently visible job, then fade in the new one
-      allJobs.forEach(job => {
-        if (job.classList.contains('jobs-showing')) {
-          job.classList.remove('jobs-fade-in');
-          job.classList.add('jobs-fade-out');
-          setTimeout(() => {
-            job.classList.remove('jobs-fade-out', 'jobs-showing');
-            job.classList.add('jobs-hidden');
-          }, 350);
-        }
-        if (job.id === item.dataset.contentId) {
-          setTimeout(() => {
-            job.classList.remove('jobs-hidden');
-            job.classList.add('jobs-showing', 'jobs-fade-in');
-          }, 350);
-        }
-      });
-    });
-  });
-
-  // Auto-select the first job by default (optional):
-  // if (menuItems.length) menuItems[0].click();
-}
-
-document.addEventListener('DOMContentLoaded', initJobsSection);
