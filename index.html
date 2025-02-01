@@ -18,7 +18,6 @@
   <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" defer></script>
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js" defer></script> -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
   <script src="script.js" defer></script>
 </head>
@@ -33,8 +32,6 @@
         <li><a class="menu-spacer"></a></li>
         <li><a class="menu-item" href="#project-header-static">Projects</a></li>
         <li><a class="menu-spacer"></a></li>
-        <!-- <li><a class="menu-item" href="#">Experience</a></li>
-        <li><a class="menu-spacer"></a></li> -->
         <li><a class="menu-item" href="#contact">Contact</a></li>
         <li><a class="menu-spacer"></a></li>
         <li><a class="menu-item" id="resume-link" href="https://www.dawsonamf.com/resources/Resume.pdf" target="_blank">Resume</a></li>      </ul>
@@ -45,7 +42,6 @@
     </div>
     <div class="header-menu-container">
       <a class="name-logo" href="https://www.dawsonamf.com/">D</a>
-      <!-- <p class="name-logo2">D</p> -->
       <nav class="static-menu">
         <ul class="menu-list">
           <li><a class="menu-item" href="#about">About</a></li>
@@ -54,8 +50,6 @@
           <li><a class="menu-spacer"></a></li>
           <li><a class="menu-item" href="#project-header-static">Projects</a></li>
           <li><a class="menu-spacer"></a></li>
-          <!-- <li><a class="menu-item" href="#">Experience</a></li>
-          <li><a class="menu-spacer"></a></li> -->
           <li><a class="menu-item" href="#contact">Contact</a></li>
           <li><a class="menu-spacer"></a></li>
           <li><a class="menu-item" id="resume-link" href="https://www.dawsonamf.com/resources/Resume.pdf" target="_blank">Resume</a></li>        </ul>
@@ -261,245 +255,297 @@
 
 
 
+<div class="jobs-section-container"      
+  data-aos="fade-up" 
+  data-aos-easing="ease-in-out"
+  data-aos-once="true">
 
+  <div id="jobs-header-static"></div>
+  <div id="project-header-wrapper">
+    <h2 id="project-header" style="color: var(--myBlue);">Where I've Worked</h2>
+    <a id="project-header-spacer"></a>
+  </div>
 
+    <!-- Jobs Section -->
+  <div id="jobs-section">
+    <style>
 
+      .jobs-section-container {
+        height: 650px;
+      }
 
+      #jobs-header-static {
+        visibility: hidden;
+      }
 
+      #jobs-header {
+        color: var(--myBlue);
+        font-size: 40px;
+        padding: 20px;
+        margin: 10px;
+        margin-bottom: 0px;
+      }
 
-
-<!-- Jobs Section -->
-<div id="jobs-section">
-  <style>
-    /* Container for the entire jobs section */
-    #jobs-section {
-      position: relative;
-      max-width: 1180px;
-      margin: 0 auto;
-      width: 100%;
-      font-family: 'Roboto', sans-serif;
-      color: #e6f1ff;
-    }
-    @media (min-width: 1101px) {
-      #jobs-section {
+      #jobs-header-wrapper {
         display: flex;
-        flex-direction: row;
-        gap: 40px;
+        align-items: center;
+        margin-bottom: 20px;
       }
-    }
-    @media (max-width: 1100px) {
+
+      #jobs-header-spacer {
+        background-color: var(--myGray1);
+        flex-grow: 1;
+        height: 1px;
+        margin-right: 10px;
+        margin-left: auto;
+        transform: translateY(5px);
+      }
+
+      /* Container for the entire jobs section */
       #jobs-section {
-        display: block;
+        position: relative;
+        max-width: 1180px;
+        margin: 0 auto;
+        width: calc(100% - 20px);
+        font-family: 'Roboto', sans-serif;
+        color: #e6f1ff;
+        /* height: 520px; */
       }
-    }
-    /* Navigation container: allow overflow visible so highlight isn’t clipped */
-    .nav-container {
-      position: relative;
-      overflow-x: visible; /* changed from auto to visible */
-      white-space: nowrap;
-      scrollbar-width: none;
-      -webkit-overflow-scrolling: touch;
-      flex-shrink: 0;
-      border-left: 3px solid #253347;
-      z-index: 1;
-      align-self: flex-start;
-    }
-    .nav-container::-webkit-scrollbar {
-      display: none;
-    }
-    .menu {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-      width: 200px;
-      position: relative;
-    }
-    .menu li {
-      margin: 0;
-      cursor: pointer;
-      color: #7B8A9A;
-      padding: 12px 16px;
-      font-size: 16px;
-      transition: background-color 0.2s, color 0.2s;
-    }
-    @media (min-width: 1101px) {
-      .menu li {
-        border-top-right-radius: 6px;
-        border-bottom-right-radius: 6px;
+
+      @media (min-width: 1100px) {
+        #jobs-section {
+          display: flex;
+          flex-direction: row;
+          gap: 40px;
+        }
       }
-    }
-    @media (max-width: 1100px) {
-      .menu li {
-        border-top-left-radius: 6px;
-        border-top-right-radius: 6px;
+      @media (max-width: 1100px) {
+        #jobs-section {
+          display: block;
+        }
       }
-    }
-    .menu li:hover {
-      background: #253347;
-    }
-    .menu li.selected {
-      background: #192232;
-      color: #61ffda;
-    }
-    .highlight {
-      position: absolute;
-      background: #61ffda;
-      box-shadow: 0 0 8px #61ffda;
-      transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
-      pointer-events: none;
-      z-index: 999; /* ensure highlight is above the nav bar */
-    }
-    @media (max-width: 1100px) {
+      /* Outer nav container: no overflow clipping so highlight can be visible */
       .nav-container {
-        border-left: none;
-        border-bottom: 2px solid #253347;
+        position: relative;
+        overflow-x: visible;
+        white-space: nowrap;
+        z-index: 1;
+        align-self: flex-start;
+        border-left: 3px solid #253347;
+      }
+      /* Inner scrollable wrapper for mobile */
+      .menu-scroll-wrapper {
+        overflow-x: auto;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+      .menu-scroll-wrapper::-webkit-scrollbar {
+        display: none;
       }
       .menu {
-        display: inline-flex;
-        min-width: 100%;
-        width: auto;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 225px;
+        position: relative;
       }
       .menu li {
-        display: inline-block;
+        margin: 0;
+        cursor: pointer;
+        color: #7B8A9A;
+        padding: 12px 16px;
+        font-size: 16px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+      @media (min-width: 1101px) {
+        .menu li {
+          border-top-right-radius: 6px;
+          border-bottom-right-radius: 6px;
+        }
+      }
+      @media (max-width: 1100px) {
+        .menu li {
+          border-top-left-radius: 6px;
+          border-top-right-radius: 6px;
+        }
+      }
+      .menu li:hover {
+        background: #253347;
+      }
+      .menu li.selected {
+        background: #192232;
+        color: var(--myBlue);
       }
       .highlight {
-        height: 2px;
-        border-radius: 0;
+        position: absolute;
+        background: var(--myBlue);
+        box-shadow: 0 0 8px #61ffda;
+        transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
+        pointer-events: none;
+        z-index: 999;
       }
-    }
-    /* Job details container: height auto */
-    #jobs-content-wrapper {
-      position: relative;
-      flex: 1;
-    }
-    @media (max-width: 1100px) {
+      @media (max-width: 1100px) {
+        .nav-container {
+          border-left: none;
+          overflow-x: hidden;
+        }
+        .menu-scroll-wrapper {
+          border-bottom: 2px solid #253347;
+        }
+        .menu {
+          display: inline-flex;
+          min-width: 100%;
+          width: auto;
+        }
+        .menu li {
+          display: inline-block;
+        }
+        .highlight {
+          height: 2px;
+          border-radius: 0;
+        }
+      }
+      /* Job details container: height auto */
       #jobs-content-wrapper {
-        margin-top: 20px;
+        position: relative;
+        flex: 1;
       }
-    }
-    /* Job content card */
-    .job-content {
-      position: relative;
-      width: 100%;
-      background-color: #2c2c2c;
-      border-radius: var(--border-radius);
-      padding: 20px;
-      margin: 0;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      overflow: hidden;
-      color: #e6f1ff;
-    }
-    .job-content.hidden {
-      display: none;
-    }
-    .job-content.showing {
-      display: flex;
-      z-index: 1;
-    }
-    .jobOutRight {
-      transform: translateX(1100px);
-      transition: transform 0.5s ease-in-out;
-    }
-    .jobInRight {
-      transform: translateX(1100px);
-      animation: jobSlideInRight 0.5s forwards ease-in-out;
-    }
-    @keyframes jobSlideInRight {
-      0%   { transform: translateX(1100px); }
-      100% { transform: translateX(0); }
-    }
-    .job-title {
-      font-size: 24px;
-      color: #61ffda;
-      margin-bottom: 5px;
-    }
-    .job-dates {
-      font-size: 15px;
-      color: #8892b0;
-      margin-bottom: 10px;
-    }
-    .job-bullets {
-      list-style-type: disc;
-      padding-left: 20px;
-      line-height: 1.5;
-    }
-  </style>
-  <!-- Left nav menu -->
-  <div class="nav-container" id="navContainer">
-    <ul class="menu" id="menuList">
-      <li class="selected" data-job="job-1">Upstatement</li>
-      <li data-job="job-2">Apple</li>
-      <li data-job="job-3">Scout Studio</li>
-      <li data-job="job-4">Starry</li>
-      <li data-job="job-5">MullenLowe</li>
-    </ul>
-    <div class="highlight" id="highlight"></div>
-  </div>
-  <!-- Right side job details -->
-  <div id="jobs-content-wrapper">
-    <div class="job-content showing" id="job-1">
-      <h3 class="job-title">Software Engineer @ Upstatement</h3>
-      <div class="job-dates">Jan 2021 – Present</div>
-      <ul class="job-bullets">
-        <li>Built custom WordPress themes and React-based frontends.</li>
-        <li>Led performance optimization efforts, cutting load times by 40%.</li>
-        <li>Built custom WordPress themes and React-based frontends.</li>
-        <li>Led performance optimization efforts, cutting load times by 40%.</li>
-        <li>Built custom WordPress themes and React-based frontends.</li>
-        <li>Led performance optimization efforts, cutting load times by 40%.</li>
-        <li>Built custom WordPress themes and React-based frontends.</li>
-        <li>Led performance optimization efforts, cutting load times by 40%.</li>
-        <li>Built custom WordPress themes and React-based frontends.</li>
-        <li>Led performance optimization efforts, cutting load times by 40%.</li>
-      </ul>
+      @media (max-width: 1100px) {
+        #jobs-content-wrapper {
+          margin-top: 20px;
+        }
+      }
+      /* Job content card */
+      .job-content {
+        position: relative;
+        width: 100%;
+        background-color: #2c2c2c;
+        border-radius: var(--border-radius);
+        padding: 20px;
+        margin: 0;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        overflow: hidden;
+        color: #e6f1ff;
+      }
+      .job-content.hidden {
+        display: none;
+      }
+      .job-content.showing {
+        display: flex;
+        z-index: 1;
+      }
+      .jobOutRight {
+        transform: translateX(1100px);
+        transition: transform 0.5s ease-in-out;
+      }
+      .jobInRight {
+        transform: translateX(1100px);
+        animation: jobSlideInRight 0.5s forwards ease-in-out;
+      }
+      @keyframes jobSlideInRight {
+        0%   { transform: translateX(1100px); }
+        100% { transform: translateX(0); }
+      }
+      .job-title {
+        font-size: 24px;
+        color: var(--myBlue);
+        margin-bottom: 5px;
+      }
+      .job-dates {
+        /* font-size: 15px;
+        color: #8892b0;
+        margin-bottom: 10px; */
+
+        font-family: 'SF Mono', monospace;
+        font-size: 15px;
+        color: var(--myGray1);
+      }
+      .job-bullets {
+        list-style-type: disc;
+        padding-left: 20px;
+        line-height: 1.5;
+      }
+    </style>
+    <!-- Left nav menu -->
+    <div class="nav-container" id="navContainer">
+      <div class="menu-scroll-wrapper">
+        <ul class="menu" id="menuList">
+          <li class="selected job-menu-item" data-job="job-1">About Objects</li>
+          <li class="job-menu-item" data-job="job-2">Johns Hopkins University</li>
+          <li class="job-menu-item" data-job="job-3">Visual Language Associates</li>
+          <li class="job-menu-item" data-job="job-4">Startup Shell</li>
+        </ul>
+      </div>
+      <div class="highlight" id="highlight"></div>
     </div>
-    <div class="job-content hidden" id="job-2">
-      <h3 class="job-title">Frontend Engineer @ Apple</h3>
-      <div class="job-dates">Jun 2019 – Dec 2020</div>
-      <ul class="job-bullets">
-        <li>Developed new UI features in Swift and JavaScript.</li>
-        <li>Maintained complex build pipelines and CI/CD processes.</li>
-      </ul>
+    <!-- Right side job details -->
+    <div id="jobs-content-wrapper">
+      <div class="job-content showing" id="job-1">
+        <h3 class="job-title">Software Engineer @ About Objects</h3>
+        <div class="job-dates">July 2023 – Present</div>
+        <!-- <div class="project-tools">July 2023 – Present</div> -->
+        <ul class="job-bullets">
+          <li>Led development of a 3D object recognition pipeline for Vision Pro, enabling detection and rotation inference from 200 images.</li>
+          <li>Supported use case for a horizontal oil drilling company to analyze industrial drill bit components, surfacing history, quality, and repair procedures.</li>
+          <li>Researched and implemented innovative approaches that garnered interest from Apple.</li>
+          <li>Worked extensively on VisionOS, iPadOS, and iOS projects, specializing in AR/VR development using RealityKit.</li>
+          <li>Wrote software to automate the company’s billing process, from sending reminders to generating reports.</li>
+          <li>Led the development of About Object’s new website. Incorporated custom graphics using Three.js, wrote multiple custom plugins for WordPress and a from-scratch PHP server.</li>
+          <li>Built LLM toolchains for enterprise and government clients.</li>
+          <li>Processed unstructured documents into structured data models for app visualization.</li>
+          <li>Created pipelines to populate official forms from structured data models or detailed text descriptions, tailored to meet stringent enterprise and government formatting requirements.</li>
+          <li>Selected to lead the company’s AI blog, writing articles on autoencoders, reinforcement learning, and connecting transformers to graph neural networks.</li>
+        </ul>
+      </div>
+      <div class="job-content hidden" id="job-2">
+        <h3 class="job-title">Guest Lecturer @ Johns Hopkins University</h3>
+        <div class="job-dates">Spring 2024</div>
+        <ul class="job-bullets">
+          <li>Presented to interpreters on statistical concepts to enhance research interpretation, covering topics from fundamentals to the central limit theorem and multiple linear regression.</li>
+        </ul>
+      </div>
+      <div class="job-content hidden" id="job-3">
+        <h3 class="job-title">Technical Co-Founder @ Visual Language Associates</h3>
+        <div class="job-dates">September 2019 - July 2023</div>
+        <!-- <div class="project-tools">September 2019 - July 2023</div> -->
+        <ul class="job-bullets">
+          <li>Co-founder of an agency that provides signed language interpreting and cued language transliteration services, successfully securing contracts with the MD state government, and serving over two dozen clients in the DMV area with an average contract value of over $90,000.</li>
+          <li>Served as a cued language transliterator, directly providing interpretation/transliteration services to consumers.</li>
+          <li>Responsible for coordinating scheduling with school officials and other interpreters and transliterators, as well as preparing and leading language and policy training sessions. Assisted with recruiting, onboarding, and sales.</li>
+          <li>Developed methodology to screen employees, clients, and contracts, as well as match clients with service providers.</li>
+          <li>The Auto-cuer was developed for Visual Language Associates.</li>
+        </ul>
+      </div>
+      <div class="job-content hidden" id="job-4">
+        <h3 class="job-title">Fellow @ Startup Shell</h3>
+        <div class="job-dates">Fall 2022</div>
+        <!-- <div class="project-tools">Fall 2022</div> -->
+        <ul class="job-bullets">
+          <li>Startup Shell is UMD’s student-run startup incubator, founding home of ventures collectively worth over $1 billion.</li>
+          <li>As a fellow, was available to consult and assist on all aspects of product development for a variety of ventures.</li>
+          <li>Some ventures that launched during my tenure included a prompt engineering website with over 100,000 monthly visitors and a Discord server with over 5,000 active members, a farmland valuation AI model, and a patient management platform for underfunded hospitals in Africa.</li>
+        </ul>
+      </div>
     </div>
-    <div class="job-content hidden" id="job-3">
-      <h3 class="job-title">Developer @ Scout Studio</h3>
-      <div class="job-dates">Jan 2018 – May 2019</div>
-      <ul class="job-bullets">
-        <li>Managed multiple client sites using Node.js and Express.</li>
-        <li>Implemented real-time chat functionality with WebSockets.</li>
-      </ul>
-    </div>
-    <div class="job-content hidden" id="job-4">
-      <h3 class="job-title">Software Intern @ Starry</h3>
-      <div class="job-dates">Jun 2017 – Aug 2017</div>
-      <ul class="job-bullets">
-        <li>Created internal tools to automate recurring engineering tasks.</li>
-        <li>Collaborated on a small agile team to deliver new product features.</li>
-      </ul>
-    </div>
-    <div class="job-content hidden" id="job-5">
-      <h3 class="job-title">Web Developer @ MullenLowe</h3>
-      <div class="job-dates">Jan 2016 – May 2017</div>
-      <ul class="job-bullets">
-        <li>Worked on marketing sites, ensuring brand consistency across pages.</li>
-        <li>Optimized images and styles for minimal load times.</li>
-      </ul>
-    </div>
-  </div>
-  <script>
-    const menuList = document.getElementById("menuList");
-    const highlight = document.getElementById("highlight");
-    let selectedItem = document.querySelector(".menu li.selected");
-    let isAnimating = false;
-    function isMobileLayout() {
-      return window.innerWidth <= 1100;
-    }
-    function moveHighlight(target) {
+    <script>
+      const menuList = document.getElementById("menuList");
+      const highlight = document.getElementById("highlight");
+      let selectedItem = document.querySelector(".menu li.selected");
+      let isAnimating = false;
+      function isMobileLayout() {
+        return window.innerWidth <= 1100;
+      }
+      function moveHighlight(target, animate = true) {
+      animate
+        ? highlight.style.transition = "top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s"
+        : highlight.style.transition = "none";
       if (isMobileLayout()) {
-        highlight.style.left = target.offsetLeft + "px";
+        const scrollWrapper = document.querySelector('.menu-scroll-wrapper');
+        const scrollLeft = scrollWrapper ? scrollWrapper.scrollLeft : 0;
+        highlight.style.left = (target.offsetLeft - scrollLeft) + "px";
         highlight.style.width = target.offsetWidth + "px";
         highlight.style.top = (menuList.offsetTop + menuList.offsetHeight) + "px";
         highlight.style.height = "2px";
@@ -512,51 +558,72 @@
         highlight.style.borderRadius = "6px";
       }
     }
+
     window.addEventListener("resize", () => {
-      if (selectedItem) moveHighlight(selectedItem);
+      if (selectedItem) moveHighlight(selectedItem, true);
     });
     window.addEventListener("load", () => {
-      if (selectedItem) moveHighlight(selectedItem);
+      if (selectedItem) moveHighlight(selectedItem, true);
     });
+    const scrollWrapper = document.querySelector('.menu-scroll-wrapper');
+    if (scrollWrapper) {
+      scrollWrapper.addEventListener("scroll", () => {
+        if (selectedItem) moveHighlight(selectedItem, false);
+      });
+    }
+
     menuList.addEventListener("click", (e) => {
       if (e.target.tagName.toLowerCase() === "li") {
         if (isAnimating) return;
         selectedItem.classList.remove("selected");
         e.target.classList.add("selected");
         selectedItem = e.target;
-        moveHighlight(selectedItem);
+        moveHighlight(selectedItem, true);
       }
     });
-    menuList.addEventListener("click", (e) => {
-      if (e.target.tagName.toLowerCase() !== "li") return;
-      if (isAnimating) return;
-      isAnimating = true;
-      const newJobID = e.target.getAttribute("data-job");
-      const currentlyShowing = document.querySelector(".job-content.showing");
-      if (!currentlyShowing || currentlyShowing.id === newJobID) {
-        isAnimating = false;
-        return;
-      }
-      currentlyShowing.classList.add("jobOutRight");
-      setTimeout(() => {
-        currentlyShowing.classList.remove("jobOutRight", "showing");
-        currentlyShowing.classList.add("hidden");
-      }, 500);
-      const newJob = document.getElementById(newJobID);
-      setTimeout(() => {
-        newJob.classList.remove("hidden");
-        newJob.classList.add("jobInRight");
-        setTimeout(() => {
-          newJob.classList.remove("jobInRight");
-          newJob.classList.add("showing");
-          isAnimating = false;
-        }, 500);
-      }, 500);
-    });
-  </script>
-</div>
 
+      menuList.addEventListener("click", (e) => {
+        if (e.target.tagName.toLowerCase() !== "li") return;
+        if (isAnimating) return;
+        isAnimating = true;
+        const newJobID = e.target.getAttribute("data-job");
+        const currentlyShowing = document.querySelector(".job-content.showing");
+        if (!currentlyShowing || currentlyShowing.id === newJobID) {
+          isAnimating = false;
+          return;
+        }
+        currentlyShowing.classList.add("jobOutRight");
+        setTimeout(() => {
+          currentlyShowing.classList.remove("jobOutRight", "showing");
+          currentlyShowing.classList.add("hidden");
+        }, 500);
+        const newJob = document.getElementById(newJobID);
+        setTimeout(() => {
+          newJob.classList.remove("hidden");
+          newJob.classList.add("jobInRight");
+          setTimeout(() => {
+            newJob.classList.remove("jobInRight");
+            newJob.classList.add("showing");
+            isAnimating = false;
+          }, 500);
+        }, 500);
+      });
+
+      document.querySelectorAll('.job-menu-item').forEach(item => {
+      item.addEventListener('mouseover', () => {
+        document.querySelector('.cursor-follow').classList.add('cursor-follow-clickable');
+      });
+    
+      item.addEventListener('mouseout', () => {
+        document.querySelector('.cursor-follow').classList.remove('cursor-follow-clickable');
+      });
+    });
+    </script>
+  </div>
+</div>
 <br><br><br><br><br><br><br><br>
+
+
 
 
 
