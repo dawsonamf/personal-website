@@ -278,7 +278,6 @@
       margin: 0 auto;
       width: 100%;
       font-family: 'Roboto', sans-serif;
-      /* Content remains white */
       color: #e6f1ff;
     }
     @media (min-width: 1101px) {
@@ -293,10 +292,10 @@
         display: block;
       }
     }
-    /* Navigation container: force height to menu content only and allow scrolling */
+    /* Navigation container: allow overflow visible so highlight isn’t clipped */
     .nav-container {
       position: relative;
-      overflow-x: auto;
+      overflow-x: visible; /* changed from auto to visible */
       white-space: nowrap;
       scrollbar-width: none;
       -webkit-overflow-scrolling: touch;
@@ -348,7 +347,7 @@
       box-shadow: 0 0 8px #61ffda;
       transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
       pointer-events: none;
-      z-index: 999; /* Increased z-index so it sits on top */
+      z-index: 999; /* ensure highlight is above the nav bar */
     }
     @media (max-width: 1100px) {
       .nav-container {
@@ -502,7 +501,6 @@
       if (isMobileLayout()) {
         highlight.style.left = target.offsetLeft + "px";
         highlight.style.width = target.offsetWidth + "px";
-        // Position highlight at the bottom of the menu list
         highlight.style.top = (menuList.offsetTop + menuList.offsetHeight) + "px";
         highlight.style.height = "2px";
         highlight.style.borderRadius = "0";
