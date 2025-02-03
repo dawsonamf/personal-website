@@ -766,8 +766,7 @@
       <a id="project-header-spacer"></a>
     </div>
 
-    <div id="project-menu-mobile">
-      <!-- <div id="underline"></div> -->
+    <!-- <div id="project-menu-mobile">
       <div class="project-menu-item-container">
           <div class="project-menu-item" data-content-id="content-1">Amino Amigo</div>
       </div>
@@ -801,10 +800,7 @@
       <div class="project-menu-item-container">
         <div class="project-menu-item" data-content-id="content-11">Deep RL</div>
       </div>
-      <!-- <div class="project-menu-item-container">
-          <div class="project-menu-item" data-content-id="content-8">And More</div>
-      </div> -->
-  </div>
+  </div> -->
   
 
     <div id="project-wrapper">
@@ -1030,7 +1026,7 @@
 
       </div>
 
-      <div id="project-menu">
+      <!-- <div id="project-menu">
         <p class="project-menu-heading" style="border-top: 0px; padding-top: 0px; /* margin-top: 0px; */">Featured</p>
         <div class="project-menu-item" data-content-id="content-1">Amino Amigo</div>
         <div class="project-menu-item" data-content-id="content-2">LexChat</div>
@@ -1045,10 +1041,148 @@
         <div class="project-menu-item" data-content-id="content-9">(AO Website)</div>
         <div class="project-menu-item" data-content-id="content-10">(Pipeline)</div>
         <div class="project-menu-item" data-content-id="content-11">Deep RL</div>
-        <!-- <div class="project-menu-item" data-content-id="content-8">And More</div> -->
+      </div> -->
+
+      <div class="project-nav-container" id="projectNavContainer">
+        <div class="menu-scroll-wrapper">
+          <ul class="project-menu" id="menuList">
+            <li class="selected project-menu-item" data-content-id="content-1">Amino Amigo</li>
+            <li class="project-menu-item" data-content-id="content-2">LexChat</li>
+            <li class="project-menu-item" data-content-id="content-3">Rotobrush</li>
+            <li class="project-menu-item" data-content-id="content-4">Panorama Stitch</li>
+            <li class="project-menu-item" data-content-id="content-5">Other ML</li>
+            <li class="project-menu-item" data-content-id="content-6">MicroCaml</li>
+            <li class="project-menu-item" data-content-id="content-7">Architecture</li>
+            <li class="project-menu-item" data-content-id="content-8">Deep RL</li>
+          </ul>
+        </div>
+        <div class="project-nav-highlight" id="project-nav-highlight"></div>
       </div>
     </div>
   </div>
+
+  <style>
+    /* Dawson */
+      .project-nav-container {
+        position: relative;
+        overflow-x: visible;
+        white-space: nowrap;
+        z-index: 1;
+        align-self: flex-start;
+        border-right: 3px solid #253347;
+        text-align: right;
+      }
+      .project-menu {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        width: 175px;
+        position: relative;
+        padding-left: 30px;
+      }
+      .project-menu li {
+        margin: 0;
+        cursor: pointer;
+        color: #7B8A9A;
+        padding: 12px 16px;
+        font-size: 16px;
+        transition: background-color 0.2s, color 0.2s;
+      }
+      @media (min-width: 1101px) {
+        .project-menu li {
+          border-top-left-radius: 6px;
+          border-bottom-left-radius: 6px;
+        }
+      }
+      @media (max-width: 1100px) {
+        .project-menu li {
+          border-top-left-radius: 6px;
+          border-top-right-radius: 6px;
+        }
+      }
+      .project-menu li:hover {
+        background: #253347;
+      }
+      .project-menu li.selected {
+        /* background: #192232; */
+        background: color-mix(in srgb, var(--project-color1) 5%, transparent);
+        color: var(--project-color1);
+      }
+      .project-nav-highlight {
+        position: absolute;
+        background: var(--project-color1);
+        box-shadow: 0 0 8px var(--project-color1);
+        transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
+        pointer-events: none;
+        z-index: 999;
+
+      }
+      @media (max-width: 1100px) {
+        .project-nav-container {
+          border-left: none;
+          overflow-x: hidden;
+        }
+        /* .menu-scroll-wrapper {
+          border-bottom: 2px solid #253347;
+        } */
+        .project-menu {
+          display: inline-flex;
+          min-width: 100%;
+          width: auto;
+        }
+        .project-menu li {
+          display: inline-block;
+        }
+        .project-nav-highlight {
+          height: 2px;
+          border-radius: 0;
+        }
+      }
+  </style>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+  const menu = document.querySelector(".project-nav-container .project-menu");
+  const highlight = document.getElementById("project-nav-highlight");
+  if (!menu || !highlight) return;
+  let selected = menu.querySelector("li.selected") || menu.querySelector("li");
+  function moveProjectHighlight(animate = true) {
+    highlight.style.transition = animate 
+      ? "top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s"
+      : "none";
+    if (window.innerWidth <= 1100) {
+      const scrollWrapper = menu.closest('.menu-scroll-wrapper');
+      const scrollLeft = scrollWrapper ? scrollWrapper.scrollLeft : 0;
+      highlight.style.left = (selected.offsetLeft - scrollLeft) + "px";
+      highlight.style.width = selected.offsetWidth + "px";
+      highlight.style.top = (menu.offsetTop + menu.offsetHeight) + "px";
+      highlight.style.height = "2px";
+      highlight.style.borderRadius = "0";
+    } else {
+      highlight.style.top = selected.offsetTop + "px";
+      highlight.style.height = selected.offsetHeight + "px";
+      // Position the highlight to the right edge of the li,
+      // then translate it right by its own width (3px)
+      highlight.style.left = (selected.offsetLeft + selected.offsetWidth) + "px";
+      highlight.style.width = "3px";
+      highlight.style.borderRadius = "6px";
+      // Alternatively, you can use a transform to shift it right by its own width:
+      // highlight.style.transform = "translateX(3px)";
+    }
+  }
+  menu.addEventListener("click", function(e) {
+    if (e.target.tagName.toLowerCase() === "li") {
+      menu.querySelector("li.selected")?.classList.remove("selected");
+      e.target.classList.add("selected");
+      selected = e.target;
+      moveProjectHighlight(true);
+    }
+  });
+  window.addEventListener("resize", () => moveProjectHighlight(true));
+  window.addEventListener("load", () => moveProjectHighlight(true));
+});
+
+  </script>
     <br><br><br><br><br><br><br><br>
     <br><br><br><br>
 
