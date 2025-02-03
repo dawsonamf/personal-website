@@ -696,12 +696,12 @@ body {
   padding: 7.5px;
   /* line height 2 em */
   /* center the text */
-  text-align: center;
+  /* text-align: center; */
 }
 
 .project-menu-item:hover {
-  color: var(--myBlue);
-  transition: color 0.3s ease-in-out;
+  /* color: var(--myBlue);
+  transition: color 0.3s ease-in-out; */
 }
 
 .hidden {
