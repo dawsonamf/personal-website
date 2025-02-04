@@ -460,14 +460,14 @@ $(document).ready(function() {
 
 
 // for mobile project menu selection
-$(document).ready(function() {
-  $('.project-menu-item:first').addClass('project-menu-selected'); // This line selects the first menu item and adds the 'project-menu-selected' class.
+// $(document).ready(function() {
+//   $('.project-menu-item:first').addClass('project-menu-selected'); // This line selects the first menu item and adds the 'project-menu-selected' class.
 
-  $('.project-menu-item').click(function() {
-    $('.project-menu-item').removeClass('project-menu-selected'); // Remove the 'project-menu-selected' class from all items.
-    $(this).addClass('project-menu-selected'); // Add the 'project-menu-selected' class to the clicked item.
-  });
-});
+//   $('.project-menu-item').click(function() {
+//     $('.project-menu-item').removeClass('project-menu-selected'); // Remove the 'project-menu-selected' class from all items.
+//     $(this).addClass('project-menu-selected'); // Add the 'project-menu-selected' class to the clicked item.
+//   });
+// });
 
 
 // Initialize Vanilla Tilt for all card elements

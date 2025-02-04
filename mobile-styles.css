@@ -347,6 +347,9 @@
     /* justify-content: flex-start; */
     /* position: relative; */
     padding: 0px;
+    margin-top: 20px;
+    margin-left: 0;
+    margin-right: 0;
   }
 
   
@@ -356,46 +359,39 @@
   }
 
   #project-menu-mobile {
-    display: flex;
-    /* overflow-x: scroll;  */
-        /* To make the scrollbar always visible */
+    /* display: flex;
     overflow-y: hidden;
     margin: 20px;
     margin-left: 0px;
-    margin-right: 0px;
+    margin-right: 0px; */
   }
   
   /* Customize the scrollbar style for Webkit browsers */
   #project-menu-mobile::-webkit-scrollbar {
-    display: none;
+    /* display: none; */
     /* height: 10px;
     background: transparent;  */
 }
   
   #project-menu-mobile::-webkit-scrollbar-thumb {
-    background: #888; /* Change to match your design */
-    border-radius: 20px; /* Adjust as needed */
+    /* background: #888;
+    border-radius: 20px; */
   }
   
   /* #project-menu-mobile::-webkit-scrollbar-thumb:hover {
     background: #888;
   } */
   
-  .project-menu-item {
+  /* .project-menu-item {
     cursor: pointer;
     background-color: transparent;
     transition: color 0.3s ease-in-out;
     padding: 20px;
-    /* padding-top: 15px;
-    padding-bottom: 15px; */
-    /* line height 2 em */
-    /* center the text */
     text-align: center;
     white-space: nowrap;
-    /* make the top two corners the --border radius but the other two nothing */
     border-radius: 10px 10px 0px 0px;
-    border-bottom: 2px solid var(--myGray2); /* Adjust thickness as needed */
-  }
+    border-bottom: 2px solid var(--myGray2);
+  } */
 
   .project-menu-item-container {
     padding-bottom: 4px; /* adjust this as needed */
@@ -403,21 +399,21 @@
   }
 
   .project-menu-selected {
-    color: var(--project-color1); /* Replace 'yourSelectedColor' with your desired hex color or color name for selected item. */
+    /* color: var(--project-color1);
     background-color: var(--myGray2);
-    border-bottom: 2px solid var(--project-color1); /* Adjust thickness as needed */
+    border-bottom: 2px solid var(--project-color1); */
 }
 
   .project-menu-item:hover {
-    color: var(--myWhite);
-    transition: color 86400s;
+    /* color: var(--myWhite);
+    transition: color 86400s; */
   }
 
   #underline {
-    position: absolute;
-    height: 2px; /* Height of the underline */
-    background-color: var(--project-color1); /* Underline color */
-    transition: all 0.3s ease-in-out; /* Adjust as needed */
+    /* position: absolute;
+    height: 2px;
+    background-color: var(--project-color1);
+    transition: all 0.3s ease-in-out; */
   }
 
 
@@ -825,3 +821,5 @@
   }
   
   
+
+  /* COPYLLM */

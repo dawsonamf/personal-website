@@ -636,6 +636,7 @@ body {
     margin: 10px;
     margin-bottom: 0px;
     padding: 20px;
+    z-index: 2;
 }
 
 #project-content {
@@ -1191,9 +1192,9 @@ body {
   display: none;
 }
 
-#project-menu-mobile {
+/* #project-menu-mobile {
   display: none;
-}
+} */
 
 .project-tools-mobile {
   display: none;
