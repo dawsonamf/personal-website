@@ -71,7 +71,7 @@ body {
   position: relative;
   /* overflow-x: scroll; */
   overflow-x: hidden;
-
+  overflow-y: hidden;
 
 }
 
