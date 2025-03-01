@@ -1,5 +1,5 @@
 :root {
-  --border-radius: 20px;
+  --border-radius: 10px;
   --project-text-overlap: 250px;
   --project-menu-spacer-width: 25px;
   --socials-menu-spacer-height: 45px; /* max is 105, 80 was what I liked most*/
@@ -71,7 +71,7 @@ body {
   position: relative;
   /* overflow-x: scroll; */
   overflow-x: hidden;
-
+  overflow-y: hidden;
 
 }
 
@@ -177,7 +177,7 @@ body {
   .static-menu {
     background-color: rgba(var(--myBlack), 0.5);
     border-radius: var(--border-radius);
-    width: 400px;
+    width: 500px;
     z-index: 1;
     margin-right: 10px;
     margin-left: auto;
@@ -193,7 +193,7 @@ body {
   .moving-menu {
     background-color: rgba(var(--myBlack), 0.5);
     border-radius: var(--border-radius);
-    width: 400px;
+    width: 500px;
     z-index: 1;
     margin-right: 27px;
     margin-left: auto;
@@ -373,11 +373,11 @@ body {
 
   @keyframes slideInLeft {
     from {
-      transform: translateX(-250%);
+      transform: translate3d(-250%, 0, 0);
       visibility: visible;
     }
     to {
-      transform: translateX(0);
+      transform: translate3d(0, 0, 0);
       visibility: visible;
     }
   }
@@ -505,22 +505,23 @@ body {
 
 
 
-  /* the about and skills section */
-  .double-view-container {
-    display: flex;
-  }
-
-  .double-view-left, .double-view-right {
+  /* cards */
+  .card-style {
     padding: 20px;
     margin: 10px;
     margin-bottom: 0px;
     border-radius: var(--border-radius);
+    background-color: var(--myGray2);
+  }
+
+  /* the about and skills section */
+  .double-view-container {
+    display: flex;
   }
   
   .double-view-left {
     width: 31%;
     float: left;
-    background-color: var(--myGray2);
 
     visibility: hidden;
     /* animation: slideInLeft 1.5s ease-out;
@@ -531,7 +532,6 @@ body {
   .double-view-right {
     width: 69%;
     float: right;
-    background-color: var(--myGray2);
 
     visibility: hidden;
     /* animation: slideInRight 1.5s ease-out;
@@ -614,9 +614,8 @@ body {
 
 #project-header-spacer {
   background-color: var(--myGray1);
-  width: 73%;
+  flex-grow: 1;
   height: 1px;
-  /* align right */
   margin-right: 10px;
   margin-left: auto;
 
@@ -637,6 +636,7 @@ body {
     margin: 10px;
     margin-bottom: 0px;
     padding: 20px;
+    z-index: 2;
 }
 
 #project-content {
@@ -697,12 +697,12 @@ body {
   padding: 7.5px;
   /* line height 2 em */
   /* center the text */
-  text-align: center;
+  /* text-align: center; */
 }
 
 .project-menu-item:hover {
-  color: var(--myBlue);
-  transition: color 0.3s ease-in-out;
+  /* color: var(--myBlue);
+  transition: color 0.3s ease-in-out; */
 }
 
 .hidden {
@@ -803,7 +803,6 @@ body {
   margin-top: 10px;
   margin-right: calc(var(--project-text-overlap) + +10px);
   flex-wrap: wrap;
-  
 }
 
 .project-info {
@@ -1147,7 +1146,42 @@ body {
 
   --project-color1: #ff8a2b;
   --project-color2: var(--myGray2);
+}
 
+/* FieldOps */
+#content-8 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
+}
+
+/* AO Website */
+#content-9 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
+}
+
+/* Pipeline */
+#content-10 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
+}
+
+/* Deep RL */
+#content-11 {
+  --project-color1: rgb(216, 134, 0);
+  --project-color2: rgb(0, 0, 0);
+  --project-color3: rgb(255, 255, 255);
+
+  --project-color2: var(--myGray2);
 }
   /* an interesting orange: #FF6B2B; */
   /* --myLightSlate: #2B4162; */
@@ -1158,9 +1192,9 @@ body {
   display: none;
 }
 
-#project-menu-mobile {
+/* #project-menu-mobile {
   display: none;
-}
+} */
 
 .project-tools-mobile {
   display: none;
@@ -1174,7 +1208,19 @@ body {
   display: none;
 }
 
-
+/* COPYLLM */
 
 
   
+
+
+
+
+
+
+
+
+
+
+
+
