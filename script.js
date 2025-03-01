@@ -417,24 +417,6 @@ function setupHeaderMenu() {
 
 
 AOS.init();
-// var elementVisibility = {};
-// document.addEventListener('aos:in', ({ detail }) => {
-//   elementVisibility[$(detail).attr('id')] = true;
-// });
-// document.addEventListener('aos:out', ({ detail }) => {
-//   elementVisibility[$(detail).attr('id')] = false;
-// });
-
-// function isElementVisible(elementId) {
-//   return elementVisibility[elementId] === true;
-// }
-
-// function isDivVisible(id) {
-//   var div = document.getElementById(id);
-//   return div.classList.contains('aos-animate');
-// }
-
-
 
 
 
@@ -478,12 +460,29 @@ $(document).ready(function() {
 
 
 // for mobile project menu selection
-$(document).ready(function() {
-  $('.project-menu-item:first').addClass('project-menu-selected'); // This line selects the first menu item and adds the 'project-menu-selected' class.
+// $(document).ready(function() {
+//   $('.project-menu-item:first').addClass('project-menu-selected'); // This line selects the first menu item and adds the 'project-menu-selected' class.
 
-  $('.project-menu-item').click(function() {
-    $('.project-menu-item').removeClass('project-menu-selected'); // Remove the 'project-menu-selected' class from all items.
-    $(this).addClass('project-menu-selected'); // Add the 'project-menu-selected' class to the clicked item.
+//   $('.project-menu-item').click(function() {
+//     $('.project-menu-item').removeClass('project-menu-selected'); // Remove the 'project-menu-selected' class from all items.
+//     $(this).addClass('project-menu-selected'); // Add the 'project-menu-selected' class to the clicked item.
+//   });
+// });
+
+
+// Initialize Vanilla Tilt for all card elements
+$(document).ready(function() {
+  // Convert jQuery object to an array of DOM elements
+  var cards = $('.card').get();
+  console.log(cards)
+  VanillaTilt.init(cards, {
+    max: 10,                  // Maximum tilt rotation (degrees)
+    speed: 7500,               // Speed of the enter/exit transition
+    perspective: 1250,        // Transform perspective, lower = more extreme tilt
+    scale: 1.02,              // 1.05 = 105% scaling on hover
+    glare: false,             // Enable glare effect
+    "max-glare": 0.3,         // Maximum glare opacity (0 to 1)
+    gyroscope: true           // Enable tilt based on device orientation
   });
 });
 
@@ -606,3 +605,33 @@ createTypingAnimation('typing-text');
 
 // Legacy stuff
 // var offset = (target === "#contact") ? 80 : 40;
+
+
+// COPYLLM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
