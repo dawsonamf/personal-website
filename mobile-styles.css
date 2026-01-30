@@ -787,7 +787,6 @@
   /* font-size: 22px; */
   /* font-weight: bold; */
   color: var(--myBlue);
-  border-radius: var(--border-radius);
   border-radius: 10px;
   width: fit-content;
   border: 1px solid var(--myBlue);
