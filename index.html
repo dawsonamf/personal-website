@@ -1,4 +1,3 @@
-<!-- http://127.0.0.1:3000/Personal%20Site/index.html# -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +6,6 @@
   <title>Dawson Metzger-Fleetwood</title>
 
   <!-- Styles -->
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">  -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
@@ -27,18 +25,10 @@
 
 <body>
   <div id="main-body">
+    <header>
     <!-- the logo, header, menus, and following circle/dot cursor -->
-    <nav class="moving-menu">
-      <ul class="menu-list">
-        <li><a class="menu-item" href="#about">About</a></li>
-        <li><a class="menu-spacer"></a></li>
-        <li><a class="menu-item" href="#jobs-header-static">Experience</a></li>
-        <li><a class="menu-spacer"></a></li>
-        <li><a class="menu-item" href="#project-header-static">Projects</a></li>
-        <li><a class="menu-spacer"></a></li>
-        <li><a class="menu-item" href="#contact">Contact</a></li>
-        <li><a class="menu-spacer"></a></li>
-        <li><a class="menu-item" id="resume-link" href="resources/Resume.pdf" target="_blank">Resume</a></li>      </ul>
+    <nav class="moving-menu" aria-label="Main navigation">
+      <ul class="menu-list"></ul>
     </nav>
     <div id="cursor-container">
       <div class="cursor-follow"></div>
@@ -46,27 +36,16 @@
     </div>
     <div class="header-menu-container">
       <a class="name-logo" href="https://www.dawsonamf.com/">D</a>
-      <nav class="static-menu">
-        <ul class="menu-list">
-          <li><a class="menu-item" href="#about">About</a></li>
-          <li><a class="menu-spacer"></a></li>
-          <li><a class="menu-item" href="#jobs-header-static">Experience</a></li>
-          <li><a class="menu-spacer"></a></li>
-          <li><a class="menu-item" href="#project-header-static">Projects</a></li>
-          <li><a class="menu-spacer"></a></li>
-          <li><a class="menu-item" href="#contact">Contact</a></li>
-          <li><a class="menu-spacer"></a></li>
-          <li><a class="menu-item" id="resume-link" href="resources/Resume.pdf" target="_blank">Resume</a></li>        </ul>
+      <nav class="static-menu" aria-label="Main navigation">
+        <ul class="menu-list"></ul>
       </nav>
-      <nav class="static-menu-mobile">
-        <ul class="menu-list">
-          <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
-          <li><a class="menu-spacer"></a></li>
-          <a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a>
-          <li><a class="menu-spacer"></a></li>
-          <li><a class="menu-item" id="resume-link" href="resources/Resume.pdf" target="_blank">Resume</a></li>        </ul>
+      <nav class="static-menu-mobile" aria-label="Quick links">
+        <ul class="menu-list"></ul>
       </nav>
     </div>
+    </header>
+
+    <main>
       
 
 
@@ -74,7 +53,6 @@
     <!-- the image, typing text, sub text, and social links -->
     <div id="typing-container">
       <div id="typing-right">
-        <!-- <img id="typing-image" class="card" src="resources/profile_photo.jpeg" alt="Dawson.jpeg"> -->
         <img id="typing-image" class="card" src="resources/profile_photo_6.png" alt="Dawson.jpeg">
       </div>
       <div id="typing-left">
@@ -82,7 +60,7 @@
         <p id="sub-text">Web&nbsp;|&nbsp;iOS and visionOS&nbsp;|&nbsp;ML and RL</p>
       </div>
       <div id="socials-list">
-        <a class="socials-menu-spacer"></a>
+        <span class="socials-menu-spacer"></span>
         <br>
         <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
         <a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
@@ -91,32 +69,24 @@
         <a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a>
         <a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a>
 
-        <!-- might add -->
-        <!-- <a href="#" class="socials-item"><i class="fab fa-instagram"></i></a> -->
-        <!-- <a href="#" class="socials-item"><i class="fab fa-github"></i></a> -->
-
-        <!-- different style -->
-        <!-- <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="bx bxl-linkedin"></i></a> -->
-        <!-- <a href="mailto:dawsonamf@icloud.com" class="socials-item"><i class="far fa-envelope"></i></a> -->
         <br>
-        <a class="socials-menu-spacer"></a>
+        <span class="socials-menu-spacer"></span>
 
       </div>
-          
     </div>
-    <br><br><br><br><br><br><br><br>
+    <div class="section-spacer"></div>
 
 
 
 
     <!-- about and skills -->
-    <div class="double-view-container", id="about">
+    <section class="double-view-container" id="about">
       <div class="double-view-left card-style">
         <h2 class="about-header">About Me</h2>
         <p class="about-text">
           I’m Dawson Metzger-Fleetwood, a software engineer with dual degrees in Finance and Computer Science (Machine Learning specialization) from the University of Maryland.
           <br><br>
-          Most of my work revolves around web, iOS, and visionOS development, but my professional experience also includes working extensively with LLM toolchains, building MCP servers, skills, and CLI tools for agents, automating business processes, and developing scalable ML pipelines. Recently, my interest has been contributing to the <a href="https://github.com/anomalyco/opencode" target="_blank" class="text-link">opencode</a> API surface, expanding client coverage and enhancing some of the core functionality. I love building cool things both at work and in my free time, and I’m passionate about solving real world problems with technology.
+          Most of my work revolves around web, iOS, and visionOS development, but my professional experience also includes working extensively with LLM toolchains, building MCP servers, CLI tools, and skill packs for agents, automating business processes, and developing scalable ML pipelines. Recently, my interest has been contributing to the <a href="https://github.com/anomalyco/opencode" target="_blank" class="text-link">opencode</a> API surface, expanding client coverage and enhancing some of the core functionality. I love building cool things both at work and in my free time, and I’m passionate about solving real world problems with technology.
           <br><br>
           When I’m not coding, I’m dedicated to fitness and continuously pushing myself as a natural bodybuilder. I also love learning - whether it be a random skill, a new language, or an RL algorithm optimization. Traveling is another big part of my life. I enjoy exploring new places, immersing myself in different cultures, and collecting experiences that shape who I am.
           <br><br>
@@ -127,245 +97,41 @@
 
       <div class="double-view-right card-style">
         <h2 class="skills-header">Skills</h2>
-        <h2 class="skills-section-header" style="/*color: rgb(244, 199, 115);*/">Web</h2>
+        <h2 class="skills-section-header">Web</h2>
         <p class="skills-text">
           I have professional experience engineering full-stack web applications and interactive websites. I’ve built modern backends with Node and Bun, as well as specialized sites with PHP and custom WordPress plugins. I've led full-scale, from-scratch overhauls of enterprise websites, built production grade frontends with React as well as vanilla HTML, CSS, and JavaScript, architected CI/CD pipelines with GitHub Actions and Docker, deployed secure multi-tenant serverless applications on AWS (Lambda, DynamoDB, Cognito), managed business critical production deployments, and built integrated web experiences featuring real-time data processing with WebSockets and libraries like Three.js.
-        <h2 class="skills-section-header" style="/*color: rgb(118, 255, 127);*/">iOS and visionOS</h2>
+        <h2 class="skills-section-header">iOS and visionOS</h2>
         <p class="skills-text">
           I’ve worked extensively on iOS and visionOS projects, including advanced AR/VR development using RealityKit. I have experience with RealityKit’s entity-component-system architecture, coordinating SharePlay in 3D spaces, debugging complex and highly customized view hierarchies, package management in Xcode, concurrency in Swift 6, and building ultra high performance, heapless programs. I’m comfortable across Apple's full development stack, from optimizing performance with Instruments, managing scenes in Reality Composer Pro, deploying CI/CD pipelines with Xcode Cloud and TestFlight, and training/using ML models with Create and Core ML.
         </p>
-        <h2 class="skills-section-header" style="/*color: rgb(134, 158, 252);*/">ML and RL</h2>
-        <p style="line-height: 1.5;">
+        <h2 class="skills-section-header">ML and RL</h2>
+        <p class="skills-text">
           Professionally, I've applied machine learning to both enterprise and government systems. I designed and built a real time computer vision pipeline that trains models capable of recognizing and tracking the orientation of 3D objects using LIDAR. I’ve also fine-tuned and deployed foundation models to improve performance on domain-specific tasks.
           <br><br>
           Personally, my interest in ML extends much further. I built a transformer using only numpy, and have worked directly with embeddings, autoencoders, and more. I've had some exposure to deep reinforcement learning and loved it. I've read Reinforcement Learning: An Introduction by Sutton and Barto cover to cover and implemented some of the core algorithms: TD(λ), DQN and SARSA varieties, some policy gradients, off policy importance sampling, etc.
         </p>
       </div>
-    </div>
-    <br><br><br><br><br><br><br><br>
-
-
-
+    </section>
+    <div class="section-spacer"></div>
 
   
   <!-- Jobs Section -->
-  <div class="jobs-section-container"      
+  <section class="jobs-section-container"      
     data-aos="fade-up" 
     data-aos-easing="ease-in-out"
     data-aos-once="true">
 
   <div id="jobs-header-static"></div>
-  <div id="project-header-wrapper">
-    <h2 id="project-header" style="color: var(--myBlue);">Where I've Worked</h2>
-    <a id="project-header-spacer"></a>
+  <div class="section-header-wrapper" id="jobs-header-wrapper">
+    <h2 class="section-header" id="jobs-header">Where I've Worked</h2>
+    <span class="section-header-spacer" id="jobs-header-spacer"></span>
   </div>
 
   <div id="jobs-section">
-    <style>
-
-      .jobs-section-container {
-        /* height: 650px; */
-      }
-
-      #jobs-header-static {
-        visibility: hidden;
-      }
-
-      #jobs-header {
-        color: var(--myBlue);
-        font-size: 40px;
-        padding: 20px;
-        margin: 10px;
-        margin-bottom: 0px;
-      }
-
-      #jobs-header-wrapper {
-        display: flex;
-        align-items: center;
-        margin-bottom: 20px;
-      }
-
-      #jobs-header-spacer {
-        background-color: var(--myGray1);
-        flex-grow: 1;
-        height: 1px;
-        margin-right: 10px;
-        margin-left: auto;
-        transform: translateY(5px);
-      }
-
-      /* Container for the entire jobs section */
-      #jobs-section {
-        position: relative;
-        max-width: 1180px;
-        margin: 0 auto;
-        width: calc(100% - 20px);
-        font-family: 'Roboto', sans-serif;
-        color: #e6f1ff;
-        /* height: 520px; */
-      }
-
-      @media (min-width: 1100px) {
-        #jobs-section {
-          display: flex;
-          flex-direction: row;
-          gap: 40px;
-        }
-      }
-      @media (max-width: 1100px) {
-        #jobs-section {
-          display: block;
-        }
-      }
-      /* Outer nav container: no overflow clipping so highlight can be visible */
-      .nav-container {
-        position: relative;
-        overflow-x: visible;
-        white-space: nowrap;
-        z-index: 1;
-        align-self: flex-start;
-        border-left: 3px solid #253347;
-      }
-      /* Inner scrollable wrapper for mobile */
-      .menu-scroll-wrapper {
-        overflow-x: auto;
-        scrollbar-width: none;
-        -webkit-overflow-scrolling: touch;
-      }
-      .menu-scroll-wrapper::-webkit-scrollbar {
-        display: none;
-      }
-      .menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        width: 225px;
-        position: relative;
-      }
-      .menu li {
-        margin: 0;
-        cursor: pointer;
-        color: #7B8A9A;
-        padding: 12px 16px;
-        font-size: 16px;
-        transition: background-color 0.2s, color 0.2s;
-      }
-      @media (min-width: 1101px) {
-        .menu li {
-          border-top-right-radius: 6px;
-          border-bottom-right-radius: 6px;
-        }
-      }
-      @media (max-width: 1100px) {
-        .menu li {
-          border-top-left-radius: 6px;
-          border-top-right-radius: 6px;
-        }
-      }
-      .menu li:hover {
-        background: #253347;
-      }
-      .menu li.selected {
-        background: #192232;
-        color: var(--myBlue);
-      }
-      .highlight {
-        position: absolute;
-        background: var(--myBlue);
-        box-shadow: 0 0 8px #61ffda;
-        transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
-        pointer-events: none;
-        z-index: 999;
-      }
-      @media (max-width: 1100px) {
-        .nav-container {
-          border-left: none;
-          overflow-x: hidden;
-        }
-        .menu-scroll-wrapper {
-          border-bottom: 2px solid #253347;
-        }
-        .menu {
-          display: inline-flex;
-          min-width: 100%;
-          width: auto;
-        }
-        .menu li {
-          display: inline-block;
-        }
-        .highlight {
-          height: 2px;
-          border-radius: 0;
-        }
-      }
-      /* Job details container: height auto */
-      #jobs-content-wrapper {
-        position: relative;
-        flex: 1;
-      }
-      @media (max-width: 1100px) {
-        #jobs-content-wrapper {
-          margin-top: 20px;
-        }
-      }
-      /* Job content card */
-      .job-content {
-        position: relative;
-        width: 100%;
-        background-color: #2c2c2c;
-        border-radius: var(--border-radius);
-        padding: 20px;
-        margin: 0;
-        box-sizing: border-box;
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
-        overflow: hidden;
-        color: #e6f1ff;
-      }
-      .job-content.hidden {
-        display: none;
-      }
-      .job-content.showing {
-        display: flex;
-        z-index: 1;
-      }
-      .jobOutRight {
-        transform: translateX(1100px);
-        transition: transform 0.5s ease-in-out;
-      }
-      .jobInRight {
-        transform: translateX(1100px);
-        animation: jobSlideInRight 0.5s forwards ease-in-out;
-      }
-      @keyframes jobSlideInRight {
-        0%   { transform: translateX(1100px); }
-        100% { transform: translateX(0); }
-      }
-      .job-title {
-        font-size: 24px;
-        color: var(--myBlue);
-        margin-bottom: 5px;
-      }
-      .job-dates {
-        /* font-size: 15px;
-        color: #8892b0;
-        margin-bottom: 10px; */
-
-        font-family: 'SF Mono', monospace;
-        font-size: 15px;
-        color: var(--myGray1);
-      }
-      .job-bullets {
-        list-style-type: disc;
-        padding-left: 20px;
-        line-height: 1.5;
-      }
-    </style>
     <!-- Left nav menu -->
-    <div class="nav-container" id="navContainer">
+    <div class="nav-container" id="jobs-nav-container">
       <div class="menu-scroll-wrapper">
-        <ul class="menu" id="menuList">
+        <ul class="menu" id="jobs-menu-list">
           <li class="selected job-menu-item" data-job="job-1">About Objects</li>
           <li class="job-menu-item" data-job="job-2">Johns Hopkins University</li>
           <li class="job-menu-item" data-job="job-3">Visual Language Associates</li>
@@ -387,32 +153,13 @@
           <li>Led development of a 3D ML object recognition pipeline, enabling rotation inference from 200 images. Supported an industrial oil drill manufacturer in analyzing drill bit component history and repairs.</li>
           <li>Architected and deployed multi-tenant serverless application using AWS Lambda, DynamoDB (with GSI patterns), and Cognito for identity management; implemented secure file handling with S3/CloudFront signed URLs and Secrets Manager; automated CI/CD deployment across dev/staging/production environments.</li>
           <li>Led About Object’s AI blog, writing articles on autoencoders, reinforcement learning, GNNs, and transformers.</li>
-
-
-          <!-- <li>Led development of a 3D object recognition pipeline for enabling detection and rotation inference from 200 images.</li>
-          <li>Worked extensively on VisionOS, iPadOS, and iOS projects, specializing in AR/VR development using RealityKit, Blender, etc.</li>
-          <li>Wrote software to automate billing processes, from sending reminders to generating reports.</li>
-          <li>Led the development of About Object’s website. Incorporated custom graphics using Three.js, wrote multiple custom plugins for WordPress and a from-scratch PHP server.</li>
-          <li>Built LLM toolchains for unstructured data ingestion, and assisted compliance-based document generation for enterprise and government clients.</li>
-          <li>Selected to lead the AI blog, writing articles on autoencoders, reinforcement learning, transformers, and graph neural networks.</li> -->
-      
-          <!-- <li>Led development of a 3D object recognition pipeline for Vision Pro, enabling detection and rotation inference from 200 images.</li>
-          <li style="margin-left: 40px;">Supported use case for a horizontal oil drilling company to analyze industrial drill bit components, surfacing history, quality, and repair procedures.</li>
-          <li style="margin-left: 40px;">Researched and implemented innovative approaches that garnered interest from Apple.</li>
-          <li>Worked extensively on VisionOS, iPadOS, and iOS projects, specializing in AR/VR development using RealityKit.</li>
-          <li>Wrote software to automate the company’s billing process, from sending reminders to generating reports.</li>
-          <li>Led the development of About Object’s new website. Incorporated custom graphics using Three.js, wrote multiple custom plugins for WordPress and a from-scratch PHP server.</li>
-          <li>Built LLM toolchains for enterprise and government clients.</li>
-          <li style="margin-left: 40px;">Processed unstructured documents into structured data models for app visualization.</li>
-          <li style="margin-left: 40px;">Created pipelines to populate official forms from structured data models or detailed text descriptions, tailored to meet stringent enterprise and government formatting requirements.</li>
-          <li>Selected to lead the company’s AI blog, writing articles on autoencoders, reinforcement learning, and connecting transformers to graph neural networks.</li> -->
         </ul>
       </div>
       <div class="job-content hidden" id="job-2">
         <h3 class="job-title">Guest Lecturer @ <a href="https://cogsci.jhu.edu/" target="_blank" class="text-link">Johns Hopkins University</a></h3>
         <div class="job-dates">Spring 2024 – Present</div>
         <ul class="job-bullets">
-          <li>Led the development of employee facing applications designed to integrate internal systems and improve preparation efficiency, including creating a custom MCP server.</li>
+          <li>Led the development of employee facing applications designed to integrate internal systems and improve preparation efficiency, including creating a custom MCP server, CLI tool, and skill pack for agents.</li>
           <li>Presented to interpreters on statistical concepts to enhance research interpretation, covering topics from fundamentals to the central limit theorem and multiple linear regression.</li>
           <li>Designed accessible training materials to make complex statistical ideas understandable for non-statisticians and provided insights on applying reasoning in cognitive science research.</li>
         </ul>
@@ -420,7 +167,6 @@
       <div class="job-content hidden" id="job-3">
         <h3 class="job-title">Technical Co-Founder @ Visual Language Associates</h3>
         <div class="job-dates">September 2019 - July 2023</div>
-        <!-- <div class="project-tools">September 2019 - July 2023</div> -->
         <ul class="job-bullets">
           <li>Co-founder of an agency that provides signed language interpreting and cued language transliteration services, successfully securing contracts with the MD and VA state governments, and serving over two dozen clients in the DMV area with an average contract value of over $90,000.</li>
           <li>Led the automation and integration of client payment, payroll, and scheduling software to streamline operations.</li>
@@ -432,256 +178,37 @@
       <div class="job-content hidden" id="job-4">
         <h3 class="job-title">Fellow @ <a href="https://startupshell.org/" target="_blank" class="text-link">Startup Shell</a></h3>
         <div class="job-dates">September 2022 – Present</div>
-        <!-- <div class="project-tools">Fall 2022</div> -->
         <ul class="job-bullets">
           <li>Startup Shell is UMD’s student-run startup incubator, founding home of ventures collectively worth over $1 billion.</li>
           <li>As a fellow, assisted with product development for a variety of ventures including a prompt engineering website with over 400,000 monthly visitors and a discord server with over 50,000 active members, a farmland valuation AI model, and a patient management platform for underfunded hospitals in Africa.</li>
         </ul>
       </div>
     </div>
-    <script>
-      const menuList = document.getElementById("menuList");
-      const highlight = document.getElementById("highlight");
-      let selectedItem = document.querySelector(".menu li.selected");
-      let isAnimating = false;
-      function isMobileLayout() {
-        return window.innerWidth <= 1100;
-      }
-      function moveHighlight(target, animate = true) {
-      animate
-        ? highlight.style.transition = "top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s"
-        : highlight.style.transition = "none";
-      if (isMobileLayout()) {
-        const scrollWrapper = document.querySelector('.menu-scroll-wrapper');
-        const scrollLeft = scrollWrapper ? scrollWrapper.scrollLeft : 0;
-        highlight.style.left = (target.offsetLeft - scrollLeft) + "px";
-        highlight.style.width = target.offsetWidth + "px";
-        highlight.style.top = (menuList.offsetTop + menuList.offsetHeight) + "px";
-        highlight.style.height = "2px";
-        highlight.style.borderRadius = "0";
-      } else {
-        highlight.style.top = target.offsetTop + "px";
-        highlight.style.height = target.offsetHeight + "px";
-        highlight.style.left = "-" + 3 + "px";
-        highlight.style.width = "3px";
-        highlight.style.borderRadius = "6px";
-      }
-    }
-
-    window.addEventListener("resize", () => {
-      if (selectedItem) moveHighlight(selectedItem, true);
-    });
-    window.addEventListener("load", () => {
-      if (selectedItem) moveHighlight(selectedItem, true);
-    });
-    const scrollWrapper = document.querySelector('.menu-scroll-wrapper');
-    if (scrollWrapper) {
-      scrollWrapper.addEventListener("scroll", () => {
-        if (selectedItem) moveHighlight(selectedItem, false);
-      });
-    }
-
-    menuList.addEventListener("click", (e) => {
-      if (e.target.tagName.toLowerCase() === "li") {
-        if (isAnimating) return;
-        selectedItem.classList.remove("selected");
-        e.target.classList.add("selected");
-        selectedItem = e.target;
-        moveHighlight(selectedItem, true);
-      }
-    });
-
-      menuList.addEventListener("click", (e) => {
-        if (e.target.tagName.toLowerCase() !== "li") return;
-        if (isAnimating) return;
-        isAnimating = true;
-        const newJobID = e.target.getAttribute("data-job");
-        const currentlyShowing = document.querySelector(".job-content.showing");
-        if (!currentlyShowing || currentlyShowing.id === newJobID) {
-          isAnimating = false;
-          return;
-        }
-        currentlyShowing.classList.add("jobOutRight");
-        setTimeout(() => {
-          currentlyShowing.classList.remove("jobOutRight", "showing");
-          currentlyShowing.classList.add("hidden");
-        }, 500);
-        const newJob = document.getElementById(newJobID);
-        setTimeout(() => {
-          newJob.classList.remove("hidden");
-          newJob.classList.add("jobInRight");
-          setTimeout(() => {
-            newJob.classList.remove("jobInRight");
-            newJob.classList.add("showing");
-            isAnimating = false;
-          }, 500);
-        }, 500);
-      });
-
-      document.querySelectorAll('.job-menu-item').forEach(item => {
-      item.addEventListener('mouseover', () => {
-        document.querySelector('.cursor-follow').classList.add('cursor-follow-clickable');
-      });
-    
-      item.addEventListener('mouseout', () => {
-        document.querySelector('.cursor-follow').classList.remove('cursor-follow-clickable');
-      });
-    });
-    </script>
   </div>
-</div>
-<br><br><br><br><br><br><br><br>
+</section>
+<div class="section-spacer"></div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-    
     <!-- projects -->
     <div id="project-header-static"></div>
-    <div class="project-section-wrapper"
+    <section class="project-section-wrapper"
       data-aos="fade-up" 
       data-aos-easing="ease-in-out"
       data-aos-once="true">
-    <div id="project-header-wrapper">
-      <h2 id="project-header">Things I've Built</h2>
-      <a id="project-header-spacer"></a>
+    <div class="section-header-wrapper" id="project-header-wrapper">
+      <h2 class="section-header" id="project-header">Things I've Built</h2>
+      <span class="section-header-spacer" id="project-header-spacer"></span>
     </div>
 
   
 
     <div id="projects-section">
       <div class="project-nav-wrapper-mobile">
-        <div class="project-nav-container" id="projectNavContainer">
+        <div class="project-nav-container" id="project-nav-container">
           <div class="menu-scroll-wrapper">
-            <ul class="project-menu" id="menuList">
+            <ul class="project-menu" id="project-menu-list">
               <li class="selected project-menu-item" data-content-id="content-1">Amino Amigo</li>
               <li class="project-menu-item" data-content-id="content-2">LexChat</li>
               <li class="project-menu-item" data-content-id="content-3">Rotobrush</li>
-              <!-- <li class="project-menu-item" data-content-id="content-4">Panorama Stitch</li> -->
               <li class="project-menu-item" data-content-id="content-5">Other ML</li>
               <li class="project-menu-item" data-content-id="content-6">MicroCaml</li>
               <li class="project-menu-item" data-content-id="content-7">Architecture</li>
@@ -698,8 +225,7 @@
         <div id="content-1" class="hidden">
           <div class="image-container">
             <img class="project-image card" src="resources/Amino_Media.png" alt="Project Image">
-            <!-- style="width: 500px;;"> -->
-            <div class="project-tools">Swift &nbsp; SwiftUI &nbsp; Xcode</div>
+            <div class="project-tools"><span class="pill">Swift</span><span class="pill">SwiftUI</span><span class="pill">Xcode</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">Amino Amigo</h1>
@@ -711,19 +237,19 @@
               <br><br>
               Amino Amigo has been downloaded in over a dozen countries. 
               The app factors in individual metabolic limits and alerts users to when - and how much - protein 
-              to have. The app follows the MVC model, Apple's interface guidelines and design principles, and makes use of a wide 
+              to have. The app closely follows Apple's interface guidelines and design principles, and makes use of a wide 
               variety of Swift features and frameworks.
               <br><br>
               <a class="button-link" href="https://apps.apple.com/us/app/amino-amigo/id1638666228" target="_blank">View on the App Store</a>
             </p>
-            <div class="project-tools-mobile">Swift &nbsp; SwiftUI &nbsp; Xcode</div>
+            <div class="project-tools-mobile"><span class="pill">Swift</span><span class="pill">SwiftUI</span><span class="pill">Xcode</span></div>
           </div>
         </div>
 
         <div id="content-2" class="hidden">
           <div class="image-container">
             <img class="project-image card" src="resources/LexChat_Media.jpeg" alt="Project Image">
-            <div class="project-tools">Python &nbsp; Pinecone &nbsp; Streamlit &nbsp; OpenAI &nbsp; BeautifulSoup</div>
+            <div class="project-tools"><span class="pill">Python</span><span class="pill">Pinecone</span><span class="pill">Streamlit</span><span class="pill">OpenAI</span><span class="pill">BeautifulSoup</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">LexChat</h1>
@@ -739,17 +265,14 @@
               <br><br>
               <a href="lexchat.html" target="_blank" class="button-link">Visit LexChat</a>
             </p>
-            <div class="project-tools-mobile">Python &nbsp; Pinecone &nbsp; Streamlit &nbsp; OpenAI &nbsp; BeautifulSoup</div>
+            <div class="project-tools-mobile"><span class="pill">Python</span><span class="pill">Pinecone</span><span class="pill">Streamlit</span><span class="pill">OpenAI</span><span class="pill">BeautifulSoup</span></div>
           </div>
         </div>
 
         <div id="content-3" class="hidden">
           <div class="image-container">
-            <!-- <video id="rotobrush-video" class="project-image" style="border-radius: 20px; margin-right: -10px; object-fit: fill;" autoplay loop>
-              <source src="resources/Rotobrush_Media.mp4" type="video/mp4">
-            </video> -->
             <img id="rotobrush-image" class="project-image card" src="resources/Rotobrush_Media.png" alt="Project Image">
-            <div class="project-tools">Matlab</div>
+            <div class="project-tools"><span class="pill">Matlab</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">Rotobrush</h1>
@@ -765,33 +288,14 @@
               <br><br>
               <a class="button-link" href="resources/SnapCut.pdf" target="_blank">Read the Paper</a>
             </p>
-            <div class="project-tools-mobile">Matlab</div>
-          </div>
-        </div>
-
-        <div id="content-4" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Panorama_Media.png" alt="Project Image">
-            <div class="project-tools">Matlab</div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Panorama Stitch</h1>
-            <p class="project-description">
-              This project is a panorama stitching application. Given a few overlapping images 
-              taken from the same location, the program stitches them together into a coherent 
-              single image. This project used a variety of techniques including alternate color 
-              spaces (YCbCr), GMMs and ANMS for feature recognition, convolution, RANSAC for feature 
-              matching and homography estimation, cylindrical projection, bilinear interpolation for 
-              image blending, and more. 
-            </p>
-            <div class="project-tools-mobile">Matlab</div>
+            <div class="project-tools-mobile"><span class="pill">Matlab</span></div>
           </div>
         </div>
 
         <div id="content-5" class="hidden">
           <div class="image-container">
             <img class="project-image card" src="resources/ML_Media.png" alt="Project Image">
-            <div class="project-tools">Python &nbsp; Matlab &nbsp; TensorFlow &nbsp; Numpy &nbsp; Pandas &nbsp; and more </div>
+            <div class="project-tools"><span class="pill">Python</span><span class="pill">Matlab</span><span class="pill">TensorFlow</span><span class="pill">Numpy</span><span class="pill">Pandas</span><span class="pill">and more</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">Other ML</h1>
@@ -808,14 +312,14 @@
               and more. I’ve also used techniques to support model development such as 
               ANMS, RANSAC, SfM, SLAM, factor graphs, GTSAM, importance sampling, and more.
             </p>
-            <div class="project-tools-mobile">Python &nbsp; Matlab &nbsp; TensorFlow &nbsp; Numpy &nbsp; Pandas &nbsp; and more </div>
+            <div class="project-tools-mobile"><span class="pill">Python</span><span class="pill">Matlab</span><span class="pill">TensorFlow</span><span class="pill">Numpy</span><span class="pill">Pandas</span><span class="pill">and more</span></div>
           </div>
         </div>
 
         <div id="content-6" class="hidden">
           <div class="image-container">
             <img class="project-image card" src="resources/Microcaml_Media.png" alt="Project Image">
-            <div class="project-tools">OCaml</div>
+            <div class="project-tools"><span class="pill">OCaml</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">MicroCaml</h1>
@@ -830,14 +334,14 @@
               <!-- <a href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank" class="text-link">regex</a>  -->
               regular expression engine using NFAs and DFAs. 
             </p>
-            <div class="project-tools-mobile">OCaml</div>
+            <div class="project-tools-mobile"><span class="pill">OCaml</span></div>
           </div>
         </div>
 
         <div id="content-7" class="hidden">
           <div class="image-container">
             <img class="project-image card" src="resources/Systems_Media.png" alt="Project Image">
-            <div class="project-tools">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
+            <div class="project-tools"><span class="pill">C</span><span class="pill">C++</span><span class="pill">MIPS Assembly</span><span class="pill">Python</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">Systems Architecture</h1>
@@ -849,14 +353,14 @@
               implementations and finding the best hyper-parameters for various processors involved 
               extensive scripting. Some of these projects involved working directly in MIPS Assembly.
             </p>
-            <div class="project-tools-mobile">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
+            <div class="project-tools-mobile"><span class="pill">C</span><span class="pill">C++</span><span class="pill">MIPS Assembly</span><span class="pill">Python</span></div>
           </div>
         </div>
 
         <div id="content-8" class="hidden">
           <div class="image-container">
             <img class="project-image card" src="resources/RL_Media.png" alt="Project Image">
-            <div class="project-tools">Python &nbsp; C++ &nbsp; OpenAI Gym</div>
+            <div class="project-tools"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">OpenAI Gym</span></div>
           </div>
           <div class="project-info">
             <h1 class="project-title">Deep RL</h1>
@@ -867,281 +371,37 @@
               Along with OpenAI’s Spinning Up, I implemented many of the algorithms I learned from scratch, 
               including SARSA, DQN, PPO, DDPG, SAC, and a simple version of Monte Carlo Tree Search inspired by AlphaZero.
             </p>
-            <div class="project-tools-mobile">Python &nbsp; C++ &nbsp; OpenAI Gym</div>
-          </div>
-        </div>
-
-        <div id="content-9" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Systems_Media.png" alt="Project Image">
-            <div class="project-tools">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">AO Website</h1>
-            <p class="project-description">
-              In college, I took a computer systems architecture class revolving around optimizing performance 
-              of multithreaded and networked systems
-            </p>
-            <div class="project-tools-mobile">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
-          </div>
-        </div>
-
-        <div id="content-10" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Systems_Media.png" alt="Project Image">
-            <div class="project-tools">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Pipeline</h1>
-            <p class="project-description">
-              In college, I took a computer systems architecture class revolving around optimizing performance 
-              of multithreaded and networked systems
-            </p>
-            <div class="project-tools-mobile">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
-          </div>
-        </div>
-
-        <div id="content-11" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Systems_Media.png" alt="Project Image">
-            <div class="project-tools">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Deep RL</h1>
-            <p class="project-description">
-              In college, I took a computer systems architecture class revolving around optimizing performance 
-              of multithreaded and networked systems
-            </p>
-            <div class="project-tools-mobile">C &nbsp; C++ &nbsp; MIPS Assembly &nbsp; Python</div>
+            <div class="project-tools-mobile"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">OpenAI Gym</span></div>
           </div>
         </div>
 
       </div>
     </div>
   </div>
+    </section>
 
-  <style>
-      #projects-section {
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        max-width: 1180px;
-        margin: 0 auto;
-        width: calc(100% - 20px);
-        font-family: 'Roboto', sans-serif;
-        color: #e6f1ff;
-      }
+    <div class="section-spacer"></div>
 
-      /* Desktop: content left, menu on right */
-      @media (min-width: 1100px) {
-        /* Position the project menu to the right */
-        .project-nav-wrapper-mobile {
-          order: 1;
-        }
-      }
+    <!-- blog section -->
+    <div id="blog-header-static"></div>
+    <section class="blog-section-wrapper" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-once="true">
+      <div class="section-header-wrapper" id="blog-header-wrapper">
+        <h2 class="section-header" id="blog-header">Blog</h2>
+        <span class="section-header-spacer" id="blog-header-spacer"></span>
+      </div>
+      <div class="blog-scroll-container">
+        <div class="blog-scroll-fade blog-scroll-fade-left"></div>
+        <div class="blog-scroll-track" id="blog-scroll-track">
+          <!-- cards rendered by JS -->
+        </div>
+        <div class="blog-scroll-fade blog-scroll-fade-right"></div>
+      </div>
+    </section>
 
-      @media (min-width: 1100px) {
-        #projects-section {
-          display: flex;
-          flex-direction: row;
-          gap: 0px;
-        }
-      }
-      @media (max-width: 1100px) {
-        #projects-section {
-          display: block;
-        }
-      }
-
-      .project-nav-container {
-        position: relative;
-        overflow-x: visible;
-        white-space: nowrap;
-        z-index: 1;
-        align-self: flex-start;
-        border-right: 3px solid #253347;
-        text-align: right;
-      }
-
-      .project-menu {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        width: 175px;
-        position: relative;
-        padding-left: 20px;
-      }
-
-      .project-menu li {
-        margin: 0;
-        cursor: pointer;
-        color: #7B8A9A;
-        padding: 12px 16px;
-        font-size: 16px;
-        transition: background-color 0.2s, color 0.2s;
-      }
-      @media (min-width: 1100px) {
-        .project-menu li {
-          border-top-left-radius: 6px;
-          border-bottom-left-radius: 6px;
-        }
-      }
-      @media (max-width: 1100px) {
-        .project-menu li {
-          border-top-left-radius: 6px;
-          border-top-right-radius: 6px;
-        }
-      }
-      .project-menu li:hover {
-        background: #253347;
-      }
-      .project-menu li.selected {
-        /* background: #192232; */
-        background: color-mix(in srgb, var(--project-color1) 5%, transparent);
-        color: var(--project-color1);
-      }
-      .project-nav-highlight {
-        position: absolute;
-        background: var(--project-color1);
-        box-shadow: 0 0 8px var(--project-color1);
-        transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
-        pointer-events: none;
-        z-index: 999;
-
-      }
-      @media (max-width: 1100px) {
-        .project-nav-container {
-          border-left: none;
-          overflow-x: hidden;
-        }
-        /* .menu-scroll-wrapper {
-          border-bottom: 2px solid #253347;
-        } */
-        .project-menu {
-          display: inline-flex;
-          min-width: 100%;
-          width: auto;
-          padding-left: 0;
-        }
-        .project-menu li {
-          display: inline-block;
-        }
-        .project-nav-highlight {
-          height: 2px;
-          border-radius: 0;
-        }
-
-        .project-nav-container {
-          border-right: none;
-          overflow-x: hidden;
-        }
-      }
-  </style>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function(){
-  const menu = document.querySelector(".project-nav-container .project-menu");
-  const highlight = document.getElementById("project-nav-highlight");
-  if (!menu || !highlight) return;
-  let selected = menu.querySelector("li.selected") || menu.querySelector("li");
-  function moveProjectHighlight(animate = true) {
-    highlight.style.transition = animate 
-      ? "top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s"
-      : "none";
-    if (window.innerWidth <= 1100) {
-      const scrollWrapper = menu.closest('.menu-scroll-wrapper');
-      const scrollLeft = scrollWrapper ? scrollWrapper.scrollLeft : 0;
-      highlight.style.left = (selected.offsetLeft - scrollLeft) + "px";
-      highlight.style.width = selected.offsetWidth + "px";
-      highlight.style.top = (menu.offsetTop + menu.offsetHeight) + "px";
-      highlight.style.height = "2px";
-      highlight.style.borderRadius = "0";
-    } else {
-      highlight.style.top = selected.offsetTop + "px";
-      highlight.style.height = selected.offsetHeight + "px";
-      // Position the highlight to the right edge of the li,
-      // then translate it right by its own width (3px)
-      highlight.style.left = (selected.offsetLeft + selected.offsetWidth) + "px";
-      highlight.style.width = "3px";
-      highlight.style.borderRadius = "6px";
-      // Alternatively, you can use a transform to shift it right by its own width:
-      // highlight.style.transform = "translateX(3px)";
-    }
-  }
-  menu.addEventListener("click", function(e) {
-    if (e.target.tagName.toLowerCase() === "li") {
-      menu.querySelector("li.selected")?.classList.remove("selected");
-      e.target.classList.add("selected");
-      selected = e.target;
-      moveProjectHighlight(true);
-    }
-  });
-  window.addEventListener("resize", () => moveProjectHighlight(true));
-  window.addEventListener("load", () => moveProjectHighlight(true));
-});
-
-document.addEventListener("DOMContentLoaded", function() {
-  const menu       = document.querySelector(".project-nav-container .project-menu");
-  const highlight  = document.getElementById("project-nav-highlight");
-  const scrollWrap = document.querySelector(".project-nav-container .menu-scroll-wrapper");
-
-  let selectedItem = menu.querySelector("li.selected");
-  
-  function moveProjectHighlight(animate = true) {
-    highlight.style.transition = animate 
-      ? "top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s"
-      : "none";
-
-    if (window.innerWidth <= 1100) {
-      // On narrow screens, move the highlight horizontally
-      const scrollLeft = scrollWrap ? scrollWrap.scrollLeft : 0;
-      highlight.style.left  = (selectedItem.offsetLeft - scrollLeft) + "px";
-      highlight.style.width = selectedItem.offsetWidth + "px";
-      highlight.style.top   = (menu.offsetTop + menu.offsetHeight) + "px";
-      highlight.style.height = "2px";
-      highlight.style.borderRadius = "0";
-    } else {
-      // On desktop, position it vertically
-      highlight.style.top    = selectedItem.offsetTop + "px";
-      highlight.style.height = selectedItem.offsetHeight + "px";
-      highlight.style.left   = (selectedItem.offsetLeft + selectedItem.offsetWidth) + "px";
-      highlight.style.width  = "3px";
-      highlight.style.borderRadius = "6px";
-    }
-  }
-
-  // Reposition highlight when the user clicks a different item
-  menu.addEventListener("click", (e) => {
-    if (e.target.tagName.toLowerCase() === "li") {
-      menu.querySelector("li.selected")?.classList.remove("selected");
-      e.target.classList.add("selected");
-      selectedItem = e.target;
-      moveProjectHighlight(true);
-    }
-  });
-
-  // **Key addition**: reposition highlight on scroll just like the jobs menu
-  if (scrollWrap) {
-    scrollWrap.addEventListener("scroll", () => {
-      if (selectedItem) moveProjectHighlight(false);
-    });
-  }
-
-  // Handle window resize as well
-  window.addEventListener("resize", () => moveProjectHighlight(true));
-  
-  // Position the highlight on load
-  moveProjectHighlight(true);
-});
-  </script>
-    <br><br><br><br><br><br><br><br>
-    <br><br><br><br>
-
-
-
+    <div class="section-spacer"></div>
 
     <!-- contact me -->
-    <div class="double-view-container", id="contact">
+    <section class="double-view-container" id="contact">
       <div class="contact-view-left"
         data-aos="fade-right"
         data-aos-once="true">
@@ -1151,104 +411,63 @@ document.addEventListener("DOMContentLoaded", function() {
           to reach out! Send me an email at <a href="mailto:dawsonamf@icloud.com" target="_blank" class="text-link">dawsonamf@icloud.com</a>, 
             or connect with me by selecting an option below. You can also 
               <a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'}); return false;" class="text-link">
-                schedule a call
-              </a>.
-            <!-- <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="text-link">LinkedIn</a>! -->
-
+                schedule a call</a>.
         </p>
-        <!-- <div class="contact-text">
-          Quick links:
-          <br><br>
-        </div> -->
-        <br><br>
         <div class="quick-links">
           <!-- this menu is only visible on a computer -->
-          <nav class="contact-menu">
+          <nav class="contact-menu" aria-label="Social links">
             <ul class="menu-list">
-              <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
-              <li><a class="socials-menu-spacer2"></a></li>
-              <a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-              <li><a class="socials-menu-spacer2"></a></li>
-              <a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a>
-              <li><a class="socials-menu-spacer2"></a></li>
-              <a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a>
-              <li><a class="socials-menu-spacer2"></a></li>
-              <a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a>
-              <li><a class="socials-menu-spacer2"></a></li>
-              <a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a>         
+              <li><a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a></li>
+              <li><span class="socials-menu-spacer2"></span></li>
+              <li><a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+              <li><span class="socials-menu-spacer2"></span></li>
+              <li><a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a></li>
+              <li><span class="socials-menu-spacer2"></span></li>
+              <li><a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a></li>
+              <li><span class="socials-menu-spacer2"></span></li>
+              <li><a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a></li>
+              <li><span class="socials-menu-spacer2"></span></li>
+              <li><a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a></li>
             </ul>
           </nav>
           <!-- this menu is only visible on mobile -->
-          <nav class="contact-menu-mobile">
+          <nav class="contact-menu-mobile" aria-label="Social links">
             <ul class="menu-list">
-                <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
-                <li><a class="socials-menu-spacer-mobile-top"></a></li>
-                <a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-                <li><a class="socials-menu-spacer-mobile-top"></a></li>
-                <a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a>
+                <li><a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a></li>
+                <li><a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
+                <li><a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a></li>
+                <li><a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a></li>
+                <li><a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a></li>
+                <li><a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a></li>
             </ul>
-            <div class="horizontal-line"></div>
-            <ul class="menu-list">
-                <a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a>
-                <li><a class="socials-menu-spacer-mobile-bottom"></a></li>
-                <a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a>
-                <li><a class="socials-menu-spacer-mobile-bottom"></a></li>
-                <a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a>
-        </ul>
-        </nav>
+          </nav>
         </div>
       </div>
-
-       <!-- <li><a class="socials-menu-spacer2"></a></li> -->
-      <!-- <a href="#" class="socials-item"><i class="fab fa-instagram"></i></a> -->
-      <!-- <li><a class="socials-menu-spacer2"></a></li> -->
-      <!-- <a href="#" class="socials-item"><i class="fab fa-github"></i></a> -->
 
       <img class="contact-image card" src="resources/location.png" alt="Map"
         data-aos="fade-left" 
         data-aos-easing="ease-in-out"
         data-aos-once="true">
 
-    </div>
-    <br><br><br><br><br><br><br><br>
-    
+    </section>
 
-    <!-- references -->
-    <!-- <div id="references-container">
-      <h2 class="references-header">References</h2>
-      <p class="references-text">
-        The inspiration for this website came from a few different sources. I was inspired by
-  
-        <a href="https://brittanychiang.com" target="_blank" class="text-link">brittanychiang.com</a>,  
-        <a href="https://jacekjeznach.com" target="_blank" class="text-link">jacekjeznach.com</a>, 
-        <a href="https://tamalsen.dev" target="_blank" class="text-link">tamalsen.dev</a>, 
-        <a href="https://dunks1980.com" target="_blank" class="text-link">dunks1980.com</a>, 
-        and
-        <a href="https://karpathy.ai" target="_blank" class="text-link">karpathy.ai</a>.
-    </p>
-    </div>
-    <br><br><br><br><br><br><br> -->
+    <div class="section-spacer"></div>
+    </main>
 
-    <br><br><br><br><br><br><br>
-    
-    <ul class="footer-container">
-      <p class="footer-spacer"></p>
+    <footer class="footer-container">
+      <span class="footer-spacer"></span>
       <p class="footer-text">
         Designed and built by Dawson Metzger-Fleetwood
       </p>
-      <p class="footer-spacer"></p>
-    </ul>
+      <span class="footer-spacer"></span>
+    </footer>
 
     <div class="footer-container-mobile">
       <p class="footer-text-mobile">
         Designed and built by Dawson Metzger-Fleetwood
       </p>
     </div>
-      <!-- work experience -->
-      <!-- contact me (with testimonials maybe?) -->
   </div>
 </body>
   
 </html>
-
-<!-- COPYLLM -->

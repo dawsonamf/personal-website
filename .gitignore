@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+**/.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# Scratch / temp files
+scrap.txt
+resources/scrap.txt
+resources/temp.ipynb

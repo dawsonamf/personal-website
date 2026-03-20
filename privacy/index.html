@@ -10,120 +10,14 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
   <link rel="stylesheet" href="../styles.css">
   <link rel="stylesheet" href="../mobile-styles.css">
-
-  <style>
-    .privacy-container {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-
-    .privacy-header-wrapper {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      margin-top: 40px;
-    }
-
-    .privacy-header {
-      color: var(--myBlue);
-      font-size: 40px;
-      padding: 20px;
-      margin: 10px;
-      margin-bottom: 0px;
-    }
-
-    .privacy-header-spacer {
-      background-color: var(--myGray1);
-      flex-grow: 1;
-      height: 1px;
-      margin-right: 10px;
-      margin-left: auto;
-      transform: translateY(5px);
-    }
-
-    .privacy-content {
-      background-color: var(--myGray2);
-      border-radius: var(--border-radius);
-      padding: 30px 40px;
-      margin: 10px;
-      color: var(--myWhite);
-      line-height: 1.6;
-    }
-
-    .privacy-content h2 {
-      color: var(--myBlue);
-      font-size: 24px;
-      margin-top: 30px;
-      margin-bottom: 15px;
-    }
-
-    .privacy-content h2:first-child {
-      margin-top: 0;
-    }
-
-    .privacy-content h3 {
-      color: var(--myWhite);
-      font-size: 18px;
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
-
-    .privacy-content p {
-      color: var(--myWhite);
-      margin-bottom: 15px;
-    }
-
-    .privacy-content ul {
-      padding-left: 20px;
-      margin-bottom: 15px;
-    }
-
-    .privacy-content li {
-      color: var(--myWhite);
-      margin-bottom: 10px;
-    }
-
-    .privacy-content strong {
-      color: var(--myWhite);
-    }
-
-    .last-updated {
-      color: var(--mySlate);
-      font-style: italic;
-      margin-bottom: 25px;
-      font-family: 'SF Mono', monospace;
-      font-size: 14px;
-    }
-
-    .intro-text {
-      color: var(--myWhite);
-      margin-bottom: 20px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid var(--myGray1);
-    }
-
-
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-      .privacy-content {
-        padding: 20px;
-        margin: 10px 0;
-      }
-
-      .privacy-header {
-        font-size: 28px;
-        padding: 10px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="privacy-styles.css">
 </head>
 
 <body>
   <div id="main-body">
     <!-- Header with logo -->
     <div class="header-menu-container">
-      <a class="name-logo" href="https://www.dawsonamf.com/" style="opacity: 1;">D</a>
+      <a class="name-logo name-logo-visible" href="https://www.dawsonamf.com/">D</a>
     </div>
 
     <div class="privacy-container">
@@ -218,13 +112,13 @@
 
       <br><br><br>
 
-      <ul class="footer-container">
-        <p class="footer-spacer"></p>
+      <footer class="footer-container">
+        <span class="footer-spacer"></span>
         <p class="footer-text">
           Designed and built by Dawson Metzger-Fleetwood
         </p>
-        <p class="footer-spacer"></p>
-      </ul>
+        <span class="footer-spacer"></span>
+      </footer>
 
       <div class="footer-container-mobile">
         <p class="footer-text-mobile">
