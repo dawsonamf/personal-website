@@ -65,6 +65,57 @@
   padding: 0;
 }
 
+.blog-post-content blockquote {
+  border-left: 3px solid var(--myBlue);
+  margin: 1.5em 0;
+  padding: 0.5em 0 0.5em 1.5em;
+  color: var(--myGray1);
+}
+
+.blog-post-content blockquote p {
+  margin-bottom: 0.5em;
+}
+
+.blog-post-content ul,
+.blog-post-content ol {
+  padding-left: 1.5em;
+  margin-bottom: 1.5em;
+}
+
+.blog-post-content li {
+  margin-bottom: 0.4em;
+}
+
+.blog-post-content hr {
+  border: none;
+  border-top: 1px solid var(--myGray2);
+  margin: 2em 0;
+}
+
+.blog-post-content img.blog-image {
+  max-width: 100%;
+  border-radius: var(--border-radius);
+  margin: 1.5em 0;
+}
+
+.blog-post-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+}
+
+.blog-post-content th,
+.blog-post-content td {
+  padding: 8px 12px;
+  border: 1px solid var(--myGray2);
+  text-align: left;
+}
+
+.blog-post-content th {
+  background-color: var(--myGray2);
+  font-weight: 600;
+}
+
 .blog-nav {
   display: flex;
   align-items: center;

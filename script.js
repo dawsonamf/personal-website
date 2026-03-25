@@ -545,11 +545,25 @@
 
   const blogPosts = [
     {
-      title: "How Fast Are AI Agents Improving?",
+      title: "Homeclaw: Giving AI Clients a Way Back Into Your Machine",
+      date: "March 2026",
+      excerpt: "I built a remote MCP server that tunnels through Cloudflare so AI clients can run shell commands and read skill files on your machine from anywhere — no port forwarding or DNS required.",
+      image: "resources/ML_Media.png",
+      url: "blog/post.html?id=homeclaw"
+    },
+    {
+      title: "Building a Coding Agent in Embedded Swift",
+      date: "March 2026",
+      excerpt: "How I built a fully featured coding agent in Embedded Swift — no Foundation, no async/await, no Codable — that compiles to a 195 KB binary.",
+      image: "resources/ML_Media.png",
+      url: "blog/post.html?id=embedded-swift-agent"
+    },
+    {
+      title: "How Fast Are Agents Improving?",
       date: "February 2026",
       excerpt: "An analysis of METR-Horizon benchmark data showing AI agent capability doubling times, with interactive projections through 2033.",
       image: "resources/ML_Media.png",
-      url: "blog/metr-doubling-post.html"
+      url: "blog/post.html?id=metr-doubling"
     },
     {
       title: "Autoencoders – Part 2",
