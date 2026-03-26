@@ -1,43 +1,67 @@
 ---
-title: "Homeclaw: Giving AI Clients a Way Back Into Your Machine"
+title: Homeclaw: Giving Remote Agents a Way Back Into Your Machine
 date: March 2026
 tags: [AI & ML, Systems]
 ---
 
-I kept running into the same problem. I'd be working in Cursor or Claude, and I'd want the AI to run something on a different machine, or access skills I'd written that lived somewhere else. MCP is supposed to solve this, but every MCP server I found was either local-only or required me to set up port forwarding, configure DNS, mess with firewalls. I didn't want to do any of that.
+One of the early features that I think was key in driving the rapid growth of OpenClaw was channels — the ability to take actions on your computer through an agent by messaging it from your phone. The agent loop was running on your computer, but you could interact with the loop from anywhere. This is now a fairly standard feature in Claude Code and other coding agents, but at the time it was novel.
 
-So I built homeclaw. It's a remote MCP server that runs on your machine and tunnels out through Cloudflare. You start it, it prints a config block, you paste that into your AI client, and now that client can run shell commands and read your skill files from anywhere. No network configuration.
+The value proposition was twofold and roughly as follows:   
+
+1. an agent loop is running on your computer, so it can take actions inside your filesystem and on your device, and
+2. you can message this agent from anywhere, thereby taking actions on your computer from anywhere.
+
+This got me thinking. There is no reason why the agent loop that controls your computer has to be running on your computer. All it needs is a tunnel, a way to send commands that get executed on your computer. Thus the idea for homeclaw was born.
+
+**Traditional (e.g. Claude Code, OpenClaw)**
+
+```mermaid
+flowchart TB
+  A["Phone / Remote Device"] -->|messages| B["Agent Loop\n(on your Mac)"]
+  B -->|takes actions| C["Your Mac"]
+```
+
+**Homeclaw**
+
+```mermaid
+flowchart TB
+  D["Claude / Cursor / ChatGPT"] -->|MCP tool calls| E["Cloudflare Tunnel"]
+  E --> F["Homeclaw Server\n(on your Mac)"]
+  F -->|executes commands| G["Your Mac"]
+```
+
+Homeclaw is a remote MCP server running on your computer, meaning any agent or chatbot that supports MCPs can use it. Homeclaw exposes 3 tools:
+
+- `run_command` — execute a shell command on your machine
+- `list_skills` — list available SKILL.md files with their frontmatter so the agent can discover what skills exist
+- `read_skill` — read the full contents of a specific SKILL.md file so the agent can load it into context
 
 ## How it works
 
-The whole thing is about 400 lines of TypeScript running on Bun. When you start it, a few things happen in sequence:
+The whole thing is about 400 lines of TypeScript running on Bun. When you start it:
 
-1. It loads a bearer token from `~/.homeclaw/token` (you generate this yourself with openssl)
+1. It loads a bearer token from `~/.homeclaw/token` (you must generate this yourself with openssl)
 2. It starts an HTTP server on localhost
 3. It opens a Cloudflare Quick Tunnel, which gives you a random HTTPS URL that routes back to your machine
 4. It prints the MCP client config to your terminal so you can copy-paste it
 
-The server exposes three tools over MCP's Streamable HTTP transport: one to list your skill files, one to read a skill's frontmatter, and one to run shell commands. That's it. Each incoming request gets a fresh MCP server instance, so there's no session state to worry about.
+Each incoming request gets a fresh MCP server instance, so there's no session state to worry about.
 
-## The auth situation
+## Auth
 
-The bearer token is the real security boundary. Treat it like an SSH key. Anyone who has it can run commands on your machine.
+The bearer token is the security boundary, so treat it like an SSH key. Anyone who has it can run arbitrary commands on your machine.
 
-I also had to implement OAuth 2.0 because some MCP clients (connectors, specifically) won't connect without it. The OAuth flow auto-approves everything, which sounds alarming until you think about it for a second. This is a personal server. There's one user. The bearer token already gates access. The OAuth layer exists purely so clients that require OAuth can actually connect.
-
-The OAuth credentials get auto-generated on first launch and stored in `~/.homeclaw/`. You can also hardcode them in a config file if you want them to stay stable across restarts.
+I also implemented OAuth 2.0 because some MCP clients (Like ChatGPT) require it. the OAuth flow exists purely to fit the shape of these clients, and just auto approves everything. These OAuth credentials get auto-generated on first launch and stored in `~/.homeclaw/`, so they persist across restarts automatically. You can also hardcode them in a config file if you want to set specific values manually.
 
 ## Building it
 
-I wanted the codebase to be boring in a good way. Each source file does one thing. `auth.ts` handles tokens. `oauth.ts` handles OAuth flows. `permissions.ts` does glob matching for command allow/deny rules. `shell.ts` spawns processes. `tunnel.ts` manages the Cloudflare tunnel lifecycle. `http.ts` routes requests. No dependency injection frameworks, no class hierarchies, just functions that take arguments and return values.
+The only real design decision I made was making sure the server was stateless. This means there's no session cleanup, stale state, or side effects from long lived connections to worry about. To that effect, every request creates a new `McpServer` instance.
 
-The one design decision I keep coming back to is making the server stateless. Every request creates a new `McpServer` instance. This means there's no session cleanup, no stale state, no memory leaks from long-lived connections. It's wasteful in theory but the overhead is negligible and it removes an entire category of bugs.
-
-I wrote the whole thing against Bun because I wanted native TypeScript execution without a build step. `bun run src/index.ts` and you're going. The test suite covers permissions, auth, OAuth flows, skill discovery, shell execution, and full HTTP integration, all running through `bun test`.
+I wrote it with Bun because I read that Anthropic acquired bun and I wanted to try using Bun. There's a test suite that covers just about everything you can run with `bun test`.
 
 ## Command permissions
 
-By default, homeclaw lets the AI run anything. If that makes you nervous (fair), you can drop a `config.json` next to it with glob-based allow/deny rules:
+By default, homeclaw lets the AI run anything. If you want an allowlist, create a`config.json` with glob based rules in the directory you run homeclaw from (or point to one via `CONFIG_FILE`).
 
 ```json
 {
@@ -50,22 +74,21 @@ By default, homeclaw lets the AI run anything. If that makes you nervous (fair),
 }
 ```
 
-Last matching rule wins, so you put the catch-all deny first and specific allows after. It's not a sandbox. Someone determined could probably work around it. But it's enough to keep an overeager AI from running `rm -rf /` by accident.
-
-## What I'd do differently
-
-Honestly, not much. The scope is small on purpose. It does three things and I want it to keep doing three things. If I were starting over I might skip the OAuth implementation and just tell people to use bearer tokens, but enough MCP clients require OAuth that it would have been a constant support issue.
-
-The Cloudflare tunnel dependency is the part I like least. It works well, but it means you need an internet connection even if you're tunneling to a machine on your own network. A local mode exists (set `TUNNEL=false`) for that case, but then you're back to configuring your own network.
+The last matching rule wins, so if you deny everything as the first rule, you can allow specific commands after. Keep in mind the code that blocks commands is rudimentary and not battle tested. A sufficiently motivated agent could probably find a way around it.
 
 ## Using it
 
 ```bash
+# install bun if you don't have it
 curl -fsSL https://bun.sh/install | bash
+
+# generate a bearer token (treat this like an SSH key)
 mkdir -p ~/.homeclaw && openssl rand -base64 32 > ~/.homeclaw/token
+
+# run homeclaw
 bunx homeclaw
 ```
 
-Three commands. It prints the config. You paste it into Cursor, Claude, whatever. Done. Or, just point your agent at the [repo](https://github.com/dawsonamf/homeclaw) and let it figure out the setup for you.
+When you run homeclaw, it'll print the config that you need to paste into your preferred agent.
 
 [github.com/dawsonamf/homeclaw](https://github.com/dawsonamf/homeclaw)

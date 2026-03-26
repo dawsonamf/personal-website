@@ -65,6 +65,23 @@
   padding: 0;
 }
 
+.blog-post-content .mermaid {
+  background-color: var(--myGray2);
+  padding: 20px;
+  border-radius: var(--border-radius);
+  margin: 1.5em 0;
+  text-align: center;
+}
+
+.blog-post-content .mermaid svg {
+  max-width: 100%;
+}
+
+.blog-post-content .mermaid .node rect {
+  rx: 10;
+  ry: 10;
+}
+
 .blog-post-content blockquote {
   border-left: 3px solid var(--myBlue);
   margin: 1.5em 0;
