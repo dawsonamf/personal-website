@@ -1,7 +1,6 @@
 ---
 title: How Fast Are Agents Improving?
 date: February 2026
-tags: [AI & ML]
 scripts: [https://cdn.plot.ly/plotly-2.27.0.min.js, https://cdn.jsdelivr.net/npm/js-yaml@4/dist/js-yaml.min.js, posts/metr-chart.js]
 styles: [posts/metr-chart.css]
 ---

@@ -10,7 +10,7 @@
     { label: 'About', href: '#about' },
     { label: 'Experience', href: '#jobs-header-static' },
     { label: 'Projects', href: '#project-header-static' },
-    { label: 'Blog', href: '#blog-header-static' },
+    { label: 'Blog', href: 'blog/', isBlogLink: true },
     { label: 'Contact', href: '#contact' },
     { label: 'Resume', href: 'resources/Resume.pdf', isResume: true },
   ];
@@ -30,7 +30,9 @@
         return `<li><a href="${item.href}" target="_blank" class="socials-item"><i class="${item.icon}"></i></a></li>${spacer}`;
       }
       const target = item.isResume ? ' target="_blank"' : '';
-      const cls = item.isResume ? 'menu-item resume-link' : 'menu-item';
+      let cls = 'menu-item';
+      if (item.isResume) cls = 'menu-item resume-link';
+      if (item.isBlogLink) cls = 'menu-item blog-page-link';
       return `<li><a class="${cls}" href="${item.href}"${target}>${item.label}</a></li>${spacer}`;
     }).join('');
   }
@@ -114,50 +116,56 @@
   }
 
 
-  function createTypingAnimation(id) {
-    const element = document.getElementById(id);
-    if (!element) return;
-
-    const text = element.getAttribute('data-text').replace(/&#10;/g, '\n');
-    let charIndex = 0;
-    let newlineCount = 0;
-
-    const cursor = document.createElement('span');
-    cursor.className = 'cursor';
-    element.appendChild(cursor);
-
-    function type() {
-      return new Promise((resolve) => {
-        function typeCharacter() {
-          if (charIndex < text.length) {
-            if (text.charAt(charIndex) === '\n') {
-              element.insertBefore(document.createElement('br'), cursor);
-              newlineCount++;
-              if (newlineCount === 2) {
-                const subText = document.querySelector('#sub-text');
-                if (subText) {
-                  subText.style.animation = "fadein 0.8s ease-out";
-                  subText.style.animationDelay = `0.01s`;
-                  subText.style.animationFillMode = "forwards";
-                  persistAfterAnimation(subText, { visibility: 'visible', opacity: '1' });
-                }
-              }
-            } else {
-              element.insertBefore(document.createTextNode(text.charAt(charIndex)), cursor);
-            }
-            charIndex++;
-            setTimeout(typeCharacter, TYPING_DELAY);
-          } else {
-            cursor.style.animation = "blink 1s infinite";
-            resolve();
-          }
-        }
-
-        typeCharacter();
-      });
+  function fadeInSubText() {
+    const subText = document.querySelector('#sub-text');
+    if (subText) {
+      subText.style.animation = "fadein 0.8s ease-out";
+      subText.style.animationDelay = "0.01s";
+      subText.style.animationFillMode = "forwards";
+      persistAfterAnimation(subText, { visibility: 'visible', opacity: '1' });
     }
+  }
 
-    type().then(startAnimations);
+  function runHomeTypingSequence() {
+    startTypingSequence({
+      elementId: 'typing-text',
+      typingDelay: TYPING_DELAY,
+      deleteDelay: 40,
+      sequences: [
+        [
+          { action: 'type', text: "Hi,\nI'm Dawson,\nfrontend" },
+          { action: 'pause', duration: 200 },
+          { action: 'delete', count: 8 },
+          { action: 'type', text: "backend" },
+          { action: 'pause', duration: 200 },
+          { action: 'delete', count: 7 },
+          { action: 'type', text: "software engineer." },
+          { action: 'callback', fn: startAnimations },
+        ],
+        [
+          { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1000 },
+          { action: 'delete', count: 18 },
+          { action: 'type', text: "agentic engineer." },
+          { action: 'pause', duration: 1000 },
+          { action: 'delete', count: 17 },
+          { action: 'type', text: "software engineer." },
+        ],
+        [
+          { action: 'type', text: "Hey,\nI'm Dawson,\nsoftware engineer." },
+          { action: 'callback', fn: startAnimations },
+        ],
+        [
+          { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
+          { action: 'callback', fn: startAnimations },
+        ]
+      ],
+      onNewlineCount: {
+        count: 2,
+        callback: fadeInSubText,
+      },
+    });
   }
 
 
@@ -343,9 +351,10 @@
 
   $(document).ready(function() {
     $('.menu-item').on('click', function(event) {
-      if (!$(this).is(".resume-link")) {
-        event.preventDefault();
+      if ($(this).is(".resume-link") || $(this).is(".blog-page-link")) {
+        return;
       }
+      event.preventDefault();
       const target = this.hash;
       let offset = 40;
       switch (target) {
@@ -540,48 +549,10 @@
     menuItems[0].click();
   }
 
-  createTypingAnimation('typing-text');
+  runHomeTypingSequence();
 
 
-  const blogPosts = [
-    {
-      title: "Homeclaw: Giving AI Clients a Way Back Into Your Machine",
-      date: "March 2026",
-      excerpt: "I built a remote MCP server that tunnels through Cloudflare so AI clients can run shell commands and read skill files on your machine from anywhere — no port forwarding or DNS required.",
-      image: "resources/ML_Media.png",
-      url: "blog/post.html?id=homeclaw"
-    },
-    {
-      title: "Building a Coding Agent in Embedded Swift",
-      date: "March 2026",
-      excerpt: "How I built a fully featured coding agent in Embedded Swift — no Foundation, no async/await, no Codable — that compiles to a 195 KB binary.",
-      image: "resources/ML_Media.png",
-      url: "blog/post.html?id=embedded-swift-agent"
-    },
-    {
-      title: "How Fast Are Agents Improving?",
-      date: "February 2026",
-      excerpt: "An analysis of METR-Horizon benchmark data showing AI agent capability doubling times, with interactive projections through 2033.",
-      image: "resources/ML_Media.png",
-      url: "blog/post.html?id=metr-doubling"
-    },
-    {
-      title: "Autoencoders – Part 2",
-      date: "April 2024",
-      excerpt: "Using autoencoders in practice: outlier detection, variational autoencoders for data generation, denoising, and the CLIP model.",
-      image: "resources/ML_Media.png",
-      url: "https://www.aboutobjects.com/2024/04/01/autoencoders-part-2/",
-      external: true
-    },
-    {
-      title: "Autoencoders – Part 1",
-      date: "January 2024",
-      excerpt: "Building intuition for autoencoders: how they compress data into lower-dimensional representations and what makes them useful.",
-      image: "resources/ML_Media.png",
-      url: "https://www.aboutobjects.com/2024/01/05/autoencoders-part-1/",
-      external: true
-    }
-  ];
+  const blogPosts = window.BLOG_POSTS || [];
 
   function renderBlogCards() {
     const track = document.getElementById('blog-scroll-track');

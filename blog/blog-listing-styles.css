@@ -1,0 +1,261 @@
+#main-body {
+  min-width: auto;
+  max-width: 1200px;
+}
+
+.name-logo-visible {
+  opacity: 1;
+}
+
+
+/* Nav bar */
+
+.blog-listing-nav {
+  display: flex;
+  align-items: center;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.blog-listing-nav .name-logo {
+  margin: 0;
+}
+
+
+/* Hero / typing header */
+
+#blog-typing-container {
+  display: flex;
+  position: relative;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+#blog-typing-left {
+  flex: 1;
+  text-align: left;
+}
+
+#blog-typing-text {
+  font-size: 70px;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: bold;
+  position: relative;
+  color: var(--myWhite);
+  padding-top: 0.5em;
+}
+
+#blog-sub-text {
+  color: var(--myGray1);
+  font-size: 16px;
+  line-height: 1.6;
+  position: relative;
+  opacity: 0;
+  max-width: 600px;
+  margin-top: 12px;
+}
+
+#blog-socials-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: calc(0.5em + 10px);
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+
+/* Tag filter pills */
+
+.blog-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 20px 20px 10px;
+}
+
+.filter-pill {
+  font-family: 'SF Mono', monospace;
+  font-size: 13px;
+  color: var(--myGray1);
+  border-radius: 20px;
+  padding: 6px 16px;
+  background-color: var(--myGray2);
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: color 0.25s ease-in-out, border-color 0.25s ease-in-out, background-color 0.25s ease-in-out;
+  user-select: none;
+}
+
+.filter-pill:hover {
+  color: var(--myBlue);
+  border-color: var(--myBlue);
+}
+
+.filter-pill.active {
+  color: var(--myBlue);
+  border-color: var(--myBlue);
+  background-color: rgba(97, 255, 218, 0.06);
+}
+
+
+/* Main content area */
+
+.blog-listing-content {
+  padding: 30px 20px 60px;
+}
+
+
+/* Card grid */
+
+.blog-listing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 24px;
+  row-gap: 24px;
+  align-content: start;
+}
+
+.blog-listing-grid .blog-card {
+  flex-shrink: unset;
+  width: auto;
+  height: 220px;
+  padding: 24px;
+  border-radius: var(--border-radius);
+  background-color: var(--myGray2);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease-in-out;
+  transform-style: preserve-3d;
+}
+
+.blog-listing-grid .blog-card:hover {
+  background-color: var(--myCardHover);
+}
+
+.blog-listing-grid .blog-card .blog-card-title {
+  color: var(--myWhite);
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.blog-listing-grid .blog-card .blog-card-date {
+  font-family: 'SF Mono', monospace;
+  font-size: 13px;
+  color: var(--myGray1);
+  margin: 0 0 14px 0;
+}
+
+.blog-listing-grid .blog-card .blog-card-excerpt {
+  color: var(--myWhite);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0 0 14px 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.blog-listing-grid .blog-card .blog-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: auto;
+}
+
+.blog-listing-grid .blog-card .blog-card-tags .pill {
+  font-size: 11px;
+  padding: 3px 10px;
+}
+
+
+/* Card hide/show for filtering */
+
+.blog-listing-grid .blog-card-wrapper.filtered-out {
+  display: none;
+}
+
+
+/* Footer */
+
+.blog-listing-footer {
+  max-width: 1200px;
+  margin: 0 auto 40px;
+}
+
+
+/* Responsive */
+
+@media screen and (max-width: 1100px) {
+  #cursor-container {
+    display: none;
+  }
+
+  .blog-listing-nav {
+    padding: 15px;
+  }
+
+  #blog-typing-container {
+    padding: 0 15px;
+    margin-bottom: 15px;
+  }
+
+  #blog-typing-text {
+    font-size: 34px;
+    padding-top: 0.25em;
+  }
+
+  #blog-sub-text {
+    font-size: 14px;
+    margin-top: 8px;
+  }
+
+  #blog-socials-list {
+    display: none;
+  }
+
+  .blog-filter-bar {
+    padding: 15px 15px 5px;
+    gap: 8px;
+  }
+
+  .filter-pill {
+    font-size: 12px;
+    padding: 5px 12px;
+  }
+
+  .blog-listing-content {
+    padding: 20px 15px 40px;
+  }
+
+  .blog-listing-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .blog-listing-grid .blog-card {
+    height: auto;
+    min-height: 150px;
+    padding: 20px;
+  }
+
+  .blog-listing-grid .blog-card .blog-card-title {
+    font-size: 17px;
+  }
+
+  .blog-listing-grid .blog-card .blog-card-date {
+    font-size: 12px;
+  }
+
+  .blog-listing-grid .blog-card .blog-card-excerpt {
+    font-size: 14px;
+  }
+}

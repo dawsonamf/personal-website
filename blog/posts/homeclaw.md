@@ -1,12 +1,11 @@
 ---
-title: Homeclaw: Giving Remote Agents a Way Back Into Your Machine
+title: Homeclaw: Giving Remote Agents a Way Into Your Machine
 date: March 2026
-tags: [AI & ML, Systems]
 ---
 
 One of the early features that I think was key in driving the rapid growth of OpenClaw was channels — the ability to take actions on your computer through an agent by messaging it from your phone. The agent loop was running on your computer, but you could interact with the loop from anywhere. This is now a fairly standard feature in Claude Code and other coding agents, but at the time it was novel.
 
-The value proposition was twofold and roughly as follows:   
+The value proposition was twofold and roughly as follows:
 
 1. an agent loop is running on your computer, so it can take actions inside your filesystem and on your device, and
 2. you can message this agent from anywhere, thereby taking actions on your computer from anywhere.

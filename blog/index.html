@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog | Dawson Metzger-Fleetwood</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../mobile-styles.css">
+  <link rel="stylesheet" href="blog-listing-styles.css">
+
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+  <script src="../blog-data.js"></script>
+  <script src="../typing-engine.js"></script>
+</head>
+
+<body>
+  <div id="main-body">
+    <div id="cursor-container">
+      <div class="cursor-follow"></div>
+      <div class="circle-follow"></div>
+    </div>
+
+    <nav class="blog-listing-nav">
+      <a class="name-logo name-logo-visible" href="../index.html">D</a>
+    </nav>
+
+    <div id="blog-typing-container">
+      <div id="blog-typing-left">
+        <h1 id="blog-typing-text"></h1>
+        <p id="blog-sub-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+      </div>
+      <div id="blog-socials-list">
+        <span class="socials-menu-spacer"></span>
+        <br>
+        <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
+        <a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a>
+        <a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a>
+        <a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a>
+        <a href="" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a>
+        <br>
+        <span class="socials-menu-spacer"></span>
+      </div>
+    </div>
+
+    <div class="blog-filter-bar" id="filter-bar">
+      <!-- pills rendered by JS -->
+    </div>
+
+    <div class="blog-listing-content">
+      <div class="blog-listing-grid" id="blog-grid">
+        <!-- cards rendered by JS -->
+      </div>
+    </div>
+
+    <footer class="footer-container blog-listing-footer">
+      <span class="footer-spacer"></span>
+      <p class="footer-text">
+        Designed and built by Dawson Metzger-Fleetwood
+      </p>
+      <span class="footer-spacer"></span>
+    </footer>
+
+    <div class="footer-container-mobile">
+      <p class="footer-text-mobile">
+        Designed and built by Dawson Metzger-Fleetwood
+      </p>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var TYPING_DELAY = 75;
+
+      // Cursor follower
+      const cursor = document.querySelector('.cursor-follow');
+      const circle = document.querySelector('.circle-follow');
+      if (cursor && circle) {
+        let mouseX = 0, mouseY = 0;
+        let circleX = 0, circleY = 0;
+        let cursorX = 0, cursorY = 0;
+
+        document.addEventListener('mousemove', function (e) {
+          const body = document.body.getBoundingClientRect();
+          const mainBody = document.getElementById('main-body');
+          let adjustment = 8;
+          if (mainBody) {
+            const diff = (body.width - mainBody.getBoundingClientRect().width) / 2;
+            adjustment = diff <= 0 ? 8 : 8 - diff;
+          }
+          mouseX = e.clientX - body.left - window.scrollX + adjustment;
+          mouseY = e.clientY - body.top  - window.scrollY + 8;
+        });
+
+        (function animate() {
+          circleX += (mouseX - circleX - circle.offsetWidth  / 2) * 0.25;
+          circleY += (mouseY - circleY - circle.offsetHeight / 2) * 0.25;
+          cursorX += (mouseX - cursorX - cursor.offsetWidth  / 2) * 0.6;
+          cursorY += (mouseY - cursorY - cursor.offsetHeight / 2) * 0.6;
+          cursor.style.left = cursorX + 'px';
+          cursor.style.top  = cursorY + 'px';
+          circle.style.left = circleX + 'px';
+          circle.style.top  = circleY + 'px';
+          requestAnimationFrame(animate);
+        })();
+
+        const hoverSelectors = '.text-link, .name-logo, .blog-card, .filter-pill, .socials-item';
+        document.addEventListener('mouseover', e => {
+          if (e.target.closest(hoverSelectors)) cursor.classList.add('cursor-follow-clickable');
+        });
+        document.addEventListener('mouseout', e => {
+          if (e.target.closest(hoverSelectors)) cursor.classList.remove('cursor-follow-clickable');
+        });
+
+        document.addEventListener('mousemove', function () {
+          const container = document.getElementById('cursor-container');
+          if (container) container.style.opacity = '1';
+        }, { once: true });
+      }
+
+
+      // Typing animation
+      function onBlogTypingComplete() {
+        const subText = document.getElementById('blog-sub-text');
+        if (subText) {
+          subText.style.animation = 'fadein 0.8s ease-out';
+          subText.style.animationDelay = '0.01s';
+          subText.style.animationFillMode = 'forwards';
+          subText.addEventListener('animationend', function handler() {
+            subText.removeEventListener('animationend', handler);
+            subText.style.animation = 'none';
+            subText.style.opacity = '1';
+          });
+        }
+
+        const socialsList = document.getElementById('blog-socials-list');
+        if (socialsList) {
+          socialsList.style.animation = 'fadein 0.8s ease-out';
+          socialsList.style.animationDelay = '0.15s';
+          socialsList.style.animationFillMode = 'forwards';
+          socialsList.addEventListener('animationend', function handler() {
+            socialsList.removeEventListener('animationend', handler);
+            socialsList.style.animation = 'none';
+            socialsList.style.opacity = '1';
+          });
+        }
+      }
+
+      startTypingSequence({
+        elementId: 'blog-typing-text',
+        typingDelay: TYPING_DELAY,
+        deleteDelay: 40,
+        sequences: [
+          [
+            { action: 'type', text: "Cool things I've built." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 23 },
+            { action: 'type', text: 'Blog.' },
+          ],
+          [
+            { action: 'type', text: "Random writings." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 16 },
+            { action: 'type', text: 'Blog.' },
+          ],
+          [
+            { action: 'type', text: "Things I find interesting." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 26 },
+            { action: 'type', text: 'Blog.' },
+          ],
+        ],
+      });
+
+
+      // Data
+      const posts = window.BLOG_POSTS || [];
+      const allTags = [...new Set(posts.flatMap(p => p.tags || []))].sort();
+      const activeTags = new Set();
+
+
+      // Render filter pills
+      function renderFilterBar() {
+        const bar = document.getElementById('filter-bar');
+        if (!bar) return;
+        bar.innerHTML = allTags.map(tag =>
+          `<button class="filter-pill" data-tag="${tag}">${tag}</button>`
+        ).join('');
+
+        bar.addEventListener('click', function (e) {
+          const pill = e.target.closest('.filter-pill');
+          if (!pill) return;
+          const tag = pill.dataset.tag;
+          if (activeTags.has(tag)) {
+            activeTags.delete(tag);
+            pill.classList.remove('active');
+          } else {
+            activeTags.add(tag);
+            pill.classList.add('active');
+          }
+          applyFilters();
+        });
+      }
+
+
+      // Render cards
+      function renderCards() {
+        const grid = document.getElementById('blog-grid');
+        if (!grid) return;
+
+        grid.innerHTML = posts.map(post => {
+          const tagsHTML = (post.tags || []).map(t => `<span class="pill">${t}</span>`).join('');
+          const target = post.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+          const url = post.external ? post.url : (post.url.startsWith('blog/') ? post.url.replace('blog/', '') : post.url);
+          return `<div class="blog-card-wrapper" data-tags="${(post.tags || []).join(',')}">
+            <a class="blog-card" href="${url}"${target}>
+              <h3 class="blog-card-title">${post.title}</h3>
+              <p class="blog-card-date">${post.date}</p>
+              <p class="blog-card-excerpt">${post.excerpt}</p>
+              <div class="blog-card-tags">${tagsHTML}</div>
+            </a>
+          </div>`;
+        }).join('');
+
+        VanillaTilt.init(grid.querySelectorAll('.blog-card'), {
+          max: 8,
+          speed: 400,
+          perspective: 1200,
+          scale: 1.02,
+          glare: false,
+          gyroscope: false
+        });
+      }
+
+
+      // Apply tag filters
+      function applyFilters() {
+        const wrappers = document.querySelectorAll('#blog-grid .blog-card-wrapper');
+        wrappers.forEach(wrapper => {
+          if (activeTags.size === 0) {
+            wrapper.classList.remove('filtered-out');
+            return;
+          }
+          const tags = wrapper.dataset.tags.split(',');
+          const match = tags.some(t => activeTags.has(t));
+          wrapper.classList.toggle('filtered-out', !match);
+        });
+
+        updateGridOffsets();
+      }
+
+
+      function updateGridOffsets() {
+        const grid = document.getElementById('blog-grid');
+        if (!grid) return;
+        const isMobile = window.innerWidth <= 1100;
+        const allWrappers = grid.querySelectorAll('.blog-card-wrapper');
+        if (isMobile) {
+          allWrappers.forEach(w => w.style.transform = '');
+          grid.style.marginBottom = '';
+          return;
+        }
+        const visible = [...grid.querySelectorAll('.blog-card-wrapper:not(.filtered-out)')];
+        const cardHeight = visible.length ? visible[0].querySelector('.blog-card').offsetHeight : 0;
+        const offsets = [0, cardHeight / 2, 0];
+        const maxOffset = Math.max(...offsets);
+        visible.forEach((wrapper, i) => {
+          const col = i % 3;
+          wrapper.style.transform = `translateY(${offsets[col]}px)`;
+        });
+        grid.style.marginBottom = maxOffset + 'px';
+        const hidden = grid.querySelectorAll('.blog-card-wrapper.filtered-out');
+        hidden.forEach(w => w.style.transform = '');
+      }
+
+      // Init
+      renderFilterBar();
+      renderCards();
+      updateGridOffsets();
+      window.addEventListener('resize', updateGridOffsets);
+    })();
+  </script>
+</body>
+</html>

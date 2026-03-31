@@ -1,7 +1,6 @@
 ---
 title: Building a Coding Agent in Embedded Swift
 date: March 2026
-tags: [Swift, Systems]
 ---
 
 A few months ago I stumbled across [obra/smallest-agent](https://github.com/obra/smallest-agent), a repo that defines a fully functional coding agent (the core of Claude code, openclaw, etc.), but in as few bytes as possible. Stripped down it’s one single 493 byte file defining the agent loop; sending messages to Anthropic’s api, a command line tool, waiting for and executing those tool calls, and printing to the terminal. That’s it. 493 bytes is not a lot. To put it in perspective, this paragraph is also exactly 493 bytes.
