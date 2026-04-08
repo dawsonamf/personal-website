@@ -12,6 +12,7 @@
   <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="mobile-styles.css">
+  <link rel="stylesheet" href="featured-carousel.css">
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js" defer></script>
@@ -197,189 +198,23 @@
       data-aos-easing="ease-in-out"
       data-aos-once="true">
     <div class="section-header-wrapper" id="project-header-wrapper">
-      <h2 class="section-header" id="project-header">Things I've Built</h2>
+      <h2 class="section-header" id="project-header">Selected Works</h2>
       <span class="section-header-spacer" id="project-header-spacer"></span>
     </div>
 
-  
-
-    <div id="projects-section">
-      <div class="project-nav-wrapper-mobile">
-        <div class="project-nav-container" id="project-nav-container">
-          <div class="menu-scroll-wrapper">
-            <ul class="project-menu" id="project-menu-list">
-              <li class="selected project-menu-item" data-content-id="content-1">Amino Amigo</li>
-              <li class="project-menu-item" data-content-id="content-2">LexChat</li>
-              <li class="project-menu-item" data-content-id="content-3">Rotobrush</li>
-              <li class="project-menu-item" data-content-id="content-5">Other ML</li>
-              <li class="project-menu-item" data-content-id="content-6">MicroCaml</li>
-              <li class="project-menu-item" data-content-id="content-7">Architecture</li>
-              <li class="project-menu-item" data-content-id="content-8">Deep RL</li>
-            </ul>
-          </div>
-          <div class="project-nav-highlight" id="project-nav-highlight"></div>
+    <section class="featured-carousel-section" id="featured-carousel">
+      <div class="featured-carousel-container">
+        <div class="featured-carousel-fade featured-carousel-fade-left"></div>
+        <div class="featured-carousel-track" id="featured-track">
+          <!-- cards rendered by JS -->
         </div>
+        <div class="featured-carousel-fade featured-carousel-fade-right"></div>
       </div>
-
-    <div id="project-wrapper">
-      <div id="project-content">
-
-        <div id="content-1" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Amino_Media.png" alt="Project Image">
-            <div class="project-tools"><span class="pill">Swift</span><span class="pill">SwiftUI</span><span class="pill">Xcode</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Amino Amigo</h1>
-            <p class="project-description">I like to workout, and building muscle requires lots of protein. 
-              Building muscle optimally requires timing protein intake. However, no macronutrient tracking 
-              app that I could find takes this into account. None distinguish complete from incomplete protein, 
-              or optimal protein windows. This frustrated me to the point that I created the app I wished 
-              already existed.
-              <br><br>
-              Amino Amigo has been downloaded in over a dozen countries. 
-              The app factors in individual metabolic limits and alerts users to when - and how much - protein 
-              to have. The app closely follows Apple's interface guidelines and design principles, and makes use of a wide 
-              variety of Swift features and frameworks.
-              <br><br>
-              <a class="button-link" href="https://apps.apple.com/us/app/amino-amigo/id1638666228" target="_blank">View on the App Store</a>
-            </p>
-            <div class="project-tools-mobile"><span class="pill">Swift</span><span class="pill">SwiftUI</span><span class="pill">Xcode</span></div>
-          </div>
-        </div>
-
-        <div id="content-2" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/LexChat_Media.jpeg" alt="Project Image">
-            <div class="project-tools"><span class="pill">Python</span><span class="pill">Pinecone</span><span class="pill">Streamlit</span><span class="pill">OpenAI</span><span class="pill">BeautifulSoup</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">LexChat</h1>
-            <p class="project-description">
-              LexChat is a website that allows users to search and talk to the Lex Fridman podcast. 
-              I transcribed the podcast with Whisper,
-              created the search engine using vector embeddings, and construct natural 
-              language replies based on this search using GPT-3.5. Each search result includes a timestamped 
-              link directly to the moment in the podcast episode containing the search result.
-              <br><br>
-              I built this back in 2022, before ChatGPT was launched and the explosion of LLMs in general. Because there was limited
-              LLM tooling at the time, I had to build my own RAG stack from scratch, including hosting the embeddings and implementing my own search engine using approximate k-NN.
-              <br><br>
-              <a href="lexchat.html" target="_blank" class="button-link">Visit LexChat</a>
-            </p>
-            <div class="project-tools-mobile"><span class="pill">Python</span><span class="pill">Pinecone</span><span class="pill">Streamlit</span><span class="pill">OpenAI</span><span class="pill">BeautifulSoup</span></div>
-          </div>
-        </div>
-
-        <div id="content-3" class="hidden">
-          <div class="image-container">
-            <img id="rotobrush-image" class="project-image card" src="resources/Rotobrush_Media.png" alt="Project Image">
-            <div class="project-tools"><span class="pill">Matlab</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Rotobrush</h1>
-            <p class="project-description">
-              With Rotobrush, a user can manually mark the border of an object in the first 
-              frame of a video, and Rotobrush will automatically propagate that border across 
-              all subsequent frames.
-              <br><br>
-              This project was based on a paper called “Video SnapCut” (Bai et al.) that was revolutionary 
-              at the time of its release in 2009. SnapCut was immediately included by Adobe Systems in 
-              Photoshop, and was only recently replaced by more modern techniques. I am proud that my 
-              implementation achieves superior performance to the 2009 version.
-              <br><br>
-              <a class="button-link" href="resources/SnapCut.pdf" target="_blank">Read the Paper</a>
-            </p>
-            <div class="project-tools-mobile"><span class="pill">Matlab</span></div>
-          </div>
-        </div>
-
-        <div id="content-5" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/ML_Media.png" alt="Project Image">
-            <div class="project-tools"><span class="pill">Python</span><span class="pill">Matlab</span><span class="pill">TensorFlow</span><span class="pill">Numpy</span><span class="pill">Pandas</span><span class="pill">and more</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Other ML</h1>
-            <p class="project-description">
-              My computer science concentration was in machine learning, so I’ve had exposure to much of the 
-              machine learning lifecycle. This includes scraping data, preprocessing and preparing 
-              data, data analysis and presentation, designing, training, debugging, and testing model 
-              architectures, and integrating the results into existing applications. 
-              <br><br>
-              I’ve developed a variety of traditional models from scratch, including neural 
-              networks (backpropagation and gradient descent too), transformers, CNNs, autoencoders, softmax 
-              regression and classification, embeddings, PCA, simulated annealing, A* search, particle 
-              filters, Kalman filters, entropy based decision trees, Bayes nets, GMMs, ensemble methods, 
-              and more. I’ve also used techniques to support model development such as 
-              ANMS, RANSAC, SfM, SLAM, factor graphs, GTSAM, importance sampling, and more.
-            </p>
-            <div class="project-tools-mobile"><span class="pill">Python</span><span class="pill">Matlab</span><span class="pill">TensorFlow</span><span class="pill">Numpy</span><span class="pill">Pandas</span><span class="pill">and more</span></div>
-          </div>
-        </div>
-
-        <div id="content-6" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Microcaml_Media.png" alt="Project Image">
-            <div class="project-tools"><span class="pill">OCaml</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">MicroCaml</h1>
-            <p class="project-description">
-              MicroCaml is my own - albeit simple - programming language. It's Turing complete, and has 
-              many of the features of OCaml. I created the lexer, parser, and interpreter from scratch using 
-              <!-- <a href="https://en.wikipedia.org/wiki/Context-free_grammar" target="_blank" class="text-link">CFG</a> -->
-              context free grammar, and created an interactive shell to interface with the programming language 
-              from the command line.
-              <br><br>
-              As a precursor to designing MicroCaml, I familiarized myself with context free grammar by creating a 
-              <!-- <a href="https://en.wikipedia.org/wiki/Regular_expression" target="_blank" class="text-link">regex</a>  -->
-              regular expression engine using NFAs and DFAs. 
-            </p>
-            <div class="project-tools-mobile"><span class="pill">OCaml</span></div>
-          </div>
-        </div>
-
-        <div id="content-7" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/Systems_Media.png" alt="Project Image">
-            <div class="project-tools"><span class="pill">C</span><span class="pill">C++</span><span class="pill">MIPS Assembly</span><span class="pill">Python</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Systems Architecture</h1>
-            <p class="project-description">
-              In college, I took a computer systems architecture class revolving around optimizing performance 
-              of multithreaded and networked systems. I implemented Tomasulo’s algorithm, four 
-              branch predictors (G-share, Two-Level Adaptive, etc), and three cache coherency protocols 
-              (MOESI, etc) for parallelized processors ranging from 4 to 16 cores. Testing my 
-              implementations and finding the best hyper-parameters for various processors involved 
-              extensive scripting. Some of these projects involved working directly in MIPS Assembly.
-            </p>
-            <div class="project-tools-mobile"><span class="pill">C</span><span class="pill">C++</span><span class="pill">MIPS Assembly</span><span class="pill">Python</span></div>
-          </div>
-        </div>
-
-        <div id="content-8" class="hidden">
-          <div class="image-container">
-            <img class="project-image card" src="resources/RL_Media.png" alt="Project Image">
-            <div class="project-tools"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">OpenAI Gym</span></div>
-          </div>
-          <div class="project-info">
-            <h1 class="project-title">Deep RL</h1>
-            <p class="project-description">
-              After graduating college, I became interested in reinforcement learning, and decided to do a self-study using 
-              "Reinforcement Learning: An Introduction" by Sutton and Barto as a guide. 
-              I read that book from cover to cover and fell in love with the ideas there. 
-              Along with OpenAI’s Spinning Up, I implemented many of the algorithms I learned from scratch, 
-              including SARSA, DQN, PPO, DDPG, SAC, and a simple version of Monte Carlo Tree Search inspired by AlphaZero.
-            </p>
-            <div class="project-tools-mobile"><span class="pill">Python</span><span class="pill">C++</span><span class="pill">OpenAI Gym</span></div>
-          </div>
-        </div>
-
+      <div class="featured-carousel-dots" id="featured-dots">
+        <!-- dots rendered by JS -->
       </div>
-    </div>
-  </div>
+    </section>
+
     </section>
 
     <div class="section-spacer"></div>

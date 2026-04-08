@@ -184,110 +184,7 @@
     margin-top: 0px;
   }
 
-  #project-header { color: var(--project-color1); }
-
-  #project-wrapper {
-    display: flex;
-    height: fit-content;
-  }
-
-  #project-content, #project-menu {
-    box-sizing: border-box;
-    height: 100%;
-    margin: 10px;
-    margin-bottom: 0px;
-    padding: 20px;
-  }
-
-  #project-content {
-    padding: 0px;
-    margin-top: 20px;
-    margin-left: 0;
-    margin-right: 0;
-  }
-
-  #project-menu {
-    display: none;
-  }
-
-  .project-menu-item-container {
-    padding-bottom: 4px;
-  }
-
-  .project-menu-item:active {
-    color: var(--project-color1);
-    background-color: var(--myGray2);
-    transition: color 0.001s;
-    transition: background-color 0.001;
-  }
-
-  .showing {
-    flex-direction: column;
-  }
-
-  .out-right {
-    z-index: -1;
-  }
-
-  .in-right {
-    z-index: -1;
-  }
-
-  .project-title {
-    color: var(--project-color1);
-    font-size: 20px;
-    text-align: center;
-    padding: 0;
-    margin: 0px;
-    background-color: var(--myGray2);
-    padding-top: 60px;
-    padding-bottom: 10px;
-    transform: translateY(-40px);
-    border-radius: var(--border-radius) var(--border-radius) 0px 0px;
-  }
-
-  .project-image {
-    width: 100%;
-    object-fit: cover;
-    border-radius: var(--border-radius);
-    box-shadow: 0 0 0 rgba(0,0,0,0);
-  }
-
-  .project-image:hover {
-    transform: scale(1);
-    z-index: 2;
-    box-shadow: 0 0 0 rgba(0,0,0,0);
-  }
-
-  .image-container {
-    width: 100%;
-    min-width: 100%;
-  }
-
-  .project-tools {
-    display: none;
-  }
-
-  .project-tools-mobile {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: -40px;
-    margin-right: 10px;
-  }
-
-  .project-description {
-    margin: 0px;
-    color: var(--project-color3);
-    font-size: 16px;
-    line-height: 1.5;
-    background-color: var(--project-color2);
-    padding: 20px;
-    border-radius: 0 0 var(--border-radius) var(--border-radius);
-    z-index: 0;
-    background: var(--project-color2);
-    transform: translateY(-50px);
-  }
+  #project-header { color: var(--myBlue); }
 
 
   /* Contact section */
@@ -361,16 +258,6 @@
     font-size: 13px;
     margin: 0px auto;
     padding: 0px;
-  }
-
-
-  /* Button links */
-
-  .button-link:hover {
-    transform: none;
-    background-color: inherit;
-    color: var(--project-color1);
-    transition: none;
   }
 
 

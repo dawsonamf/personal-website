@@ -1,0 +1,267 @@
+/* ============================================
+   Featured Carousel — shared across home & blog
+   ============================================ */
+
+.featured-carousel-section {
+  padding: 0 20px;
+  margin-bottom: 48px;
+}
+
+.featured-carousel-container {
+  position: relative;
+}
+
+.featured-carousel-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding: 4px 8px;
+}
+
+.featured-carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+.featured-carousel-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.featured-carousel-fade-left {
+  left: 0;
+  background: linear-gradient(to right, rgb(var(--myBlack)), transparent);
+  opacity: 0;
+}
+
+.featured-carousel-fade-right {
+  right: 0;
+  background: linear-gradient(to left, rgb(var(--myBlack)), transparent);
+  opacity: 1;
+}
+
+
+/* Pagination dots */
+
+.featured-carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding-top: 20px;
+}
+
+.fc-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  background-color: var(--myGray1);
+  opacity: 0.35;
+  cursor: pointer;
+  transition: opacity 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+
+.fc-dot:hover {
+  opacity: 0.7;
+}
+
+.fc-dot.active {
+  opacity: 1;
+  transform: scale(1.25);
+}
+
+
+/* Shared card typography & elements */
+
+.fc-card-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: var(--featured-accent, var(--myBlue));
+  margin: 0 0 10px 0;
+  line-height: 1.25;
+}
+
+.fc-card-desc {
+  color: var(--myWhite);
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0 0 18px 0;
+}
+
+.fc-card-tech {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.fc-card-tech .pill {
+  font-size: 12px;
+  padding: 4px 12px;
+}
+
+.fc-card-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  text-decoration: none;
+  font-family: 'SF Mono', monospace;
+  font-size: 13px;
+  color: var(--featured-accent, var(--myBlue));
+  padding: 8px 16px;
+  border: 1px solid var(--featured-accent, var(--myBlue));
+  border-radius: 10px;
+  width: fit-content;
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out, transform 0.25s ease-in-out;
+}
+
+.fc-card-cta:hover {
+  background-color: var(--featured-accent, var(--myBlue));
+  color: rgb(var(--myBlack));
+  transform: translateY(-2px);
+}
+
+.fc-card-cta i {
+  font-size: 11px;
+  transition: transform 0.25s ease-in-out;
+}
+
+.fc-card-cta:hover i {
+  transform: translateX(3px);
+}
+
+
+/* ============================================
+   Card layout — shared base
+   ============================================ */
+
+.fc-card {
+  flex-shrink: 0;
+  width: 90%;
+  min-height: 420px;
+  display: flex;
+  scroll-snap-align: center;
+}
+
+.fc-card-image {
+  width: 45%;
+  flex-shrink: 0;
+}
+
+.fc-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.fc-card-body {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+
+/* Style: unified — image + text in one card */
+
+.fc-style-unified .fc-card {
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  background-color: var(--myGray2);
+}
+
+.fc-style-unified .fc-card-body {
+  padding: 28px 32px;
+}
+
+
+/* Style: floating — image in a card, text on background */
+
+.fc-style-floating .fc-card {
+  gap: 28px;
+  align-items: center;
+}
+
+.fc-style-floating .fc-card-image {
+  width: 510px;
+  height: 340px;
+  flex-shrink: 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fc-style-floating .fc-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+
+/* ============================================
+   Responsive
+   ============================================ */
+
+@media screen and (max-width: 1100px) {
+  .featured-carousel-section {
+    padding: 0 15px;
+    margin-bottom: 32px;
+  }
+
+  .featured-carousel-track {
+    gap: 16px;
+  }
+
+  .featured-carousel-fade {
+    width: 32px;
+  }
+
+  .fc-card {
+    width: 92%;
+    flex-direction: column;
+    min-height: auto;
+  }
+
+  .fc-card-image {
+    width: 100%;
+  }
+
+  .fc-style-unified .fc-card-body {
+    padding: 20px;
+  }
+
+  .fc-style-floating .fc-card {
+    gap: 16px;
+  }
+
+  .fc-style-floating .fc-card-image {
+    width: 100%;
+    height: 240px;
+  }
+
+  .fc-style-floating .fc-card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .fc-card-title {
+    font-size: 20px;
+  }
+
+  .fc-card-desc {
+    font-size: 14px;
+  }
+}
