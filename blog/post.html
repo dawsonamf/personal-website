@@ -15,6 +15,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
   <script src="../blog-data.js"></script>
   <script>
     mermaid.initialize({
@@ -228,6 +229,16 @@
           const minutes = Math.max(1, Math.round(words / 200));
           const readTimeEl = document.getElementById('read-time');
           if (readTimeEl) readTimeEl.textContent = minutes + ' min read';
+
+          VanillaTilt.init(contentEl.querySelectorAll('.blog-image'), {
+            max: 8,
+            speed: 6000,
+            perspective: 1200,
+            scale: 1,
+            glare: true,
+            "max-glare": 0.15,
+            gyroscope: true
+          });
 
           const scriptsList = Array.isArray(meta.scripts) ? meta.scripts : meta.scripts ? [meta.scripts] : [];
           return loadPostScripts(scriptsList);

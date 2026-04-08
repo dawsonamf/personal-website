@@ -22,41 +22,6 @@ const FEATURED_PROJECTS = [
     external: true
   },
   {
-    id: "rotobrush",
-    title: "Rotobrush",
-    description: "With Rotobrush, a user can manually mark the border of an object in the first frame of a video, and Rotobrush will automatically propagate that border across all subsequent frames.<br><br>This project was based on a paper called \"Video SnapCut\" (Bai et al.) that was revolutionary at the time of its release in 2009. SnapCut was immediately included by Adobe Systems in Photoshop, and was only recently replaced by more modern techniques. I am proud that my implementation achieves superior performance to the 2009 version.",
-    image: "../resources/Rotobrush_Media.png",
-    tech: ["Matlab"],
-    accentColor: "#4cc7e5",
-    url: "../resources/SnapCut.pdf",
-    ctaLabel: "Read the Paper",
-    external: true
-  },
-  {
-    id: "other-ml",
-    title: "Other ML",
-    description: "My computer science concentration was in machine learning, so I've had exposure to much of the machine learning lifecycle. This includes scraping data, preprocessing and preparing data, data analysis and presentation, designing, training, debugging, and testing model architectures, and integrating the results into existing applications.<br><br>I've developed a variety of traditional models from scratch, including neural networks (backpropagation and gradient descent too), transformers, CNNs, autoencoders, softmax regression and classification, embeddings, PCA, simulated annealing, A* search, particle filters, Kalman filters, entropy based decision trees, Bayes nets, GMMs, ensemble methods, and more. I've also used techniques to support model development such as ANMS, RANSAC, SfM, SLAM, factor graphs, GTSAM, importance sampling, and more.",
-    image: "../resources/ML_Media.png",
-    tech: ["Python", "Matlab", "TensorFlow", "Numpy", "Pandas", "and more"],
-    accentColor: "hsl(63, 100%, 70%)"
-  },
-  {
-    id: "microcaml",
-    title: "MicroCaml",
-    description: "MicroCaml is my own - albeit simple - programming language. It's Turing complete, and has many of the features of OCaml. I created the lexer, parser, and interpreter from scratch using context free grammar, and created an interactive shell to interface with the programming language from the command line.<br><br>As a precursor to designing MicroCaml, I familiarized myself with context free grammar by creating a regular expression engine using NFAs and DFAs.",
-    image: "../resources/MicrOCaml_Media_2.png",
-    tech: ["OCaml"],
-    accentColor: "#5af8a1"
-  },
-  {
-    id: "architecture",
-    title: "Systems Architecture",
-    description: "In college, I took a computer systems architecture class revolving around optimizing performance of multithreaded and networked systems. I implemented Tomasulo's algorithm, four branch predictors (G-share, Two-Level Adaptive, etc), and three cache coherency protocols (MOESI, etc) for parallelized processors ranging from 4 to 16 cores. Testing my implementations and finding the best hyper-parameters for various processors involved extensive scripting. Some of these projects involved working directly in MIPS Assembly.",
-    image: "../resources/Systems_Media.png",
-    tech: ["C", "C++", "MIPS Assembly", "Python"],
-    accentColor: "#ff8a2b"
-  },
-  {
     id: "deep-rl",
     title: "Deep RL",
     description: "After graduating college, I became interested in reinforcement learning, and decided to do a self-study using \"Reinforcement Learning: An Introduction\" by Sutton and Barto as a guide. I read that book from cover to cover and fell in love with the ideas there. Along with OpenAI's Spinning Up, I implemented many of the algorithms I learned from scratch, including SARSA, DQN, PPO, DDPG, SAC, and a simple version of Monte Carlo Tree Search inspired by AlphaZero.",
@@ -120,6 +85,14 @@ const BLOG_POSTS = [
     url: "https://www.aboutobjects.com/2024/01/05/autoencoders-part-1/",
     tags: ["AI & ML"],
     external: true
+  },
+  {
+    id: "college-projects",
+    title: "Highlights from My CS Degree",
+    date: "May 2022",
+    excerpt: "A collection of projects from my Computer Science undergrad, consolidated from an older version of this site.",
+    tags: ["AI & ML", "Systems"],
+    url: "blog/post.html?id=college-projects"
   },
 ];
 
