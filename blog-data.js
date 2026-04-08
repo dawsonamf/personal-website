@@ -91,7 +91,7 @@ const BLOG_POSTS = [
     id: "embedded-swift-agent",
     title: "Building a Coding Agent in Embedded Swift",
     date: "February 2026",
-    excerpt: "How I built a fully featured coding agent in Embedded Swift that compiles to a 195 KB binary and boots in 120ms.",
+    excerpt: "Building a fully featured coding agent in Embedded Swift that compiles to a 195 KB binary and boots in 120ms.",
     url: "blog/post.html?id=embedded-swift-agent",
     tags: ["Swift", "Systems"]
   },

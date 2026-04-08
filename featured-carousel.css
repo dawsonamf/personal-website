@@ -113,8 +113,7 @@
   align-items: center;
   gap: 6px;
   text-decoration: none;
-  font-family: 'SF Mono', monospace;
-  font-size: 13px;
+  font-size: 15px;
   color: var(--featured-accent, var(--myBlue));
   padding: 8px 16px;
   border: 1px solid var(--featured-accent, var(--myBlue));

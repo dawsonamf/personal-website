@@ -1,8 +1,7 @@
 ---
-
-## title: Toolbelt: Giving AI Clients a Way Into Your Machine
-
+title: Toolbelt: Giving AI Clients a Way Into Your Machine
 date: March 2026
+---
 
 One of the early features that I think was key in driving the rapid growth of OpenClaw was channels — the ability to take actions on your computer through an agent by messaging it from your phone. The agent loop was running on your computer, but you could interact with the loop from anywhere. This is now a fairly standard feature in Claude Code (called Dispatch) and other coding agents, but at the time it was novel.
 
@@ -76,15 +75,36 @@ I wrote it in Python with FastMCP and Starlette. There's a test suite that cover
 # clone and install
 git clone https://github.com/dawsonamf/toolbelt.git
 cd toolbelt
-pip install -r requirements.txt
+pip install -e .
 
-# run in remote mode (Cloudflare tunnel)
-python server.py
+# set API keys (add to your shell profile to persist)
+export EXA_API_KEY=...        # required for web_search / web_crawl
+export CONTEXT7_API_KEY=...   # optional — avoids rate limits
+
+# run in remote mode (Cloudflare tunnel, requires cloudflared)
+toolbelt
 
 # or run in local stdio mode
-python server.py --local
+toolbelt --local
 ```
 
-The bearer token is auto-generated on first run. When you run toolbelt, it'll print the config that you need to paste into your preferred agent.
+The bearer token is auto-generated on first run. When you run toolbelt in remote mode, it prints the MCP client config you need to paste into your preferred agent — including the tunnel URL and auth header. You can also rotate all auth credentials (bearer token, OAuth client ID, and client secret) in one shot with `toolbelt --rotate-auth`.
+
+For local mode with LM Studio, add this to `~/.lmstudio/mcp.json`:
+
+```json
+{
+  "mcpServers": {
+    "toolbelt": {
+      "command": "toolbelt",
+      "args": ["--local"],
+      "env": {
+        "EXA_API_KEY": "your_exa_key",
+        "CONTEXT7_API_KEY": "your_context7_key"
+      }
+    }
+  }
+}
+```
 
 [github.com/dawsonamf/toolbelt](https://github.com/dawsonamf/toolbelt)

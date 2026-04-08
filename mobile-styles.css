@@ -108,7 +108,7 @@
     font-size: 8px;
     position: relative;
     opacity: 0;
-    font-family: 'Roboto Mono', monospace;
+    font-family: 'SF Mono', monospace;
   }
 
   #socials-list {
@@ -156,7 +156,6 @@
   }
 
   .skills-section-header {
-    font-family: 'SF Mono', monospace;
     color: var(--myBlue);
     font-size: 18px;
   }

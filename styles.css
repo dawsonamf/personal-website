@@ -273,7 +273,7 @@ body {
   font-size: 14px;
   position: relative;
   opacity: 0;
-  font-family: 'Roboto Mono', monospace;
+  font-family: 'SF Mono', monospace;
 }
 
 @keyframes fadein {
@@ -381,7 +381,6 @@ body {
 }
 
 .skills-section-header {
-  font-family: 'SF Mono', monospace;
   color: var(--myBlue);
   font-size: 23px;
 }
@@ -445,7 +444,6 @@ body {
   max-width: 1180px;
   margin: 0 auto;
   width: calc(100% - 20px);
-  font-family: 'Roboto', sans-serif;
   color: var(--myWhite);
 }
 

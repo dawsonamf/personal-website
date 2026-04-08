@@ -153,6 +153,13 @@
           { action: 'type', text: "software engineer." },
         ],
         [
+          { action: 'type', text: "Hi,\nI'm Dawson,\nfull stack engineer." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1000 },
+          { action: 'delete', count: 20 },
+          { action: 'type', text: "software engineer." },
+        ],
+        [
           { action: 'type', text: "Hey,\nI'm Dawson,\nsoftware engineer." },
           { action: 'callback', fn: startAnimations },
         ],
@@ -555,6 +562,15 @@
         <p class="blog-card-excerpt">${post.excerpt}</p>
       </a>
     `).join('');
+
+    VanillaTilt.init(track.querySelectorAll('.blog-card'), {
+      max: 8,
+      speed: 400,
+      perspective: 1200,
+      scale: 1.02,
+      glare: false,
+      gyroscope: false
+    });
   }
 
   function setupBlogScrollFade() {
