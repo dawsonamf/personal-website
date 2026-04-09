@@ -5,7 +5,7 @@ const FEATURED_PROJECTS = [
     description: "I fine-tuned Google's Gemma 4 26B MoE model using Heretic's experimental Arbitrary-Rank Ablation (ARA) method to explore the alignment boundary between refusal suppression and capability preservation. ARA bypasses the standard directional ablation pipeline — which breaks on Gemma 4's custom layer types — by using PyTorch hooks and direct L-BFGS matrix optimization instead.<br><br>The result is two model variants at different points on the KL divergence vs. refusal Pareto frontier, published on HuggingFace in both raw safetensors and GGUF formats. Benchmark comparisons against the vanilla model are planned.",
     image: "../resources/placeholder.png",
     tech: ["Python", "PyTorch", "HuggingFace", "Heretic", "L-BFGS"],
-    accentColor: "#F05138",
+    accentColor: "#61ffda",
     url: "blog/post.html?id=gemma4-heretic-ara",
     ctaLabel: "Read the Blog Post",
     external: false
@@ -13,10 +13,10 @@ const FEATURED_PROJECTS = [
   {
     id: "embedded-swift-agent",
     title: "Embedded Swift Agent",
-    description: "I wanted to see how small a fully featured coding agent could be if built from the ground up in Embedded Swift. Without Foundation, I had to replace every dependency manually: networking with libcurl via C interop, JSON parsing by wrapping cJSON with RAII semantics, concurrency with raw pthreads and mutexes, and shell execution with posix_spawn. The agent used itself to help port its own codebase from standard Swift to Embedded Swift.<br><br>The result is a 195 KB binary that boots in 120ms, supports streaming responses, parallel tool execution, subagents, and real-time steering. It's smaller than most JPEGs and significantly more capable than the project that inspired it.",
+    description: "I wanted to build a fully featured coding agent from scratch, and see how small I could make the binary. Embedded Swift seemed like the perfect fit. Without Foundation, I had to replace every dependency manually: networking with libcurl via C interop, JSON parsing by wrapping cJSON with RAII semantics, concurrency with raw pthreads and mutexes, and shell execution with posix_spawn. Once the initial implementation was working in standard Swift, I used the agent running inside its own binary to help port itself to Embedded Swift.<br><br>The result is a 195 KB binary that boots in 120ms, supports streaming responses, parallel tool execution, subagents, and real-time steering. It's smaller than most JPEGs, with the same capabilities as agents more than 500x its size.",
     image: "../resources/EmbeddedSwiftAgent_CLIScreenshot.png",
     tech: ["Swift", "C", "libcurl", "cJSON", "pthreads"],
-    accentColor: "#F05138",
+    accentColor: "#61ffda",
     url: "https://github.com/dawsonamf/EmbeddedSwiftAgent",
     ctaLabel: "View on GitHub",
     external: true
@@ -24,10 +24,10 @@ const FEATURED_PROJECTS = [
   {
     id: "helm",
     title: "Helm",
-    description: "I had over a dozen Cursor windows open at once, each in a different Desktop window on my Mac, and managing them was a job on its own. I wanted Arc Browser's elegant space and tab management, but for my IDE. So I built it.<br><br>Helm is a VS Code and Cursor extension that lives in the Explorer sidebar. You save workspaces, organize them into spaces with custom names, colors, and emojis, and click to switch. The entire UI is a single HTML webview with no framework, styled using VS Code's theme variables so it looks native in any theme. Spaces support trackpad swipe navigation and drag-and-drop reordering.",
+    description: "I often have many projects open simultaneously. With over a dozen Cursor windows open at once, each in a different Desktop window on my Mac, managing them was becoming a job on its own. I am a huge fan of Arc Browser and wanted its elegant space and tab management inside my IDE, so I built it.<br><br>Helm is a VS Code/Cursor extension that lives in the Explorer sidebar. You save workspaces, organize them into spaces with custom names, colors, and emojis, and click to switch. You can swipe between spaces with the trackpad, and drag and drop to reorder. The styling uses VS Code's built-in theme variables, so it looks native regardless of which theme you're using.",
     image: "../resources/Helm_All.png",
     tech: ["TypeScript", "VS Code API", "esbuild"],
-    accentColor: "#007ACC",
+    accentColor: "#61ffda",
     url: "https://github.com/dawsonamf/helm",
     ctaLabel: "View on GitHub",
     external: true
@@ -35,10 +35,10 @@ const FEATURED_PROJECTS = [
   {
     id: "toolbelt",
     title: "Toolbelt",
-    description: "I realized that the agent loop controlling your computer doesn't have to be running on your computer — it just needs a tunnel. Toolbelt is a remote MCP server that runs on your machine and exposes a configurable set of tools (shell, file I/O, grep, web search, and more) to any AI client over a Cloudflare tunnel.<br><br>The server is written in Python with FastMCP. It auto-generates a bearer token on first launch, opens a Cloudflare Quick Tunnel for HTTPS access, and includes an OAuth 2.0 flow for clients that require it. The entire server is stateless — no session cleanup, no stale connections, no side effects from long-lived sessions.",
+    description: "Fundamentally, a coding agent is just a chatbot with access to a filesystem. There's no reason that access must be restricted to a CLI agent running locally on a machine. In theory, any chatbot could become a coding agent if given the right access.<br><br>Toolbelt is an MCP server that does exactly that. It runs on your machine (or a cloud VM/dev box) and exposes a configurable set of tools (bash, read_file, write_file, glob, grep, web_search, etc) over the internet through a secure Cloudflare tunnel. Add Toolbelt to any MCP compatible chatbot (like the ChatGPT app on your iPhone or a local model in LM Studio) and it will become an agent capable of taking actions on your machine. This makes the chat interface the minor component of the agentic system; you can swap it out anytime without having to modify your tools or environment.",
     image: "../resources/Purple_Toolbelt_Image.png",
     tech: ["Python", "FastMCP", "Cloudflare", "OAuth 2.0"],
-    accentColor: "#F48120",
+    accentColor: "#61ffda",
     url: "https://github.com/dawsonamf/toolbelt",
     ctaLabel: "View on GitHub",
     external: true
@@ -49,7 +49,7 @@ const FEATURED_PROJECTS = [
     description: "I like to workout, and building muscle requires lots of protein. Building muscle optimally requires timing protein intake. However, no macronutrient tracking app that I could find takes this into account. None distinguish complete from incomplete protein, or optimal protein windows. This frustrated me to the point that I created the app I wished already existed.<br><br>Amino Amigo has been downloaded in over a dozen countries. The app factors in individual metabolic limits and alerts users to when - and how much - protein to have. The app closely follows Apple's interface guidelines and design principles, and makes use of a wide variety of Swift features and frameworks.",
     image: "../resources/Amino_Media.png",
     tech: ["Swift", "SwiftUI", "Xcode"],
-    accentColor: "rgb(162, 78, 245)",
+    accentColor: "#61ffda",
     url: "https://apps.apple.com/us/app/amino-amigo/id1638666228",
     ctaLabel: "View on the App Store",
     external: true
@@ -60,7 +60,7 @@ const FEATURED_PROJECTS = [
     description: "LexChat is a website that allows users to search and talk to the Lex Fridman podcast. I transcribed the podcast with Whisper, created the search engine using vector embeddings, and construct natural language replies based on this search using GPT-3.5. Each search result includes a timestamped link directly to the moment in the podcast episode containing the search result.<br><br>I built this back in 2022, before ChatGPT was launched and the explosion of LLMs in general. Because there was limited LLM tooling at the time, I had to build my own RAG stack from scratch, including hosting the embeddings and implementing my own search engine using approximate k-NN.",
     image: "../resources/LexChat_Media.jpeg",
     tech: ["Python", "Pinecone", "Streamlit", "OpenAI", "BeautifulSoup"],
-    accentColor: "#0084ff",
+    accentColor: "#61ffda",
     url: "lexchat.html",
     ctaLabel: "Visit LexChat",
     external: true
@@ -71,7 +71,7 @@ const FEATURED_PROJECTS = [
     description: "After graduating college, I became interested in reinforcement learning, and decided to do a self-study using \"Reinforcement Learning: An Introduction\" by Sutton and Barto as a guide. I read that book from cover to cover and fell in love with the ideas there. Along with OpenAI's Spinning Up, I implemented many of the algorithms I learned from scratch, including SARSA, DQN, PPO, DDPG, SAC, and a simple version of Monte Carlo Tree Search inspired by AlphaZero.",
     image: "../resources/RL_Media.png",
     tech: ["Python", "C++", "OpenAI Gym"],
-    accentColor: "rgb(216, 134, 0)"
+    accentColor: "#61ffda"
   }
 ];
 
