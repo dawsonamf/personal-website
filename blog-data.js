@@ -13,9 +13,9 @@ const FEATURED_PROJECTS = [
   {
     id: "embedded-swift-agent",
     title: "Embedded Swift Agent",
-    description: "I wanted to build a fully featured coding agent from scratch, and see how small I could make the binary. Embedded Swift seemed like the perfect fit. Without Foundation, I had to replace every dependency manually: networking with libcurl via C interop, JSON parsing by wrapping cJSON with RAII semantics, concurrency with raw pthreads and mutexes, and shell execution with posix_spawn. Once the initial implementation was working in standard Swift, I used the agent running inside its own binary to help port itself to Embedded Swift.<br><br>The result is a 195 KB binary that boots in 120ms, supports streaming responses, parallel tool execution, subagents, and real-time steering. It's smaller than most JPEGs, with the same capabilities as agents more than 500x its size.",
+    description: "Recently I decided I wanted to build a coding agent from scratch. With so many tutorials online, I decided to make it a little more challenging for myself; make the final binary as small as possible. Rather than learn Rust, I went with Embedded Swift. Without Foundation I had to create almost every dependency manually: networking with libcurl via C interop, JSON parsing by wrapping cJSON with RAII semantics, concurrency with raw pthreads and mutexes, etc. Once the initial implementation was working in standard Swift, I used the agent running inside its own binary to help port itself to Embedded Swift.<br><br>The final result is a 195 KB binary that boots in 120ms, supports streaming responses, parallel tool execution, subagents, and more. It's smaller than most JPEGs, with the same capabilities as agents more than 500x its size.",
     image: "../resources/EmbeddedSwiftAgent_CLIScreenshot.png",
-    tech: ["Swift", "C", "libcurl", "cJSON", "pthreads"],
+    tech: ["Embedded Swift", "C", "libcurl", "cJSON", "pthreads"],
     accentColor: "#61ffda",
     url: "https://github.com/dawsonamf/EmbeddedSwiftAgent",
     ctaLabel: "View on GitHub",
@@ -24,9 +24,9 @@ const FEATURED_PROJECTS = [
   {
     id: "helm",
     title: "Helm",
-    description: "I often have many projects open simultaneously. With over a dozen Cursor windows open at once, each in a different Desktop window on my Mac, managing them was becoming a job on its own. I am a huge fan of Arc Browser and wanted its elegant space and tab management inside my IDE, so I built it.<br><br>Helm is a VS Code/Cursor extension that lives in the Explorer sidebar. You save workspaces, organize them into spaces with custom names, colors, and emojis, and click to switch. You can swipe between spaces with the trackpad, and drag and drop to reorder. The styling uses VS Code's built-in theme variables, so it looks native regardless of which theme you're using.",
+    description: "I often work on many projects at the same time. Sometimes I find myself with over a dozen Cursor windows open at once. At a certain point, managing them all started to feel like a job on its own. I am a huge fan of Arc Browser and wanted its elegant space and tab management inside my IDE, so I built it.<br><br>Helm is a VS Code/Cursor extension that lives in the Explorer sidebar. You can save workspaces, and organize them into “spaces” with custom names, colors, and emojis. You can swipe between spaces with the trackpad, and drag and drop to reorder. The styling uses VS Code's built-in theme variables, so it looks native regardless of which theme you're using.",
     image: "../resources/Helm_All.png",
-    tech: ["TypeScript", "VS Code API", "esbuild"],
+    tech: ["TypeScript", "VSCode API", "Webview", "CSP", "esbuild"],
     accentColor: "#61ffda",
     url: "https://github.com/dawsonamf/helm",
     ctaLabel: "View on GitHub",
@@ -92,7 +92,7 @@ const BLOG_POSTS = [
     id: "helm",
     title: "Helm: A Minimalist Workspace Switcher for your IDE",
     date: "April 2026",
-    excerpt: "I built a Cursor/VSCode extension that brings Arc Browser style space and workspace management to your IDE sidebar.",
+    excerpt: "Building a Cursor/VSCode extension that brings Arc Browser style space and workspace management to your IDE sidebar.",
     url: "blog/post.html?id=helm",
     tags: ["Tools"]
   },
