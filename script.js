@@ -191,7 +191,7 @@
       var linkTarget = proj.external ? ' target="_blank" rel="noopener noreferrer"' : '';
       var imgSrc = proj.image.replace(/^\.\.\//, '');
       var ctaHTML = proj.url && proj.ctaLabel
-        ? '<a class="fc-card-cta" href="' + proj.url.replace(/^\.\.\//, '') + '"' + linkTarget + '>' + proj.ctaLabel + ' <i class="fas fa-arrow-right"></i></a>'
+        ? '<a class="fc-card-cta" href="' + proj.url.replace(/^\.\.\//, '') + '"' + linkTarget + '>' + proj.ctaLabel + '</a>'
         : '';
       return '<div class="fc-card" style="--featured-accent: ' + proj.accentColor + '">' +
         '<div class="fc-card-image"><img src="' + imgSrc + '" alt="' + proj.title + '"></div>' +

@@ -3,9 +3,13 @@ title: Helm: A Workspace Switcher for VS Code and Cursor
 date: March 2026
 ---
 
+<img src="../../resources/Helm_3.png" alt="Helm main view" class="blog-image blog-image-float-right" />
+
 I work on lot of projects. Between work, personal projects, and open source, I probably have over a dozen project directories I switch between regularly. Since I often work with multi-root workspaces (multiple folders open at once in a single VSCode/Cursor winow), it's worse; you have to manually "Add Folder to Workspace" every time, or manage the `.code-workspace` manually. In practice, what this meant was I had a dozen Cursor windows open at once, each in a different Desktop window on my mac grouped by concept/scope. Organizing the windows on my machine was a job on its own, and god forbid there was an update. If Cursor restarted it would group all workspaces together in the same Desktop window and I'd have to spend a few minutes sorting out the windows again. In the grand scheme of things this isn't an enormous deal, only costing a few minutes of work and a few units of mental effort, but it got to be annoying. I began to find myself choosing to not clone a repo, stub out an idea, or even update my IDE just because I didn't think it was worth adding to the overhead that was my project window management.
 
 I love Arc. Arc has been my default browser since early 2023. The tab management is clean, and the mental abstraction of Spaces is elegant. I wanted an Arc style sidebar in my IDE, one that would let me switch between workspaces like I switch between tabs, and group workspaces in "spaces" by context (i.e. work, personal, etc). So I built it.
+
+<div style="clear: both;"></div>
 
 ## The Idea
 
@@ -40,6 +44,8 @@ All persistent data lives in VS Code's user settings under `helm.spaces`. This m
 
 ## The Webview
 
+<img src="../../resources/Helm_2.png" alt="Helm webview UI" class="blog-image blog-image-float-left" />
+
 The entire UI is a single HTML string generated in TypeScript. No React, no Vue, no build step for the frontend. The `_getHtml` method returns a complete document with inline `<style>` and `<script>` tags. Initial data is serialized into the script as a JSON literal.
 
 I went with this approach because VS Code webviews are sandboxed and the UI is simple enough that a framework would be overhead without much benefit. Also, The UI is short enough for an LLM to work with all at once, and doing so reduces tool call overhead.
@@ -48,7 +54,11 @@ The CSS makes use of VS Code's theme variables (`--vscode-foreground`, `--vscode
 
 The swipe gesture detection listens for horizontal `wheel` events on the viewport, accumulates `deltaX`, and triggers a page transition once a threshold is crossed. This gives you trackpad swipe navigation between spaces that feels similar to swiping between spaces in Arc. Arc's is definitely snappier though; an area for improvement eventually.
 
+<div style="clear: both;"></div>
+
 ## Spaces
+
+<img src="../../resources/Helm_1.png" alt="Helm spaces" class="blog-image blog-image-float-right" />
 
 Spaces are the organizational layer. Each space is an object with an id, name, color, optional emoji, and an array of workspaces:
 
@@ -65,6 +75,8 @@ interface Space {
 The active space is tracked in `context.globalState`, not in settings. This keeps it ephemeral and per-window, so opening a new window doesn't clobber your space selection in another.
 
 You can drag workspace cards between spaces by dragging a card over a different space's dot in the bottom bar. When you hover over a dot for 500ms, the view animates to that space and opens a gap where the card will land. Space dots themselves are also draggable for reordering.
+
+<div style="clear: both;"></div>
 
 ## Distribution
 

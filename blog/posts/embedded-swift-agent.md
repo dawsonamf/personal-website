@@ -1,8 +1,7 @@
 ---
-
-## title: Building a Coding Agent in Embedded Swift
-date: March 2026
-
+title: Building a Coding Agent in Embedded Swift
+date: February 2026
+---
 A few months ago I stumbled across [obra/smallest-agent](https://github.com/obra/smallest-agent), a repo that defines a fully functional coding agent (the core of Claude code, OpenClaw, etc.), but in as few bytes as possible. Stripped down it’s one single 493 byte file defining the agent loop; sending messages to Anthropic’s api, a command line tool, waiting for and executing those tool calls, and printing to the terminal. That’s it. 493 bytes is not a lot. To put it in perspective, this paragraph is also exactly 493 bytes.
 
 As a software engineer, I've been working with coding agents for nearly two years. To see that the core logic could be implemented so simply was kind of awesome. Naturally I spun up Docker and built for Linux distribution, excited to see the smallest compiled binary I had ever seen. I was very disappointed. Smallest-agent uses Bun as the runtime, and therefore must pull in all of Bun's dependencies. Without those dependencies, that one file wouldn't know how to make an HTTPS request, parse JSON, spawn a process, or read an environment variable. It couldn't write to the terminal, handle async execution, or catch a Ctrl+C. The 493 bytes describe what the agent does, and absolutely nothing else. It's standing on the shoulders of the giant that is Bun's runtime. Compiled, the actual binary size was around 95 megabytes.
@@ -178,6 +177,8 @@ This is definitely more verbose than `try JSONEncoder().encode(request)`. But it
 ## The Agent Builds Itself
 
 I've worked with C before, but never to this extent. Luckily, I had a coding agent handy that could help me. Once the initial implementation was working in Swift, I used the agent to help port itself to embedded Swift. Most of the code in this repository was written by the agent running inside its own binary. The final numbers are below: A 195 kilobyte binary that boots in 120 milliseconds. This agent, significantly more fully featured than obra/smallest-agent, is smaller than most JPEGs. If you want to try running it yourself, clone it from [dawsonamf/EmbeddedSwiftAgent](https://github.com/dawsonamf/EmbeddedSwiftAgent) and follow the instructions in the README.
+
+![EmbeddedSwiftAgent CLI](../../resources/EmbeddedSwiftAgent_CLIScreenshot.png)
 
 The final numbers:
 

@@ -1,5 +1,49 @@
 const FEATURED_PROJECTS = [
   {
+    id: "gemma4-heretic-ara",
+    title: "Gemma 4 MoE Heretic-ARA",
+    description: "I fine-tuned Google's Gemma 4 26B MoE model using Heretic's experimental Arbitrary-Rank Ablation (ARA) method to explore the alignment boundary between refusal suppression and capability preservation. ARA bypasses the standard directional ablation pipeline — which breaks on Gemma 4's custom layer types — by using PyTorch hooks and direct L-BFGS matrix optimization instead.<br><br>The result is two model variants at different points on the KL divergence vs. refusal Pareto frontier, published on HuggingFace in both raw safetensors and GGUF formats. Benchmark comparisons against the vanilla model are planned.",
+    image: "../resources/placeholder.png",
+    tech: ["Python", "PyTorch", "HuggingFace", "Heretic", "L-BFGS"],
+    accentColor: "#F05138",
+    url: "blog/post.html?id=gemma4-heretic-ara",
+    ctaLabel: "Read the Blog Post",
+    external: false
+  },
+  {
+    id: "embedded-swift-agent",
+    title: "Embedded Swift Agent",
+    description: "I wanted to see how small a fully featured coding agent could be if built from the ground up in Embedded Swift. Without Foundation, I had to replace every dependency manually: networking with libcurl via C interop, JSON parsing by wrapping cJSON with RAII semantics, concurrency with raw pthreads and mutexes, and shell execution with posix_spawn. The agent used itself to help port its own codebase from standard Swift to Embedded Swift.<br><br>The result is a 195 KB binary that boots in 120ms, supports streaming responses, parallel tool execution, subagents, and real-time steering. It's smaller than most JPEGs and significantly more capable than the project that inspired it.",
+    image: "../resources/EmbeddedSwiftAgent_CLIScreenshot.png",
+    tech: ["Swift", "C", "libcurl", "cJSON", "pthreads"],
+    accentColor: "#F05138",
+    url: "https://github.com/dawsonamf/EmbeddedSwiftAgent",
+    ctaLabel: "View on GitHub",
+    external: true
+  },
+  {
+    id: "helm",
+    title: "Helm",
+    description: "I had over a dozen Cursor windows open at once, each in a different Desktop window on my Mac, and managing them was a job on its own. I wanted Arc Browser's elegant space and tab management, but for my IDE. So I built it.<br><br>Helm is a VS Code and Cursor extension that lives in the Explorer sidebar. You save workspaces, organize them into spaces with custom names, colors, and emojis, and click to switch. The entire UI is a single HTML webview with no framework, styled using VS Code's theme variables so it looks native in any theme. Spaces support trackpad swipe navigation and drag-and-drop reordering.",
+    image: "../resources/Helm_All.png",
+    tech: ["TypeScript", "VS Code API", "esbuild"],
+    accentColor: "#007ACC",
+    url: "https://github.com/dawsonamf/helm",
+    ctaLabel: "View on GitHub",
+    external: true
+  },
+  {
+    id: "toolbelt",
+    title: "Toolbelt",
+    description: "I realized that the agent loop controlling your computer doesn't have to be running on your computer — it just needs a tunnel. Toolbelt is a remote MCP server that runs on your machine and exposes a configurable set of tools (shell, file I/O, grep, web search, and more) to any AI client over a Cloudflare tunnel.<br><br>The server is written in Python with FastMCP. It auto-generates a bearer token on first launch, opens a Cloudflare Quick Tunnel for HTTPS access, and includes an OAuth 2.0 flow for clients that require it. The entire server is stateless — no session cleanup, no stale connections, no side effects from long-lived sessions.",
+    image: "../resources/Purple_Toolbelt_Image.png",
+    tech: ["Python", "FastMCP", "Cloudflare", "OAuth 2.0"],
+    accentColor: "#F48120",
+    url: "https://github.com/dawsonamf/toolbelt",
+    ctaLabel: "View on GitHub",
+    external: true
+  },
+  {
     id: "amino-amigo",
     title: "Amino Amigo",
     description: "I like to workout, and building muscle requires lots of protein. Building muscle optimally requires timing protein intake. However, no macronutrient tracking app that I could find takes this into account. None distinguish complete from incomplete protein, or optimal protein windows. This frustrated me to the point that I created the app I wished already existed.<br><br>Amino Amigo has been downloaded in over a dozen countries. The app factors in individual metabolic limits and alerts users to when - and how much - protein to have. The app closely follows Apple's interface guidelines and design principles, and makes use of a wide variety of Swift features and frameworks.",
@@ -37,6 +81,14 @@ if (typeof window !== 'undefined') {
 
 const BLOG_POSTS = [
   {
+    id: "gemma4-heretic-ara",
+    title: "Fine-Tuning Gemma 4 MoE with Heretic-ARA",
+    date: "April 2026",
+    excerpt: "Exploring the alignment boundary of Google's Gemma 4 26B MoE model using Arbitrary-Rank Ablation, with two variants on the KL divergence vs. refusal Pareto frontier.",
+    url: "blog/post.html?id=gemma4-heretic-ara",
+    tags: ["AI & ML"]
+  },
+  {
     id: "helm",
     title: "Helm: A Minimalist Workspace Switcher for your IDE",
     date: "April 2026",
@@ -46,7 +98,7 @@ const BLOG_POSTS = [
   },
   {
     id: "toolbelt",
-    title: "Toolbelt: Giving AI Clients a Way Into Your Machine",
+    title: "Toolbelt: Giving AI Clients a Way Into Your Environment",
     date: "March 2026",
     excerpt: "Turn your local machine into a remote MCP server so any AI client can access your skills setup and take actions on your machine.",
     url: "blog/post.html?id=toolbelt",

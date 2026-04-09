@@ -1,5 +1,5 @@
 ---
-title: Toolbelt: Giving AI Clients a Way Into Your Machine
+title: Toolbelt: Giving AI Clients a Way Into Your Environment
 date: March 2026
 ---
 
@@ -33,7 +33,13 @@ flowchart TB
 
 
 
-Toolbelt is a remote MCP server running on your computer, meaning any agent or chatbot that supports MCPs can use it. It also supports a local stdio mode for clients that run on the same machine (like LM Studio). Toolbelt exposes a configurable set of tools that let it take the same set of actions a standard coding agent running on your machine can take:
+Toolbelt lets you turn any chatbot with MCP support into a fully fledged coding agent.
+
+It decouples your agentic infrastructure from the chatbot itself. Your tools, permissions, etc are accessible through the MCP server, not baked into a particular vendor's product. You can swap between web based chatbots, terminal based agents, and even chatbot apps on your iPhone without extensive work maintaining your setup.
+
+Additionally, because the server is just an MCP endpoint, it doesn't have to run on your Mac at all. You can host it on a cloud VM or a remote dev box and your environment follows you regardless of which device you're accessing it from.
+
+Toolbelt exposes a configurable set of tools that let it take the same set of actions a standard coding agent running on your machine can take:
 
 - `bash` — execute a shell command on your machine
 - `read_file` / `write_file` — read and write files on disk
@@ -46,6 +52,8 @@ Toolbelt is a remote MCP server running on your computer, meaning any agent or c
 
 Each tool can be toggled on or off in a `tools.toml` config file.
 
+Toolbelt runs in one of two modes: a remote mode that exposes the server over an HTTP endpoint (via a Cloudflare tunnel), and a local stdio mode for clients that run on the same machine as the server (like LM Studio).
+
 ## How it works
 
 The server is written in Python using FastMCP. When you start it:
@@ -55,13 +63,13 @@ The server is written in Python using FastMCP. When you start it:
 3. It opens a Cloudflare Quick Tunnel, which gives you a random HTTPS URL that routes back to your machine
 4. It prints the MCP client config to your terminal so you can copy-paste it
 
-You can also run `python server.py --local` for stdio transport with no network exposure (useful for local MCP clients like LM Studio)
+You can also run `python server.py --local` for stdio transport with no network exposure (useful for local MCP clients like LM Studio).
 
 ## Auth
 
 The bearer token is the primary security boundary, so treat it like an SSH key. Anyone who has it can run arbitrary commands on your machine.
 
-I also implemented OAuth 2.0 because some MCP clients (Like ChatGPT) require it. the OAuth flow exists purely to fit the shape of these clients, and just auto approves everything. These OAuth credentials get auto-generated on first launch and stored in `~/.toolbelt/`, so they persist across restarts automatically. You can also hardcode them in a config file if you want to set specific values manually.
+I also implemented OAuth 2.0 because some MCP clients (like ChatGPT) require it. the OAuth flow exists purely to fit the shape of these clients, and just auto approves everything. These OAuth credentials get auto-generated on first launch and stored in `~/.toolbelt/`, so they persist across restarts automatically. You can also hardcode them in a config file if you want to set specific values manually.
 
 ## Building it
 
