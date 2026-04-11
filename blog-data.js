@@ -2,13 +2,13 @@ const FEATURED_PROJECTS = [
   {
     id: "gemma4-heretic-ara",
     title: "Gemma 4 MoE Heretic-ARA",
-    description: "I fine-tuned Google's Gemma 4 26B MoE model using Heretic's experimental Arbitrary-Rank Ablation (ARA) method to explore the alignment boundary between refusal suppression and capability preservation. ARA bypasses the standard directional ablation pipeline — which breaks on Gemma 4's custom layer types — by using PyTorch hooks and direct L-BFGS matrix optimization instead.<br><br>The result is two model variants at different points on the KL divergence vs. refusal Pareto frontier, published on HuggingFace in both raw safetensors and GGUF formats. Benchmark comparisons against the vanilla model are planned.",
-    image: "../resources/placeholder.png",
+    description: "Out of curiosity I rented an H100 on RunPod and fine tuned Google's Gemma 4 26B MoE model using Heretic's experimental ARA branch. I couldn't decide between two of the models on the KL divergence/refusals Pareto frontier, so I benchmarked them both against the evals Google released for the original model (MMMLU, MMMU Pro, AIME 2026, GPQA Diamond, LiveCodeBench V6, τ2-bench, etc).<br><br>I'm currently working on a blog post that explains in more depth what I did, how heretic works, and how arbitrary rank ablation improves on the original design. In the meantime, you can download the models yourself using the link below.",
+    image: "../resources/KLvsRefusals.png",
     tech: ["Python", "PyTorch", "HuggingFace", "Heretic", "L-BFGS"],
     accentColor: "#61ffda",
-    url: "blog/post.html?id=gemma4-heretic-ara",
-    ctaLabel: "Read the Blog Post",
-    external: false
+    url: "https://huggingface.co/dawsonamf",
+    ctaLabel: "View on HuggingFace",
+    external: true
   },
   {
     id: "embedded-swift-agent",
@@ -80,14 +80,14 @@ if (typeof window !== 'undefined') {
 }
 
 const BLOG_POSTS = [
-  {
-    id: "gemma4-heretic-ara",
-    title: "Fine-Tuning Gemma 4 MoE with Heretic-ARA",
-    date: "April 2026",
-    excerpt: "Exploring the alignment boundary of Google's Gemma 4 26B MoE model using Arbitrary-Rank Ablation, with two variants on the KL divergence vs. refusal Pareto frontier.",
-    url: "blog/post.html?id=gemma4-heretic-ara",
-    tags: ["AI & ML"]
-  },
+  // {
+  //   id: "gemma4-heretic-ara",
+  //   title: "Fine-Tuning Gemma 4 MoE with Heretic-ARA",
+  //   date: "April 2026",
+  //   excerpt: "Exploring the alignment boundary of Google's Gemma 4 26B MoE model using Arbitrary-Rank Ablation, with two variants on the KL divergence vs. refusal Pareto frontier.",
+  //   url: "blog/post.html?id=gemma4-heretic-ara",
+  //   tags: ["AI & ML"]
+  // },
   {
     id: "helm",
     title: "Helm: A Minimalist Workspace Switcher for your IDE",
