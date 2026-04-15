@@ -233,6 +233,10 @@
     min-height: auto;
   }
 
+  .fc-card-body {
+    justify-content: flex-start;
+  }
+
   .fc-card-image {
     width: 100%;
   }

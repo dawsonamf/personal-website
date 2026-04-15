@@ -20,6 +20,7 @@
   <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
   <script src="../blog-data.js"></script>
   <script src="../typing-engine.js"></script>
+  <script src="../cursor-follow.js" defer></script>
 </head>
 
 <body>
@@ -29,16 +30,26 @@
       <div class="circle-follow"></div>
     </div>
 
-    <nav class="blog-listing-nav">
-      <a class="name-logo name-logo-visible" href="../index.html">D</a>
+    <nav class="moving-menu" aria-label="Main navigation">
+      <ul class="menu-list"></ul>
     </nav>
+
+    <div class="header-menu-container">
+      <a class="name-logo" href="../index.html">D</a>
+      <nav class="static-menu" aria-label="Main navigation">
+        <ul class="menu-list"></ul>
+      </nav>
+      <nav class="static-menu-mobile" aria-label="Quick links">
+        <ul class="menu-list"></ul>
+      </nav>
+    </div>
 
     <div id="blog-typing-container">
       <div id="blog-typing-left">
         <h1 id="blog-typing-text"></h1>
         <p id="blog-sub-text">I like building things. While some projects become public, most never leave my machine, and the only people who hear about them are my friends and family. That's what this page is; an excuse to dive deep into something and get it out into the world.</p>
-        <p id="blog-sub-text-2">Writing about something is its own kind of project, and so is posting something publicly. It makes you commit to producing a real version of what's in your head, knowing someone might actually look at it. It forces a different kind of clarity than just building alone does.</p>
-        <p id="blog-sub-text-3">The topics jump around a lot, but each is crafted with interest, thought, and care. If something kept me up late more than a few nights in a row, it might end up here.</p>
+        <p id="blog-sub-text-2">Writing about something is its own kind of project, and so is posting something publicly. It makes you commit to producing a real version of what's in your head, knowing someone might actually look at it. It forces a different kind of clarity than building alone does.</p>
+        <p id="blog-sub-text-3">The topics jump around a lot, but if something kept me up late more than a few nights in a row, it might end up here.</p>
       </div>
       <div id="blog-socials-list">
         <span class="socials-menu-spacer"></span>
@@ -109,53 +120,68 @@
   <script>
     (function () {
       var TYPING_DELAY = 75;
+      var SCROLL_THRESHOLD = 300;
 
-      // Cursor follower
-      const cursor = document.querySelector('.cursor-follow');
-      const circle = document.querySelector('.circle-follow');
-      if (cursor && circle) {
-        let mouseX = 0, mouseY = 0;
-        let circleX = 0, circleY = 0;
-        let cursorX = 0, cursorY = 0;
+      // Nav menu setup
+      var NAV_LINKS = [
+        { label: 'About', href: '../index.html#about' },
+        { label: 'Experience', href: '../index.html#jobs-header-static' },
+        { label: 'Projects', href: '../index.html#project-header-static' },
+        { label: 'Blog', href: './', isBlogLink: true },
+        { label: 'Contact', href: '../index.html#contact' },
+        { label: 'Resume', href: '../resources/Resume.pdf', isResume: true },
+      ];
+      var MOBILE_NAV_LINKS = [
+        { href: 'https://www.linkedin.com/in/dawsonamf7/', icon: 'fab fa-linkedin' },
+        { href: 'mailto:dawsonamf@icloud.com', icon: 'bx bx-envelope' },
+        { label: 'Resume', href: '../resources/Resume.pdf', isResume: true },
+      ];
 
-        document.addEventListener('mousemove', function (e) {
-          const body = document.body.getBoundingClientRect();
-          const mainBody = document.getElementById('main-body');
-          let adjustment = 8;
-          if (mainBody) {
-            const diff = (body.width - mainBody.getBoundingClientRect().width) / 2;
-            adjustment = diff <= 0 ? 8 : 8 - diff;
+      function buildNavItems(items) {
+        return items.map(function (item, i) {
+          var spacer = i < items.length - 1 ? '<li><span class="menu-spacer"></span></li>' : '';
+          if (item.icon) {
+            return '<li><a href="' + item.href + '" target="_blank" class="socials-item"><i class="' + item.icon + '"></i></a></li>' + spacer;
           }
-          mouseX = e.clientX - body.left - window.scrollX + adjustment;
-          mouseY = e.clientY - body.top  - window.scrollY + 8;
-        });
-
-        (function animate() {
-          circleX += (mouseX - circleX - circle.offsetWidth  / 2) * 0.25;
-          circleY += (mouseY - circleY - circle.offsetHeight / 2) * 0.25;
-          cursorX += (mouseX - cursorX - cursor.offsetWidth  / 2) * 0.6;
-          cursorY += (mouseY - cursorY - cursor.offsetHeight / 2) * 0.6;
-          cursor.style.left = cursorX + 'px';
-          cursor.style.top  = cursorY + 'px';
-          circle.style.left = circleX + 'px';
-          circle.style.top  = circleY + 'px';
-          requestAnimationFrame(animate);
-        })();
-
-        const hoverSelectors = '.text-link, .name-logo, .blog-card, .filter-pill, .socials-item, .fc-card-cta, .fc-dot';
-        document.addEventListener('mouseover', e => {
-          if (e.target.closest(hoverSelectors)) cursor.classList.add('cursor-follow-clickable');
-        });
-        document.addEventListener('mouseout', e => {
-          if (e.target.closest(hoverSelectors)) cursor.classList.remove('cursor-follow-clickable');
-        });
-
-        document.addEventListener('mousemove', function () {
-          const container = document.getElementById('cursor-container');
-          if (container) container.style.opacity = '1';
-        }, { once: true });
+          var target = item.isResume ? ' target="_blank"' : '';
+          var cls = 'menu-item';
+          if (item.isResume) cls = 'menu-item resume-link';
+          if (item.isBlogLink) cls = 'menu-item blog-page-link';
+          return '<li><a class="' + cls + '" href="' + item.href + '"' + target + '>' + item.label + '</a></li>' + spacer;
+        }).join('');
       }
 
+      (function populateNavMenus() {
+        var desktopHTML = buildNavItems(NAV_LINKS);
+        var mobileHTML = buildNavItems(MOBILE_NAV_LINKS);
+        document.querySelectorAll('.moving-menu .menu-list, .static-menu .menu-list').forEach(function (el) {
+          el.innerHTML = desktopHTML;
+        });
+        var mobileMenu = document.querySelector('.static-menu-mobile .menu-list');
+        if (mobileMenu) mobileMenu.innerHTML = mobileHTML;
+      })();
+
+      (function setupHeaderMenu() {
+        var menu = document.querySelector('.moving-menu');
+        if (!menu) return;
+        var lastScrollTop = 0;
+        window.addEventListener('scroll', function () {
+          var currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+          var isScrollingUp = currentScrollTop < lastScrollTop;
+          var isPastThreshold = currentScrollTop > SCROLL_THRESHOLD;
+          if (currentScrollTop < (SCROLL_THRESHOLD / 3)) {
+            menu.classList.add('menu-invisible');
+          } else {
+            menu.classList.remove('menu-invisible');
+          }
+          if (isScrollingUp && isPastThreshold) {
+            menu.classList.add('menu-sticky');
+          } else {
+            menu.classList.remove('menu-sticky');
+          }
+          lastScrollTop = currentScrollTop;
+        });
+      })();
 
       // Typing animation
       function onBlogTypingComplete() {
@@ -207,6 +233,45 @@
           });
         }
 
+        var nameLogo = document.querySelector('.name-logo');
+        if (nameLogo) {
+          nameLogo.style.animation = 'fadein 0.8s ease-out';
+          nameLogo.style.animationDelay = '0.38s';
+          nameLogo.style.animationFillMode = 'forwards';
+          nameLogo.addEventListener('animationend', function handler() {
+            nameLogo.removeEventListener('animationend', handler);
+            nameLogo.style.animation = 'none';
+            nameLogo.style.visibility = 'visible';
+            nameLogo.style.opacity = '1';
+          });
+        }
+
+        var staticMenu = document.querySelector('.static-menu');
+        if (staticMenu) {
+          staticMenu.style.animation = 'fadein 0.8s ease-out';
+          staticMenu.style.animationDelay = '0.76s';
+          staticMenu.style.animationFillMode = 'forwards';
+          staticMenu.addEventListener('animationend', function handler() {
+            staticMenu.removeEventListener('animationend', handler);
+            staticMenu.style.animation = 'none';
+            staticMenu.style.visibility = 'visible';
+            staticMenu.style.opacity = '1';
+          });
+        }
+
+        var staticMenuMobile = document.querySelector('.static-menu-mobile');
+        if (staticMenuMobile) {
+          staticMenuMobile.style.animation = 'fadein 0.8s ease-out';
+          staticMenuMobile.style.animationDelay = '0.76s';
+          staticMenuMobile.style.animationFillMode = 'forwards';
+          staticMenuMobile.addEventListener('animationend', function handler() {
+            staticMenuMobile.removeEventListener('animationend', handler);
+            staticMenuMobile.style.animation = 'none';
+            staticMenuMobile.style.visibility = 'visible';
+            staticMenuMobile.style.opacity = '1';
+          });
+        }
+
         var selectedWorksHeader = document.getElementById('selected-works-header');
         var featuredCarousel = document.getElementById('featured-carousel');
         [selectedWorksHeader, featuredCarousel].forEach(function (el) {
@@ -236,17 +301,38 @@
             { action: 'type', text: 'Blog.' },
           ],
           [
-            { action: 'type', text: "Random musings." },
-            { action: 'callback', fn: onBlogTypingComplete },
-            { action: 'pause', duration: 800 },
-            { action: 'delete', count: 16 },
-            { action: 'type', text: 'Blog.' },
-          ],
-          [
             { action: 'type', text: "Things I find interesting." },
             { action: 'callback', fn: onBlogTypingComplete },
             { action: 'pause', duration: 800 },
             { action: 'delete', count: 26 },
+            { action: 'type', text: 'Blog.' },
+          ],
+          [
+            { action: 'type', text: "Late night rabbit holes." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 24 },
+            { action: 'type', text: 'Blog.' },
+          ],
+          [
+            { action: 'type', text: "Rabbit holes." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 13 },
+            { action: 'type', text: 'Blog.' },
+          ],
+          [
+            { action: 'type', text: "Things I've built." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 18 },
+            { action: 'type', text: 'Blog.' },
+          ],
+          [
+            { action: 'type', text: "Random projects." },
+            { action: 'callback', fn: onBlogTypingComplete },
+            { action: 'pause', duration: 800 },
+            { action: 'delete', count: 16 },
             { action: 'type', text: 'Blog.' },
           ],
         ],

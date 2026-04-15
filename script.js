@@ -143,13 +143,16 @@
           { action: 'callback', fn: startAnimations },
         ],
         [
-          { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
+          { action: 'type', text: "Hi,\nI'm Dawson,\nweb developer." },
           { action: 'callback', fn: startAnimations },
-          { action: 'pause', duration: 1000 },
-          { action: 'delete', count: 18 },
-          { action: 'type', text: "agentic engineer." },
-          { action: 'pause', duration: 1000 },
-          { action: 'delete', count: 17 },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 14 },
+          { action: 'type', text: "iOS developer." },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 14 },
+          { action: 'type', text: "ML engineer." },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 12 },
           { action: 'type', text: "software engineer." },
         ],
         [
@@ -166,7 +169,17 @@
         [
           { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
           { action: 'callback', fn: startAnimations },
-        ]
+        ],
+        // [
+        //   { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
+        //   { action: 'callback', fn: startAnimations },
+        //   { action: 'pause', duration: 1000 },
+        //   { action: 'delete', count: 18 },
+        //   { action: 'type', text: "vibe coder." },
+        //   { action: 'pause', duration: 1000 },
+        //   { action: 'delete', count: 11 },
+        //   { action: 'type', text: "software engineer." },
+        // ],
       ],
       onNewlineCount: {
         count: 2,
@@ -291,78 +304,6 @@
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => fn(...args), delay);
     };
-  }
-
-
-  function cursorFollow() {
-    const cursor = document.querySelector(".cursor-follow");
-    const circle = document.querySelector(".circle-follow");
-
-    if (!cursor || !circle) return;
-
-    let mouseX = 0;
-    let mouseY = 0;
-    let circleX = 0;
-    let circleY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-
-    document.addEventListener("mousemove", function (event) {
-      let adjustment = 8;
-      const body = document.body.getBoundingClientRect();
-      const mainBody = document.getElementById("main-body");
-      if (!mainBody) return;
-
-      const mainBodyRect = mainBody.getBoundingClientRect();
-      let widthDifference = body.width - mainBodyRect.width;
-      widthDifference = widthDifference / 2;
-      adjustment = 8 - widthDifference;
-
-      if (widthDifference <= 0) {
-        adjustment = 8;
-      }
-
-      mouseX = event.clientX - body.left - window.scrollX + adjustment;
-      mouseY = event.clientY - body.top - window.scrollY  + 8;
-    });
-
-    function animate() {
-      circleX += (mouseX - circleX - circle.offsetWidth / 2) * 0.25;
-      circleY += (mouseY - circleY - circle.offsetHeight / 2) * 0.25;
-
-      cursorX += (mouseX - cursorX - cursor.offsetWidth / 2) * 0.6;
-      cursorY += (mouseY - cursorY - cursor.offsetHeight / 2) * 0.6;
-
-      cursor.style.left = cursorX + "px";
-      cursor.style.top = cursorY + "px";
-
-      circle.style.left = circleX + "px";
-      circle.style.top = circleY + "px";
-
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    const hoverSelectors = '.menu-item, .socials-item, .text-link, .name-logo, .button-link, .job-menu-item, .blog-card, .fc-card-cta, .fc-dot';
-    document.addEventListener('mouseover', (e) => {
-      if (e.target.closest(hoverSelectors)) {
-        cursor.classList.add('cursor-follow-clickable');
-      }
-    });
-    document.addEventListener('mouseout', (e) => {
-      if (e.target.closest(hoverSelectors)) {
-        cursor.classList.remove('cursor-follow-clickable');
-      }
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-      document.addEventListener("mousemove", function () {
-        const cursorContainer = document.querySelector("#cursor-container");
-        if (cursorContainer) {
-          cursorContainer.style.opacity = "1";
-        }
-      }, { once: true });
-    });
   }
 
 
@@ -537,7 +478,6 @@
 
 
   populateNavMenus();
-  cursorFollow();
   setupHeaderMenu();
   initJobsMenu();
 
