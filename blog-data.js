@@ -2,7 +2,7 @@ const FEATURED_PROJECTS = [
   {
     id: "gemma4-heretic-ara",
     title: "Gemma 4 MoE Heretic-ARA",
-    description: "Out of curiosity I rented an H100 on RunPod and fine tuned Google's Gemma 4 26B MoE model using Heretic's experimental ARA branch. I couldn't decide between two of the models on the KL divergence/refusals Pareto frontier, so I benchmarked them both against the evals Google released for the original model (MMMLU, MMMU Pro, AIME 2026, GPQA Diamond, LiveCodeBench V6, τ2-bench, etc).<br><br>I'm currently working on a blog post that explains in more depth what I did, how heretic works, and how arbitrary rank ablation improves on the original design. In the meantime, you can download the models yourself using the link below.",
+    description: "Out of curiosity I rented an H100 on RunPod and fine tuned Google's Gemma 4 26B MoE model using Heretic's experimental ARA branch. I couldn't decide between two of the models on the KL divergence/refusals Pareto frontier, so I benchmarked them both against the evals Google released for the original model (MMMLU, MMMU Pro, AIME 2026, GPQA Diamond, LiveCodeBench V6, τ2-bench, etc).<br><br>I'm currently working on a blog post that explains in more depth what I did, how heretic works, and how arbitrary rank ablation improves on the original design. In the meantime, you can download and try the models yourself using the link below.",
     image: "../resources/KLvsRefusals.png",
     tech: ["Python", "PyTorch", "HuggingFace", "Heretic", "L-BFGS"],
     accentColor: "#61ffda",
