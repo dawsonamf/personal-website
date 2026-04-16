@@ -1,8 +1,8 @@
 (function () {
   'use strict';
 
-  var isSubpage = window.location.pathname.indexOf('/blog') !== -1;
-  var prefix = isSubpage ? '../' : '';
+  const isSubpage = window.location.pathname.indexOf('/blog') !== -1;
+  const prefix = isSubpage ? '../' : '';
 
   window.NAV_CONFIG = {
     NAV_LINKS: [
@@ -23,12 +23,12 @@
 
   function buildNavItems(items) {
     return items.map(function (item, i) {
-      var spacer = i < items.length - 1 ? '<li><span class="menu-spacer"></span></li>' : '';
+      const spacer = i < items.length - 1 ? '<li><span class="menu-spacer"></span></li>' : '';
       if (item.icon) {
         return '<li><a href="' + item.href + '" target="_blank" class="socials-item"><i class="' + item.icon + '"></i></a></li>' + spacer;
       }
-      var target = item.isResume ? ' target="_blank"' : '';
-      var cls = 'menu-item';
+      const target = item.isResume ? ' target="_blank"' : '';
+      let cls = 'menu-item';
       if (item.isResume) cls = 'menu-item resume-link';
       if (item.isBlogLink) cls = 'menu-item blog-page-link';
       return '<li><a class="' + cls + '" href="' + item.href + '"' + target + '>' + item.label + '</a></li>' + spacer;
@@ -36,25 +36,25 @@
   }
 
   // Populate nav menus
-  var desktopHTML = buildNavItems(window.NAV_CONFIG.NAV_LINKS);
-  var mobileHTML = buildNavItems(window.NAV_CONFIG.MOBILE_NAV_LINKS);
+  const desktopHTML = buildNavItems(window.NAV_CONFIG.NAV_LINKS);
+  const mobileHTML = buildNavItems(window.NAV_CONFIG.MOBILE_NAV_LINKS);
 
-  var desktopMenus = document.querySelectorAll('.moving-menu .menu-list, .static-menu .menu-list');
-  for (var i = 0; i < desktopMenus.length; i++) {
+  const desktopMenus = document.querySelectorAll('.moving-menu .menu-list, .static-menu .menu-list');
+  for (let i = 0; i < desktopMenus.length; i++) {
     desktopMenus[i].innerHTML = desktopHTML;
   }
-  var mobileMenu = document.querySelector('.static-menu-mobile .menu-list');
+  const mobileMenu = document.querySelector('.static-menu-mobile .menu-list');
   if (mobileMenu) mobileMenu.innerHTML = mobileHTML;
 
   // Scroll-based sticky header
-  var menu = document.querySelector('.moving-menu');
+  const menu = document.querySelector('.moving-menu');
   if (menu) {
-    var lastScrollTop = 0;
-    var threshold = window.NAV_CONFIG.SCROLL_THRESHOLD;
+    let lastScrollTop = 0;
+    const threshold = window.NAV_CONFIG.SCROLL_THRESHOLD;
     window.addEventListener('scroll', function () {
-      var currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      var isScrollingUp = currentScrollTop < lastScrollTop;
-      var isPastThreshold = currentScrollTop > threshold;
+      const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const isScrollingUp = currentScrollTop < lastScrollTop;
+      const isPastThreshold = currentScrollTop > threshold;
       if (currentScrollTop < (threshold / 3)) {
         menu.classList.add('menu-invisible');
       } else {

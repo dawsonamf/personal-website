@@ -28,22 +28,22 @@
  *   - callback: fires `fn()` immediately, then continues to the next step
  */
 function startTypingSequence(config) {
-  var element = document.getElementById(config.elementId);
+  const element = document.getElementById(config.elementId);
   if (!element) return;
 
-  var typingDelay = config.typingDelay || 75;
-  var deleteDelay = config.deleteDelay || 40;
-  var sequences   = config.sequences || [];
+  const typingDelay = config.typingDelay || 75;
+  const deleteDelay = config.deleteDelay || 40;
+  const sequences   = config.sequences || [];
   if (sequences.length === 0) return;
 
-  var steps = sequences[Math.floor(Math.random() * sequences.length)];
+  const steps = sequences[Math.floor(Math.random() * sequences.length)];
 
-  var cursor = document.createElement('span');
+  const cursor = document.createElement('span');
   cursor.className = 'cursor';
   element.appendChild(cursor);
 
-  var newlineCount = 0;
-  var newlineCbFired = false;
+  let newlineCount = 0;
+  let newlineCbFired = false;
 
   function setCursorBlink(on) {
     cursor.style.animation = on ? 'blink 1s infinite' : 'none';
@@ -51,8 +51,8 @@ function startTypingSequence(config) {
 
   // Collect all text/br nodes before the cursor so we can delete from the end.
   function getContentNodes() {
-    var nodes = [];
-    var child = element.firstChild;
+    const nodes = [];
+    let child = element.firstChild;
     while (child && child !== cursor) {
       nodes.push(child);
       child = child.nextSibling;
@@ -67,7 +67,7 @@ function startTypingSequence(config) {
       return;
     }
 
-    var step = steps[index];
+    const step = steps[index];
 
     if (step.action === 'pause') {
       setCursorBlink(true);
@@ -79,12 +79,12 @@ function startTypingSequence(config) {
 
     if (step.action === 'type') {
       setCursorBlink(false);
-      var text = step.text || '';
-      var charIdx = 0;
+      const text = step.text || '';
+      let charIdx = 0;
 
       function typeChar() {
         if (charIdx < text.length) {
-          var ch = text.charAt(charIdx);
+          const ch = text.charAt(charIdx);
           if (ch === '\n') {
             element.insertBefore(document.createElement('br'), cursor);
             newlineCount++;
@@ -113,7 +113,7 @@ function startTypingSequence(config) {
 
     if (step.action === 'delete') {
       setCursorBlink(false);
-      var remaining = step.count || 0;
+      let remaining = step.count || 0;
 
       function deleteChar() {
         if (remaining <= 0) {
@@ -121,13 +121,13 @@ function startTypingSequence(config) {
           return;
         }
 
-        var nodes = getContentNodes();
+        const nodes = getContentNodes();
         if (nodes.length === 0) {
           runStep(index + 1);
           return;
         }
 
-        var last = nodes[nodes.length - 1];
+        const last = nodes[nodes.length - 1];
 
         if (last.nodeType === Node.TEXT_NODE) {
           if (last.textContent.length > 1) {

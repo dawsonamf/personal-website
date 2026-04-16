@@ -10,22 +10,22 @@
 (function () {
   'use strict';
 
-  var FEATURED_STYLE = 'floating';
+  const FEATURED_STYLE = 'floating';
 
   function renderFeaturedCarousel(isSubpage) {
-    var featuredProjects = window.FEATURED_PROJECTS || [];
-    var section = document.getElementById('featured-carousel');
-    var track = document.getElementById('featured-track');
+    const featuredProjects = window.FEATURED_PROJECTS || [];
+    const section = document.getElementById('featured-carousel');
+    const track = document.getElementById('featured-track');
     if (!section || !track || featuredProjects.length === 0) return;
 
     section.classList.add('fc-style-' + FEATURED_STYLE);
 
     track.innerHTML = featuredProjects.map(function (proj) {
-      var techHTML = proj.tech.map(function (t) { return '<span class="pill">' + t + '</span>'; }).join('');
-      var linkTarget = proj.external ? ' target="_blank" rel="noopener noreferrer"' : '';
-      var imgSrc = isSubpage ? proj.image : proj.image.replace(/^\.\.\//, '');
-      var url = proj.url ? (isSubpage ? proj.url : proj.url.replace(/^\.\.\//, '')) : '';
-      var ctaHTML = proj.url && proj.ctaLabel
+      const techHTML = proj.tech.map(function (t) { return '<span class="pill">' + t + '</span>'; }).join('');
+      const linkTarget = proj.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      const imgSrc = isSubpage ? proj.image : proj.image.replace(/^\.\.\//, '');
+      const url = proj.url ? (isSubpage ? proj.url : proj.url.replace(/^\.\.\//, '')) : '';
+      const ctaHTML = proj.url && proj.ctaLabel
         ? '<a class="fc-card-cta" href="' + url + '"' + linkTarget + '>' + proj.ctaLabel + '</a>'
         : '';
       return '<div class="fc-card" style="--featured-accent: ' + proj.accentColor + '">' +
@@ -41,7 +41,7 @@
 
   function initCarouselTilt() {
     if (FEATURED_STYLE === 'unified') return;
-    var images = document.querySelectorAll('.fc-card-image');
+    const images = document.querySelectorAll('.fc-card-image');
     if (!images.length) return;
     VanillaTilt.init(Array.from(images), {
       max: 8,
@@ -55,17 +55,17 @@
   }
 
   function setupCarouselFades() {
-    var track = document.getElementById('featured-track');
-    var section = document.getElementById('featured-carousel');
+    const track = document.getElementById('featured-track');
+    const section = document.getElementById('featured-carousel');
     if (!track || !section) return;
-    var fadeL = section.querySelector('.featured-carousel-fade-left');
-    var fadeR = section.querySelector('.featured-carousel-fade-right');
+    const fadeL = section.querySelector('.featured-carousel-fade-left');
+    const fadeR = section.querySelector('.featured-carousel-fade-right');
     if (!fadeL || !fadeR) return;
 
     function update() {
-      var sl = track.scrollLeft;
-      var sw = track.scrollWidth;
-      var cw = track.clientWidth;
+      const sl = track.scrollLeft;
+      const sw = track.scrollWidth;
+      const cw = track.clientWidth;
       fadeL.style.opacity = sl <= 5 ? '0' : '1';
       fadeR.style.opacity = sl + cw >= sw - 5 ? '0' : '1';
     }
@@ -75,9 +75,9 @@
   }
 
   function setupCarouselDots() {
-    var featuredProjects = window.FEATURED_PROJECTS || [];
-    var track = document.getElementById('featured-track');
-    var dotsContainer = document.getElementById('featured-dots');
+    const featuredProjects = window.FEATURED_PROJECTS || [];
+    const track = document.getElementById('featured-track');
+    const dotsContainer = document.getElementById('featured-dots');
     if (!track || !dotsContainer || featuredProjects.length === 0) return;
 
     dotsContainer.innerHTML = featuredProjects.map(function (_, i) {
@@ -85,25 +85,25 @@
     }).join('');
 
     dotsContainer.addEventListener('click', function (e) {
-      var dot = e.target.closest('.fc-dot');
+      const dot = e.target.closest('.fc-dot');
       if (!dot) return;
-      var cards = track.querySelectorAll('.fc-card');
-      var idx = parseInt(dot.dataset.index, 10);
+      const cards = track.querySelectorAll('.fc-card');
+      const idx = parseInt(dot.dataset.index, 10);
       if (cards[idx]) {
         cards[idx].scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
     });
 
     function updateActiveDot() {
-      var cards = track.querySelectorAll('.fc-card');
-      var trackRect = track.getBoundingClientRect();
-      var center = trackRect.left + trackRect.width / 2;
-      var closest = 0;
-      var minDist = Infinity;
+      const cards = track.querySelectorAll('.fc-card');
+      const trackRect = track.getBoundingClientRect();
+      const center = trackRect.left + trackRect.width / 2;
+      let closest = 0;
+      let minDist = Infinity;
       cards.forEach(function (card, i) {
-        var cardRect = card.getBoundingClientRect();
-        var cardCenter = cardRect.left + cardRect.width / 2;
-        var dist = Math.abs(cardCenter - center);
+        const cardRect = card.getBoundingClientRect();
+        const cardCenter = cardRect.left + cardRect.width / 2;
+        const dist = Math.abs(cardCenter - center);
         if (dist < minDist) { minDist = dist; closest = i; }
       });
       dotsContainer.querySelectorAll('.fc-dot').forEach(function (d, i) {
@@ -116,7 +116,7 @@
   }
 
   window.initFeaturedCarousel = function (opts) {
-    var isSubpage = opts && opts.isSubpage;
+    const isSubpage = opts && opts.isSubpage;
     renderFeaturedCarousel(isSubpage);
     initCarouselTilt();
     setupCarouselFades();
