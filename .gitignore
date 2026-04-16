@@ -8,6 +8,7 @@
 *~
 .vscode/
 .idea/
+.claude/
 
 # Scratch / temp files
 scrap.txt

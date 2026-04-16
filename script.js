@@ -4,52 +4,11 @@
   const MOBILE_BREAKPOINT = 1100;
   const TYPING_DELAY = 75;
   const ANIMATION_DURATION = 500;
-  const SCROLL_THRESHOLD = 300;
   const DELAY_ADJUSTMENT = 3;
-  const NAV_LINKS = [
-    { label: 'About', href: '#about' },
-    { label: 'Experience', href: '#jobs-header-static' },
-    { label: 'Projects', href: '#project-header-static' },
-    { label: 'Blog', href: 'blog/', isBlogLink: true },
-    { label: 'Contact', href: '#contact' },
-    { label: 'Resume', href: 'resources/Resume.pdf', isResume: true },
-  ];
-
-  const MOBILE_NAV_LINKS = [
-    { href: 'https://www.linkedin.com/in/dawsonamf7/', icon: 'fab fa-linkedin' },
-    { href: 'mailto:dawsonamf@icloud.com', icon: 'bx bx-envelope' },
-    { label: 'Resume', href: 'resources/Resume.pdf', isResume: true },
-  ];
-
-  function buildNavItems(items) {
-    return items.map((item, i) => {
-      const spacer = i < items.length - 1
-        ? '<li><span class="menu-spacer"></span></li>'
-        : '';
-      if (item.icon) {
-        return `<li><a href="${item.href}" target="_blank" class="socials-item"><i class="${item.icon}"></i></a></li>${spacer}`;
-      }
-      const target = item.isResume ? ' target="_blank"' : '';
-      let cls = 'menu-item';
-      if (item.isResume) cls = 'menu-item resume-link';
-      if (item.isBlogLink) cls = 'menu-item blog-page-link';
-      return `<li><a class="${cls}" href="${item.href}"${target}>${item.label}</a></li>${spacer}`;
-    }).join('');
-  }
-
-  function populateNavMenus() {
-    const desktopHTML = buildNavItems(NAV_LINKS);
-    const mobileHTML = buildNavItems(MOBILE_NAV_LINKS);
-
-    for (const el of document.querySelectorAll('.moving-menu .menu-list, .static-menu .menu-list')) {
-      el.innerHTML = desktopHTML;
-    }
-    const mobileMenu = document.querySelector('.static-menu-mobile .menu-list');
-    if (mobileMenu) mobileMenu.innerHTML = mobileHTML;
-  }
 
   function persistAfterAnimation(el, finalStyles) {
-    el.addEventListener('animationend', function handler() {
+    el.addEventListener('animationend', function handler(e) {
+      if (e.target !== el) return;
       el.removeEventListener('animationend', handler);
       el.style.animation = 'none';
       Object.assign(el.style, finalStyles);
@@ -169,6 +128,13 @@
         [
           { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
           { action: 'callback', fn: startAnimations },
+        ],
+        [
+          { action: 'type', text: "Hey,\nI'm Dawson,\nbuilder." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 8 },
+          { action: 'type', text: "software engineer." },
         ],
         // [
         //   { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
@@ -307,31 +273,6 @@
   }
 
 
-  function setupHeaderMenu() {
-    const menu = document.querySelector('.moving-menu');
-    if (!menu) return;
-
-    let lastScrollTop = 0;
-    window.addEventListener('scroll', () => {
-      const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-      const isScrollingUp = currentScrollTop < lastScrollTop;
-      const isPastThreshold = currentScrollTop > SCROLL_THRESHOLD;
-
-      if (currentScrollTop < (SCROLL_THRESHOLD / 3)) {
-        menu.classList.add('menu-invisible');
-      } else {
-        menu.classList.remove('menu-invisible');
-      }
-
-      if (isScrollingUp && isPastThreshold) {
-        menu.classList.add('menu-sticky');
-      } else {
-        menu.classList.remove('menu-sticky');
-      }
-
-      lastScrollTop = currentScrollTop;
-    });
-  }
 
 
   AOS.init();
@@ -477,8 +418,6 @@
 
 
 
-  populateNavMenus();
-  setupHeaderMenu();
   initJobsMenu();
 
   renderFeaturedCarousel();

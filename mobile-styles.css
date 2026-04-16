@@ -31,6 +31,22 @@
 
   .static-menu-mobile .socials-item {
     color: var(--myGray1);
+    height: auto;
+    width: auto;
+  }
+
+  .static-menu-mobile .menu-list {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .static-menu-mobile .menu-item {
+    color: var(--myGray1);
+    text-decoration: none;
+    padding-left: 0;
+    transition: 0.3s ease-in-out;
+    display: flex;
+    align-items: center;
   }
 
   .menu-item {

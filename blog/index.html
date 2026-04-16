@@ -20,6 +20,7 @@
   <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
   <script src="../blog-data.js"></script>
   <script src="../typing-engine.js"></script>
+  <script src="../nav-config.js" defer></script>
   <script src="../cursor-follow.js" defer></script>
 </head>
 
@@ -120,68 +121,6 @@
   <script>
     (function () {
       var TYPING_DELAY = 75;
-      var SCROLL_THRESHOLD = 300;
-
-      // Nav menu setup
-      var NAV_LINKS = [
-        { label: 'About', href: '../index.html#about' },
-        { label: 'Experience', href: '../index.html#jobs-header-static' },
-        { label: 'Projects', href: '../index.html#project-header-static' },
-        { label: 'Blog', href: './', isBlogLink: true },
-        { label: 'Contact', href: '../index.html#contact' },
-        { label: 'Resume', href: '../resources/Resume.pdf', isResume: true },
-      ];
-      var MOBILE_NAV_LINKS = [
-        { href: 'https://www.linkedin.com/in/dawsonamf7/', icon: 'fab fa-linkedin' },
-        { href: 'mailto:dawsonamf@icloud.com', icon: 'bx bx-envelope' },
-        { label: 'Resume', href: '../resources/Resume.pdf', isResume: true },
-      ];
-
-      function buildNavItems(items) {
-        return items.map(function (item, i) {
-          var spacer = i < items.length - 1 ? '<li><span class="menu-spacer"></span></li>' : '';
-          if (item.icon) {
-            return '<li><a href="' + item.href + '" target="_blank" class="socials-item"><i class="' + item.icon + '"></i></a></li>' + spacer;
-          }
-          var target = item.isResume ? ' target="_blank"' : '';
-          var cls = 'menu-item';
-          if (item.isResume) cls = 'menu-item resume-link';
-          if (item.isBlogLink) cls = 'menu-item blog-page-link';
-          return '<li><a class="' + cls + '" href="' + item.href + '"' + target + '>' + item.label + '</a></li>' + spacer;
-        }).join('');
-      }
-
-      (function populateNavMenus() {
-        var desktopHTML = buildNavItems(NAV_LINKS);
-        var mobileHTML = buildNavItems(MOBILE_NAV_LINKS);
-        document.querySelectorAll('.moving-menu .menu-list, .static-menu .menu-list').forEach(function (el) {
-          el.innerHTML = desktopHTML;
-        });
-        var mobileMenu = document.querySelector('.static-menu-mobile .menu-list');
-        if (mobileMenu) mobileMenu.innerHTML = mobileHTML;
-      })();
-
-      (function setupHeaderMenu() {
-        var menu = document.querySelector('.moving-menu');
-        if (!menu) return;
-        var lastScrollTop = 0;
-        window.addEventListener('scroll', function () {
-          var currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          var isScrollingUp = currentScrollTop < lastScrollTop;
-          var isPastThreshold = currentScrollTop > SCROLL_THRESHOLD;
-          if (currentScrollTop < (SCROLL_THRESHOLD / 3)) {
-            menu.classList.add('menu-invisible');
-          } else {
-            menu.classList.remove('menu-invisible');
-          }
-          if (isScrollingUp && isPastThreshold) {
-            menu.classList.add('menu-sticky');
-          } else {
-            menu.classList.remove('menu-sticky');
-          }
-          lastScrollTop = currentScrollTop;
-        });
-      })();
 
       // Typing animation
       function onBlogTypingComplete() {
