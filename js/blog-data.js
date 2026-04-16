@@ -61,7 +61,7 @@ const FEATURED_PROJECTS = [
     image: "../resources/LexChat_Media.jpeg",
     tech: ["Python", "Pinecone", "Streamlit", "OpenAI", "BeautifulSoup"],
     accentColor: "#61ffda",
-    url: "lexchat.html",
+    url: "/lexchat/",
     ctaLabel: "Visit LexChat",
     external: true
   },
