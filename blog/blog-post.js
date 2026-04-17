@@ -47,6 +47,70 @@
     return { meta, body: match[2] };
   }
 
+  function parsePostDate(dateStr) {
+    if (!dateStr) return null;
+    const d = new Date(dateStr + ' 1');
+    return isNaN(d.getTime()) ? null : d.toISOString().slice(0, 10);
+  }
+
+  function injectJsonLd(meta, postData) {
+    const url = window.location.href;
+    const datePublished = parsePostDate(meta.date);
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'BlogPosting',
+      headline: meta.title || '',
+      url: url,
+      mainEntityOfPage: { '@type': 'WebPage', '@id': url },
+      author: {
+        '@type': 'Person',
+        name: 'Dawson Metzger-Fleetwood',
+        url: 'https://www.dawsonamf.com/'
+      },
+      publisher: {
+        '@type': 'Person',
+        name: 'Dawson Metzger-Fleetwood',
+        url: 'https://www.dawsonamf.com/'
+      }
+    };
+    if (datePublished) {
+      schema.datePublished = datePublished;
+      schema.dateModified = datePublished;
+    }
+    if (postData && postData.excerpt) schema.description = postData.excerpt;
+    if (postData && postData.tags) schema.keywords = postData.tags.join(', ');
+
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+  }
+
+  function addCopyButtons(root) {
+    root.querySelectorAll('pre > code').forEach(code => {
+      const pre = code.parentElement;
+      pre.classList.add('has-copy-btn');
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy-btn';
+      btn.setAttribute('aria-label', 'Copy code');
+      btn.innerHTML =
+        '<i class="code-copy-icon code-copy-icon-copy fa-regular fa-copy" aria-hidden="true"></i>' +
+        '<i class="code-copy-icon code-copy-icon-check fa-solid fa-check" aria-hidden="true"></i>';
+
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText(code.innerText).then(() => {
+          btn.classList.add('copied');
+          setTimeout(() => btn.classList.remove('copied'), 1500);
+        });
+      });
+
+      pre.appendChild(btn);
+    });
+  }
+
   function loadPostScripts(scripts) {
     if (!scripts || !scripts.length) return Promise.resolve();
     return scripts.reduce((chain, src) => {
@@ -108,6 +172,8 @@
       const contentEl = document.getElementById('post-content');
       contentEl.innerHTML = marked.parse(body);
       mermaid.run({ nodes: contentEl.querySelectorAll('.mermaid') });
+      addCopyButtons(contentEl);
+      injectJsonLd(meta, postData);
 
       const words = contentEl.innerText.trim().split(/\s+/).length;
       const minutes = Math.max(1, Math.round(words / 200));
