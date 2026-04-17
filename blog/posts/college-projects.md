@@ -27,7 +27,7 @@ In college, I took a computer systems architecture class revolving around optimi
 
 ## MicroCaml
 
-![MicroCaml](../../resources/MicrOCaml_Media_2.png)
+![MicroCaml](../../resources/MicrOCaml_Media.png)
 
 MicroCaml is my own - albeit simple - programming language. It's Turing complete, and has many of the features of OCaml. I created the lexer, parser, and interpreter from scratch using context free grammar, and created an interactive shell to interface with the programming language from the command line.
 
