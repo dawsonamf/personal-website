@@ -43,12 +43,12 @@
   line-height: 1.2;
   font-weight: bold;
   position: relative;
-  color: var(--myWhite);
+  color: var(--text);
   padding-top: 0.5em;
 }
 
 [id^="blog-sub-text"] {
-  color: var(--myGray1);
+  color: var(--text50);
   font-size: 16px;
   line-height: 1.6;
   position: relative;
@@ -84,10 +84,10 @@
 .filter-pill {
   font-family: 'SF Mono', monospace;
   font-size: 13px;
-  color: var(--myGray1);
+  color: var(--text50);
   border-radius: 20px;
   padding: 6px 16px;
-  background-color: var(--myGray2);
+  background-color: var(--text10);
   border: 1px solid transparent;
   cursor: pointer;
   transition: color 0.25s ease-in-out, border-color 0.25s ease-in-out, background-color 0.25s ease-in-out;
@@ -95,14 +95,14 @@
 }
 
 .filter-pill:hover {
-  color: var(--myBlue);
-  border-color: var(--myBlue);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 .filter-pill.active {
-  color: var(--myBlue);
-  border-color: var(--myBlue);
-  background-color: rgba(97, 255, 218, 0.06);
+  color: var(--accent);
+  border-color: var(--accent);
+  background-color: var(--accent5);
 }
 
 
@@ -129,7 +129,7 @@
   height: 220px;
   padding: 24px;
   border-radius: var(--border-radius);
-  background-color: var(--myGray2);
+  background-color: var(--text10);
   text-decoration: none;
   display: flex;
   flex-direction: column;
@@ -138,11 +138,11 @@
 }
 
 .blog-listing-grid .blog-card:hover {
-  background-color: var(--myCardHover);
+  background-color: var(--text15);
 }
 
 .blog-listing-grid .blog-card .blog-card-title {
-  color: var(--myWhite);
+  color: var(--text);
   font-size: 20px;
   font-weight: bold;
   margin: 0 0 8px 0;
@@ -152,12 +152,12 @@
 .blog-listing-grid .blog-card .blog-card-date {
   font-family: 'SF Mono', monospace;
   font-size: 13px;
-  color: var(--myGray1);
+  color: var(--text50);
   margin: 0 0 14px 0;
 }
 
 .blog-listing-grid .blog-card .blog-card-excerpt {
-  color: var(--myWhite);
+  color: var(--text);
   font-size: 15px;
   line-height: 1.5;
   margin: 0 0 14px 0;
@@ -199,7 +199,7 @@
 /* Section headings — reuse home page .section-header-wrapper / .section-header */
 
 .blog-section-header {
-  color: var(--myBlue);
+  color: var(--accent);
   white-space: nowrap;
 }
 

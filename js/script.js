@@ -72,6 +72,15 @@
       elem.style.animationFillMode = "forwards";
       persistAfterAnimation(elem, { visibility: 'visible', transform: 'translateX(0)' });
     }
+
+    // Waits for the later (right) card to finish sliding: delay 3.34s + duration 1.5s.
+    const aboutHeaderWrapper = document.querySelector('#about-header-wrapper');
+    if (aboutHeaderWrapper) {
+      aboutHeaderWrapper.style.animation = "fadein 0.8s ease-out";
+      aboutHeaderWrapper.style.animationDelay = `${4.84 - DELAY_ADJUSTMENT}s`;
+      aboutHeaderWrapper.style.animationFillMode = "forwards";
+      persistAfterAnimation(aboutHeaderWrapper, { visibility: 'visible', opacity: '1' });
+    }
   }
 
 

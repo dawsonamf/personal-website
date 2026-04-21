@@ -13,6 +13,8 @@
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/mobile-styles.css">
   <link rel="stylesheet" href="css/featured-carousel.css">
+  <link rel="stylesheet" href="css/theme-cycler.css">
+  <script src="js/theme-bootstrap.js"></script>
 
   <!-- Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js" defer></script>
@@ -86,9 +88,13 @@
 
 
     <!-- about and skills -->
+    <div class="section-header-wrapper" id="about-header-wrapper" style="visibility: hidden; opacity: 0;">
+      <h2 class="section-header" id="about-section-header"><span class="sec-num">01.</span>About</h2>
+      <span class="section-header-spacer" id="about-header-spacer"></span>
+    </div>
     <section class="double-view-container" id="about">
       <div class="double-view-left card-style">
-        <h2 class="about-header">About Me</h2>
+        <h3 class="card-title about-header">About Me</h3>
         <p class="about-text">
           I’m Dawson Metzger-Fleetwood, a software engineer with dual degrees in Finance and Computer Science (Machine Learning specialization) from the University of Maryland.
           <br><br>
@@ -102,7 +108,7 @@
       </div>
 
       <div class="double-view-right card-style">
-        <h2 class="skills-header">Skills</h2>
+        <h3 class="card-title skills-header">Skills</h3>
         <h2 class="skills-section-header">Web</h2>
         <p class="skills-text">
           I have professional experience engineering full-stack web applications and interactive websites. I’ve built modern backends with Node and Bun, as well as specialized sites with PHP and custom WordPress plugins. I've led full-scale, from-scratch overhauls of enterprise websites, built production grade frontends with React as well as vanilla HTML, CSS, and JavaScript, architected CI/CD pipelines with GitHub Actions and Docker, deployed secure multi-tenant serverless applications on AWS (Lambda, DynamoDB, Cognito), managed business critical production deployments, and built integrated web experiences featuring real-time data processing with WebSockets and libraries like Three.js.
@@ -129,7 +135,7 @@
 
   <div id="jobs-header-static"></div>
   <div class="section-header-wrapper" id="jobs-header-wrapper">
-    <h2 class="section-header" id="jobs-header">Where I've Worked</h2>
+    <h2 class="section-header" id="jobs-header"><span class="sec-num">02.</span>Where I've Worked</h2>
     <span class="section-header-spacer" id="jobs-header-spacer"></span>
   </div>
 
@@ -202,7 +208,7 @@
       data-aos-easing="ease-in-out"
       data-aos-once="true">
     <div class="section-header-wrapper" id="project-header-wrapper">
-      <h2 class="section-header" id="project-header">Selected Works</h2>
+      <h2 class="section-header" id="project-header"><span class="sec-num">03.</span>Selected Works</h2>
       <span class="section-header-spacer" id="project-header-spacer"></span>
     </div>
 
@@ -227,7 +233,7 @@
     <div id="blog-header-static"></div>
     <section class="blog-section-wrapper" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-once="true">
       <div class="section-header-wrapper" id="blog-header-wrapper">
-        <h2 class="section-header" id="blog-header">Blog</h2>
+        <h2 class="section-header" id="blog-header"><span class="sec-num">04.</span>Blog</h2>
         <span class="section-header-spacer" id="blog-header-spacer"></span>
       </div>
       <div class="blog-scroll-container">
@@ -245,11 +251,16 @@
     <div class="section-spacer"></div>
 
     <!-- contact me -->
+    <div class="section-header-wrapper" id="contact-header-wrapper"
+      data-aos="fade-right"
+      data-aos-once="true">
+      <h2 class="section-header" id="contact-section-header"><span class="sec-num">05.</span>Contact</h2>
+      <span class="section-header-spacer" id="contact-header-spacer"></span>
+    </div>
     <section class="double-view-container" id="contact">
       <div class="contact-view-left"
         data-aos="fade-right"
         data-aos-once="true">
-        <h2 class="contact-header">Contact Me</h2>
         <p class="contact-text">My inbox is always open. If you're interested in working together, 
           have a question, or just want to say hi, feel free 
           to reach out! Send me an email at <a href="mailto:dawsonamf@icloud.com" target="_blank" class="text-link">dawsonamf@icloud.com</a>, 
@@ -288,10 +299,12 @@
         </div>
       </div>
 
-      <img class="contact-image card" src="resources/location.png" alt="Map"
-        data-aos="fade-left" 
+      <div class="contact-image-wrapper card"
+        data-aos="fade-left"
         data-aos-easing="ease-in-out"
         data-aos-once="true">
+        <img class="contact-image" src="resources/location.png" alt="Map">
+      </div>
 
     </section>
 
@@ -312,6 +325,7 @@
       </p>
     </div>
   </div>
+  <script defer src="js/theme-cycler.js"></script>
 </body>
   
 </html>

@@ -9,7 +9,7 @@
 }
 
 .blog-post-title {
-  color: var(--myBlue);
+  color: var(--accent);
   font-size: 42px;
   margin: 0 0 15px 0;
   line-height: 1.2;
@@ -23,7 +23,7 @@
 
 
 .blog-post-content {
-  color: var(--myWhite);
+  color: var(--text);
   font-size: 17px;
   line-height: 1.8;
 }
@@ -33,27 +33,27 @@
 }
 
 .blog-post-content h2 {
-  color: var(--myBlue);
+  color: var(--accent);
   font-size: 28px;
   margin: 2em 0 1em 0;
 }
 
 .blog-post-content h3 {
-  color: var(--myWhite);
+  color: var(--text);
   font-size: 22px;
   margin: 1.5em 0 0.75em 0;
 }
 
 .blog-post-content code {
   font-family: 'SF Mono', monospace;
-  background-color: var(--myGray2);
+  background-color: var(--text10);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 15px;
 }
 
 .blog-post-content pre {
-  background-color: var(--myGray2);
+  background-color: var(--text10);
   padding: 20px;
   border-radius: var(--border-radius);
   overflow-x: auto;
@@ -76,7 +76,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--myWhite);
+  color: var(--text);
   background: none;
   border: none;
   cursor: pointer;
@@ -90,7 +90,7 @@
 }
 
 .blog-post-content pre.has-copy-btn .code-copy-btn:hover {
-  color: var(--myBlue);
+  color: var(--accent);
 }
 
 .blog-post-content .code-copy-icon {
@@ -120,7 +120,7 @@
 }
 
 .blog-post-content .mermaid {
-  background-color: var(--myGray2);
+  background-color: var(--text10);
   padding: 20px;
   border-radius: var(--border-radius);
   margin: 1.5em 0;
@@ -137,10 +137,10 @@
 }
 
 .blog-post-content blockquote {
-  border-left: 3px solid var(--myBlue);
+  border-left: 3px solid var(--accent);
   margin: 1.5em 0;
   padding: 0.5em 0 0.5em 1.5em;
-  color: var(--myGray1);
+  color: var(--text50);
 }
 
 .blog-post-content blockquote p {
@@ -159,7 +159,7 @@
 
 .blog-post-content hr {
   border: none;
-  border-top: 1px solid var(--myGray2);
+  border-top: 1px solid var(--text15);
   margin: 2em 0;
 }
 
@@ -204,12 +204,12 @@
 .blog-post-content th,
 .blog-post-content td {
   padding: 8px 12px;
-  border: 1px solid var(--myGray2);
+  border: 1px solid var(--text15);
   text-align: left;
 }
 
 .blog-post-content th {
-  background-color: var(--myGray2);
+  background-color: var(--text10);
   font-weight: 600;
 }
 

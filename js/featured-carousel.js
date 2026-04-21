@@ -28,7 +28,7 @@
       const ctaHTML = proj.url && proj.ctaLabel
         ? '<a class="fc-card-cta" href="' + url + '"' + linkTarget + '>' + proj.ctaLabel + '</a>'
         : '';
-      return '<div class="fc-card" style="--featured-accent: ' + proj.accentColor + '">' +
+      return '<div class="fc-card">' +
         '<div class="fc-card-image"><img src="' + imgSrc + '" alt="' + proj.title + '"></div>' +
         '<div class="fc-card-body">' +
           '<h3 class="fc-card-title">' + proj.title + '</h3>' +

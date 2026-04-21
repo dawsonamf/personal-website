@@ -97,6 +97,16 @@ function startTypingSequence(config) {
               newlineCbFired = true;
               config.onNewlineCount.callback();
             }
+          } else if (newlineCount >= 2) {
+            const prev = cursor.previousSibling;
+            if (prev && prev.nodeType === Node.ELEMENT_NODE && prev.classList && prev.classList.contains('typing-accent')) {
+              prev.appendChild(document.createTextNode(ch));
+            } else {
+              const span = document.createElement('span');
+              span.className = 'typing-accent';
+              span.appendChild(document.createTextNode(ch));
+              element.insertBefore(span, cursor);
+            }
           } else {
             element.insertBefore(document.createTextNode(ch), cursor);
           }
@@ -140,6 +150,15 @@ function startTypingSequence(config) {
         } else if (last.nodeName === 'BR') {
           element.removeChild(last);
           newlineCount = Math.max(0, newlineCount - 1);
+          remaining--;
+          setTimeout(deleteChar, deleteDelay);
+        } else if (last.nodeType === Node.ELEMENT_NODE && last.classList && last.classList.contains('typing-accent')) {
+          const txt = last.textContent;
+          if (txt.length > 1) {
+            last.textContent = txt.slice(0, -1);
+          } else {
+            element.removeChild(last);
+          }
           remaining--;
           setTimeout(deleteChar, deleteDelay);
         } else {

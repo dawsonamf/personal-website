@@ -37,13 +37,13 @@
 
 .featured-carousel-fade-left {
   left: 0;
-  background: linear-gradient(to right, rgb(var(--myBlack)), transparent);
+  background: linear-gradient(to right, var(--bg), transparent);
   opacity: 0;
 }
 
 .featured-carousel-fade-right {
   right: 0;
-  background: linear-gradient(to left, rgb(var(--myBlack)), transparent);
+  background: linear-gradient(to left, var(--bg), transparent);
   opacity: 1;
 }
 
@@ -84,13 +84,13 @@
 .fc-card-title {
   font-size: 22px;
   font-weight: bold;
-  color: var(--featured-accent, var(--myBlue));
+  color: var(--featured-accent, var(--accent));
   margin: 0 0 10px 0;
   line-height: 1.25;
 }
 
 .fc-card-desc {
-  color: var(--myWhite);
+  color: var(--text);
   font-size: 15px;
   line-height: 1.6;
   margin: 0 0 18px 0;
@@ -114,17 +114,17 @@
   gap: 6px;
   text-decoration: none;
   font-size: 15px;
-  color: var(--featured-accent, var(--myBlue));
+  color: var(--featured-accent, var(--accent));
   padding: 8px 16px;
-  border: 1px solid var(--featured-accent, var(--myBlue));
+  border: 1px solid var(--featured-accent, var(--accent));
   border-radius: 10px;
   width: fit-content;
   transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out, transform 0.25s ease-in-out;
 }
 
 .fc-card-cta:hover {
-  background-color: var(--featured-accent, var(--myBlue));
-  color: rgb(var(--myBlack));
+  background-color: var(--featured-accent, var(--accent));
+  color: var(--bg);
   transform: translateY(-2px);
 }
 
@@ -176,7 +176,7 @@
 .fc-style-unified .fc-card {
   border-radius: var(--border-radius);
   overflow: hidden;
-  background-color: var(--myGray2);
+  background-color: var(--text10);
 }
 
 .fc-style-unified .fc-card-body {

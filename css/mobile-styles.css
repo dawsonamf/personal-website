@@ -1,7 +1,7 @@
 @media screen and (max-width: 1100px) {
 
   body {
-    background-color: rgb(var(--myBlack));
+    background-color: var(--bg);
   }
 
   #main-body {
@@ -30,7 +30,7 @@
   }
 
   .static-menu-mobile .socials-item {
-    color: var(--myGray1);
+    color: var(--text50);
     height: auto;
     width: auto;
   }
@@ -41,7 +41,7 @@
   }
 
   .static-menu-mobile .menu-item {
-    color: var(--myGray1);
+    color: var(--text50);
     text-decoration: none;
     padding-left: 0;
     transition: 0.3s ease-in-out;
@@ -50,7 +50,7 @@
   }
 
   .menu-item {
-    color: var(--myGray1);
+    color: var(--text50);
     text-decoration: none;
     padding-left: 15px;
     transition: 0.3s ease-in-out;
@@ -59,7 +59,7 @@
   .menu-spacer {
     border-width: 0.5px;
     border-style: solid;
-    border-color: var(--myGray1);
+    border-color: var(--text20);
     border-top-width: 8px;
     border-bottom-width: 8px;
     margin: 10px;
@@ -76,13 +76,13 @@
   .name-logo:hover {
     transform: none;
     background-color: inherit;
-    color: var(--myBlue);
+    color: var(--accent);
     transition: none;
   }
 
   .name-logo:active {
-    background-color: var(--myBlue);
-    color: rgb(var(--myBlack));
+    background-color: var(--accent);
+    color: var(--bg);
   }
 
   #typing-container {
@@ -119,7 +119,7 @@
   }
 
   #sub-text {
-    color: var(--myBlue);
+    color: var(--accent);
     letter-spacing: 3px;
     font-size: 8px;
     position: relative;
@@ -136,7 +136,6 @@
 
   .double-view-container {
     flex-direction: column;
-    margin-top: -40px;
     padding-right: 20px;
     box-sizing: border-box;
   }
@@ -150,29 +149,31 @@
 
   .double-view-left {
     width: 100%;
-    background-color: var(--myGray2);
+    background-color: var(--text10);
     visibility: hidden;
   }
 
   .double-view-right {
     margin-top: 40px;
     width: 100%;
-    background-color: var(--myGray2);
+    background-color: var(--text10);
     visibility: hidden;
   }
 
+  .card-title {
+    font-size: 22px;
+  }
+
   .about-header {
-    color: var(--myBlue);
-    font-size: 25px;
+    color: var(--accent);
   }
 
   .skills-header {
-    color: var(--myBlue);
-    font-size: 25px;
+    color: var(--accent);
   }
 
   .skills-section-header {
-    color: var(--myBlue);
+    color: var(--accent);
     font-size: 18px;
   }
 
@@ -199,7 +200,7 @@
     margin-top: 0px;
   }
 
-  #project-header { color: var(--myBlue); }
+  #project-header { color: var(--accent); }
 
 
   /* Contact section */
@@ -213,15 +214,13 @@
     width: 100%;
     padding: 20px;
     margin: 10px;
-    margin-top: 60px;
     margin-bottom: 0px;
-    background-color: var(--myGray2);
+    background-color: var(--text10);
     border-radius: var(--border-radius);
   }
 
   .contact-header {
-    color: var(--myBlue);
-    font-size: 40px;
+    color: var(--accent);
   }
 
   .contact-image {
@@ -269,7 +268,7 @@
   .footer-text-mobile {
     width: fit-content;
     text-align: center;
-    color: var(--myGray1);
+    color: var(--text50);
     font-size: 13px;
     margin: 0px auto;
     padding: 0px;
@@ -282,7 +281,7 @@
     margin-top: -80px;
   }
 
-  #blog-header { color: var(--myBlue); }
+  #blog-header { color: var(--accent); }
 
   .blog-scroll-container {
     position: relative;
@@ -309,7 +308,7 @@
     min-height: 150px;
     padding: 20px;
     border-radius: var(--border-radius);
-    background-color: var(--myGray2);
+    background-color: var(--text10);
     text-decoration: none;
     display: flex;
     flex-direction: column;
