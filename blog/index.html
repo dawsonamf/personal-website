@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog | Dawson Metzger-Fleetwood</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile-styles.css">
+  <link rel="stylesheet" href="../css/featured-carousel.css">
+  <link rel="stylesheet" href="blog-listing-styles.css">
+  <link rel="stylesheet" href="../css/theme-cycler.css">
+  <script src="../js/theme-bootstrap.js"></script>
+
+  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+  <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+  <script src="../js/blog-data.js"></script>
+  <script src="../js/featured-carousel.js"></script>
+  <script src="../js/typing-engine.js"></script>
+  <script src="../js/nav-config.js" defer></script>
+  <script src="../js/cursor-follow.js" defer></script>
+</head>
+
+<body>
+  <div id="main-body">
+    <div id="cursor-container">
+      <div class="cursor-follow"></div>
+      <div class="circle-follow"></div>
+    </div>
+
+    <nav class="moving-menu" aria-label="Main navigation">
+      <ul class="menu-list"></ul>
+    </nav>
+
+    <div class="header-menu-container">
+      <a class="name-logo" href="../index.html">D</a>
+      <nav class="static-menu" aria-label="Main navigation">
+        <ul class="menu-list"></ul>
+      </nav>
+      <nav class="static-menu-mobile" aria-label="Quick links">
+        <ul class="menu-list"></ul>
+      </nav>
+    </div>
+
+    <div id="blog-typing-container">
+      <div id="blog-typing-left">
+        <h1 id="blog-typing-text"></h1>
+        <p id="blog-sub-text">I like building things. While some projects become public, most never leave my machine, and the only people who hear about them are my friends and family. That's what this page is; an excuse to dive deep into something and get it out into the world.</p>
+        <p id="blog-sub-text-2">Writing about something is its own kind of project, and so is posting something publicly. It makes you commit to producing a real version of what's in your head, knowing someone might actually look at it. It forces a different kind of clarity than building alone does.</p>
+        <p id="blog-sub-text-3">The topics jump around a lot, but if something kept me up late more than a few nights in a row, it might end up here.</p>
+      </div>
+      <div id="blog-socials-list">
+        <span class="socials-menu-spacer"></span>
+        <br>
+        <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
+        <a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a>
+        <a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a>
+        <a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a>
+        <a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a>
+        <br>
+        <span class="socials-menu-spacer"></span>
+      </div>
+    </div>
+
+    <div class="section-spacer"></div>
+
+    <div class="section-header-wrapper" id="selected-works-header">
+      <h2 class="section-header blog-section-header"><span class="sec-num">01.</span>Selected Works</h2>
+      <span class="section-header-spacer"></span>
+    </div>
+
+    <section class="featured-carousel-section" id="featured-carousel">
+      <div class="featured-carousel-container">
+        <div class="featured-carousel-fade featured-carousel-fade-left"></div>
+        <div class="featured-carousel-track" id="featured-track">
+          <!-- cards rendered by JS -->
+        </div>
+        <div class="featured-carousel-fade featured-carousel-fade-right"></div>
+      </div>
+      <div class="featured-carousel-dots" id="featured-dots">
+        <!-- dots rendered by JS -->
+      </div>
+    </section>
+
+    <div class="section-spacer"></div>
+
+    <div class="section-header-wrapper" data-aos="fade-up" data-aos-once="true">
+      <h2 class="section-header blog-section-header"><span class="sec-num">02.</span>All Posts</h2>
+      <span class="section-header-spacer"></span>
+    </div>
+
+    <div class="blog-filter-bar" id="filter-bar" data-aos="fade-up" data-aos-once="true">
+      <!-- pills rendered by JS -->
+    </div>
+
+    <div class="blog-listing-content">
+      <div class="blog-listing-grid" id="blog-grid">
+        <!-- cards rendered by JS -->
+      </div>
+    </div>
+
+    <footer class="footer-container blog-listing-footer">
+      <span class="footer-spacer"></span>
+      <p class="footer-text">
+        Designed and built by Dawson Metzger-Fleetwood
+      </p>
+      <span class="footer-spacer"></span>
+    </footer>
+
+    <div class="footer-container-mobile">
+      <p class="footer-text-mobile">
+        Designed and built by Dawson Metzger-Fleetwood
+      </p>
+    </div>
+  </div>
+
+  <script src="blog-listing.js"></script>
+  <script defer src="../js/theme-cycler.js"></script>
+</body>
+</html>

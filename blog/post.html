@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading… | Dawson Metzger-Fleetwood</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/mobile-styles.css">
+  <link rel="stylesheet" href="blog-styles.css">
+  <link rel="stylesheet" href="../css/theme-cycler.css">
+  <script src="../js/theme-bootstrap.js"></script>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+  <script src="../js/blog-data.js"></script>
+  <script src="../js/cursor-follow.js" defer></script>
+  <script>
+    mermaid.initialize({
+      startOnLoad: false,
+      theme: 'base',
+      themeVariables: {
+        darkMode: true,
+        background: '#2c2c2c',
+        primaryColor: '#2c2c2c',
+        primaryTextColor: '#e6f1ff',
+        primaryBorderColor: '#a2a2a3',
+        lineColor: '#a2a2a3',
+        nodeTextColor: '#e6f1ff',
+        mainBkg: '#2c2c2c',
+        nodeBorder: '#a2a2a3',
+        edgeLabelBackground: '#2c2c2c',
+      },
+      flowchart: { curve: 'basis', padding: 16 },
+    });
+  </script>
+</head>
+
+<body>
+  <div id="main-body">
+    <div id="cursor-container">
+      <div class="cursor-follow"></div>
+      <div class="circle-follow"></div>
+    </div>
+
+    <nav class="blog-nav">
+      <a class="name-logo name-logo-visible" href="../index.html">D</a>
+    </nav>
+
+    <article class="blog-post-container">
+      <header class="blog-post-header">
+        <h1 class="blog-post-title" id="post-title"></h1>
+        <div class="blog-post-meta" id="post-meta"></div>
+      </header>
+      <div class="blog-post-content" id="post-content"></div>
+    </article>
+
+    <footer class="footer-container blog-footer">
+      <span class="footer-spacer"></span>
+      <p class="footer-text">
+        Designed and built by Dawson Metzger-Fleetwood
+      </p>
+      <span class="footer-spacer"></span>
+    </footer>
+  </div>
+
+  <script src="blog-post.js"></script>
+  <script defer src="../js/theme-cycler.js"></script>
+</body>
+</html>
