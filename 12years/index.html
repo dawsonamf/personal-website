@@ -1,0 +1,3424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>12 Years Together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #060609;
+    --cream: #f2ede4;
+    --gold: #c9a86c;
+    --gold-light: #e0c992;
+    --sky-top: #0a0a14;
+    --sky-bot: #0a0a14;
+  }
+
+  html { scroll-behavior: auto; }
+
+  body {
+    background: var(--bg);
+    color: var(--cream);
+    font-family: 'EB Garamond', Georgia, serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    transition: background 0.3s ease;
+  }
+
+  #bgLayer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(to bottom, #0a0a14, #0a0a14);
+  }
+
+  .scroll-container { height: 4500vh; position: relative; }
+
+  .intro-region {
+    height: 400vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  .intro-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .bg-gradient {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 50% 55%, rgba(160, 70, 100, 0.05) 0%, transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 100%, rgba(30, 60, 40, 0.06) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  /* Watercolor / paper texture overlay */
+  .paper-texture {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 998;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image:
+      url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='6' stitchTiles='stitch' seed='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+    background-size: 512px 512px;
+  }
+
+  /* Subtle watercolor wash edges */
+  .watercolor-wash {
+    position: fixed; inset: 0;
+    pointer-events: none; z-index: 997;
+    opacity: 0;
+    transition: opacity 1s ease;
+    background:
+      radial-gradient(ellipse 90% 80% at 20% 30%, rgba(180,120,160,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse 70% 90% at 80% 70%, rgba(120,160,140,0.04) 0%, transparent 50%),
+      radial-gradient(ellipse 80% 60% at 50% 90%, rgba(200,170,120,0.03) 0%, transparent 40%);
+  }
+
+  .particles-canvas {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.45;
+    z-index: 1;
+  }
+
+  /* Title — centered in viewport */
+  .title-group {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none; z-index: 2;
+  }
+  .title-main {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300; font-size: clamp(2.2rem, 5vw, 4rem);
+    letter-spacing: 0.2em; color: var(--cream);
+    opacity: 0; text-transform: uppercase;
+  }
+  /* Intro messages — centered */
+  .intro-msg {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center; pointer-events: none; z-index: 2;
+    max-width: 520px; width: 90%;
+  }
+  .intro-msg p {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300; font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    line-height: 1.7;
+    color: var(--cream); opacity: 0;
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: absolute; bottom: 5vh; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center;
+    z-index: 2; pointer-events: none;
+  }
+  .scroll-line {
+    width: 1px; height: 28px;
+    background: linear-gradient(to bottom, transparent, var(--gold));
+    margin-bottom: 12px; opacity: 0;
+    animation: scrollPulse 2.5s ease-in-out infinite;
+  }
+  .scroll-hint span {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 0.8rem; letter-spacing: 0.25em;
+    text-transform: uppercase; color: var(--gold); opacity: 0;
+  }
+  @keyframes scrollPulse {
+    0%, 100% { transform: scaleY(1); opacity: 0.5; }
+    50% { transform: scaleY(1.3); opacity: 1; }
+  }
+
+
+  /* Sky gradient that shifts with scroll */
+  .sky-layer {
+    position: absolute; inset: 0;
+    pointer-events: none; z-index: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  /* Sun glow behind flower */
+  .sun-glow {
+    position: absolute;
+    width: 420px; height: 420px;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -55%);
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,210,130,0.12) 0%, rgba(255,180,100,0.06) 35%, transparent 70%);
+    pointer-events: none; z-index: 0;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+
+  /* Flower SVG — bigger */
+  .flower-svg {
+    width: min(85vw, 85vh, 780px);
+    height: min(85vw, 85vh, 780px);
+    position: relative; z-index: 1;
+    margin-top: 5vh;
+    opacity: 0;
+  }
+
+
+  /* Sections */
+  .section {
+    height: 320vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  .section-pin {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .section-visual {
+    position: absolute;
+    width: 45%;
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+  }
+
+  .section-visual--left { left: 3%; }
+  .section-visual--right { right: 3%; }
+
+  .section-text {
+    position: absolute;
+    width: 40%;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0;
+  }
+
+  .section-text--left { left: 5%; }
+  .section-text--right { right: 5%; }
+
+  .section-label {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    font-size: clamp(3rem, 6vw, 5rem);
+    color: var(--gold);
+    opacity: 0.3;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    font-size: clamp(1.6rem, 3.5vw, 2.8rem);
+    color: var(--cream);
+    letter-spacing: 0.05em;
+    margin-bottom: 1rem;
+  }
+
+  .section-body {
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: clamp(1rem, 1.8vw, 1.15rem);
+    line-height: 1.8;
+    color: rgba(242, 237, 228, 0.8);
+  }
+
+  /* Outro */
+  .outro-region {
+    height: 250vh;
+    position: relative;
+    z-index: 2;
+  }
+
+  .outro-sticky {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .outro-text {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 300;
+    font-style: italic;
+    font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+    line-height: 1.7;
+    color: var(--cream);
+    opacity: 0;
+    text-align: center;
+  }
+
+  /* Modal */
+
+  /* Noise overlay */
+  .noise {
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    opacity: 0.022;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 128px 128px;
+  }
+
+  .vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 3;
+    background: radial-gradient(ellipse 65% 55% at 50% 50%, transparent 40%, rgba(4,4,8,0.6) 100%);
+  }
+
+  /* Calendar wheel spin */
+  @keyframes wheelSpin {
+    from { transform: translate(200px,200px) rotate(0deg); }
+    to   { transform: translate(200px,200px) rotate(360deg); }
+  }
+  #monthsWheel {
+    animation: wheelSpin 180s linear infinite;
+  }
+
+  /* Star field slow rotation */
+  @keyframes starSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  #starField {
+    transform-origin: 200px 200px;
+    animation: starSpin 720s linear infinite;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .section-pin {
+      flex-direction: column;
+    }
+    .section-visual {
+      position: relative;
+      width: 90%;
+      height: 50vh;
+      left: auto !important;
+      right: auto !important;
+    }
+    .section-text {
+      position: relative;
+      width: 85%;
+      top: auto;
+      transform: none;
+      left: auto !important;
+      right: auto !important;
+      text-align: center;
+      padding: 1rem 0;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div id="bgLayer"></div>
+<canvas class="particles-canvas" id="particles"></canvas>
+<div class="noise"></div>
+<div class="paper-texture"></div>
+<div class="watercolor-wash" id="watercolorWash"></div>
+<div class="vignette"></div>
+
+<div class="scroll-container">
+  <!-- INTRO REGION -->
+  <div class="intro-region">
+    <div class="intro-sticky">
+      <div class="bg-gradient"></div>
+
+      <div class="title-group">
+        <div class="title-main" id="titleMain">Twelve Years Together</div>
+      </div>
+
+      <div class="intro-msg" id="msg1">
+        <p>Dear Elise,</p>
+      </div>
+      <div class="intro-msg" id="msg2">
+        <p>Happy anniversary! I'm not a big crafter, but I do like to code, so I made this for you. Enjoy!</p>
+      </div>
+      <div class="intro-msg" id="msg3">
+        <p>This is a letter about twelve, told in twelve ways.</p>
+      </div>
+
+      <div class="scroll-hint" id="scrollHint">
+        <div class="scroll-line"></div>
+        <span>Keep scrolling</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: Breaths -->
+  <div class="section" id="section-1" data-section="1">
+    <div class="section-pin">
+      <div class="section-visual section-visual--right" id="visual-1">
+        <svg class="breathing-svg" viewBox="0 0 400 400" style="width:min(70vw,70vh,500px);height:min(70vw,70vh,500px);">
+          <defs>
+            <radialGradient id="breathGrad" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#f0d8a0" stop-opacity="0.6"/>
+              <stop offset="50%" stop-color="#d4a060" stop-opacity="0.2"/>
+              <stop offset="100%" stop-color="#a08050" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="breathGlow">
+              <feGaussianBlur stdDeviation="8" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <g id="breathRings"></g>
+          <circle id="breathCircle" cx="200" cy="200" r="60" fill="url(#breathGrad)" filter="url(#breathGlow)"/>
+        </svg>
+      </div>
+      <div class="section-text section-text--left">
+        <div class="section-label">I</div>
+        <div class="section-title">Twelve Breaths Per Minute</div>
+        <p class="section-body">Human beings take between 12 and 20 breaths per minute. 12 when they're relaxed, comfortable, and at peace. You are all those things to me; I can breathe easy when I'm with you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2: Petals — SPECIAL flower section -->
+  <div class="section" id="section-2" data-section="2">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-2">
+        <div class="sky-layer" id="skyLayer"></div>
+        <div class="sun-glow" id="sunGlow"></div>
+
+        <svg class="flower-svg" id="flowerSvg" viewBox="0 0 700 750">
+          <defs>
+            <radialGradient id="pg1" cx="50%" cy="85%" r="65%">
+              <stop offset="0%" stop-color="#fce4ec"/>
+              <stop offset="30%" stop-color="#f0a0b8"/>
+              <stop offset="70%" stop-color="#d4587a"/>
+              <stop offset="100%" stop-color="#a0304e"/>
+            </radialGradient>
+            <radialGradient id="pg2" cx="50%" cy="85%" r="65%">
+              <stop offset="0%" stop-color="#fdd8e8"/>
+              <stop offset="30%" stop-color="#e890a8"/>
+              <stop offset="70%" stop-color="#c84868"/>
+              <stop offset="100%" stop-color="#922842"/>
+            </radialGradient>
+            <radialGradient id="pg3" cx="50%" cy="85%" r="65%">
+              <stop offset="0%" stop-color="#f8e0f0"/>
+              <stop offset="30%" stop-color="#e098c0"/>
+              <stop offset="70%" stop-color="#c05888"/>
+              <stop offset="100%" stop-color="#8a2858"/>
+            </radialGradient>
+            <radialGradient id="cg" cx="45%" cy="45%" r="55%">
+              <stop offset="0%" stop-color="#fff4b0"/>
+              <stop offset="40%" stop-color="#f0c840"/>
+              <stop offset="80%" stop-color="#d4a020"/>
+              <stop offset="100%" stop-color="#b08018"/>
+            </radialGradient>
+            <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4a9858"/>
+              <stop offset="100%" stop-color="#205830"/>
+            </linearGradient>
+            <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#5ab868"/>
+              <stop offset="50%" stop-color="#3a9048"/>
+              <stop offset="100%" stop-color="#286830"/>
+            </linearGradient>
+            <linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#48a870"/>
+              <stop offset="50%" stop-color="#308860"/>
+              <stop offset="100%" stop-color="#1e6848"/>
+            </linearGradient>
+            <linearGradient id="gg1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3aaa58"/>
+              <stop offset="60%" stop-color="#1a7838"/>
+              <stop offset="100%" stop-color="#0e4820"/>
+            </linearGradient>
+            <linearGradient id="gg2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#2a9870"/>
+              <stop offset="60%" stop-color="#1a6850"/>
+              <stop offset="100%" stop-color="#0a4030"/>
+            </linearGradient>
+            <linearGradient id="gg3" x1="0" y1="0" x2="0.3" y2="1">
+              <stop offset="0%" stop-color="#48b868"/>
+              <stop offset="100%" stop-color="#1a6830"/>
+            </linearGradient>
+            <filter id="fgBlur">
+              <feGaussianBlur stdDeviation="1.5"/>
+            </filter>
+            <filter id="pglow">
+              <feGaussianBlur stdDeviation="3" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+            <filter id="cglow">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+            <filter id="sglow">
+              <feGaussianBlur stdDeviation="10" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+
+          <ellipse class="ground" cx="350" cy="685" rx="70" ry="6"
+            fill="rgba(50,35,15,0.25)" opacity="0"/>
+
+          <g id="greeneryBack" opacity="0">
+            <g id="fernL" transform="translate(280,670)">
+              <path d="M0,0 C-8,-40 -20,-90 -15,-160" stroke="url(#gg2)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <g class="fern-leaf-group" transform="translate(-8,-50)">
+                <path d="M0,0 C-12,4 -32,0 -44,-12 C-46,-16 -42,-18 -38,-16 C-26,-8 -10,-8 0,-4Z" fill="url(#gg1)" opacity="0.85"/>
+              </g>
+              <g class="fern-leaf-group" transform="translate(-15,-85)">
+                <path d="M0,0 C8,5 24,3 34,-8 C36,-12 32,-14 28,-12 C20,-6 6,-6 0,-3Z" fill="url(#gg1)" opacity="0.8"/>
+              </g>
+              <g class="fern-leaf-group" transform="translate(-18,-115)">
+                <path d="M0,0 C-10,4 -26,2 -36,-8 C-38,-12 -34,-14 -30,-12 C-22,-6 -8,-6 0,-3Z" fill="url(#gg2)" opacity="0.75"/>
+              </g>
+              <g class="fern-leaf-group" transform="translate(-17,-140)">
+                <path d="M0,0 C8,3 18,1 24,-6 C26,-10 22,-12 18,-10 C12,-5 4,-5 0,-2Z" fill="url(#gg2)" opacity="0.7"/>
+              </g>
+            </g>
+            <g id="fernR" transform="translate(420,670)">
+              <path d="M0,0 C8,-35 18,-85 12,-150" stroke="url(#gg1)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+              <g class="fern-leaf-group" transform="translate(8,-45)">
+                <path d="M0,0 C12,4 32,0 44,-12 C46,-16 42,-18 38,-16 C26,-8 10,-8 0,-4Z" fill="url(#gg2)" opacity="0.85"/>
+              </g>
+              <g class="fern-leaf-group" transform="translate(14,-80)">
+                <path d="M0,0 C-10,5 -26,3 -36,-8 C-38,-12 -34,-14 -30,-12 C-22,-6 -6,-6 0,-3Z" fill="url(#gg1)" opacity="0.8"/>
+              </g>
+              <g class="fern-leaf-group" transform="translate(16,-108)">
+                <path d="M0,0 C10,4 26,2 36,-8 C38,-12 34,-14 30,-12 C22,-6 8,-6 0,-3Z" fill="url(#gg2)" opacity="0.75"/>
+              </g>
+              <g class="fern-leaf-group" transform="translate(14,-132)">
+                <path d="M0,0 C-8,3 -18,1 -24,-6 C-26,-10 -22,-12 -18,-10 C-12,-5 -4,-5 0,-2Z" fill="url(#gg1)" opacity="0.7"/>
+              </g>
+            </g>
+            <g id="archLeafL" transform="translate(310,672)">
+              <path d="M0,0 C-30,-20 -70,-50 -95,-110" stroke="url(#gg2)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+            </g>
+            <g id="archLeafR" transform="translate(390,672)">
+              <path d="M0,0 C30,-18 65,-45 85,-100" stroke="url(#gg1)" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.5"/>
+            </g>
+          </g>
+
+          <g id="grassGroup" opacity="0">
+            <path class="grass-blade" d="M310,672 C308,650 305,635 302,615" stroke="url(#gg1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path class="grass-blade" d="M320,672 C318,648 312,628 315,605" stroke="url(#gg2)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path class="grass-blade" d="M330,672 C332,652 328,632 334,610" stroke="url(#gg3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path class="grass-blade" d="M370,672 C368,650 372,630 366,608" stroke="url(#gg3)" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <path class="grass-blade" d="M380,672 C382,648 388,628 385,605" stroke="url(#gg2)" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path class="grass-blade" d="M390,672 C392,650 395,635 398,615" stroke="url(#gg1)" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path class="grass-blade" d="M295,674 C288,658 280,648 270,640" stroke="url(#gg2)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <path class="grass-blade" d="M405,674 C412,658 420,648 430,640" stroke="url(#gg1)" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <ellipse cx="350" cy="676" rx="100" ry="8" fill="url(#gg2)" opacity="0.12"/>
+          </g>
+
+          <path class="stem" id="stem"
+            d="M350,665 C350,610 348,530 350,430 Q352,350 350,280"
+            stroke="url(#sg)" stroke-width="4" fill="none" stroke-linecap="round"/>
+
+          <g class="leaf leaf-l" id="leafL" transform="translate(348,530)" opacity="0">
+            <g class="leaf-sway-l">
+              <path d="M0,0 C-18,12 -50,8 -78,-12 C-82,-18 -80,-22 -78,-24 C-58,-14 -22,-18 0,-8Z" fill="url(#lg)"/>
+              <path d="M0,-3 C-22,-6 -50,-14 -74,-18" stroke="rgba(255,255,255,0.12)" stroke-width="0.6" fill="none"/>
+            </g>
+          </g>
+          <g class="leaf leaf-r" id="leafR" transform="translate(352,478)" opacity="0">
+            <g class="leaf-sway-r">
+              <path d="M0,0 C18,12 50,8 78,-12 C82,-18 80,-22 78,-24 C58,-14 22,-18 0,-8Z" fill="url(#lg2)"/>
+              <path d="M0,-3 C22,-6 50,-14 74,-18" stroke="rgba(255,255,255,0.12)" stroke-width="0.6" fill="none"/>
+            </g>
+          </g>
+          <g class="leaf leaf-l2" id="leafL2" transform="translate(349,445)" opacity="0">
+            <g class="leaf-sway-l2">
+              <path d="M0,0 C-14,9 -38,6 -58,-9 C-62,-14 -60,-17 -58,-18 C-42,-10 -16,-14 0,-6Z" fill="url(#lg2)" opacity="0.8"/>
+            </g>
+          </g>
+
+          <g class="flower-head" id="flowerHead" transform="translate(350,280)">
+            <circle class="bloom-glow" cx="0" cy="0" r="95"
+              fill="rgba(200,90,120,0.04)" filter="url(#sglow)" opacity="0"/>
+            <g id="petalsGroup"></g>
+            <g class="flower-center" opacity="0">
+              <circle cx="0" cy="0" r="20" fill="url(#cg)" filter="url(#cglow)"/>
+              <circle cx="0" cy="0" r="13" fill="rgba(250,235,100,0.25)"/>
+              <circle cx="-3" cy="-3" r="2.5" fill="rgba(255,255,255,0.12)"/>
+            </g>
+          </g>
+          <g id="greeneryFront" opacity="0" filter="url(#fgBlur)">
+            <path d="M240,690 C225,660 210,640 195,620" stroke="url(#gg1)" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+            <path d="M240,688 C230,665 218,645 225,618" stroke="url(#gg2)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.35"/>
+            <path d="M460,690 C475,660 490,640 505,620" stroke="url(#gg2)" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.4"/>
+            <path d="M460,688 C470,665 482,645 475,618" stroke="url(#gg1)" stroke-width="2.5" fill="none" stroke-linecap="round" opacity="0.35"/>
+            <path d="M220,692 C200,680 175,678 158,685 C165,672 188,664 220,672Z" fill="url(#gg1)" opacity="0.3"/>
+            <path d="M480,692 C500,680 525,678 542,685 C535,672 512,664 480,672Z" fill="url(#gg2)" opacity="0.3"/>
+          </g>
+        </svg>
+
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">II</div>
+        <div class="section-title">Twelve Petals</div>
+        <p class="section-body">Many flowers have twelve petals. Here's to continuing to bloom with you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3: Roses -->
+  <div class="section" id="section-3" data-section="3">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-3">
+        <svg class="roses-svg" viewBox="0 0 400 450" style="width:min(70vw,65vh,500px);height:min(79vw,73vh,562px);">
+          <defs>
+            <filter id="roseGlow">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <g id="rosesGroup"></g>
+        </svg>
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">III</div>
+        <div class="section-title">A Dozen Roses</div>
+        <p class="section-body">A dozen roses is a classic gesture of love, and no anniversary card would be complete without it.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 4: Dodecahedron -->
+  <div class="section" id="section-4" data-section="4">
+    <div class="section-pin">
+      <div class="section-visual section-visual--right" id="visual-4">
+        <svg class="dodeca-svg" viewBox="0 0 400 400" style="width:min(70vw,70vh,500px);height:min(70vw,70vh,500px);">
+          <g id="dodecaEdges"></g>
+        </svg>
+      </div>
+      <div class="section-text section-text--left">
+        <div class="section-label">IV</div>
+        <div class="section-title">Twelve Faces</div>
+        <p class="section-body">Relationships aren't one dimensional. This dodecahedron represents every angle of you I've come to know and love.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 5: Hours -->
+  <div class="section" id="section-5" data-section="5">
+    <div class="section-pin">
+      <div class="section-visual section-visual--right" id="visual-5">
+        <svg class="clock-svg" viewBox="0 0 400 400" style="width:min(70vw,70vh,500px);height:min(70vw,70vh,500px);">
+          <defs>
+            <radialGradient id="clockGlow" cx="50%" cy="50%" r="30%">
+              <stop offset="0%" stop-color="#a0b8d0" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#a0b8d0" stop-opacity="0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="200" cy="200" r="150" stroke="rgba(200,210,230,0.15)" stroke-width="1" fill="none"/>
+          <circle cx="200" cy="200" r="30" fill="url(#clockGlow)"/>
+          <g id="clockMarkers"></g>
+          <g id="clockDots"></g>
+          <line id="clockHourHand" x1="200" y1="200" x2="200" y2="90" stroke="rgba(200,210,230,0.7)" stroke-width="2.5" stroke-linecap="round"/>
+          <line id="clockMinuteHand" x1="200" y1="200" x2="200" y2="70" stroke="rgba(200,210,230,0.35)" stroke-width="1" stroke-linecap="round"/>
+          <circle cx="200" cy="200" r="3" fill="rgba(200,210,230,0.5)"/>
+        </svg>
+      </div>
+      <div class="section-text section-text--left">
+        <div class="section-label">V</div>
+        <div class="section-title">Twelve Hours</div>
+        <p class="section-body">Much can happen in a day. Throughout every hour of every day I know you're there for me, no matter what happens.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: Months -->
+  <div class="section" id="section-6" data-section="6">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-6">
+        <svg class="months-svg" viewBox="0 0 400 400" style="width:min(70vw,70vh,500px);height:min(70vw,70vh,500px);">
+          <g id="monthsWheel" transform="translate(200,200)">
+            <g id="monthArcs"></g>
+            <g id="monthDots"></g>
+          </g>
+        </svg>
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">VI</div>
+        <div class="section-title">Twelve Months</div>
+        <p class="section-body">Each month brings with it new seasons, new holidays, new challenges, and new adventures. No matter the seasons of the world, I'm glad I experience them with you.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 7: Moons -->
+  <div class="section" id="section-7" data-section="7">
+    <div class="section-pin">
+      <div class="section-visual section-visual--right" id="visual-7">
+        <svg class="moons-svg" viewBox="0 0 400 300" style="width:min(75vw,60vh,550px);height:min(56vw,45vh,412px);">
+          <defs>
+            <filter id="moonGlow" x="-100%" y="-100%" width="300%" height="300%">
+              <feGaussianBlur stdDeviation="6" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <g id="moonsGroup"></g>
+          <path id="tidePath" fill="none" stroke="rgba(180,200,220,0.15)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="section-text section-text--left">
+        <div class="section-label">VII</div>
+        <div class="section-title">Twelve Phases of the Moon</div>
+        <p class="section-body">Ancient astronomers divided the lunar cycle into twelve phases. We've changed many times over the last twelve years, and seen all phases of each other.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 8: Notes -->
+  <div class="section" id="section-8" data-section="8">
+    <div class="section-pin">
+      <div class="section-visual section-visual--right" id="visual-8">
+        <svg class="piano-svg" viewBox="0 0 400 300" style="width:min(75vw,55vh,550px);height:min(56vw,41vh,412px);">
+          <defs>
+            <filter id="keyGlow">
+              <feGaussianBlur stdDeviation="4" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <g id="pianoKeys"></g>
+          <path id="soundWave" fill="none" stroke="rgba(180,160,220,0.3)" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="section-text section-text--left">
+        <div class="section-label">VIII</div>
+        <div class="section-title">Twelve Notes</div>
+        <p class="section-body">Every song ever written uses the same twelve notes, but from them emerges infinite unique melodies. Our relationship is like a song I can play on repeat.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 9: Blues -->
+  <div class="section" id="section-9" data-section="9">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-9">
+        <svg class="blues-svg" viewBox="0 0 400 300" style="width:min(75vw,55vh,550px);height:min(56vw,41vh,412px);">
+          <defs>
+            <linearGradient id="barGrad1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d4a030" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#8a5a10" stop-opacity="0.5"/>
+            </linearGradient>
+            <linearGradient id="barGrad2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d06830" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#804020" stop-opacity="0.5"/>
+            </linearGradient>
+            <linearGradient id="barGrad3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#c89040" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#786030" stop-opacity="0.5"/>
+            </linearGradient>
+            <filter id="bluesBarGlow" x="-50%" y="-50%" width="200%" height="200%">
+              <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+              <feColorMatrix in="blur" type="matrix" values="1.2 0 0 0 0.1  0 0.9 0 0 0.05  0 0 0.5 0 0  0 0 0 1 0" result="glow"/>
+              <feMerge>
+                <feMergeNode in="glow"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <g id="staffLines"></g>
+          <g id="eqBars"></g>
+          <g id="musicNotes"></g>
+        </svg>
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">IX</div>
+        <div class="section-title">Twelve Bars</div>
+        <p class="section-body">The 12 bar chord progression is the most popular chord progressions in blues. I had to include it here because we know how to get down.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 10: Constellations -->
+  <div class="section" id="section-10" data-section="10">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-10">
+        <svg class="stars-svg" viewBox="0 0 400 400" style="width:min(75vw,75vh,550px);height:min(75vw,75vh,550px);">
+          <defs>
+            <filter id="starGlow">
+              <feGaussianBlur stdDeviation="2" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <g id="starField"></g>
+        </svg>
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">X</div>
+        <div class="section-title">Twelve Constellations</div>
+        <p class="section-body">There are twelve constellations in the zodiac. Sailors used them to find their way home. You've always been that for me, the constant I orient by.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 11: Jupiter -->
+  <div class="section" id="section-11" data-section="11">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-11">
+        <svg class="jupiter-svg" viewBox="0 0 400 400" style="width:min(75vw,75vh,550px);height:min(75vw,75vh,550px);">
+          <defs>
+            <radialGradient id="sunGradient" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fff4b0" stop-opacity="0.9"/>
+              <stop offset="40%" stop-color="#f0c840" stop-opacity="0.6"/>
+              <stop offset="100%" stop-color="#d4a020" stop-opacity="0"/>
+            </radialGradient>
+            <filter id="sunBlur">
+              <feGaussianBlur stdDeviation="6" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <circle cx="200" cy="200" r="20" fill="url(#sunGradient)" filter="url(#sunBlur)"/>
+          <circle cx="200" cy="200" r="8" fill="rgba(255,240,180,0.8)"/>
+          <circle id="earthOrbit" cx="200" cy="200" r="80" fill="none" stroke="rgba(150,180,220,0.12)" stroke-width="0.5"/>
+          <circle id="jupiterOrbit" cx="200" cy="200" r="160" fill="none" stroke="rgba(200,180,150,0.10)" stroke-width="0.5"/>
+          <path id="earthTrail" fill="none" stroke="rgba(100,160,220,0.15)" stroke-width="1" stroke-linecap="round"/>
+          <path id="jupiterTrail" fill="none" stroke="rgba(210,180,130,0.10)" stroke-width="1.5" stroke-linecap="round"/>
+          <circle id="earthPlanet" cx="280" cy="200" r="4" fill="rgba(100,160,220,0.8)" opacity="0"/>
+          <circle id="jupiterPlanet" cx="360" cy="200" r="7" fill="rgba(210,180,130,0.7)" opacity="0"/>
+        </svg>
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">XI</div>
+        <div class="section-title">One Jupiter Orbit</div>
+        <p class="section-body">It takes Jupiter twelve years to go around the Sun. So technically this is our first anniversary on Jupiter. While we would have considered 12 years a long time when we were in high school, it also is just the beginning of all the time that remains. To many more one year anniversaries, on many different cosmic timelines.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 12: Twelve Years -->
+  <div class="section" id="section-12" data-section="12">
+    <div class="section-pin">
+      <div class="section-visual section-visual--left" id="visual-12">
+        <svg class="twelve-svg" viewBox="0 0 400 400" style="width:min(80vw,80vh,600px);height:min(80vw,80vh,600px);">
+          <defs>
+            <linearGradient id="twelveFillGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f0d080"/>
+              <stop offset="50%" stop-color="#e0c060"/>
+              <stop offset="100%" stop-color="#d4a040"/>
+            </linearGradient>
+            <filter id="twelveGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="8" result="b"/>
+              <feComposite in="SourceGraphic" in2="b" operator="over"/>
+            </filter>
+          </defs>
+          <text id="twelveOutline" x="200" y="250" text-anchor="middle"
+            font-family="'Cormorant Garamond', Georgia, serif"
+            font-size="260" font-weight="300"
+            fill="none"
+            stroke="rgba(201,168,108,0.2)" stroke-width="1">12</text>
+          <text id="twelveFill" x="200" y="250" text-anchor="middle"
+            font-family="'Cormorant Garamond', Georgia, serif"
+            font-size="260" font-weight="300"
+            fill="url(#twelveFillGrad)"
+            filter="url(#twelveGlow)"
+            opacity="0">12</text>
+        </svg>
+      </div>
+      <div class="section-text section-text--right">
+        <div class="section-label">XII</div>
+        <div class="section-title">Twelve Years</div>
+        <p class="section-body">I've loved being with you the last 12 years. Here's to the next 12.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- OUTRO REGION -->
+  <div class="outro-region">
+    <div class="outro-sticky">
+      <div class="outro-content" style="display:flex;flex-direction:column;align-items:center;position:relative;">
+        <p class="outro-text" id="outroSign">Love, Dawson ❤️</p>
+        <div id="outroPhotos" style="display:flex;gap:1.5rem;margin-top:2rem;opacity:0;">
+          <img src="then.jpeg" alt="Us in 2014" style="width:min(35vw,220px);border-radius:8px;object-fit:cover;">
+          <img src="now.jpeg" alt="Us in 2026" style="width:min(35vw,220px);border-radius:8px;object-fit:cover;">
+        </div>
+        <button id="goToTop" style="margin-top:1.5rem;opacity:0;background:none;border:1px solid var(--gold);color:var(--gold);padding:0.6rem 1.8rem;font-family:'Cormorant Garamond',Georgia,serif;font-size:1rem;letter-spacing:0.15em;cursor:pointer;border-radius:4px;transition:background 0.3s,color 0.3s;" onmouseover="this.style.background='var(--gold)';this.style.color='var(--bg)'" onmouseout="this.style.background='none';this.style.color='var(--gold)'">BACK TO TOP</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+history.scrollRestoration = 'manual';
+window.scrollTo(0, 0);
+
+(function() {
+  /* ================================================================
+     SECTIONS CONFIG — Task 2: background colors & particle tints
+     ================================================================ */
+  const SECTIONS = [
+    { id: 'breaths',        bg: { top: '#1a1818', bot: '#2a2525' }, particleTint: [210, 200, 195] },
+    { id: 'petals',         bg: { top: '#2a1520', bot: '#4a3040' }, particleTint: [215, 195, 165] },
+    { id: 'roses',          bg: { top: '#5e1a2a', bot: '#c07090' }, particleTint: [230, 180, 200] },
+    { id: 'dodecahedron',   bg: { top: '#2a1535', bot: '#4a2860' }, particleTint: [200, 170, 220] },
+    { id: 'clock',          bg: { top: '#0a1228', bot: '#142040' }, particleTint: [140, 160, 200] },
+    { id: 'months',         bg: { top: '#6B4D1F', bot: '#8C6B2E' }, particleTint: [215, 195, 165] },
+    { id: 'moons',          bg: { top: '#0a1020', bot: '#3a3a50' }, particleTint: [200, 200, 210] },
+    { id: 'notes',          bg: { top: '#1a1040', bot: '#3a2060' }, particleTint: [180, 160, 220] },
+    { id: 'blues',          bg: { top: '#2a1a10', bot: '#6b4520' }, particleTint: [220, 190, 150] },
+    { id: 'constellations', bg: { top: '#050510', bot: '#0a0a24' }, particleTint: [200, 200, 240] },
+    { id: 'jupiter',        bg: { top: '#050510', bot: '#0a0a24' }, particleTint: [180, 180, 220] },
+    { id: 'twelveyears',    bg: { top: '#1a1510', bot: '#2a2018' }, particleTint: [220, 200, 160] },
+  ];
+
+  /* -- COLOR UTILITIES -- */
+  function hexToRgb(hex) {
+    const h = hex.replace('#', '');
+    return [parseInt(h.substring(0,2), 16), parseInt(h.substring(2,4), 16), parseInt(h.substring(4,6), 16)];
+  }
+
+  function rgbToHex(r, g, b) {
+    return '#' + ((1 << 24) | (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b)).toString(16).slice(1);
+  }
+
+  function lerpColor(hexA, hexB, t) {
+    const a = hexToRgb(hexA);
+    const b = hexToRgb(hexB);
+    return rgbToHex(
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+      a[2] + (b[2] - a[2]) * t
+    );
+  }
+
+  function lerpRgb(a, b, t) {
+    return [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t,
+      a[2] + (b[2] - a[2]) * t
+    ];
+  }
+
+  /* -- LAYOUT MEASUREMENTS -- */
+  // These are recalculated after ScrollTrigger setup
+  const bgLayerEl = document.getElementById('bgLayer');
+  const introRegion = document.querySelector('.intro-region');
+  let introHeight = 0; // set after layout
+  let sectionTops = []; // top offsets of each .section
+  let sectionHeights = []; // height of each .section
+  let totalScrollHeight = 0;
+
+  function measureLayout() {
+    introHeight = introRegion.offsetHeight;
+    const sectionEls = document.querySelectorAll('.section');
+    sectionTops = [];
+    sectionHeights = [];
+    sectionEls.forEach(el => {
+      sectionTops.push(el.offsetTop);
+      sectionHeights.push(el.offsetHeight);
+    });
+    totalScrollHeight = document.querySelector('.scroll-container').offsetHeight;
+  }
+
+  /* -- BACKGROUND UPDATE (Task 2) -- */
+  function updateBackground(scrollY) {
+    let topColor, botColor;
+
+    if (scrollY < introHeight * 0.8) {
+      // During intro: fade from near-black to section 1's colors
+      const t = Math.max(0, Math.min(1, scrollY / (introHeight * 0.8)));
+      topColor = lerpColor('#0a0a14', SECTIONS[0].bg.top, t);
+      botColor = lerpColor('#0a0a14', SECTIONS[0].bg.bot, t);
+    } else if (sectionTops.length > 0) {
+      // Find which section we're in
+      let idx = -1;
+      for (let i = 0; i < 12; i++) {
+        if (scrollY >= sectionTops[i]) idx = i;
+      }
+
+      if (idx < 0) {
+        // Still before section 1
+        topColor = SECTIONS[0].bg.top;
+        botColor = SECTIONS[0].bg.bot;
+      } else if (idx >= 11) {
+        // At or past section 12: hold
+        topColor = SECTIONS[11].bg.top;
+        botColor = SECTIONS[11].bg.bot;
+      } else {
+        // Between section idx and idx+1
+        const sectionStart = sectionTops[idx];
+        const sectionEnd = sectionTops[idx + 1];
+        const t = Math.max(0, Math.min(1, (scrollY - sectionStart) / (sectionEnd - sectionStart)));
+        topColor = lerpColor(SECTIONS[idx].bg.top, SECTIONS[idx + 1].bg.top, t);
+        botColor = lerpColor(SECTIONS[idx].bg.bot, SECTIONS[idx + 1].bg.bot, t);
+      }
+    } else {
+      topColor = '#0a0a14';
+      botColor = '#0a0a14';
+    }
+
+    bgLayerEl.style.background = `linear-gradient(to bottom, ${topColor}, ${botColor})`;
+  }
+
+  function getCurrentParticleTint(scrollY) {
+    if (scrollY < introHeight * 0.8) {
+      const t = Math.max(0, Math.min(1, scrollY / (introHeight * 0.8)));
+      return lerpRgb([200, 200, 200], SECTIONS[0].particleTint, t);
+    }
+
+    if (sectionTops.length === 0) return [200, 200, 200];
+
+    let idx = -1;
+    for (let i = 0; i < 12; i++) {
+      if (scrollY >= sectionTops[i]) idx = i;
+    }
+
+    if (idx < 0) return SECTIONS[0].particleTint;
+    if (idx >= 11) return SECTIONS[11].particleTint;
+
+    const sectionStart = sectionTops[idx];
+    const sectionEnd = sectionTops[idx + 1];
+    const t = Math.max(0, Math.min(1, (scrollY - sectionStart) / (sectionEnd - sectionStart)));
+    return lerpRgb(SECTIONS[idx].particleTint, SECTIONS[idx + 1].particleTint, t);
+  }
+
+
+  /* ================================================================
+     BUILD PETALS
+     ================================================================ */
+  const NS = 'http://www.w3.org/2000/svg';
+  const petalsGroup = document.getElementById('petalsGroup');
+  const petalEls = [];
+  const PETAL_LEN = 72;
+  const PETAL_W = 20;
+
+  for (let i = 0; i < 12; i++) {
+    const baseAngle = i * 30 - 90;
+
+    const g = document.createElementNS(NS, 'g');
+    g.classList.add('petal-group');
+    g.setAttribute('data-i', i);
+
+    const shape = document.createElementNS(NS, 'path');
+    const L = PETAL_LEN, W = PETAL_W;
+    shape.setAttribute('d',
+      `M0,0 C${-W},${-L*0.32} ${-W*0.88},${-L*0.78} 0,${-L} C${W*0.88},${-L*0.78} ${W},${-L*0.32} 0,0 Z`);
+    const petalGrads = ['url(#pg1)', 'url(#pg2)', 'url(#pg3)'];
+    shape.setAttribute('fill', petalGrads[i % 3]);
+    shape.classList.add('petal-shape');
+    shape.setAttribute('filter', 'url(#pglow)');
+
+    const vein = document.createElementNS(NS, 'path');
+    vein.setAttribute('d', `M0,-6 Q0.5,${-L*0.5} 0,${-L*0.88}`);
+    vein.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+    vein.setAttribute('stroke-width', '0.6');
+    vein.setAttribute('fill', 'none');
+
+    g.appendChild(shape);
+    g.appendChild(vein);
+    petalsGroup.appendChild(g);
+    petalEls.push({ el: g, base: baseAngle });
+
+  }
+
+
+  /* ================================================================
+     PARTICLES — pollen motes, sparkles, soft drifting
+     ================================================================ */
+  const cvs = document.getElementById('particles');
+  const ctx = cvs.getContext('2d');
+  let pts = [];
+
+  const pollenColors = [
+    [215, 195, 165],
+    [230, 210, 180],
+    [200, 180, 150],
+    [240, 220, 200],
+    [180, 200, 170],
+    [230, 200, 220],
+  ];
+
+  function initPts() {
+    cvs.width = innerWidth;
+    cvs.height = innerHeight;
+    pts = [];
+    const n = Math.min(50, Math.floor(innerWidth / 25));
+    for (let i = 0; i < n; i++) {
+      const col = pollenColors[Math.floor(Math.random() * pollenColors.length)];
+      pts.push({
+        x: Math.random() * cvs.width,
+        y: Math.random() * cvs.height,
+        r: Math.random() * 1.8 + 0.3,
+        dx: (Math.random() - 0.5) * 0.18,
+        dy: -(Math.random() * 0.12 + 0.02),
+        pushX: 0, pushY: 0,
+        drift: (Math.random() - 0.5) * 0.4,
+        o: Math.random() * 0.4 + 0.06,
+        ph: Math.random() * 6.28,
+        speed: Math.random() * 0.3 + 0.7,
+        col: [col[0], col[1], col[2]]
+      });
+    }
+  }
+
+  // Wind trail wisps — spawned behind cursor
+  let windTrail = [];
+  let prevMX = innerWidth / 2, prevMY = innerHeight / 2;
+  let spawnAccum = 0;
+
+  const windColors = [
+    [220, 210, 190],
+    [200, 190, 170],
+    [210, 200, 185],
+    [230, 215, 200],
+  ];
+
+  document.addEventListener('mousemove', e => {
+    const dx = e.clientX - prevMX;
+    const dy = e.clientY - prevMY;
+    const speed = Math.hypot(dx, dy);
+    prevMX = e.clientX;
+    prevMY = e.clientY;
+
+    spawnAccum += speed;
+    const spawnThresh = 8;
+    while (spawnAccum >= spawnThresh && windTrail.length < 60) {
+      spawnAccum -= spawnThresh;
+      const angle = Math.atan2(dy, dx);
+      const spread = (Math.random() - 0.5) * 1.2;
+      const col = windColors[Math.floor(Math.random() * windColors.length)];
+      windTrail.push({
+        x: e.clientX + (Math.random() - 0.5) * 6,
+        y: e.clientY + (Math.random() - 0.5) * 6,
+        dx: Math.cos(angle + spread) * (speed * 0.08 + Math.random() * 0.5),
+        dy: Math.sin(angle + spread) * (speed * 0.08 + Math.random() * 0.5) - 0.3,
+        r: Math.random() * 1.5 + 0.5,
+        life: 1.0,
+        decay: 0.012 + Math.random() * 0.008,
+        col: col
+      });
+    }
+  });
+
+  // Current particle tint target — updated each frame from scroll position
+  let currentTint = [215, 195, 165];
+
+  function drawPts(t) {
+    ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+    // Ambient particles — pushed gently by cursor proximity
+    // Each particle's col slowly lerps toward the current section tint
+    for (const p of pts) {
+      // Lerp particle color toward current tint
+      p.col[0] += (currentTint[0] - p.col[0]) * 0.02;
+      p.col[1] += (currentTint[1] - p.col[1]) * 0.02;
+      p.col[2] += (currentTint[2] - p.col[2]) * 0.02;
+
+      const drift = Math.sin(t * 0.0005 * p.speed + p.ph) * p.drift;
+
+      // Cursor breeze: push nearby particles
+      const toCursorX = p.x - prevMX;
+      const toCursorY = p.y - prevMY;
+      const cursorDist = Math.hypot(toCursorX, toCursorY);
+      if (cursorDist < 120 && cursorDist > 0) {
+        const pushStrength = (1 - cursorDist / 120) * 0.6;
+        p.pushX += (toCursorX / cursorDist) * pushStrength;
+        p.pushY += (toCursorY / cursorDist) * pushStrength;
+      }
+      p.pushX *= 0.95;
+      p.pushY *= 0.95;
+
+      p.x += p.dx + drift + p.pushX;
+      p.y += p.dy * p.speed + p.pushY;
+      if (p.x < -10) p.x = cvs.width + 10;
+      if (p.x > cvs.width + 10) p.x = -10;
+      if (p.y < -10) p.y = cvs.height + 10;
+      if (p.y > cvs.height + 10) p.y = -10;
+      const pulse = Math.sin(t * 0.0008 + p.ph) * 0.2 + 0.8;
+      const alpha = p.o * pulse;
+      const r = p.col[0] | 0, g = p.col[1] | 0, b = p.col[2] | 0;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, 6.2832);
+      ctx.fillStyle = `rgba(${r},${g},${b},${alpha})`;
+      ctx.fill();
+      if (p.r > 1.2) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r * 2.5, 0, 6.2832);
+        ctx.fillStyle = `rgba(${r},${g},${b},${alpha * 0.08})`;
+        ctx.fill();
+      }
+    }
+
+    // Wind trail wisps
+    for (let i = windTrail.length - 1; i >= 0; i--) {
+      const w = windTrail[i];
+      w.x += w.dx;
+      w.y += w.dy;
+      w.dx *= 0.96;
+      w.dy *= 0.96;
+      w.dy -= 0.01;
+      w.life -= w.decay;
+
+      if (w.life <= 0) {
+        windTrail.splice(i, 1);
+        continue;
+      }
+
+      const [r, g, b] = w.col;
+      const a = w.life * 0.35;
+      // Soft glow
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.r * 3, 0, 6.2832);
+      ctx.fillStyle = `rgba(${r},${g},${b},${a * 0.15})`;
+      ctx.fill();
+      // Core
+      ctx.beginPath();
+      ctx.arc(w.x, w.y, w.r * w.life, 0, 6.2832);
+      ctx.fillStyle = `rgba(${r},${g},${b},${a})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(drawPts);
+  }
+  initPts();
+  requestAnimationFrame(drawPts);
+  addEventListener('resize', () => { initPts(); measureLayout(); });
+
+  /* ================================================================
+     INTRO FADE ON LOAD (non-scroll, runs immediately)
+     ================================================================ */
+  const introLoadTl = gsap.timeline();
+  introLoadTl
+    .to('#titleMain', { opacity: 1, duration: 1.2, ease: 'power2.out' }, 0.3)
+    .to('.scroll-hint span',       { opacity: 1, duration: 0.8 }, 1.8)
+    .to('.scroll-hint .scroll-line', { opacity: 0.6, duration: 0.8 }, 1.8);
+
+  /* ================================================================
+     GSAP ScrollTrigger SETUP — Task 3
+     ================================================================ */
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* -- INTRO REGION: pinned scroll-driven timeline -- */
+  const introScrollTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.intro-region',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1,
+      pin: '.intro-sticky',
+    }
+  });
+
+  // 0-0.1: scroll hint fades out
+  introScrollTl
+    .fromTo('.scroll-hint span',        { opacity: 1 }, { opacity: 0, duration: 0.08 }, 0.02)
+    .fromTo('.scroll-hint .scroll-line', { opacity: 0.6 }, { opacity: 0, duration: 0.08 }, 0.02)
+
+  // 0.1-0.2: title fades out
+    .fromTo('#titleMain', { opacity: 1 }, { opacity: 0, duration: 0.10 }, 0.12)
+
+  // 0.22-0.38: "Dear Elise,"
+    .to('#msg1 p', { opacity: 1, duration: 0.06 }, 0.22)
+    .to('#msg1 p', { opacity: 0, duration: 0.06 }, 0.38)
+
+  // 0.44-0.60: "Happy anniversary!..."
+    .to('#msg2 p', { opacity: 1, duration: 0.06 }, 0.44)
+    .to('#msg2 p', { opacity: 0, duration: 0.06 }, 0.60)
+
+  // 0.66-0.82: "This is a letter about twelve..."
+    .to('#msg3 p', { opacity: 1, duration: 0.06 }, 0.66)
+    .to('#msg3 p', { opacity: 0, duration: 0.06 }, 0.82);
+
+  /* -- SECTION ScrollTriggers (1-12) -- */
+  let clockProgress = 0;    let clockActive = false;
+  let monthsProgress = 0;   let monthsActive = false;
+  let moonsProgress = 0;    let moonsActive = false;
+  let jupiterProgress = 0;  let jupiterActive = false;
+  let constProgress = 0;    let constActive = false;
+  let pianoProgress = 0;    let pianoActive = false;
+  let bluesProgress = 0;    let bluesActive = false;
+  let petalProgress = 0;    let petalActive = false;
+  let rosesProgress = 0;    let rosesActive = false;
+  let dodecaProgress = 0;   let dodecaActive = false;
+  let twelveProgress = 0;   let twelveActive = false;
+
+  for (let i = 1; i <= 12; i++) {
+    const sectionEl = document.getElementById(`section-${i}`);
+    const pinEl = sectionEl.querySelector('.section-pin');
+    const visualEl = sectionEl.querySelector('.section-visual');
+    const textEl = sectionEl.querySelector('.section-text');
+
+    if (i === 2) {
+      // Section 2: special flower/petals section
+      const s2tl = gsap.timeline({
+        scrollTrigger: {
+          trigger: sectionEl,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: 1,
+          pin: pinEl,
+          onToggle: self => { petalActive = self.isActive; },
+          onUpdate: self => { petalProgress = self.progress; },
+        }
+      });
+
+      s2tl.fromTo(visualEl,
+        { opacity: 0 },
+        { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0);
+
+      s2tl.fromTo(textEl,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.20);
+
+      s2tl.to(textEl,
+        { opacity: 0, y: -20, duration: 0.15, ease: 'power2.in' }, 0.65);
+
+      s2tl.to(visualEl,
+        { opacity: 0, duration: 0.20, ease: 'power2.in' }, 0.80);
+
+    } else {
+      const stlOpts = {
+        trigger: sectionEl,
+        start: 'top top',
+        end: 'bottom bottom',
+        scrub: 1,
+        pin: pinEl,
+      };
+
+      if (i === 3) {
+        stlOpts.onUpdate = self => { rosesProgress = self.progress; };
+        stlOpts.onToggle = self => { rosesActive = self.isActive; };
+      }
+      if (i === 4) {
+        stlOpts.onUpdate = self => { dodecaProgress = self.progress; };
+        stlOpts.onToggle = self => { dodecaActive = self.isActive; };
+      }
+      if (i === 5) {
+        stlOpts.onUpdate = self => { clockProgress = self.progress; };
+        stlOpts.onToggle = self => { clockActive = self.isActive; };
+      }
+      if (i === 6) {
+        stlOpts.onUpdate = self => { monthsProgress = self.progress; };
+        stlOpts.onToggle = self => { monthsActive = self.isActive; };
+      }
+      if (i === 7) {
+        stlOpts.onUpdate = self => { moonsProgress = self.progress; };
+        stlOpts.onToggle = self => { moonsActive = self.isActive; };
+      }
+      if (i === 8) {
+        stlOpts.onUpdate = self => { pianoProgress = self.progress; };
+        stlOpts.onToggle = self => { pianoActive = self.isActive; };
+      }
+      if (i === 9) {
+        stlOpts.onUpdate = self => { bluesProgress = self.progress; };
+        stlOpts.onToggle = self => { bluesActive = self.isActive; };
+      }
+      if (i === 10) {
+        stlOpts.onUpdate = self => { constProgress = self.progress; };
+        stlOpts.onToggle = self => { constActive = self.isActive; };
+      }
+      if (i === 11) {
+        stlOpts.onUpdate = self => { jupiterProgress = self.progress; };
+        stlOpts.onToggle = self => { jupiterActive = self.isActive; };
+      }
+      if (i === 12) {
+        stlOpts.onUpdate = self => { twelveProgress = self.progress; };
+        stlOpts.onToggle = self => { twelveActive = self.isActive; };
+      }
+
+      const stl = gsap.timeline({ scrollTrigger: stlOpts });
+
+      stl.fromTo(visualEl,
+        { yPercent: 100, opacity: 0 },
+        { yPercent: 0, opacity: 1, duration: 0.20, ease: 'power2.out' }, 0);
+
+      stl.fromTo(textEl,
+        { opacity: 0, y: 30 },
+        { opacity: 1, y: 0, duration: 0.15, ease: 'power2.out' }, 0.20);
+
+      stl.to(textEl,
+        { opacity: 0, y: -20, duration: 0.15, ease: 'power2.in' }, 0.65);
+
+      stl.to(visualEl,
+        { yPercent: -100, opacity: 0, duration: 0.20, ease: 'power2.in' }, 0.80);
+    }
+  }
+
+  /* -- OUTRO: pin and fade -- */
+  const outroTl = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.outro-region',
+      start: 'top top',
+      end: 'bottom bottom',
+      scrub: 1,
+      pin: '.outro-sticky',
+    }
+  });
+
+  outroTl
+    .fromTo('#outroSign',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.20, ease: 'power2.out' }, 0.05)
+    .fromTo('.outro-content',
+      { y: 0 },
+      { y: -80, duration: 0.30, ease: 'power2.inOut' }, 0.35)
+    .fromTo('#outroPhotos',
+      { opacity: 0, y: 30 },
+      { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' }, 0.40)
+    .fromTo('#goToTop',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.15, ease: 'power2.out' }, 0.60);
+
+  /* -- MASTER SCROLL TRACKER: background + particle tint + currentSection -- */
+  let currentSection = -1; // -1 = intro, 0-11 = sections (0-indexed), 12 = outro
+
+  ScrollTrigger.create({
+    trigger: '.scroll-container',
+    start: 'top top',
+    end: 'bottom bottom',
+    onUpdate: () => {
+      const scrollY = window.scrollY || window.pageYOffset;
+      updateBackground(scrollY);
+      currentTint = getCurrentParticleTint(scrollY);
+
+      if (sectionTops.length > 0) {
+        currentSection = -1;
+        for (let i = 0; i < 12; i++) {
+          if (scrollY >= sectionTops[i]) currentSection = i;
+        }
+      }
+
+      // Base watercolor wash for non-flower sections
+      if (currentSection >= 0 && currentSection !== 1) {
+        washEl.style.opacity = 0.15;
+      } else if (currentSection < 0) {
+        washEl.style.opacity = 0;
+      }
+    }
+  });
+
+  // Measure layout after ScrollTrigger has done its thing
+  ScrollTrigger.addEventListener('refresh', measureLayout);
+  // Initial measurement
+  requestAnimationFrame(() => {
+    measureLayout();
+    updateBackground(0);
+  });
+
+  /* ================================================================
+     FLOWER — Task 4: section 7 local scroll context
+     ================================================================ */
+  const stemEl = document.getElementById('stem');
+  const stemLen = stemEl.getTotalLength();
+  stemEl.style.strokeDasharray = stemLen;
+  stemEl.style.strokeDashoffset = stemLen;
+
+  const bloomOrder = [0, 6, 3, 9, 1, 7, 4, 10, 2, 8, 5, 11];
+
+  // Flower growth phases mapped to section 7 progress (0-1):
+  // 0.0-0.2: visual entering, flower SVG fades in, ground appears
+  // 0.2-0.5: stem grows, leaves sprout, greenery sprouts
+  // 0.5-0.7: petals bloom one by one
+  // 0.65: flower center pops
+  // 0.8-1.0: text fades out, visual exits (handled by section-level ScrollTrigger)
+
+  const FLOWER_FADE_START = 0.0;
+  const FLOWER_FADE_END = 0.20;
+  const STEM_START = 0.20;
+  const STEM_END = 0.50;
+  const STEM_DUR = STEM_END - STEM_START;
+  const PETAL_START = 0.50;
+  const PETAL_END = 0.70;
+  const PETAL_EACH = (PETAL_END - PETAL_START) / 14; // stagger across 12 petals with some overlap
+  const CENTER_POP = 0.65;
+
+  // Leaf positions along stem
+  const STEM_BASE_X = 350, STEM_BASE_Y = 665;
+  const STEM_TOP_Y = 280;
+  const LEAF_L_Y = 530, LEAF_R_Y = 478, LEAF_L2_Y = 445;
+  const STEM_RANGE = STEM_BASE_Y - STEM_TOP_Y;
+  // leaf-l at y=530: fraction = (665-530)/385 = 0.351
+  // leaf-r at y=478: fraction = (665-478)/385 = 0.486
+  // leaf-l2 at y=445: fraction = (665-445)/385 = 0.571
+
+  const GREENERY_START = STEM_START;
+
+  // Sun glow element
+  const sunEl = document.getElementById('sunGlow');
+  const washEl = document.getElementById('watercolorWash');
+
+  // Cursor state
+  let sMouseX = innerWidth / 2, sMouseY = innerHeight / 2;
+  let mouseX = sMouseX, mouseY = sMouseY;
+
+  document.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+  document.addEventListener('touchmove', e => {
+    if (e.touches[0]) { mouseX = e.touches[0].clientX; mouseY = e.touches[0].clientY; }
+  }, { passive: true });
+
+  // Smoothed bend offset for the stem curve
+  let stemBend = 0;
+  // Leaf cursor sway
+  let leafSwayL = 0, leafSwayR = 0, leafSwayL2 = 0;
+  const leafSwayLEl = document.querySelector('.leaf-sway-l');
+  const leafSwayREl = document.querySelector('.leaf-sway-r');
+  const leafSwayL2El = document.querySelector('.leaf-sway-l2');
+  const leafLEl = document.getElementById('leafL');
+  const leafREl = document.getElementById('leafR');
+  const leafL2El = document.getElementById('leafL2');
+  const flowerHeadEl = document.getElementById('flowerHead');
+
+  // Greenery sway state
+  let fernSwayL = 0, fernSwayR = 0, grassSway = 0;
+  const fernLEl = document.getElementById('fernL');
+  const fernREl = document.getElementById('fernR');
+  const greeneryFrontEl = document.getElementById('greeneryFront');
+
+  // Petal wind state
+  const windOffsets = new Float32Array(12);
+  const windTargets = new Float32Array(12);
+
+  function stemXat(y, bend) {
+    const t = (STEM_BASE_Y - y) / STEM_RANGE;
+    return STEM_BASE_X + bend * Math.sin(t * Math.PI * 0.85);
+  }
+
+  function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+
+  // Pre-setup greenery dash arrays so they're ready for scroll-driven reveal
+  function setupGreeneryDash() {
+    document.querySelectorAll('.grass-blade').forEach(blade => {
+      const len = blade.getTotalLength();
+      blade.style.strokeDasharray = len;
+      blade.style.strokeDashoffset = len;
+    });
+    document.querySelectorAll('#fernL > path, #fernR > path').forEach(stem => {
+      const len = stem.getTotalLength();
+      stem.style.strokeDasharray = len;
+      stem.style.strokeDashoffset = len;
+    });
+    document.querySelectorAll('#fernL .fern-leaf-group').forEach((leaf, i) => {
+      const pointsLeft = (i % 2 === 0);
+      gsap.set(leaf, { scale: 0, transformOrigin: pointsLeft ? '100% 50%' : '0% 50%' });
+    });
+    document.querySelectorAll('#fernR .fern-leaf-group').forEach((leaf, i) => {
+      const pointsRight = (i % 2 === 0);
+      gsap.set(leaf, { scale: 0, transformOrigin: pointsRight ? '0% 50%' : '100% 50%' });
+    });
+    document.querySelectorAll('#archLeafL path, #archLeafR path').forEach(p => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+    });
+    document.querySelectorAll('#greeneryFront path[d*="C"]').forEach(p => {
+      if (p.getAttribute('fill') !== 'none' && p.getAttribute('fill')) return;
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = len;
+      p.style.strokeDashoffset = len;
+    });
+    document.querySelectorAll('#greeneryFront path[fill^="url"]').forEach((leaf, i) => {
+      gsap.set(leaf, { scale: 0, transformOrigin: i === 0 ? '100% 100%' : '0% 100%' });
+    });
+  }
+  setupGreeneryDash();
+
+  /* -- FLOWER TICK: runs every frame, drives all flower state based on petalProgress -- */
+  function tickFlower() {
+    const p = petalProgress;
+
+    // --- Flower SVG visibility ---
+    const flowerSvg = document.getElementById('flowerSvg');
+    if (p < FLOWER_FADE_START) {
+      flowerSvg.style.opacity = 0;
+    } else if (p < FLOWER_FADE_END) {
+      flowerSvg.style.opacity = Math.min(1, (p - FLOWER_FADE_START) / (FLOWER_FADE_END - FLOWER_FADE_START));
+    } else if (p < 0.80) {
+      flowerSvg.style.opacity = 1;
+    }
+    // After 0.80, the section-level ScrollTrigger handles fading the visual container
+
+    // Ground
+    const groundEl = document.querySelector('.ground');
+    if (groundEl) {
+      if (p >= FLOWER_FADE_START && p < FLOWER_FADE_END) {
+        groundEl.style.opacity = 0.35 * ((p - FLOWER_FADE_START) / (FLOWER_FADE_END - FLOWER_FADE_START));
+      } else if (p >= FLOWER_FADE_END) {
+        groundEl.style.opacity = 0.35;
+      } else {
+        groundEl.style.opacity = 0;
+      }
+    }
+
+    // --- Stem growth ---
+    const stemProgress = Math.max(0, Math.min(1, (p - STEM_START) / STEM_DUR));
+    const stemDrawn = stemProgress >= 1;
+
+    if (stemDrawn) {
+      stemEl.style.strokeDasharray = 'none';
+      stemEl.style.strokeDashoffset = '0';
+    } else {
+      stemEl.style.strokeDasharray = stemLen;
+      stemEl.style.strokeDashoffset = stemLen * (1 - stemProgress);
+    }
+
+    // --- Leaves sprouting at correct stem heights ---
+    // leaf-l fraction: 0.351, leaf-r: 0.486, leaf-l2: 0.571
+    const leafLProgress = Math.max(0, Math.min(1, (stemProgress - 0.351) / 0.08));
+    const leafRProgress = Math.max(0, Math.min(1, (stemProgress - 0.486) / 0.08));
+    const leafL2Progress = Math.max(0, Math.min(1, (stemProgress - 0.571) / 0.08));
+
+    gsap.set('.leaf-l',  { opacity: leafLProgress, scale: leafLProgress, transformOrigin: '100% 100%' });
+    gsap.set('.leaf-r',  { opacity: leafRProgress, scale: leafRProgress, transformOrigin: '0% 100%' });
+    gsap.set('.leaf-l2', { opacity: leafL2Progress * 0.8, scale: leafL2Progress, transformOrigin: '100% 100%' });
+
+    // --- Greenery sprouting (tied to stem growth) ---
+    const greeneryProgress = Math.max(0, Math.min(1, (stemProgress - 0.0) / 1.0));
+
+    // Grass group and greenery back visibility
+    const grassGroupEl = document.getElementById('grassGroup');
+    const greeneryBackEl = document.getElementById('greeneryBack');
+    if (greeneryProgress > 0) {
+      grassGroupEl.style.opacity = Math.min(1, greeneryProgress * 3);
+      greeneryBackEl.style.opacity = Math.min(1, greeneryProgress * 3);
+    } else {
+      grassGroupEl.style.opacity = 0;
+      greeneryBackEl.style.opacity = 0;
+    }
+
+    // Grass blades draw-on
+    document.querySelectorAll('.grass-blade').forEach((blade, i) => {
+      const bladeT = Math.max(0, Math.min(1, (greeneryProgress - i * 0.05) / 0.3));
+      const len = parseFloat(blade.style.strokeDasharray) || blade.getTotalLength();
+      blade.style.strokeDashoffset = len * (1 - bladeT);
+    });
+
+    // Fern stems draw-on
+    document.querySelectorAll('#fernL > path, #fernR > path').forEach((stem, i) => {
+      const fernT = Math.max(0, Math.min(1, (greeneryProgress - 0.1 - i * 0.1) / 0.4));
+      const len = parseFloat(stem.style.strokeDasharray) || stem.getTotalLength();
+      stem.style.strokeDashoffset = len * (1 - fernT);
+    });
+
+    // Fern leaves sprout
+    document.querySelectorAll('#fernL .fern-leaf-group').forEach((leaf, i) => {
+      const leafT = Math.max(0, Math.min(1, (greeneryProgress - 0.2 - i * 0.06) / 0.15));
+      gsap.set(leaf, { scale: leafT });
+    });
+    document.querySelectorAll('#fernR .fern-leaf-group').forEach((leaf, i) => {
+      const leafT = Math.max(0, Math.min(1, (greeneryProgress - 0.25 - i * 0.06) / 0.15));
+      gsap.set(leaf, { scale: leafT });
+    });
+
+    // Arching leaves draw-on
+    document.querySelectorAll('#archLeafL path, #archLeafR path').forEach((ap, i) => {
+      const archT = Math.max(0, Math.min(1, (greeneryProgress - 0.15 - i * 0.05) / 0.3));
+      const len = parseFloat(ap.style.strokeDasharray) || ap.getTotalLength();
+      ap.style.strokeDashoffset = len * (1 - archT);
+    });
+
+    // Foreground greenery
+    if (greeneryProgress > 0.3) {
+      greeneryFrontEl.style.opacity = Math.min(1, (greeneryProgress - 0.3) / 0.3);
+    } else {
+      greeneryFrontEl.style.opacity = 0;
+    }
+    document.querySelectorAll('#greeneryFront path[d*="C"]').forEach((fp, i) => {
+      if (fp.getAttribute('fill') !== 'none' && fp.getAttribute('fill')) return;
+      const fgT = Math.max(0, Math.min(1, (greeneryProgress - 0.3 - i * 0.03) / 0.25));
+      const len = parseFloat(fp.style.strokeDasharray) || fp.getTotalLength();
+      fp.style.strokeDashoffset = len * (1 - fgT);
+    });
+    document.querySelectorAll('#greeneryFront path[fill^="url"]').forEach((fl, i) => {
+      const flT = Math.max(0, Math.min(1, (greeneryProgress - 0.4 - i * 0.05) / 0.2));
+      gsap.set(fl, { scale: flT });
+    });
+
+    // --- Bloom glow ---
+    const bloomGlowEl = document.querySelector('.bloom-glow');
+    if (bloomGlowEl) {
+      const glowT = Math.max(0, Math.min(1, (p - (STEM_END - 0.02)) / 0.08));
+      bloomGlowEl.style.opacity = glowT;
+    }
+
+    // --- Petals bloom ---
+    for (let seq = 0; seq < 12; seq++) {
+      const idx = bloomOrder[seq];
+      const s0 = PETAL_START + seq * PETAL_EACH;
+      const raw = (p - s0) / 0.04;
+      let scale = Math.max(0, Math.min(1, raw));
+      scale = easeOut(scale);
+
+      const angle = petalEls[idx].base + windOffsets[idx];
+      petalEls[idx].el.setAttribute('transform', `rotate(${angle}) scale(${scale})`);
+      petalEls[idx].el.style.opacity = scale > 0.01 ? 1 : 0;
+      petalEls[idx].el.style.pointerEvents = scale > 0.85 ? 'auto' : 'none';
+    }
+
+    // --- Flower center ---
+    const centerEl = document.querySelector('.flower-center');
+    if (centerEl) {
+      const centerT = Math.max(0, Math.min(1, (p - CENTER_POP) / 0.04));
+      const centerScale = easeOut(centerT);
+      centerEl.style.opacity = centerT > 0.01 ? 1 : 0;
+      centerEl.setAttribute('transform', `scale(${centerScale})`);
+    }
+
+    // --- Sun glow: ramp up during flower growth, peak during bloom ---
+    if (p < STEM_START) {
+      sunEl.style.opacity = 0;
+    } else if (p < PETAL_START) {
+      // Ramp up during stem growth
+      const sunT = (p - STEM_START) / (PETAL_START - STEM_START);
+      sunEl.style.opacity = sunT * 0.5;
+    } else if (p < PETAL_END) {
+      // Peak during bloom
+      const sunT = (p - PETAL_START) / (PETAL_END - PETAL_START);
+      sunEl.style.opacity = 0.5 + sunT * 0.4;
+    } else {
+      sunEl.style.opacity = 0.9;
+    }
+
+    // Watercolor wash tracks sun glow loosely
+    washEl.style.opacity = parseFloat(sunEl.style.opacity) * 0.6;
+  }
+
+  /* -- CURSOR INTERACTION TICK: stem bending, leaf sway, petal wind -- */
+  function tickInteraction() {
+    if (!petalActive) return;
+
+    const svg = document.getElementById('flowerSvg');
+    const r = svg.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return;
+
+    const cx = r.left + r.width * (350 / 700);
+    const cy = r.top + r.height * (280 / 750);
+
+    const dx = sMouseX - cx;
+    const dy = sMouseY - cy;
+    const dist = Math.hypot(dx, dy);
+    const maxD = Math.max(innerWidth, innerHeight) * 0.5;
+    const strength = Math.min(dist / maxD, 1);
+    const wAngle = Math.atan2(dy, dx);
+
+    // Stem bending — gentle sway toward cursor
+    const targetBend = (dx / maxD) * 12;
+    stemBend += (targetBend - stemBend) * 0.025;
+
+    const p = petalProgress;
+    const stemProgress = Math.max(0, Math.min(1, (p - STEM_START) / STEM_DUR));
+    const stemDrawn = stemProgress >= 1;
+
+    // Only bend once stem is fully grown
+    const bendActive = stemDrawn && p > (STEM_END + 0.02);
+    const bend = bendActive ? stemBend : 0;
+
+    if (bendActive) {
+      const topX = stemXat(STEM_TOP_Y, bend);
+      const cp1x = STEM_BASE_X + bend * 0.4;
+      const cp1y = STEM_BASE_Y - STEM_RANGE * 0.33;
+      const cp2x = topX + bend * 0.3;
+      const cp2y = STEM_BASE_Y - STEM_RANGE * 0.66;
+      const newD = `M${STEM_BASE_X},${STEM_BASE_Y} C${cp1x},${cp1y} ${cp2x},${cp2y} ${topX},${STEM_TOP_Y}`;
+      stemEl.setAttribute('d', newD);
+
+      // Move leaves to follow the bent stem
+      leafLEl.setAttribute('transform', `translate(${stemXat(LEAF_L_Y, bend) - 2},${LEAF_L_Y})`);
+      leafREl.setAttribute('transform', `translate(${stemXat(LEAF_R_Y, bend) + 2},${LEAF_R_Y})`);
+      leafL2El.setAttribute('transform', `translate(${stemXat(LEAF_L2_Y, bend) - 1},${LEAF_L2_Y})`);
+
+      // Move flower head to bent stem top
+      flowerHeadEl.setAttribute('transform', `translate(${topX},${STEM_TOP_Y})`);
+    }
+
+    // Leaf cursor sway — leaves tilt toward/away from cursor
+    const leafInfluence = (dx / maxD);
+    const targetLeafL = leafInfluence * -8;
+    const targetLeafR = leafInfluence * 8;
+    const targetLeafL2 = leafInfluence * -6;
+    leafSwayL += (targetLeafL - leafSwayL) * 0.04;
+    leafSwayR += (targetLeafR - leafSwayR) * 0.04;
+    leafSwayL2 += (targetLeafL2 - leafSwayL2) * 0.04;
+    if (bendActive) {
+      leafSwayLEl.setAttribute('transform', `rotate(${leafSwayL})`);
+      leafSwayREl.setAttribute('transform', `rotate(${leafSwayR})`);
+      leafSwayL2El.setAttribute('transform', `rotate(${leafSwayL2})`);
+    }
+
+    // Greenery sway — ferns and grass react to cursor
+    const greeneryVisible = p > STEM_START + 0.04;
+    if (greeneryVisible) {
+      const targetFernL = leafInfluence * -5;
+      const targetFernR = leafInfluence * 5;
+      const targetGrass = leafInfluence * 3;
+      fernSwayL += (targetFernL - fernSwayL) * 0.02;
+      fernSwayR += (targetFernR - fernSwayR) * 0.02;
+      grassSway += (targetGrass - grassSway) * 0.03;
+      fernLEl.setAttribute('transform', `translate(280,670) rotate(${fernSwayL}, 0, 0)`);
+      fernREl.setAttribute('transform', `translate(420,670) rotate(${fernSwayR}, 0, 0)`);
+      greeneryFrontEl.setAttribute('transform', `translate(${grassSway * 0.5}, 0)`);
+    }
+
+    // Petal wind offsets
+    for (let i = 0; i < 12; i++) {
+      const pAngle = ((i * 30) - 90) * Math.PI / 180;
+      const influence = Math.sin(wAngle - pAngle);
+      windTargets[i] = influence * strength * 14;
+      windOffsets[i] += (windTargets[i] - windOffsets[i]) * 0.035;
+    }
+  }
+
+  /* ================================================================
+     CLOCK — Task 6: section 4 clock face
+     ================================================================ */
+  const clockMarkersGroup = document.getElementById('clockMarkers');
+  const clockDotsGroup = document.getElementById('clockDots');
+  const clockDotEls = [];
+
+  // Build 12 hour markers and glow dots
+  for (let i = 0; i < 12; i++) {
+    const angle = (i * 30 - 90) * Math.PI / 180;
+
+    // Hour marker — short line at radius 135 to 148
+    const mx1 = 200 + Math.cos(angle) * 135;
+    const my1 = 200 + Math.sin(angle) * 135;
+    const mx2 = 200 + Math.cos(angle) * 148;
+    const my2 = 200 + Math.sin(angle) * 148;
+    const marker = document.createElementNS(NS, 'line');
+    marker.setAttribute('x1', mx1);
+    marker.setAttribute('y1', my1);
+    marker.setAttribute('x2', mx2);
+    marker.setAttribute('y2', my2);
+    marker.setAttribute('stroke', 'rgba(200,210,230,0.25)');
+    marker.setAttribute('stroke-width', i % 3 === 0 ? '2' : '1');
+    marker.setAttribute('stroke-linecap', 'round');
+    clockMarkersGroup.appendChild(marker);
+
+    // Glow dot at radius 155
+    const dx = 200 + Math.cos(angle) * 155;
+    const dy = 200 + Math.sin(angle) * 155;
+    const dot = document.createElementNS(NS, 'circle');
+    dot.setAttribute('cx', dx);
+    dot.setAttribute('cy', dy);
+    dot.setAttribute('r', '4');
+    dot.setAttribute('fill', 'rgba(200,210,230,1)');
+    dot.setAttribute('opacity', '0.08');
+    clockDotsGroup.appendChild(dot);
+    clockDotEls.push(dot);
+  }
+
+  function tickClock() {
+    if (clockProgress <= 0) return;
+
+    // Hour hand sweeps 360 degrees during visible phase (progress 0.2 to 0.8)
+    const visibleProgress = Math.max(0, Math.min(1, (clockProgress - 0.2) / 0.6));
+    const hourAngle = visibleProgress * 360;
+    document.getElementById('clockHourHand').setAttribute('transform', `rotate(${hourAngle}, 200, 200)`);
+
+    // Dot glow: light up dots as hour hand passes each 30-degree mark
+    for (let i = 0; i < 12; i++) {
+      const dotAngle = i * 30; // 0, 30, 60, ... 330
+      const passed = hourAngle >= dotAngle;
+      const targetOpacity = passed ? 0.5 : 0.08;
+      const current = parseFloat(clockDotEls[i].getAttribute('opacity'));
+      const next = current + (targetOpacity - current) * 0.08;
+      clockDotEls[i].setAttribute('opacity', next);
+    }
+
+    // Minute hand follows cursor (only when section 4 is active)
+    if (clockActive) {
+      const clockSvg = document.querySelector('.clock-svg');
+      const rect = clockSvg.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) {
+        const ccx = rect.left + rect.width / 2;
+        const ccy = rect.top + rect.height / 2;
+        const mAngle = Math.atan2(sMouseY - ccy, sMouseX - ccx) * 180 / Math.PI + 90;
+        document.getElementById('clockMinuteHand').setAttribute('transform', `rotate(${mAngle}, 200, 200)`);
+      }
+    }
+  }
+
+  /* ================================================================
+     BREATHING CIRCLE — Task 5: section 12 breathing orb
+     ================================================================ */
+  const breathCircle = document.getElementById('breathCircle');
+  const breathRings = document.getElementById('breathRings');
+  const breathGradStop0 = document.querySelector('#breathGrad stop:first-child');
+  let breathRipples = [];
+  let lastSinValue = 0;
+  let breathWasCrossing = false;
+
+  function tickBreathing(time) {
+    // Breathing runs continuously in rAF — always update regardless of visibility
+    const cycle = (time / 1000) * 0.2 * Math.PI * 2;
+    const sinVal = Math.sin(cycle);
+
+    // Circle radius breathes between r=42 and r=78
+    const r = 60 * (1 + 0.3 * sinVal);
+    breathCircle.setAttribute('r', r);
+
+    // Circle opacity
+    const op = 0.5 + 0.3 * sinVal;
+    breathCircle.setAttribute('opacity', op);
+
+    // Detect exhale peak: sin crossing downward through ~0.5
+    const crossing = lastSinValue >= 0.5 && sinVal < 0.5;
+    if (crossing && !breathWasCrossing && breathRipples.length < 5) {
+      // Spawn a new ripple ring
+      const ring = document.createElementNS(NS, 'circle');
+      ring.setAttribute('cx', '200');
+      ring.setAttribute('cy', '200');
+      ring.setAttribute('r', '60');
+      ring.setAttribute('fill', 'none');
+      ring.setAttribute('stroke', '#d4a060');
+      ring.setAttribute('stroke-width', '1');
+      ring.setAttribute('opacity', '0.3');
+      breathRings.appendChild(ring);
+      breathRipples.push({ el: ring, r: 60, opacity: 0.3 });
+    }
+    breathWasCrossing = crossing;
+    lastSinValue = sinVal;
+
+    // Update ripple rings
+    for (let i = breathRipples.length - 1; i >= 0; i--) {
+      const rp = breathRipples[i];
+      rp.r += 0.5;
+      rp.opacity -= 0.003;
+      if (rp.opacity <= 0) {
+        breathRings.removeChild(rp.el);
+        breathRipples.splice(i, 1);
+      } else {
+        rp.el.setAttribute('r', rp.r);
+        rp.el.setAttribute('opacity', rp.opacity);
+      }
+    }
+
+    // Cursor interaction: warm gradient when cursor is near circle center
+    const breathSvg = document.querySelector('.breathing-svg');
+    if (breathSvg) {
+      const brect = breathSvg.getBoundingClientRect();
+      if (brect.width > 0 && brect.height > 0) {
+        const bcx = brect.left + brect.width / 2;
+        const bcy = brect.top + brect.height / 2;
+        const dist = Math.hypot(sMouseX - bcx, sMouseY - bcy);
+        const proximity = Math.max(0, 1 - dist / 200);
+        const warmOpacity = 0.6 + proximity * 0.2;
+        breathGradStop0.setAttribute('stop-opacity', warmOpacity);
+      }
+    }
+  }
+
+  /* ================================================================
+     CONSTELLATIONS — Task 7: section 5 star field
+     ================================================================ */
+  const CONSTELLATIONS = [
+    // Aries - curved ram's horn (Hamal, Sheratan, Mesarthim, 41 Ari)
+    { stars: [[35,65],[50,45],[68,35],[88,42]], lines: [[0,1],[1,2],[2,3]] },
+    // Taurus - V-shaped Hyades face + horn tips (Aldebaran, theta Tau, gamma Tau, Elnath, zeta Tau)
+    { stars: [[145,55],[125,40],[115,30],[160,25],[175,35]], lines: [[0,1],[1,2],[0,3],[0,4]] },
+    // Gemini - twin figures (Castor, Pollux, Wasat, Mebsuta, Tejat, Alhena)
+    { stars: [[245,28],[260,30],[250,50],[265,55],[240,75],[270,78]], lines: [[0,2],[2,4],[1,3],[3,5],[0,1],[4,5]] },
+    // Cancer - inverted Y (Acubens, Al Tarf, Asellus Borealis, Asellus Australis)
+    { stars: [[350,38],[335,55],[355,60],[370,72]], lines: [[0,1],[0,2],[1,3],[2,3]] },
+    // Leo - sickle + triangle (Regulus, eta Leo, Algieba, zeta Leo, Denebola, delta Leo)
+    { stars: [[35,195],[42,165],[55,148],[72,155],[95,190],[80,170]], lines: [[0,1],[1,2],[2,3],[3,5],[5,4],[0,4]] },
+    // Virgo - Y-shape with arms (Spica, Porrima, Vindemiatrix, epsilon Vir, Auva, Zavijava)
+    { stars: [[365,198],[345,170],[330,148],[355,135],[380,145],[315,165]], lines: [[0,1],[1,2],[1,3],[3,4],[2,5]] },
+    // Libra - diamond scales (Zubenelgenubi, Zubeneschamali, sigma Lib, upsilon Lib)
+    { stars: [[45,290],[65,265],[90,285],[65,310]], lines: [[0,1],[1,2],[2,3],[3,0]] },
+    // Scorpius - claws + curved tail (Antares, Dschubba, Graffias, Shaula, Sargas, Lesath, Acrab)
+    { stars: [[195,115],[180,125],[172,140],[210,130],[225,145],[240,160],[248,168]], lines: [[0,1],[1,2],[0,3],[3,4],[4,5],[5,6]] },
+    // Sagittarius - teapot asterism (Kaus Australis, Kaus Media, Kaus Borealis, Nunki, Ascella, phi Sgr)
+    { stars: [[155,280],[170,260],[185,240],[210,250],[200,275],[215,285]], lines: [[0,1],[1,2],[2,3],[3,4],[4,0],[3,5],[5,4]] },
+    // Capricornus - triangle with tail (Deneb Algedi, Nashira, Dabih, Algedi, omega Cap)
+    { stars: [[350,250],[330,260],[295,255],[285,245],[340,290]], lines: [[0,1],[1,2],[2,3],[0,4],[1,4]] },
+    // Aquarius - zigzag water stream (Sadalsuud, Sadalmelik, Sadachbia, Skat, Albali)
+    { stars: [[90,340],[110,350],[130,340],[150,355],[140,380]], lines: [[0,1],[1,2],[2,3],[3,4]] },
+    // Pisces - two fish linked by cord (eta Psc, omega Psc, iota Psc, Alrescha, omicron Psc, tau Psc)
+    { stars: [[270,340],[285,335],[300,345],[310,365],[340,370],[330,385]], lines: [[0,1],[1,2],[2,3],[3,4],[4,5],[2,4]] },
+  ];
+
+  const starFieldEl = document.getElementById('starField');
+  const constellationData = []; // runtime state per constellation
+
+  CONSTELLATIONS.forEach((c, ci) => {
+    const g = document.createElementNS(NS, 'g');
+    const starEls = [];
+    const lineEls = [];
+
+    // Draw lines first (behind stars)
+    c.lines.forEach(([a, b]) => {
+      const line = document.createElementNS(NS, 'line');
+      line.setAttribute('x1', c.stars[a][0]);
+      line.setAttribute('y1', c.stars[a][1]);
+      line.setAttribute('x2', c.stars[b][0]);
+      line.setAttribute('y2', c.stars[b][1]);
+      line.setAttribute('stroke', 'rgba(200,210,240,0.2)');
+      line.setAttribute('stroke-width', '0.5');
+      const len = Math.hypot(c.stars[b][0] - c.stars[a][0], c.stars[b][1] - c.stars[a][1]);
+      line.setAttribute('stroke-dasharray', len);
+      line.setAttribute('stroke-dashoffset', len);
+      g.appendChild(line);
+      lineEls.push({ el: line, len });
+    });
+
+    // Draw stars
+    c.stars.forEach(([sx, sy]) => {
+      const circle = document.createElementNS(NS, 'circle');
+      circle.setAttribute('cx', sx);
+      circle.setAttribute('cy', sy);
+      circle.setAttribute('r', '2');
+      circle.setAttribute('fill', 'rgba(200,210,240,0.8)');
+      circle.setAttribute('filter', 'url(#starGlow)');
+      circle.setAttribute('opacity', '0');
+      g.appendChild(circle);
+      starEls.push(circle);
+    });
+
+    starFieldEl.appendChild(g);
+    constellationData.push({ stars: starEls, lines: lineEls, positions: c.stars });
+  });
+
+  // Shooting star state
+  let shootingStars = [];
+  let prevCursorSpeed = 0;
+  let prevCX = sMouseX, prevCY = sMouseY;
+  let ambientSSTimer = 0;
+
+  function tickConstellations(time) {
+    if (constProgress <= 0 && !constActive) return;
+
+    const p = constProgress;
+
+    // Reveal constellations one by one from progress 0.15 to 0.65
+    const revealStart = 0.15;
+    const revealEnd = 0.65;
+    const revealRange = revealEnd - revealStart;
+    const eachRange = revealRange / 12;
+
+    for (let ci = 0; ci < 12; ci++) {
+      const cStart = revealStart + ci * eachRange;
+      const cProgress = Math.max(0, Math.min(1, (p - cStart) / eachRange));
+      const cd = constellationData[ci];
+
+      // Stars twinkle on with stagger
+      for (let si = 0; si < cd.stars.length; si++) {
+        const starStagger = si / cd.stars.length * 0.4; // first 40% of the constellation's range
+        const starT = Math.max(0, Math.min(1, (cProgress - starStagger) / 0.3));
+        cd.stars[si].setAttribute('opacity', starT);
+      }
+
+      // Lines draw on after stars start
+      for (let li = 0; li < cd.lines.length; li++) {
+        const lineStagger = 0.3 + li / cd.lines.length * 0.4;
+        const lineT = Math.max(0, Math.min(1, (cProgress - lineStagger) / 0.3));
+        const ld = cd.lines[li];
+        ld.el.setAttribute('stroke-dashoffset', ld.len * (1 - lineT));
+      }
+    }
+
+    // Cursor interaction: brighten nearby stars
+    if (constActive) {
+      const starsSvg = document.querySelector('.stars-svg');
+      if (starsSvg) {
+        const rect = starsSvg.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const scaleX = 400 / rect.width;
+          const scaleY = 400 / rect.height;
+          const cursorSvgX = (sMouseX - rect.left) * scaleX;
+          const cursorSvgY = (sMouseY - rect.top) * scaleY;
+
+          for (let ci = 0; ci < 12; ci++) {
+            const cd = constellationData[ci];
+            for (let si = 0; si < cd.positions.length; si++) {
+              const [sx, sy] = cd.positions[si];
+              const dist = Math.hypot(cursorSvgX - sx, cursorSvgY - sy);
+              const baseOpacity = parseFloat(cd.stars[si].getAttribute('opacity'));
+              if (baseOpacity > 0 && dist < 60) {
+                const boost = (1 - dist / 60);
+                cd.stars[si].setAttribute('opacity', Math.min(1, baseOpacity + boost * 0.5));
+                cd.stars[si].setAttribute('r', 2 + boost * 1);
+              } else if (baseOpacity > 0) {
+                cd.stars[si].setAttribute('r', '2');
+              }
+            }
+          }
+
+          // Shooting stars on fast cursor movement
+          const cdx = sMouseX - prevCX;
+          const cdy = sMouseY - prevCY;
+          const cursorSpeed = Math.hypot(cdx, cdy);
+          prevCX = sMouseX;
+          prevCY = sMouseY;
+
+          if (cursorSpeed > 8 && shootingStars.length < 3 && Math.random() < 0.3) {
+            const angle = Math.atan2(cdy, cdx);
+            const startX = cursorSvgX;
+            const startY = cursorSvgY;
+            const ssLine = document.createElementNS(NS, 'line');
+            ssLine.setAttribute('x1', startX);
+            ssLine.setAttribute('y1', startY);
+            ssLine.setAttribute('x2', startX);
+            ssLine.setAttribute('y2', startY);
+            ssLine.setAttribute('stroke', 'rgba(220,230,255,0.8)');
+            ssLine.setAttribute('stroke-width', '1');
+            ssLine.setAttribute('stroke-linecap', 'round');
+            starFieldEl.appendChild(ssLine);
+            shootingStars.push({
+              el: ssLine,
+              x: startX, y: startY,
+              dx: Math.cos(angle) * 6,
+              dy: Math.sin(angle) * 6,
+              life: 30,
+              maxLife: 30
+            });
+          }
+        }
+      }
+    }
+
+    // Ambient shooting stars — streak across periodically while section is visible
+    if (p > 0.10 && p < 0.90) {
+      ambientSSTimer++;
+      if (ambientSSTimer > 180 + Math.sin(time * 0.00071) * 80 && shootingStars.length < 5) {
+        ambientSSTimer = 0;
+        const seed = Math.sin(time * 0.0013) * 0.5 + 0.5;
+        const seed2 = Math.sin(time * 0.0029) * 0.5 + 0.5;
+        const edge = Math.floor(seed * 4);
+        let sx, sy, angle;
+        if (edge === 0) { sx = -10; sy = seed2 * 300; angle = -0.3 + seed * 0.6; }
+        else if (edge === 1) { sx = 410; sy = seed2 * 300; angle = Math.PI + (-0.3 + seed * 0.6); }
+        else if (edge === 2) { sx = seed2 * 400; sy = -10; angle = Math.PI / 2 + (-0.4 + seed * 0.8); }
+        else { sx = seed2 * 400; sy = 410; angle = -Math.PI / 2 + (-0.4 + seed * 0.8); }
+        const speed = 4 + seed2 * 4;
+        const ssLine = document.createElementNS(NS, 'line');
+        ssLine.setAttribute('x1', sx);
+        ssLine.setAttribute('y1', sy);
+        ssLine.setAttribute('x2', sx);
+        ssLine.setAttribute('y2', sy);
+        ssLine.setAttribute('stroke', 'rgba(220,230,255,0.7)');
+        ssLine.setAttribute('stroke-width', '1.2');
+        ssLine.setAttribute('stroke-linecap', 'round');
+        starFieldEl.appendChild(ssLine);
+        shootingStars.push({
+          el: ssLine,
+          x: sx, y: sy,
+          dx: Math.cos(angle) * speed,
+          dy: Math.sin(angle) * speed,
+          life: 50 + Math.floor(seed * 30),
+          maxLife: 50 + Math.floor(seed * 30)
+        });
+      }
+    }
+
+    // Update shooting stars
+    for (let i = shootingStars.length - 1; i >= 0; i--) {
+      const ss = shootingStars[i];
+      ss.x += ss.dx;
+      ss.y += ss.dy;
+      ss.life--;
+      const tailLen = 20;
+      const tailX = ss.x - ss.dx * (tailLen / 6);
+      const tailY = ss.y - ss.dy * (tailLen / 6);
+      ss.el.setAttribute('x1', tailX);
+      ss.el.setAttribute('y1', tailY);
+      ss.el.setAttribute('x2', ss.x);
+      ss.el.setAttribute('y2', ss.y);
+      const alpha = (ss.life / ss.maxLife) * 0.8;
+      ss.el.setAttribute('stroke', `rgba(220,230,255,${alpha})`);
+      if (ss.life <= 0) {
+        starFieldEl.removeChild(ss.el);
+        shootingStars.splice(i, 1);
+      }
+    }
+  }
+
+  /* ================================================================
+     CALENDAR WHEEL — Task 8: section 1 months ring
+     ================================================================ */
+  const MONTH_COLORS = [
+    '#5a9e6f', '#78b88a', '#a0d4a0', // Jan-Mar (Spring)
+    '#d4b050', '#e0c860', '#d4a030', // Apr-Jun (Summer)
+    '#d08040', '#c06030', '#b04828', // Jul-Sep (Autumn)
+    '#5080b0', '#4068a0', '#305890', // Oct-Dec (Winter)
+  ];
+
+  const monthArcsGroup = document.getElementById('monthArcs');
+  const monthDotsGroup = document.getElementById('monthDots');
+  const monthArcEls = [];
+  const monthDotEls = [];
+  const WHEEL_R = 120;
+
+  for (let i = 0; i < 12; i++) {
+    // Each arc covers 30 degrees, starting from top (270 degrees / -90 degrees)
+    const startAngle = (i * 30 - 90) * Math.PI / 180;
+    const endAngle = ((i + 1) * 30 - 90) * Math.PI / 180;
+
+    const x1 = Math.cos(startAngle) * WHEEL_R;
+    const y1 = Math.sin(startAngle) * WHEEL_R;
+    const x2 = Math.cos(endAngle) * WHEEL_R;
+    const y2 = Math.sin(endAngle) * WHEEL_R;
+
+    const arc = document.createElementNS(NS, 'path');
+    const d = `M${x1},${y1} A${WHEEL_R},${WHEEL_R} 0 0,1 ${x2},${y2}`;
+    arc.setAttribute('d', d);
+    arc.setAttribute('stroke', MONTH_COLORS[i]);
+    arc.setAttribute('stroke-width', '18');
+    arc.setAttribute('fill', 'none');
+    arc.setAttribute('stroke-linecap', 'round');
+    monthArcsGroup.appendChild(arc);
+    const arcLen = arc.getTotalLength();
+    arc.setAttribute('stroke-dasharray', arcLen);
+    arc.setAttribute('stroke-dashoffset', arcLen);
+    monthArcEls.push({ el: arc, len: arcLen });
+
+    // Dot at outer edge of arc midpoint
+    const midAngle = ((i + 0.5) * 30 - 90) * Math.PI / 180;
+    const dotR = WHEEL_R + 14;
+    const dot = document.createElementNS(NS, 'circle');
+    dot.setAttribute('cx', Math.cos(midAngle) * dotR);
+    dot.setAttribute('cy', Math.sin(midAngle) * dotR);
+    dot.setAttribute('r', '3');
+    dot.setAttribute('fill', MONTH_COLORS[i]);
+    dot.setAttribute('opacity', '0');
+    monthDotsGroup.appendChild(dot);
+    monthDotEls.push(dot);
+  }
+
+  function tickMonths() {
+    if (monthsProgress <= 0 && !monthsActive) return;
+
+    const p = monthsProgress;
+
+    // Arcs fill in one by one from progress 0.15 to 0.60
+    const fillStart = 0.15;
+    const fillEnd = 0.60;
+    const fillRange = fillEnd - fillStart;
+    const eachArc = fillRange / 12;
+
+    for (let i = 0; i < 12; i++) {
+      const arcStart = fillStart + i * eachArc;
+      const arcT = Math.max(0, Math.min(1, (p - arcStart) / eachArc));
+      const ad = monthArcEls[i];
+      ad.el.setAttribute('stroke-dashoffset', ad.len * (1 - arcT));
+
+      // Dot appears as arc fills in
+      monthDotEls[i].setAttribute('opacity', arcT);
+    }
+
+    // Cursor tilt (perspective) — only when section 1 is active
+    if (monthsActive) {
+      const monthsSvg = document.querySelector('.months-svg');
+      if (monthsSvg) {
+        const rect = monthsSvg.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const relX = (sMouseX - rect.left) / rect.width - 0.5;
+          const relY = (sMouseY - rect.top) / rect.height - 0.5;
+          monthsSvg.style.transform = `perspective(500px) rotateY(${relX * 8}deg) rotateX(${-relY * 8}deg)`;
+        }
+      }
+
+      // Hover glow: boost nearest arc based on cursor angle from center
+      const monthsSvg2 = document.querySelector('.months-svg');
+      if (monthsSvg2) {
+        const rect = monthsSvg2.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const cursorAngle = Math.atan2(sMouseY - cy, sMouseX - cx) * 180 / Math.PI;
+          // Normalize to 0-360 starting from top (-90 deg)
+          let normAngle = (cursorAngle + 90 + 360) % 360;
+          const nearestArc = Math.floor(normAngle / 30) % 12;
+
+          for (let i = 0; i < 12; i++) {
+            const baseOpacity = parseFloat(monthArcEls[i].el.getAttribute('stroke-opacity')) || 1;
+            if (i === nearestArc) {
+              monthArcEls[i].el.setAttribute('stroke-opacity', '1');
+            } else {
+              monthArcEls[i].el.setAttribute('stroke-opacity', '0.85');
+            }
+          }
+        }
+      }
+    } else {
+      // Reset opacity when not active
+      for (let i = 0; i < 12; i++) {
+        monthArcEls[i].el.setAttribute('stroke-opacity', '1');
+      }
+      // Reset transform
+      const monthsSvg = document.querySelector('.months-svg');
+      if (monthsSvg) {
+        monthsSvg.style.transform = '';
+      }
+    }
+  }
+
+  /* ================================================================
+     MOONS — Task 9: section 6 twelve moons (lunar cycle phases)
+     ================================================================ */
+  const moonsGroup = document.getElementById('moonsGroup');
+  const tidePath = document.getElementById('tidePath');
+  const moonEls = [];
+
+  // Build an SVG path for the shadow (dark) portion of a moon phase.
+  // phaseAngle: 0 = new moon (all dark), 180 = full moon (no dark)
+  // cx, cy, r: center and radius of the moon disc
+  // Returns an SVG path string, or null if no shadow needed (full moon).
+  function moonShadowPath(phaseAngle, cx, cy, r) {
+    const angle = ((phaseAngle % 360) + 360) % 360;
+
+    // Full moon — no shadow
+    if (angle === 180) return null;
+
+    // New moon — entire disc is dark
+    if (angle === 0 || angle === 360) {
+      return 'M' + cx + ',' + (cy - r) +
+        ' A' + r + ',' + r + ' 0 1,1 ' + cx + ',' + (cy + r) +
+        ' A' + r + ',' + r + ' 0 1,1 ' + cx + ',' + (cy - r) + ' Z';
+    }
+
+    // Terminator x-radius: |r * cos(angle)|
+    var rad = (angle * Math.PI) / 180;
+    var tx = Math.abs(r * Math.cos(rad));
+
+    if (angle < 90) {
+      // Waxing crescent: shadow on the left, lit sliver on the right
+      return 'M' + cx + ',' + (cy - r) +
+        ' A' + r + ',' + r + ' 0 1,1 ' + cx + ',' + (cy + r) +
+        ' A' + tx + ',' + r + ' 0 0,0 ' + cx + ',' + (cy - r) + ' Z';
+    } else if (angle < 180) {
+      // Waxing gibbous: small shadow crescent on the left
+      return 'M' + cx + ',' + (cy - r) +
+        ' A' + r + ',' + r + ' 0 1,1 ' + cx + ',' + (cy + r) +
+        ' A' + tx + ',' + r + ' 0 0,1 ' + cx + ',' + (cy - r) + ' Z';
+    } else if (angle < 270) {
+      // Waning gibbous: small shadow crescent on the right
+      return 'M' + cx + ',' + (cy - r) +
+        ' A' + r + ',' + r + ' 0 1,0 ' + cx + ',' + (cy + r) +
+        ' A' + tx + ',' + r + ' 0 0,1 ' + cx + ',' + (cy - r) + ' Z';
+    } else {
+      // Waning crescent: shadow on the right, lit sliver on the left
+      return 'M' + cx + ',' + (cy - r) +
+        ' A' + r + ',' + r + ' 0 1,0 ' + cx + ',' + (cy + r) +
+        ' A' + tx + ',' + r + ' 0 0,0 ' + cx + ',' + (cy - r) + ' Z';
+    }
+  }
+
+  // 12 evenly spaced phases: 0 (new) to 330 (waning crescent) in 30-degree steps
+  const moonHoverOffsets = [];
+  for (let i = 0; i < 12; i++) {
+    const phaseAngle = i * 30; // 0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330
+    const t = i / 11; // 0 to 1 across 12 moons
+    const mx = 25 + t * 350;
+    const arcY = 220 - 25 * Math.sin(t * Math.PI);
+    const r = 13;
+
+    const g = document.createElementNS(NS, 'g');
+    g.setAttribute('opacity', '0');
+    g.style.cursor = 'pointer';
+
+    const clipId = 'moonClip' + i;
+    const clip = document.createElementNS(NS, 'clipPath');
+    clip.setAttribute('id', clipId);
+    const clipCircle = document.createElementNS(NS, 'circle');
+    clipCircle.setAttribute('cx', mx);
+    clipCircle.setAttribute('cy', arcY);
+    clipCircle.setAttribute('r', r);
+    clip.appendChild(clipCircle);
+    g.appendChild(clip);
+
+    const body = document.createElementNS(NS, 'circle');
+    body.setAttribute('cx', mx);
+    body.setAttribute('cy', arcY);
+    body.setAttribute('r', r);
+    body.setAttribute('fill', 'rgba(220,225,240,0.7)');
+    g.appendChild(body);
+
+    const shadowD = moonShadowPath(phaseAngle, mx, arcY, r);
+    if (shadowD) {
+      const shadow = document.createElementNS(NS, 'path');
+      shadow.setAttribute('d', shadowD);
+      shadow.setAttribute('fill', 'rgba(30,32,45,0.92)');
+      shadow.setAttribute('clip-path', 'url(#' + clipId + ')');
+      g.appendChild(shadow);
+    }
+
+    moonHoverOffsets.push({ target: 0, current: 0 });
+    const idx = i;
+    g.addEventListener('mouseenter', () => { moonHoverOffsets[idx].target = -12; });
+    g.addEventListener('mouseleave', () => { moonHoverOffsets[idx].target = 0; });
+
+    moonsGroup.appendChild(g);
+    moonEls.push({ el: g, x: mx, y: arcY, r: r });
+  }
+
+  function tickMoons(time) {
+    if (moonsProgress <= 0 && !moonsActive) return;
+
+    const p = moonsProgress;
+
+    // Moons appear one by one, left to right, from progress 0.15 to 0.60
+    const moonStart = 0.15;
+    const moonEnd = 0.60;
+    const moonRange = moonEnd - moonStart;
+    const eachMoon = moonRange / 12;
+
+    for (let i = 0; i < 12; i++) {
+      const mStart = moonStart + i * eachMoon;
+      const mT = Math.max(0, Math.min(1, (p - mStart) / eachMoon));
+      moonEls[i].el.setAttribute('opacity', mT);
+      const h = moonHoverOffsets[i];
+      h.current += (h.target - h.current) * 0.15;
+      moonEls[i].el.setAttribute('transform', 'translate(0,' + h.current + ')');
+    }
+
+    // Tide wave
+    const t = time || 0;
+    let amplitude = 4;
+    if (moonsActive) {
+      const moonsSvg = document.querySelector('.moons-svg');
+      if (moonsSvg) {
+        const rect = moonsSvg.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const relY = 1 - Math.max(0, Math.min(1, (sMouseY - rect.top) / rect.height));
+          amplitude = 3 + relY * 8;
+        }
+      }
+    }
+
+    // Only draw tide if visible
+    if (p > 0.10) {
+      let tideD = 'M0,270';
+      for (let x = 0; x <= 400; x += 5) {
+        const y = 270 + Math.sin(x * 0.04 + t * 0.001) * amplitude;
+        tideD += ' L' + x + ',' + y;
+      }
+      tidePath.setAttribute('d', tideD);
+    }
+  }
+
+  /* ================================================================
+     PIANO — Task 10: section 2 twelve notes (piano keys)
+     ================================================================ */
+  const pianoKeysGroup = document.getElementById('pianoKeys');
+  const soundWavePath = document.getElementById('soundWave');
+
+  // Standard piano octave layout
+  // White keys: C, D, E, F, G, A, B (7 keys)
+  // Black keys: C#, D#, F#, G#, A# (5 keys)
+  const pianoX0 = 40;
+  const pianoX1 = 360;
+  const pianoW = pianoX1 - pianoX0; // 320
+  const whiteKeyW = pianoW / 7; // ~45.7
+  const whiteKeyH = 180;
+  const blackKeyW = 28;
+  const blackKeyH = 110;
+  const pianoY0 = 80;
+
+  // Chromatic note order: C=0, C#=1, D=2, D#=3, E=4, F=5, F#=6, G=7, G#=8, A=9, A#=10, B=11
+  // Map each chromatic note to whether it's white or black, and its x position
+  const whiteKeyIndices = [0, 2, 4, 5, 7, 9, 11]; // C, D, E, F, G, A, B
+  const blackKeyIndices = [1, 3, 6, 8, 10]; // C#, D#, F#, G#, A#
+
+  // Build key data for all 12 chromatic notes
+  const keyData = [];
+  const keyGlowEls = [];
+
+  // White keys first (drawn behind black keys)
+  for (let wi = 0; wi < 7; wi++) {
+    const chromaticIdx = whiteKeyIndices[wi];
+    const x = pianoX0 + wi * whiteKeyW;
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', pianoY0);
+    rect.setAttribute('width', whiteKeyW - 1.5);
+    rect.setAttribute('height', whiteKeyH);
+    rect.setAttribute('rx', '3');
+    rect.setAttribute('fill', 'rgba(220,215,230,0.08)');
+    rect.setAttribute('stroke', 'rgba(200,190,220,0.2)');
+    rect.setAttribute('stroke-width', '1');
+    pianoKeysGroup.appendChild(rect);
+
+    // Glow overlay
+    const glow = document.createElementNS(NS, 'rect');
+    glow.setAttribute('x', x);
+    glow.setAttribute('y', pianoY0);
+    glow.setAttribute('width', whiteKeyW - 1.5);
+    glow.setAttribute('height', whiteKeyH);
+    glow.setAttribute('rx', '3');
+    glow.setAttribute('fill', 'rgba(150,120,220,0.4)');
+    glow.setAttribute('filter', 'url(#keyGlow)');
+    glow.setAttribute('opacity', '0');
+    pianoKeysGroup.appendChild(glow);
+
+    keyData[chromaticIdx] = { x: x, w: whiteKeyW - 1.5, isBlack: false, glowEl: glow, glowVal: 0 };
+  }
+
+  // Black keys on top
+  // Black key positions: between specific white keys
+  // C#: between C and D (white index 0 and 1)
+  // D#: between D and E (white index 1 and 2)
+  // F#: between F and G (white index 3 and 4)
+  // G#: between G and A (white index 4 and 5)
+  // A#: between A and B (white index 5 and 6)
+  const blackKeyWhitePositions = [0, 1, 3, 4, 5]; // which white key gap they sit in
+
+  for (let bi = 0; bi < 5; bi++) {
+    const chromaticIdx = blackKeyIndices[bi];
+    const whitePos = blackKeyWhitePositions[bi];
+    const x = pianoX0 + (whitePos + 1) * whiteKeyW - blackKeyW / 2;
+
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', x);
+    rect.setAttribute('y', pianoY0);
+    rect.setAttribute('width', blackKeyW);
+    rect.setAttribute('height', blackKeyH);
+    rect.setAttribute('rx', '2');
+    rect.setAttribute('fill', 'rgba(30,25,40,0.7)');
+    rect.setAttribute('stroke', 'rgba(100,90,120,0.3)');
+    rect.setAttribute('stroke-width', '1');
+    pianoKeysGroup.appendChild(rect);
+
+    // Glow overlay
+    const glow = document.createElementNS(NS, 'rect');
+    glow.setAttribute('x', x);
+    glow.setAttribute('y', pianoY0);
+    glow.setAttribute('width', blackKeyW);
+    glow.setAttribute('height', blackKeyH);
+    glow.setAttribute('rx', '2');
+    glow.setAttribute('fill', 'rgba(150,120,220,0.5)');
+    glow.setAttribute('filter', 'url(#keyGlow)');
+    glow.setAttribute('opacity', '0');
+    pianoKeysGroup.appendChild(glow);
+
+    keyData[chromaticIdx] = { x: x, w: blackKeyW, isBlack: true, glowEl: glow, glowVal: 0 };
+  }
+
+  // Cursor speed tracking for sound wave
+  let pianoPrevCX = 0, pianoPrevCY = 0;
+  let pianoWavePhase = 0;
+  let pianoWaveAmplitude = 0;
+
+  // --- Playable piano (Web Audio API) ---
+  let audioCtx = null;
+  const noteFreqs = [261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88];
+
+  (function initPianoClick() {
+    const pianoSvg = document.querySelector('.piano-svg');
+    if (!pianoSvg) return;
+
+    pianoSvg.addEventListener('click', function(e) {
+      // Lazy-init AudioContext on first user gesture
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      // Convert mouse coordinates to SVG viewBox space (400x300)
+      const rect = pianoSvg.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const svgX = (e.clientX - rect.left) * (400 / rect.width);
+      const svgY = (e.clientY - rect.top) * (300 / rect.height);
+
+      // Must be within the piano key area vertically
+      if (svgY < pianoY0 || svgY > pianoY0 + whiteKeyH) return;
+
+      // Find which key was clicked — check black keys first (they overlay white keys)
+      let hitIdx = -1;
+
+      // Black keys: only if click is in the shorter black key region
+      if (svgY < pianoY0 + blackKeyH) {
+        for (let bi = 0; bi < blackKeyIndices.length; bi++) {
+          const ci = blackKeyIndices[bi];
+          const kd = keyData[ci];
+          if (svgX >= kd.x && svgX <= kd.x + kd.w) {
+            hitIdx = ci;
+            break;
+          }
+        }
+      }
+
+      // White keys (fallback)
+      if (hitIdx === -1) {
+        for (let wi = 0; wi < whiteKeyIndices.length; wi++) {
+          const ci = whiteKeyIndices[wi];
+          const kd = keyData[ci];
+          if (svgX >= kd.x && svgX <= kd.x + kd.w) {
+            hitIdx = ci;
+            break;
+          }
+        }
+      }
+
+      if (hitIdx === -1) return;
+
+      // Play note with short envelope
+      const now = audioCtx.currentTime;
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = noteFreqs[hitIdx];
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.35, now + 0.01);   // attack ~10ms
+      gain.gain.linearRampToValueAtTime(0.15, now + 0.21);   // decay ~200ms
+      gain.gain.linearRampToValueAtTime(0, now + 0.51);      // release ~300ms
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now);
+      osc.stop(now + 0.55);
+
+      // Flash the key's glow brighter
+      keyData[hitIdx].glowVal = 1;
+      keyData[hitIdx].glowEl.setAttribute('opacity', '1');
+    });
+  })();
+
+  function tickPiano(time) {
+    if (pianoProgress <= 0 && !pianoActive) return;
+
+    const p = pianoProgress;
+    const t = time || 0;
+
+    // Keys light up left to right (C through B) from progress 0.15 to 0.60
+    const keyStart = 0.15;
+    const keyEnd = 0.60;
+    const keyRange = keyEnd - keyStart;
+    const eachKey = keyRange / 12;
+
+    // Scroll-driven glow targets
+    const scrollGlowTargets = new Float32Array(12);
+    for (let i = 0; i < 12; i++) {
+      const kStart = keyStart + i * eachKey;
+      const kT = Math.max(0, Math.min(1, (p - kStart) / eachKey));
+      scrollGlowTargets[i] = kT;
+    }
+
+    // Cursor-driven glow (nearest key highlight)
+    let cursorGlowIdx = -1;
+    if (pianoActive) {
+      const pianoSvg = document.querySelector('.piano-svg');
+      if (pianoSvg) {
+        const rect = pianoSvg.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const scaleX = 400 / rect.width;
+          const cursorSvgX = (sMouseX - rect.left) * scaleX;
+
+          // Find nearest key by checking if cursor x falls within each key's x range
+          // Check black keys first (they're on top)
+          let found = false;
+          for (let bi = 0; bi < blackKeyIndices.length; bi++) {
+            const ci = blackKeyIndices[bi];
+            const kd = keyData[ci];
+            if (cursorSvgX >= kd.x && cursorSvgX <= kd.x + kd.w) {
+              cursorGlowIdx = ci;
+              found = true;
+              break;
+            }
+          }
+          if (!found) {
+            for (let wi = 0; wi < whiteKeyIndices.length; wi++) {
+              const ci = whiteKeyIndices[wi];
+              const kd = keyData[ci];
+              if (cursorSvgX >= kd.x && cursorSvgX <= kd.x + kd.w) {
+                cursorGlowIdx = ci;
+                break;
+              }
+            }
+          }
+
+          // Cursor speed for sound wave amplitude
+          const cdx = sMouseX - pianoPrevCX;
+          const cdy = sMouseY - pianoPrevCY;
+          const cursorSpeed = Math.hypot(cdx, cdy);
+          pianoPrevCX = sMouseX;
+          pianoPrevCY = sMouseY;
+
+          // Sound wave amplitude tracks cursor speed
+          const targetAmp = Math.min(15, cursorSpeed * 0.5);
+          pianoWaveAmplitude += (targetAmp - pianoWaveAmplitude) * 0.08;
+        }
+      }
+    }
+
+    // Apply glow to each key
+    for (let i = 0; i < 12; i++) {
+      const kd = keyData[i];
+      let target = scrollGlowTargets[i] * 0.6;
+      if (i === cursorGlowIdx) {
+        target = Math.max(target, 0.8);
+      }
+      kd.glowVal += (target - kd.glowVal) * 0.1;
+      kd.glowEl.setAttribute('opacity', kd.glowVal);
+    }
+
+    // Sound wave above keys
+    pianoWavePhase += 0.02;
+    const baseAmp = 3 + pianoWaveAmplitude;
+    let waveD = 'M20,60';
+    for (let x = 20; x <= 380; x += 3) {
+      const y = 60 + Math.sin(x * 0.05 + t * 0.002 + pianoWavePhase) * baseAmp;
+      waveD += ` L${x},${y}`;
+    }
+    soundWavePath.setAttribute('d', waveD);
+  }
+
+  /* ================================================================
+     ROSES — Task 11: section 3 a dozen roses
+     ================================================================ */
+  const rosesGroup = document.getElementById('rosesGroup');
+  const ROSE_POSITIONS = [
+    [200,80], [140,110], [260,110],
+    [100,160], [200,150], [300,160],
+    [130,220], [270,220],
+    [170,280], [230,280],
+    [150,340], [250,340],
+  ];
+  const ROSE_COLORS = ['#d4587a', '#c84868', '#c05888', '#e890a8', '#f0a0b8'];
+
+  function makeRosePath(cx, cy, turns, maxR) {
+    let d = '';
+    const steps = turns * 12;
+    for (let j = 0; j <= steps; j++) {
+      const angle = (j / steps) * turns * Math.PI * 2;
+      const r = (j / steps) * maxR;
+      const x = cx + Math.cos(angle) * r;
+      const y = cy + Math.sin(angle) * r;
+      d += (j === 0 ? 'M' : ' L') + x.toFixed(1) + ',' + y.toFixed(1);
+    }
+    return d;
+  }
+
+  function makePetalPaths(cx, cy, maxR, seed) {
+    const petals = [];
+    for (let j = 0; j < 4; j++) {
+      // Deterministic "random" offset using sin of seed
+      const pseudoRand = Math.sin(seed * 7.13 + j * 3.97) * 0.5 + 0.25;
+      const angle = (j / 4) * Math.PI * 2 + pseudoRand;
+      const pr = maxR * 1.3;
+      const sx = cx + Math.cos(angle) * maxR * 0.5;
+      const sy = cy + Math.sin(angle) * maxR * 0.5;
+      const ex = cx + Math.cos(angle + 0.8) * maxR * 0.5;
+      const ey = cy + Math.sin(angle + 0.8) * maxR * 0.5;
+      const cpx = cx + Math.cos(angle + 0.4) * pr;
+      const cpy = cy + Math.sin(angle + 0.4) * pr;
+      petals.push('M' + sx.toFixed(1) + ',' + sy.toFixed(1) + ' Q' + cpx.toFixed(1) + ',' + cpy.toFixed(1) + ' ' + ex.toFixed(1) + ',' + ey.toFixed(1));
+    }
+    return petals;
+  }
+
+  const roseData = []; // { group, stemEl, stemLen, spiralEl, petalEls, spiralLen, petalLens }
+
+  // Build roses
+  for (let i = 0; i < 12; i++) {
+    const [cx, cy] = ROSE_POSITIONS[i];
+    const color = ROSE_COLORS[i % ROSE_COLORS.length];
+    // Deterministic variations using index
+    const turns = 2.5 + Math.sin(i * 2.17) * 0.5;
+    const maxR = 18 + Math.sin(i * 3.31) * 4;
+
+    const g = document.createElementNS(NS, 'g');
+
+    // Stem path — runs from gathering point at bottom up to the rose head
+    const stemBaseX = 195 + Math.sin(i * 1.7) * 15; // slight spread at base (190-210)
+    const stemBaseY = 420;
+    // Control point: midway vertically, shifted toward center to create natural curve
+    const midY = (stemBaseY + cy) / 2;
+    const cpx = stemBaseX + (cx - stemBaseX) * 0.4 + Math.sin(i * 2.9) * 10;
+    const cpy = midY + Math.sin(i * 1.3) * 15;
+    const stemD = 'M' + stemBaseX.toFixed(1) + ',' + stemBaseY + ' Q' + cpx.toFixed(1) + ',' + cpy.toFixed(1) + ' ' + cx + ',' + cy;
+    const stem = document.createElementNS(NS, 'path');
+    stem.setAttribute('d', stemD);
+    stem.setAttribute('fill', 'none');
+    stem.setAttribute('stroke', 'rgba(80,160,90,0.5)');
+    stem.setAttribute('stroke-width', '1.5');
+    stem.setAttribute('stroke-linecap', 'round');
+    g.appendChild(stem);
+
+    // Spiral path
+    const spiralD = makeRosePath(cx, cy, turns, maxR);
+    const spiral = document.createElementNS(NS, 'path');
+    spiral.setAttribute('d', spiralD);
+    spiral.setAttribute('fill', 'none');
+    spiral.setAttribute('stroke', color);
+    spiral.setAttribute('stroke-width', '1.5');
+    spiral.setAttribute('stroke-linecap', 'round');
+    spiral.setAttribute('filter', 'url(#roseGlow)');
+    g.appendChild(spiral);
+
+    // Petal curves
+    const petalDs = makePetalPaths(cx, cy, maxR, i);
+    const petalEls = [];
+    for (let pi = 0; pi < petalDs.length; pi++) {
+      const petal = document.createElementNS(NS, 'path');
+      petal.setAttribute('d', petalDs[pi]);
+      petal.setAttribute('fill', 'none');
+      petal.setAttribute('stroke', color);
+      petal.setAttribute('stroke-width', '1.2');
+      petal.setAttribute('stroke-linecap', 'round');
+      petal.setAttribute('opacity', '0.7');
+      g.appendChild(petal);
+      petalEls.push(petal);
+    }
+
+    rosesGroup.appendChild(g);
+
+    // Measure and set dash arrays after appending to DOM
+    const stemLen = stem.getTotalLength();
+    stem.style.strokeDasharray = stemLen;
+    stem.style.strokeDashoffset = stemLen;
+
+    const spiralLen = spiral.getTotalLength();
+    spiral.style.strokeDasharray = spiralLen;
+    spiral.style.strokeDashoffset = spiralLen;
+
+    const petalLens = [];
+    for (let pi = 0; pi < petalEls.length; pi++) {
+      const pLen = petalEls[pi].getTotalLength();
+      petalEls[pi].style.strokeDasharray = pLen;
+      petalEls[pi].style.strokeDashoffset = pLen;
+      petalLens.push(pLen);
+    }
+
+    roseData.push({ group: g, stemEl: stem, stemLen, spiralEl: spiral, petalEls, spiralLen, petalLens });
+  }
+
+  // Leaf shapes between roses
+  const LEAF_POSITIONS = [
+    { x: 120, y: 170, angle: -0.6 },
+    { x: 290, y: 190, angle: 0.5 },
+    { x: 160, y: 310, angle: -0.3 },
+    { x: 240, y: 330, angle: 0.4 },
+    { x: 200, y: 210, angle: 0.1 },
+  ];
+
+  const roseLeafEls = [];
+  for (let li = 0; li < LEAF_POSITIONS.length; li++) {
+    const lp = LEAF_POSITIONS[li];
+    const leaf = document.createElementNS(NS, 'path');
+    // Simple curved leaf
+    const lx = lp.x;
+    const ly = lp.y;
+    const la = lp.angle;
+    const lLen = 20 + Math.sin(li * 4.1) * 5;
+    const ex = lx + Math.cos(la) * lLen;
+    const ey = ly + Math.sin(la) * lLen;
+    const cpx = (lx + ex) / 2 + Math.sin(la) * 8;
+    const cpy = (ly + ey) / 2 - Math.cos(la) * 8;
+    const d = 'M' + lx.toFixed(1) + ',' + ly.toFixed(1) + ' Q' + cpx.toFixed(1) + ',' + cpy.toFixed(1) + ' ' + ex.toFixed(1) + ',' + ey.toFixed(1);
+    leaf.setAttribute('d', d);
+    leaf.setAttribute('fill', 'none');
+    leaf.setAttribute('stroke', 'rgba(80,160,90,0.4)');
+    leaf.setAttribute('stroke-width', '1.5');
+    leaf.setAttribute('stroke-linecap', 'round');
+    rosesGroup.appendChild(leaf);
+    const leafLen = leaf.getTotalLength();
+    leaf.style.strokeDasharray = leafLen;
+    leaf.style.strokeDashoffset = leafLen;
+    roseLeafEls.push({ el: leaf, len: leafLen });
+  }
+
+  // Deterministic stagger order for roses
+  const roseOrder = [0, 6, 3, 9, 1, 7, 4, 10, 2, 8, 5, 11];
+
+  // Smoothed bouquet sway
+  let bouquetSwayX = 0, bouquetSwayY = 0;
+
+  function tickRoses() {
+    if (rosesProgress <= 0 && !rosesActive) return;
+
+    const p = rosesProgress;
+
+    // Draw-on roses staggered from progress 0.15 to 0.65
+    const drawStart = 0.15;
+    const drawEnd = 0.65;
+    const drawRange = drawEnd - drawStart;
+    const eachRose = drawRange / 12;
+
+    for (let seq = 0; seq < 12; seq++) {
+      const idx = roseOrder[seq];
+      const rd = roseData[idx];
+      const rStart = drawStart + seq * eachRose;
+
+      // Stem draws on first — starts at rStart, finishes in first 50% of the rose's window
+      const stemT = Math.max(0, Math.min(1, (p - rStart) / (eachRose * 0.5)));
+      rd.stemEl.style.strokeDashoffset = rd.stemLen * (1 - stemT);
+
+      // Spiral draws on after stem starts — begins at 30% into window, takes 50% of window
+      const spiralStart = rStart + eachRose * 0.3;
+      const spiralT = Math.max(0, Math.min(1, (p - spiralStart) / (eachRose * 0.5)));
+      rd.spiralEl.style.strokeDashoffset = rd.spiralLen * (1 - spiralT);
+
+      // Petals draw on in the latter 60% (overlapping with spiral tail)
+      for (let pi = 0; pi < rd.petalEls.length; pi++) {
+        const petalStart = rStart + eachRose * 0.4 + pi * eachRose * 0.1;
+        const petalT = Math.max(0, Math.min(1, (p - petalStart) / (eachRose * 0.4)));
+        rd.petalEls[pi].style.strokeDashoffset = rd.petalLens[pi] * (1 - petalT);
+      }
+    }
+
+    // Leaves draw on during the middle of the reveal
+    for (let li = 0; li < roseLeafEls.length; li++) {
+      const leafStart = 0.25 + li * 0.06;
+      const leafT = Math.max(0, Math.min(1, (p - leafStart) / 0.15));
+      roseLeafEls[li].el.style.strokeDashoffset = roseLeafEls[li].len * (1 - leafT);
+    }
+
+    // Cursor sway: translate entire bouquet toward cursor
+    if (rosesActive) {
+      const rosesSvg = document.querySelector('.roses-svg');
+      if (rosesSvg) {
+        const rect = rosesSvg.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const relX = (sMouseX - (rect.left + rect.width / 2)) / rect.width;
+          const relY = (sMouseY - (rect.top + rect.height / 2)) / rect.height;
+          const targetX = relX * 8;
+          const targetY = relY * 5;
+          bouquetSwayX += (targetX - bouquetSwayX) * 0.03;
+          bouquetSwayY += (targetY - bouquetSwayY) * 0.03;
+          rosesGroup.setAttribute('transform', 'translate(' + bouquetSwayX.toFixed(2) + ',' + bouquetSwayY.toFixed(2) + ')');
+        }
+      }
+    } else {
+      // Ease back to center when not active
+      bouquetSwayX *= 0.95;
+      bouquetSwayY *= 0.95;
+      if (Math.abs(bouquetSwayX) > 0.01 || Math.abs(bouquetSwayY) > 0.01) {
+        rosesGroup.setAttribute('transform', 'translate(' + bouquetSwayX.toFixed(2) + ',' + bouquetSwayY.toFixed(2) + ')');
+      }
+    }
+  }
+
+  /* ================================================================
+     BLUES EQUALIZER — Task 12: section 9 twelve bars
+     ================================================================ */
+  const staffLinesGroup = document.getElementById('staffLines');
+  const eqBarsGroup = document.getElementById('eqBars');
+  const musicNotesGroup = document.getElementById('musicNotes');
+
+  // Staff lines
+  const staffYs = [100, 130, 160, 190, 220];
+  for (let si = 0; si < staffYs.length; si++) {
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', '20');
+    line.setAttribute('y1', staffYs[si]);
+    line.setAttribute('x2', '380');
+    line.setAttribute('y2', staffYs[si]);
+    line.setAttribute('stroke', 'rgba(200,180,150,0.1)');
+    line.setAttribute('stroke-width', '0.5');
+    staffLinesGroup.appendChild(line);
+  }
+
+  // 12 bars
+  const barGrads = ['url(#barGrad1)', 'url(#barGrad2)', 'url(#barGrad3)'];
+  const eqBarEls = [];
+  const barBaseY = 260;
+
+  for (let i = 0; i < 12; i++) {
+    const barX = 30 + i * ((370 - 30) / 11) - 10;
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', barX);
+    rect.setAttribute('y', barBaseY);
+    rect.setAttribute('width', '20');
+    rect.setAttribute('height', '0');
+    rect.setAttribute('rx', '4');
+    rect.setAttribute('fill', barGrads[i % 3]);
+    rect.setAttribute('opacity', '0');
+    rect.style.cursor = 'pointer';
+    eqBarsGroup.appendChild(rect);
+    eqBarEls.push({ el: rect, x: barX, opacity: 0 });
+  }
+
+  // Music note state
+  const notePath = 'M0,0 L0,-12 M0,-12 C4,-14 6,-10 2,-8';
+  let musicNoteEls = [];
+  let noteSpawnCounter = 0;
+
+  // Smoothed wave phase
+  let eqWavePhase = 0;
+  let eqCursorSpeed = 0;
+  let eqPrevCX = 0, eqPrevCY = 0;
+
+  // --- Playable blues bars (Web Audio API) ---
+  const bluesScaleFreqs = [
+    220.00,  // A3
+    261.63,  // C4
+    293.66,  // D4
+    311.13,  // Eb4
+    329.63,  // E4
+    392.00,  // G4
+    440.00,  // A4
+    523.25,  // C5
+    587.33,  // D5
+    622.25,  // Eb5
+    659.25,  // E5
+    783.99   // G5
+  ];
+
+  (function initBluesClick() {
+    const bluesSvg = document.querySelector('.blues-svg');
+    if (!bluesSvg) return;
+
+    bluesSvg.addEventListener('click', function(e) {
+      // Lazy-init AudioContext on first user gesture (reuse piano's audioCtx)
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      // Convert mouse coordinates to SVG viewBox space (400x300)
+      const rect = bluesSvg.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+      const svgX = (e.clientX - rect.left) * (400 / rect.width);
+      const svgY = (e.clientY - rect.top) * (300 / rect.height);
+
+      // Find which bar was clicked
+      for (let i = 0; i < 12; i++) {
+        const bar = eqBarEls[i];
+        if (bar.opacity <= 0) continue;
+        const bx = bar.x;
+        const by = parseFloat(bar.el.getAttribute('y'));
+        const bh = parseFloat(bar.el.getAttribute('height'));
+        if (svgX >= bx && svgX <= bx + 20 && svgY >= by && svgY <= by + bh) {
+          // Play the blues note
+          const freq = bluesScaleFreqs[i];
+          const now = audioCtx.currentTime;
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.value = freq;
+          gain.gain.setValueAtTime(0, now);
+          gain.gain.linearRampToValueAtTime(0.35, now + 0.005);   // 5ms attack
+          gain.gain.setValueAtTime(0.35, now + 0.155);            // sustain until 155ms
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.555); // 400ms release
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(now);
+          osc.stop(now + 0.6);
+
+          // Visual flash — briefly boost opacity and add glow
+          var origOpacity = bar.opacity;
+          bar.el.setAttribute('opacity', '1');
+          bar.el.setAttribute('filter', 'url(#bluesBarGlow)');
+          (function(barRef, orig) {
+            setTimeout(function() {
+              barRef.el.setAttribute('opacity', orig);
+              barRef.el.removeAttribute('filter');
+            }, 200);
+          })(bar, origOpacity);
+
+          break;
+        }
+      }
+    });
+  })();
+
+  function tickBlues(time) {
+    if (bluesProgress <= 0 && !bluesActive) return;
+
+    const p = bluesProgress;
+    const t = time || 0;
+
+    // Bars fade in one by one left to right from progress 0.15 to 0.50
+    const barRevealStart = 0.15;
+    const barRevealEnd = 0.50;
+    const barRevealRange = barRevealEnd - barRevealStart;
+    const eachBar = barRevealRange / 12;
+
+    for (let i = 0; i < 12; i++) {
+      const bStart = barRevealStart + i * eachBar;
+      const bT = Math.max(0, Math.min(1, (p - bStart) / eachBar));
+      eqBarEls[i].opacity = bT;
+      eqBarEls[i].el.setAttribute('opacity', bT);
+    }
+
+    // Cursor interaction: wave phase and amplitude
+    if (bluesActive) {
+      const bluesSvg = document.querySelector('.blues-svg');
+      if (bluesSvg) {
+        const rect = bluesSvg.getBoundingClientRect();
+        if (rect.width > 0 && rect.height > 0) {
+          const relX = (sMouseX - rect.left) / rect.width;
+          // Cursor X shifts wave phase
+          eqWavePhase += (relX * 3 - eqWavePhase) * 0.03;
+
+          // Cursor speed affects amplitude
+          const cdx = sMouseX - eqPrevCX;
+          const cdy = sMouseY - eqPrevCY;
+          const speed = Math.hypot(cdx, cdy);
+          eqPrevCX = sMouseX;
+          eqPrevCY = sMouseY;
+          const targetSpeed = Math.min(40, speed * 0.5);
+          eqCursorSpeed += (targetSpeed - eqCursorSpeed) * 0.08;
+        }
+      }
+    }
+
+    // Animate bar heights with sine wave
+    for (let i = 0; i < 12; i++) {
+      if (eqBarEls[i].opacity <= 0) continue;
+      const barHeight = 40 + (80 + eqCursorSpeed) * Math.abs(Math.sin(t * 0.002 + i * 0.5 + eqWavePhase));
+      const barY = barBaseY - barHeight;
+      eqBarEls[i].el.setAttribute('y', barY);
+      eqBarEls[i].el.setAttribute('height', barHeight);
+    }
+
+    // Floating music notes
+    noteSpawnCounter++;
+    if (noteSpawnCounter >= 80 && musicNoteEls.length < 8 && p > 0.30) {
+      noteSpawnCounter = 0;
+      // Pick a random bar (deterministic-ish using time)
+      const barIdx = Math.floor((Math.sin(t * 0.0037) * 0.5 + 0.5) * 12) % 12;
+      if (eqBarEls[barIdx].opacity > 0.5) {
+        const noteEl = document.createElementNS(NS, 'path');
+        noteEl.setAttribute('d', notePath);
+        const noteX = eqBarEls[barIdx].x + 10;
+        const noteY = parseFloat(eqBarEls[barIdx].el.getAttribute('y')) - 5;
+        noteEl.setAttribute('transform', 'translate(' + noteX + ',' + noteY + ')');
+        noteEl.setAttribute('fill', 'none');
+        noteEl.setAttribute('stroke', 'rgba(220,190,140,0.7)');
+        noteEl.setAttribute('stroke-width', '1.5');
+        noteEl.setAttribute('stroke-linecap', 'round');
+        musicNotesGroup.appendChild(noteEl);
+        musicNoteEls.push({ el: noteEl, x: noteX, y: noteY, opacity: 0.7 });
+      }
+    }
+
+    // Update floating notes
+    for (let ni = musicNoteEls.length - 1; ni >= 0; ni--) {
+      const note = musicNoteEls[ni];
+      note.y -= 0.5;
+      note.opacity -= 0.008;
+      if (note.opacity <= 0) {
+        musicNotesGroup.removeChild(note.el);
+        musicNoteEls.splice(ni, 1);
+      } else {
+        note.el.setAttribute('transform', 'translate(' + note.x.toFixed(1) + ',' + note.y.toFixed(1) + ')');
+        note.el.setAttribute('opacity', note.opacity);
+      }
+    }
+  }
+
+  /* ================================================================
+     TWELVE YEARS — section 12: glowing "12" number
+     ================================================================ */
+  function tickTwelveYears(time) {
+    if (twelveProgress <= 0 && !twelveActive) return;
+
+    const p = twelveProgress;
+    const fillStart = 0.15;
+    const fillEnd = 0.60;
+    const fillT = Math.max(0, Math.min(1, (p - fillStart) / (fillEnd - fillStart)));
+
+    const outlineEl = document.getElementById('twelveOutline');
+    const fillEl = document.getElementById('twelveFill');
+
+    if (outlineEl) {
+      const strokeOpacity = 0.2 + fillT * 0.8;
+      outlineEl.setAttribute('stroke', 'rgba(201,168,108,' + strokeOpacity + ')');
+      outlineEl.setAttribute('stroke-width', 1 + fillT * 0.5);
+    }
+
+    if (fillEl) {
+      fillEl.setAttribute('opacity', fillT);
+    }
+  }
+
+  document.getElementById('goToTop').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ================================================================
+     JUPITER ORBIT — Task 14: section 11 solar system
+     ================================================================ */
+  const earthOrbitEl = document.getElementById('earthOrbit');
+  const jupiterOrbitEl = document.getElementById('jupiterOrbit');
+  const earthPlanetEl = document.getElementById('earthPlanet');
+  const jupiterPlanetEl = document.getElementById('jupiterPlanet');
+  const earthTrailEl = document.getElementById('earthTrail');
+  const jupiterTrailEl = document.getElementById('jupiterTrail');
+
+  // Orbit draw-on setup
+  const earthOrbitLen = earthOrbitEl.getTotalLength();
+  earthOrbitEl.style.strokeDasharray = earthOrbitLen;
+  earthOrbitEl.style.strokeDashoffset = earthOrbitLen;
+
+  const jupiterOrbitLen = jupiterOrbitEl.getTotalLength();
+  jupiterOrbitEl.style.strokeDasharray = jupiterOrbitLen;
+  jupiterOrbitEl.style.strokeDashoffset = jupiterOrbitLen;
+
+  // Orbit animation state
+  let earthAngle = 0;
+  let jupiterAngle = 0;
+  let earthTrailPositions = [];
+  let jupiterTrailPositions = [];
+  const TRAIL_LENGTH = 20;
+  let orbitsDrawn = false;
+
+  function tickJupiter(time) {
+    if (jupiterProgress <= 0 && !jupiterActive) return;
+
+    const p = jupiterProgress;
+    const t = time || 0;
+
+    // Earth orbit draws from progress 0.10-0.25
+    const earthDrawT = Math.max(0, Math.min(1, (p - 0.10) / 0.15));
+    earthOrbitEl.style.strokeDashoffset = earthOrbitLen * (1 - earthDrawT);
+
+    // Jupiter orbit draws from progress 0.15-0.30
+    const jupiterDrawT = Math.max(0, Math.min(1, (p - 0.15) / 0.15));
+    jupiterOrbitEl.style.strokeDashoffset = jupiterOrbitLen * (1 - jupiterDrawT);
+
+    orbitsDrawn = earthDrawT >= 1 && jupiterDrawT >= 1;
+
+    // Planets appear as orbits draw
+    earthPlanetEl.setAttribute('opacity', earthDrawT);
+    jupiterPlanetEl.setAttribute('opacity', jupiterDrawT);
+
+    // Cursor gravity: closer cursor = faster orbits
+    let speedMult = 1;
+    if (jupiterActive) {
+      const jupiterSvg = document.querySelector('.jupiter-svg');
+      if (jupiterSvg) {
+        const svgRect = jupiterSvg.getBoundingClientRect();
+        if (svgRect.width > 0 && svgRect.height > 0) {
+          const sunScreenX = svgRect.left + svgRect.width / 2;
+          const sunScreenY = svgRect.top + svgRect.height / 2;
+          const cursorDist = Math.hypot(sMouseX - sunScreenX, sMouseY - sunScreenY);
+          const maxDist = Math.max(svgRect.width, svgRect.height);
+          speedMult = 1 + (1 - Math.min(cursorDist / maxDist, 1)) * 2;
+        }
+      }
+    }
+
+    // Orbital motion (only when orbits partially drawn)
+    if (earthDrawT > 0.3) {
+      const baseSpeed = 0.003;
+      earthAngle += baseSpeed * speedMult;
+      jupiterAngle += (baseSpeed / 12) * speedMult;
+
+      const ex = 200 + 80 * Math.cos(earthAngle);
+      const ey = 200 + 80 * Math.sin(earthAngle);
+      earthPlanetEl.setAttribute('cx', ex);
+      earthPlanetEl.setAttribute('cy', ey);
+
+      const jx = 200 + 160 * Math.cos(jupiterAngle);
+      const jy = 200 + 160 * Math.sin(jupiterAngle);
+      jupiterPlanetEl.setAttribute('cx', jx);
+      jupiterPlanetEl.setAttribute('cy', jy);
+
+      // Update trails
+      earthTrailPositions.push([ex, ey]);
+      if (earthTrailPositions.length > TRAIL_LENGTH) earthTrailPositions.shift();
+      jupiterTrailPositions.push([jx, jy]);
+      if (jupiterTrailPositions.length > TRAIL_LENGTH) jupiterTrailPositions.shift();
+
+      // Draw trail paths
+      if (earthTrailPositions.length > 1) {
+        let ed = 'M' + earthTrailPositions[0][0].toFixed(1) + ',' + earthTrailPositions[0][1].toFixed(1);
+        for (let i = 1; i < earthTrailPositions.length; i++) {
+          ed += ' L' + earthTrailPositions[i][0].toFixed(1) + ',' + earthTrailPositions[i][1].toFixed(1);
+        }
+        earthTrailEl.setAttribute('d', ed);
+      }
+      if (jupiterTrailPositions.length > 1) {
+        let jd = 'M' + jupiterTrailPositions[0][0].toFixed(1) + ',' + jupiterTrailPositions[0][1].toFixed(1);
+        for (let i = 1; i < jupiterTrailPositions.length; i++) {
+          jd += ' L' + jupiterTrailPositions[i][0].toFixed(1) + ',' + jupiterTrailPositions[i][1].toFixed(1);
+        }
+        jupiterTrailEl.setAttribute('d', jd);
+      }
+    }
+  }
+
+  /* ================================================================
+     DODECAHEDRON — Task 15: section 8 wireframe dodecahedron
+     ================================================================ */
+  const dodecaEdgesGroup = document.getElementById('dodecaEdges');
+  const dodecaSvg = document.querySelector('.dodeca-svg');
+
+  // Geometry
+  const PHI = (1 + Math.sqrt(5)) / 2;
+  const DODECA_SCALE = 80;
+  const dodecaVertices = [
+    // 8 cube vertices
+    [1,1,1], [1,1,-1], [1,-1,1], [1,-1,-1],
+    [-1,1,1], [-1,1,-1], [-1,-1,1], [-1,-1,-1],
+    // 4 on yz plane
+    [0, 1/PHI, PHI], [0, 1/PHI, -PHI], [0, -1/PHI, PHI], [0, -1/PHI, -PHI],
+    // 4 on xz plane
+    [1/PHI, PHI, 0], [-1/PHI, PHI, 0], [1/PHI, -PHI, 0], [-1/PHI, -PHI, 0],
+    // 4 on xy plane
+    [PHI, 0, 1/PHI], [PHI, 0, -1/PHI], [-PHI, 0, 1/PHI], [-PHI, 0, -1/PHI]
+  ].map(v => v.map(c => c * DODECA_SCALE));
+
+  // Compute edges: pairs with distance = 2/PHI * scale
+  const dodecaTargetDist = 2 / PHI * DODECA_SCALE;
+  const dodecaEdges = [];
+  for (let i = 0; i < 20; i++) {
+    for (let j = i + 1; j < 20; j++) {
+      const dx = dodecaVertices[i][0] - dodecaVertices[j][0];
+      const dy = dodecaVertices[i][1] - dodecaVertices[j][1];
+      const dz = dodecaVertices[i][2] - dodecaVertices[j][2];
+      const d = Math.sqrt(dx*dx + dy*dy + dz*dz);
+      if (Math.abs(d - dodecaTargetDist) < 1) {
+        dodecaEdges.push([i, j]);
+      }
+    }
+  }
+
+  // Create SVG line elements for each edge
+  const dodecaLineEls = [];
+  for (let ei = 0; ei < dodecaEdges.length; ei++) {
+    const line = document.createElementNS(NS, 'line');
+    line.setAttribute('x1', '200');
+    line.setAttribute('y1', '200');
+    line.setAttribute('x2', '200');
+    line.setAttribute('y2', '200');
+    line.setAttribute('stroke', 'rgba(200,170,220,0.3)');
+    line.setAttribute('stroke-width', '1.2');
+    line.setAttribute('stroke-linecap', 'round');
+    // Set up dash for draw-on animation
+    line.setAttribute('stroke-dasharray', '200');
+    line.setAttribute('stroke-dashoffset', '200');
+    dodecaEdgesGroup.appendChild(line);
+    dodecaLineEls.push(line);
+  }
+
+  // Rotation state
+  let dodecaAngleX = 0.3;
+  let dodecaAngleY = 0.5;
+  let dodecaCursorOffsetX = 0;
+  let dodecaCursorOffsetY = 0;
+
+  // 3D rotation
+  function dodecaRotate(p, aX, aY) {
+    let [x, y, z] = p;
+    // Rotate around Y
+    const cosY = Math.cos(aY), sinY = Math.sin(aY);
+    const x1 = x * cosY - z * sinY;
+    const z1 = x * sinY + z * cosY;
+    // Rotate around X
+    const cosX = Math.cos(aX), sinX = Math.sin(aX);
+    const y1 = y * cosX - z1 * sinX;
+    const z2 = y * sinX + z1 * cosX;
+    return [x1, y1, z2];
+  }
+
+  // Perspective projection
+  function dodecaProject(p3d) {
+    const fov = 400;
+    const [x, y, z] = p3d;
+    const denom = Math.max(fov + z, 1);
+    const scale = fov / denom;
+    return [200 + x * scale, 200 + y * scale, z];
+  }
+
+  function tickDodecahedron(time) {
+    if (dodecaProgress <= 0 && !dodecaActive) return;
+
+    const p = dodecaProgress;
+    const t = time || 0;
+
+    // Auto-rotation (base angles advance at constant rate)
+    dodecaAngleX += 0.003;
+    dodecaAngleY += 0.005;
+
+    // Cursor rotation control: target-based lerp instead of additive
+    let cursorTargetX = 0;
+    let cursorTargetY = 0;
+    if (dodecaActive && dodecaSvg) {
+      const svgRect = dodecaSvg.getBoundingClientRect();
+      if (svgRect.width > 0 && svgRect.height > 0) {
+        const relX = (sMouseX - svgRect.left) / svgRect.width - 0.5;
+        const relY = (sMouseY - svgRect.top) / svgRect.height - 0.5;
+        cursorTargetY = relX * 0.8;
+        cursorTargetX = relY * 0.8;
+      }
+    }
+    dodecaCursorOffsetX += (cursorTargetX - dodecaCursorOffsetX) * 0.05;
+    dodecaCursorOffsetY += (cursorTargetY - dodecaCursorOffsetY) * 0.05;
+
+    // Rotate and project all vertices
+    const finalAngleX = dodecaAngleX + dodecaCursorOffsetX;
+    const finalAngleY = dodecaAngleY + dodecaCursorOffsetY;
+    const projected = [];
+    for (let i = 0; i < 20; i++) {
+      const rotated = dodecaRotate(dodecaVertices[i], finalAngleX, finalAngleY);
+      projected.push(dodecaProject(rotated));
+    }
+
+    // Edge draw-on: reveal edges as section enters (progress 0.10 to 0.45)
+    const drawStart = 0.10;
+    const drawEnd = 0.45;
+    const drawRange = drawEnd - drawStart;
+    const eachEdge = drawRange / dodecaEdges.length;
+
+    // Update each edge line
+    for (let ei = 0; ei < dodecaEdges.length; ei++) {
+      const [a, b] = dodecaEdges[ei];
+      const pA = projected[a];
+      const pB = projected[b];
+
+      dodecaLineEls[ei].setAttribute('x1', pA[0]);
+      dodecaLineEls[ei].setAttribute('y1', pA[1]);
+      dodecaLineEls[ei].setAttribute('x2', pB[0]);
+      dodecaLineEls[ei].setAttribute('y2', pB[1]);
+
+      // Compute edge length for dash
+      const edgeScreenLen = Math.hypot(pB[0] - pA[0], pB[1] - pA[1]);
+
+      // Draw-on via strokeDashoffset
+      const edgeDrawT = Math.max(0, Math.min(1, (p - drawStart - ei * eachEdge) / eachEdge));
+      if (edgeDrawT >= 1) {
+        // Fully drawn: remove dash styling to prevent jitter
+        dodecaLineEls[ei].removeAttribute('stroke-dasharray');
+        dodecaLineEls[ei].removeAttribute('stroke-dashoffset');
+      } else {
+        dodecaLineEls[ei].setAttribute('stroke-dasharray', edgeScreenLen);
+        dodecaLineEls[ei].setAttribute('stroke-dashoffset', edgeScreenLen * (1 - edgeDrawT));
+      }
+
+      // Z-depth brightness: midZ maps to opacity
+      const midZ = (pA[2] + pB[2]) / 2;
+      const brightness = 0.15 + 0.5 * ((midZ + 130) / 260);
+      const clampedBright = Math.max(0.08, Math.min(0.65, brightness));
+      // Only show opacity if edge has been drawn on
+      const finalOpacity = edgeDrawT > 0 ? clampedBright : 0;
+      dodecaLineEls[ei].setAttribute('stroke', `rgba(200,170,220,${finalOpacity})`);
+    }
+  }
+
+  /* -- MASTER TICK LOOP (performance-gated: only tick active section ± 1) -- */
+  function tick(time) {
+    const t = time || 0;
+    sMouseX += (mouseX - sMouseX) * 0.05;
+    sMouseY += (mouseY - sMouseY) * 0.05;
+
+    const cs = currentSection;
+    if (cs >= -1 && cs <= 1)  tickBreathing(t);
+    if (cs >= 0  && cs <= 2)  { tickFlower(); tickInteraction(); }
+    if (cs >= 1  && cs <= 3)  tickRoses();
+    if (cs >= 2  && cs <= 4)  tickDodecahedron(t);
+    if (cs >= 3  && cs <= 5)  tickClock();
+    if (cs >= 4  && cs <= 6)  tickMonths();
+    if (cs >= 5  && cs <= 7)  tickMoons(t);
+    if (cs >= 6  && cs <= 8)  tickPiano(t);
+    if (cs >= 7  && cs <= 9)  tickBlues(t);
+    if (cs >= 8  && cs <= 10) tickConstellations(t);
+    if (cs >= 9  && cs <= 11) tickJupiter(t);
+    if (cs >= 10)             tickTwelveYears(t);
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+})();
+</script>
+</body>
+</html>
