@@ -251,7 +251,7 @@
     if (!track || !dotsContainer || featuredProjects.length === 0) return;
 
     dotsContainer.innerHTML = featuredProjects.map(function (_, i) {
-      return '<button class="fc-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></button>';
+      return '<button class="fc-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" aria-label="Go to slide ' + (i + 1) + '"></button>';
     }).join('');
 
     function setActiveDot(idx) {

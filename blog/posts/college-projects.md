@@ -7,7 +7,7 @@ During my Computer Science undergrad at the University of Maryland, I worked on 
 
 ## Rotobrush: Video Object Segmentation
 
-![Rotobrush](../../resources/Rotobrush_Media.png)
+![Rotobrush](../../resources/Rotobrush_Media.jpg)
 
 With Rotobrush, a user can manually mark the border of an object in the first frame of a video, and Rotobrush will automatically propagate that border across all subsequent frames.
 

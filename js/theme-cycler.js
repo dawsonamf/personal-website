@@ -274,6 +274,7 @@
     toggle.className = 'tc-toggle';
     toggle.id = 'tc-toggle';
     toggle.title = 'Customize theme';
+    toggle.setAttribute('aria-label', 'Customize theme');
     toggle.innerHTML = '<i class="fa-solid fa-palette"></i>';
     document.body.appendChild(toggle);
 

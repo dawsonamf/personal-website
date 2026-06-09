@@ -21,7 +21,7 @@
 }
 
 .privacy-header-spacer {
-  background-color: var(--myGray1);
+  background-color: var(--neutral-gray);
   flex-grow: 1;
   height: 1px;
 }
@@ -68,10 +68,6 @@
 
 .privacy-content strong {
   color: var(--text);
-}
-
-.name-logo-visible {
-  opacity: 1;
 }
 
 @media (max-width: 768px) {

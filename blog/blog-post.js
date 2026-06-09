@@ -163,9 +163,7 @@
       }
 
       pills.push('<span id="read-time"></span>');
-      metaEl.innerHTML = pills.map(p =>
-        p.startsWith('<') ? `<span class="pill">${p}</span>` : `<span class="pill">${p}</span>`
-      ).join('');
+      metaEl.innerHTML = pills.map(p => `<span class="pill">${p}</span>`).join('');
 
       loadPostStyles(Array.isArray(meta.styles) ? meta.styles : meta.styles ? [meta.styles] : []);
 

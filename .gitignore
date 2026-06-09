@@ -10,8 +10,9 @@
 .idea/
 .claude/
 
-# Scratch / temp files
+# Scratch / temp files. Root todo.md is private scratch — anchored with a
+# leading slash so the tracked todo/ folder (specs + TODO.md index) is unaffected.
 scrap.txt
 resources/scrap.txt
 resources/temp.ipynb
-todo.md
+/todo.md

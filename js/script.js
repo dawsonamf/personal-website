@@ -6,14 +6,7 @@
   const ANIMATION_DURATION = 500;
   const DELAY_ADJUSTMENT = 3;
 
-  function persistAfterAnimation(el, finalStyles) {
-    el.addEventListener('animationend', function handler(e) {
-      if (e.target !== el) return;
-      el.removeEventListener('animationend', handler);
-      el.style.animation = 'none';
-      Object.assign(el.style, finalStyles);
-    });
-  }
+  // persistAfterAnimation comes from js/anim-utils.js (shared with the blog pages).
 
   function startAnimations() {
     const staticMenu = document.querySelector('.static-menu');
