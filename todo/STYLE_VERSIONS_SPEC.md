@@ -1,17 +1,32 @@
 # Style versions ("hella themes")
 
 Same content, radically different design languages, surfaced as the nav's
-Theme dropdown (promoted from easter egg to feature June 2026). Engine +
-twelve skins (studio, brutalist, broadsheet, field-notes, blueprint, doodle,
-vapor, wheatpaste, bauhaus, chinoiserie, banknote, grid) shipped June 2026.
-**Queue, tiered June 2026 (overrides all earlier orderings) — Tier 1
-definite, in order: gallery (MN·1), wanted (WW·1),
-constructivist × rodchenko merge (06 + 06·B). Tier 2 soon: 8-bit console
-(PX·1) OR crt terminal (PX·3), one of the two, undecided. Tier 3: miami
-deco (AD·2), neo-pop × ben-day merge (02 + PA·1). Tier 4, likely deferred
-indefinitely: picture palace (07·C), harvest (11), riso (08), roadside
-motel (11·C).** Approved visuals and per-style notes (palette roles,
-fonts, flags, technique) live as tiles in
+Theme dropdown (promoted from easter egg to feature June 2026).
+
+## Status + queue — SINGLE SOURCE OF TRUTH
+
+This section is the one place ship status and queue order live.
+[TODO.md](TODO.md), [test-styles.html](test-styles.html), and CLAUDE.md
+point here instead of restating it — when a skin lands, update this list
+and nothing else.
+
+**Shipped (engine + twelve skins, June 2026):** studio, brutalist,
+broadsheet, field-notes, blueprint, doodle, vapor, wheatpaste, bauhaus,
+chinoiserie, banknote (reworked June 2026: engraved two-ink currency,
+gold seal retired), grid (labelled "Swiss Grid"; square cursor follower).
+
+**Queue, tiered June 2026:**
+
+- **Tier 1 — definite, in order:** gallery (MN·1), wanted (WW·1),
+  constructivist × rodchenko merge (06 + 06·B).
+- **Tier 2 — soon:** 8-bit console (PX·1) OR crt terminal (PX·3), one of
+  the two, undecided.
+- **Tier 3:** miami deco (AD·2), neo-pop × ben-day merge (02 + PA·1).
+- **Tier 4 — likely deferred indefinitely:** picture palace (07·C),
+  harvest (11), riso (08), roadside motel (11·C).
+
+Everything else on the sheet is unranked. Approved visuals and per-style
+notes (palette roles, fonts, flags, technique) live as tiles in
 [test-styles.html](test-styles.html); the rest of that sheet is parked,
 TBD. Future engine work, in rough order: Layer-4 strings, a
 read-only content API (`js/content-api.js`), Layer-5 takeover modes (a lazy

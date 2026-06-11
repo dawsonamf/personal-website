@@ -1409,12 +1409,10 @@
       four already splits those into triples). The 5 shipped tiles are parked below the divider at the bottom.
       <b>67 tiles, 24 dark / 43 light</b>, palettes mapped to the five registry roles
       (<b>text / bg / primary / secondary / accent</b>).</p>
-    <p class="sub"><b>Shipped June 2026: vapor, bauhaus, chinoiserie, doodle, wheatpaste — moved below the
-      shipped divider, kept for reference. Queue, tiered June 2026 (overrides all earlier orderings) — tier 1,
-      in order: gallery (MN·1) · wanted (WW·1) · banknote (13·B) · grid (SW·1) · constructivist×rodchenko merge
-      (06+06·B). Tier 2: 8-bit console (PX·1) or CRT terminal (PX·3), one of the two. Tier 3: miami deco (AD·2) ·
-      neo-pop×ben-day merge (02+PA·1). Tier 4, likely deferred: picture palace (07·C) · harvest (11) · riso (08) ·
-      roadside motel (11·C). Everything else is unranked.</b>
+    <p class="sub"><b>Shipped tiles (vapor, bauhaus, chinoiserie, doodle, wheatpaste, …) are moved below the
+      shipped divider, kept for reference. Ship status and the tiered build queue live in
+      STYLE_VERSIONS_SPEC.md ("Status + queue" — the single source of truth); this sheet no longer restates
+      them.</b>
       Within any group the three takes are mutually exclusive — pick the take, then build. Each build is
       one registry entry in <b>js/theme-bootstrap.js</b> + one scoped sheet at <b>css/themes/&lt;id&gt;.css</b>;
       the tile carries the palette roles, fonts, flags, and technique notes — build protocol and JS contracts in
@@ -4521,13 +4519,11 @@
     gallery type. The <b>FA group</b> still stands alone.
     And within every group — round four or five — the three takes are mutually exclusive by construction:
     pick the take, not the group.</p>
-    <p><b>Shipped June 2026: vapor (01), bauhaus (03), chinoiserie (14), doodle (15), wheatpaste (16)</b> — all
-    five parked below the shipped divider, reference only. <b>Queue, tiered June 2026 — tier 1, in order: gallery
-    (MN·1), wanted (WW·1), banknote (13·B), grid (SW·1), constructivist × rodchenko merge (06 + 06·B); tier 2:
-    8-bit console (PX·1) or CRT terminal (PX·3), one of the two; tier 3: miami deco (AD·2), neo-pop × ben-day
-    merge (02 + PA·1); tier 4, likely deferred indefinitely: picture palace (07·C), harvest (11), riso (08),
-    roadside motel (11·C)</b> — this overrides every earlier "next up" list; everything else on the sheet is
-    unranked. Every id slots straight into the registry pattern — one entry in
+    <p><b>Shipped tiles — vapor (01), bauhaus (03), chinoiserie (14), doodle (15), wheatpaste (16)</b> — are
+    parked below the shipped divider, reference only. <b>Ship status and the tiered queue live in
+    STYLE_VERSIONS_SPEC.md ("Status + queue" — the single source of truth)</b>; this sheet carries visuals and
+    per-style notes only, and everything not queued there is unranked.
+    Every id slots straight into the registry pattern — one entry in
     js/theme-bootstrap.js (polarity + the five roles from the tile's palette + font/radius/jobs-menu tokens +
     Google Fonts URL + flags from the impl line) and one scoped css/themes/&lt;id&gt;.css. Build protocol, JS
     contracts, and per-skin QA: STYLE_VERSIONS_SPEC.md.</p>
