@@ -418,8 +418,40 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Rye&family=Smokum&family=Special+Elite&display=swap'],
       css: '/css/themes/wanted.css',
     },
+    'constructivist': {
+      id: 'constructivist',
+      label: 'Constructivist',
+      polarity: 'light',
+      // Merges test-styles tiles 06 (red wedge agitprop) + 06·B (Rodchenko's
+      // 1924 advertising shout): one red, one black, unbleached paper.
+      // Tilt off — posters lie flat — but no still flag: AOS fade-ups stay
+      // as the agit entrances, and the cursor follower stays (accent is ink,
+      // so the dot-and-ring reads as the black disc roaming the sheet).
+      flags: { tilt: false },
+      // Cursorless masthead: slogans stamp onto the sheet a word at a time,
+      // each one slamming in like a press pass (the skin animates the
+      // engine's glyph spans).
+      typing: 'word',
+      // accent is ink, not red — red stays scarce: active states and the
+      // words being sold only (06·B's discipline).
+      colors: { text:'#1d1a16', bg:'#f1e7d0', primary:'#d22b1f', secondary:'#e9ddbd', accent:'#1d1a16' },
+      tokens: {
+        '--font-body': "'Inter', sans-serif",
+        '--font-heading': "'Anton', sans-serif",
+        '--font-mono': "'IBM Plex Mono', monospace",
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#7a7264',
+        // Selected jobs entry reads as the solid ink block of the plan.
+        '--jobs-menu-navy-dark': '#1d1a16',
+        '--jobs-menu-navy': '#e0d3b2',
+        '--jobs-menu-slate': '#6e6450',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;700&display=swap'],
+      css: '/css/themes/constructivist.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted', 'constructivist'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

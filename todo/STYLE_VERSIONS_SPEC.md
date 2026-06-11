@@ -10,16 +10,15 @@ This section is the one place ship status and queue order live.
 point here instead of restating it — when a skin lands, update this list
 and nothing else.
 
-**Shipped (engine + fourteen skins, June 2026):** studio, brutalist,
+**Shipped (engine + fifteen skins, June 2026):** studio, brutalist,
 broadsheet, field-notes, blueprint, doodle, vapor, wheatpaste, bauhaus,
 chinoiserie, banknote (reworked June 2026: engraved two-ink currency,
 gold seal retired), grid (labelled "Swiss Grid"; square cursor follower),
-gallery (MN·1 white cube), wanted (WW·1 reward poster).
+gallery (MN·1 white cube), wanted (WW·1 reward poster), constructivist
+(06 + 06·B merged: wedge agitprop × Rodchenko's advertising shout).
 
-**Queue, tiered June 2026:**
+**Queue, tiered June 2026 (Tier 1 fully shipped):**
 
-- **Tier 1 — definite, in order:**
-  constructivist × rodchenko merge (06 + 06·B).
 - **Tier 2 — soon:** 8-bit console (PX·1) OR crt terminal (PX·3), one of
   the two, undecided.
 - **Tier 3:** miami deco (AD·2), neo-pop × ben-day merge (02 + PA·1).
