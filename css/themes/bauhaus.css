@@ -1,0 +1,905 @@
+/* Bauhaus: Weimar exhibition poster. Warm paper ground, white panels in
+   3px ink frames, Jost everywhere (the Futura stand-in) — display set
+   lowercase and letterspaced, labels at 600 over thick ink rules. Each
+   section claims a shape-and-color pair as its marker (01 red circle,
+   02 yellow triangle, 03 blue square, then the pairs recycle), stamped on
+   the section headers as 16px border-left accents and recycled in list
+   bullets and the carousel dots. Red is the working color (links, CTAs,
+   highlights), blue the accent, yellow the garnish.
+
+   Line/shadow stance: no shadows anywhere — poster geometry lies flat.
+   The kandinsky yellow #f6c52e is the one fixed literal (a garnish the
+   palette toy doesn't own, like white tape elsewhere); every other line
+   and fill derives from the role tokens and their alpha ramps.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and
+   mobile fixes come from css/themes/theme-base.css via flags.tilt. No
+   still flag: AOS entrances stay (motion limited to hard slide-ins) and
+   the cursor follower stays — a blue circle and dot is already bauhaus. */
+
+
+/* ---- Foundations: primaries on paper ------------------------------------- */
+
+[data-style="bauhaus"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* Page scrollbar: ink thumb in a ruled paper track. ([data-style] sits on
+   <html>, so these select the root scrollbar.) */
+[data-style="bauhaus"] {
+  scrollbar-color: var(--text) var(--bg);
+}
+
+[data-style="bauhaus"]::-webkit-scrollbar {
+  width: 13px;
+  height: 13px;
+}
+
+[data-style="bauhaus"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 2px solid var(--text);
+}
+
+[data-style="bauhaus"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 2px solid var(--bg);
+}
+
+/* Jost carries the whole sheet; hierarchy comes from scale and spacing,
+   never from synthesized bold (400/500/600 are the loaded weights). */
+[data-style="bauhaus"] h1,
+[data-style="bauhaus"] h2,
+[data-style="bauhaus"] h3,
+[data-style="bauhaus"] h4 {
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+/* Links: red ink at weight. The default's animated underline stays and
+   draws in blue (--accent), red over blue being the poster pairing. */
+[data-style="bauhaus"] .text-link {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+[data-style="bauhaus"] .text-link:hover {
+  color: var(--primary);
+}
+
+/* Poster density: a touch tighter than the default app air. */
+[data-style="bauhaus"] .section-spacer {
+  height: 7em;
+}
+
+
+/* ---- Chrome: framed nav panels, red chip logo, ruled footer --------------- */
+
+[data-style="bauhaus"] .moving-menu,
+[data-style="bauhaus"] .static-menu {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list — invisible on the default pill, obvious on a hard frame. */
+[data-style="bauhaus"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="bauhaus"] .menu-item {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+  color: var(--text70);
+  transition: none;
+}
+
+[data-style="bauhaus"] .menu-item:hover {
+  color: var(--primary);
+  transition: none;
+}
+
+/* Item separators become ink ticks. */
+[data-style="bauhaus"] .menu-spacer {
+  border-color: var(--text);
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+/* The logo is the exhibition chip: a red square stamped with a lowercase d
+   (the tile's '26 chip). Hover inverts to ink, no lift. */
+[data-style="bauhaus"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: lowercase;
+  background-color: var(--primary);
+  color: var(--bg);
+  border: none;
+  transition: none;
+}
+
+[data-style="bauhaus"] .name-logo:hover {
+  transform: none;
+  background-color: var(--text);
+  color: var(--bg);
+  transition: none;
+}
+
+/* Footer: a thick closing rule and a letterspaced lowercase colophon. */
+[data-style="bauhaus"] .footer-container {
+  border-top: 4px solid var(--text);
+  margin: 0 10px;
+  padding: 16px 0 10px;
+}
+
+[data-style="bauhaus"] .footer-spacer {
+  display: none;
+}
+
+[data-style="bauhaus"] .footer-text,
+[data-style="bauhaus"] .footer-text-mobile {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+  color: var(--text70);
+}
+
+
+/* ---- Hero: poster masthead ------------------------------------------------ */
+
+/* Lowercase letterspaced Jost 500, the tile's display spec. The longest
+   typed line ("full stack engineer.") must clear the ~795px column at the
+   cap: 20 glyphs × ~0.6em with the tracking ≈ 700px at 58px. */
+[data-style="bauhaus"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(46px, 4.3vw, 58px);
+  line-height: 1.15;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+}
+
+/* The caret becomes a red building block. */
+[data-style="bauhaus"] .cursor {
+  background-color: var(--primary);
+  width: 14px;
+}
+
+[data-style="bauhaus"] #typing-text .typing-accent {
+  color: var(--primary);
+}
+
+/* The strapline sets as the tile's ink banner: paper type on a black bar. */
+[data-style="bauhaus"] #sub-text {
+  display: inline-block;
+  background-color: var(--text);
+  color: var(--bg);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.35em;
+  text-transform: lowercase;
+  padding: 7px 14px;
+}
+
+/* Socials: ink glyphs that snap red in place — no lift. */
+[data-style="bauhaus"] #socials-list .socials-menu-spacer,
+[data-style="bauhaus"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text);
+}
+
+[data-style="bauhaus"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="bauhaus"] .socials-item i {
+  transition: none;
+}
+
+[data-style="bauhaus"] .socials-item:hover i {
+  color: var(--primary);
+  transform: none;
+}
+
+/* The portrait prints as a framed plate: grayscale at rest, color on
+   hover. (Stays clickable; box-sizing keeps the 3px frame inside the
+   225px column.) */
+[data-style="bauhaus"] #typing-image {
+  box-sizing: border-box;
+  border: 3px solid var(--text);
+  filter: grayscale(1) contrast(1.06);
+  transition: filter 0.25s ease-in-out;
+}
+
+[data-style="bauhaus"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: shape-and-color markers ------------------------------
+   Each opener carries its section's 16px border-left in the claimed color,
+   the shape itself drawn before the folio number, and the spacer thickened
+   into an ink slab running to the page edge. 01/04 = red circle,
+   02/05 = yellow triangle, 03 = blue square. */
+
+[data-style="bauhaus"] .section-header-wrapper {
+  border-left: 16px solid var(--primary);
+  padding-left: 24px;
+  margin: 10px 10px 36px;
+}
+
+[data-style="bauhaus"] #jobs-header-wrapper,
+[data-style="bauhaus"] #contact-header-wrapper {
+  border-left-color: #f6c52e;
+}
+
+[data-style="bauhaus"] #project-header-wrapper {
+  border-left-color: var(--accent);
+}
+
+[data-style="bauhaus"] .section-header {
+  margin: 0;
+  padding: 4px 0;
+  font-weight: 500;
+  font-size: clamp(34px, 3.8vw, 50px);
+  line-height: 1.1;
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every title ink. */
+[data-style="bauhaus"] #about-section-header,
+[data-style="bauhaus"] #jobs-header,
+[data-style="bauhaus"] #project-header,
+[data-style="bauhaus"] #blog-header,
+[data-style="bauhaus"] #contact-section-header,
+[data-style="bauhaus"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="bauhaus"] .section-header-spacer {
+  background-color: var(--text);
+  height: 4px;
+  transform: none;
+}
+
+[data-style="bauhaus"] .sec-num {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  font-family: var(--font-heading);
+  font-size: 0.42em;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: var(--text60);
+  margin-right: 20px;
+  vertical-align: middle;
+}
+
+[data-style="bauhaus"] .sec-num::before {
+  content: '';
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+[data-style="bauhaus"] #about-section-header .sec-num::before,
+[data-style="bauhaus"] #blog-header .sec-num::before {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+[data-style="bauhaus"] #jobs-header .sec-num::before,
+[data-style="bauhaus"] #contact-section-header .sec-num::before {
+  width: 0;
+  height: 0;
+  border-left: 11px solid transparent;
+  border-right: 11px solid transparent;
+  border-bottom: 19px solid #f6c52e;
+}
+
+[data-style="bauhaus"] #project-header .sec-num::before,
+[data-style="bauhaus"] .blog-section-header .sec-num::before {
+  width: 17px;
+  height: 17px;
+  background: var(--accent);
+}
+
+
+/* ---- About / Skills: exhibition panels -------------------------------------- */
+
+[data-style="bauhaus"] .card-style {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  padding: 26px;
+}
+
+/* "About Me" / "Skills" set like the tile's index head: a lowercase
+   letterspaced label closing on a 3px rule. */
+[data-style="bauhaus"] .card-title,
+[data-style="bauhaus"] .about-header,
+[data-style="bauhaus"] .skills-header {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+  color: var(--text);
+  border-bottom: 3px solid var(--text);
+  padding-bottom: 10px;
+  margin: 0 0 18px;
+}
+
+/* The three skills departments take the three shapes as markers. */
+[data-style="bauhaus"] .skills-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--text);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+}
+
+[data-style="bauhaus"] .skills-section-header::before {
+  content: '';
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+[data-style="bauhaus"] h4.skills-section-header:nth-of-type(1)::before {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: var(--primary);
+}
+
+[data-style="bauhaus"] h4.skills-section-header:nth-of-type(2)::before {
+  width: 0;
+  height: 0;
+  border-left: 9px solid transparent;
+  border-right: 9px solid transparent;
+  border-bottom: 16px solid #f6c52e;
+}
+
+[data-style="bauhaus"] h4.skills-section-header:nth-of-type(3)::before {
+  width: 14px;
+  height: 14px;
+  background: var(--accent);
+}
+
+[data-style="bauhaus"] .about-text,
+[data-style="bauhaus"] .skills-text,
+[data-style="bauhaus"] .contact-text {
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+[data-style="bauhaus"] .skills-text {
+  border-bottom: 1px solid var(--text25);
+}
+
+[data-style="bauhaus"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: index list + framed dossier --------------------------------- */
+
+[data-style="bauhaus"] .nav-container {
+  border-left: 3px solid var(--text);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's
+   height at load to size the highlight bar, and Jost arrives after that
+   measure. The hairline rules echo the tile's index list. */
+[data-style="bauhaus"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13.5px;
+  line-height: 17px;
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  color: var(--text60);
+  border-radius: 0;
+  border-bottom: 1px solid var(--text25);
+  padding: 13px 16px;
+  transition: none;
+}
+
+[data-style="bauhaus"] .menu li:last-child {
+  border-bottom: none;
+}
+
+[data-style="bauhaus"] .menu li:hover {
+  background: var(--text5);
+}
+
+[data-style="bauhaus"] .menu li.selected {
+  background: var(--secondary);
+  color: var(--text);
+}
+
+/* The marker bar takes section 02's yellow; the default slide stays (a
+   hard slide-in is this skin's one indulgence). JS writes geometry inline
+   on every move, hence the !importants. */
+[data-style="bauhaus"] .highlight {
+  background: #f6c52e;
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="bauhaus"] .highlight {
+    width: 8px !important;
+  }
+}
+
+[data-style="bauhaus"] .job-content {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  padding: 26px;
+}
+
+[data-style="bauhaus"] .job-title {
+  color: var(--text);
+  font-size: 23px;
+  letter-spacing: 0.06em;
+}
+
+[data-style="bauhaus"] .job-dates {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: lowercase;
+  color: var(--text60);
+}
+
+/* Square bullets: section 03's shape recycled as list markers. */
+[data-style="bauhaus"] .job-bullets {
+  list-style-type: square;
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+[data-style="bauhaus"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+
+/* ---- Selected Works: composition posters -------------------------------------- */
+
+/* Each plate is a poster: 3px ink frame with a 16px blue spine (the
+   section's shape-color), full color — posters print in primaries. */
+[data-style="bauhaus"] .fc-style-floating .fc-card-image {
+  box-sizing: border-box;
+  border: 3px solid var(--text);
+  border-left: 16px solid var(--accent);
+  background-color: var(--secondary);
+}
+
+[data-style="bauhaus"] .fc-style-floating .fc-card-image img {
+  filter: contrast(1.04) saturate(1.04);
+}
+
+[data-style="bauhaus"] .fc-card-title {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 25px;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+}
+
+[data-style="bauhaus"] .fc-card-desc {
+  color: var(--text);
+}
+
+/* CTA: the tile's "say hallo" button — an ink slab that snaps red. */
+[data-style="bauhaus"] .fc-card-cta {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: lowercase;
+  background-color: var(--text);
+  color: var(--bg);
+  border: none;
+  border-radius: 0;
+  padding: 14px 22px;
+  transition: none;
+}
+
+[data-style="bauhaus"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="bauhaus"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="bauhaus"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots as ink-ruled squares; the active one fills red. */
+[data-style="bauhaus"] .fc-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  border: 2px solid var(--text);
+  background-color: transparent;
+  opacity: 1;
+  transition: none;
+}
+
+[data-style="bauhaus"] .fc-dot:hover {
+  background-color: var(--text30);
+  opacity: 1;
+}
+
+[data-style="bauhaus"] .fc-dot.active {
+  background-color: var(--primary);
+  transform: none;
+}
+
+
+/* ---- Blog: framed teasers -------------------------------------------------------- */
+
+[data-style="bauhaus"] .blog-card {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  padding: 24px;
+  transition: none;
+}
+
+[data-style="bauhaus"] .blog-card:hover {
+  background-color: var(--bg);
+}
+
+[data-style="bauhaus"] .blog-card-title {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 19px;
+  letter-spacing: 0.06em;
+}
+
+[data-style="bauhaus"] .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+[data-style="bauhaus"] .blog-card-date {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: lowercase;
+  color: var(--text50);
+}
+
+[data-style="bauhaus"] .blog-card-excerpt {
+  color: var(--text);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="bauhaus"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="bauhaus"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--bg);
+}
+
+[data-style="bauhaus"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: lowercase;
+  color: var(--text50);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold the blanket heading
+   rule can't reach. */
+[data-style="bauhaus"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: clamp(46px, 4.3vw, 58px);
+  line-height: 1.15;
+  letter-spacing: 0.1em;
+  text-transform: lowercase;
+}
+
+[data-style="bauhaus"] [id^="blog-sub-text"] {
+  color: var(--text80);
+  line-height: 1.6;
+}
+
+/* Filters: hard chips — ink-filled when active. */
+[data-style="bauhaus"] .filter-pill {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  border-radius: 0;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: lowercase;
+  transition: none;
+}
+
+[data-style="bauhaus"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="bauhaus"] .filter-pill.active {
+  background-color: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* Post page: lowercase display title; crossheads take the red spine. */
+[data-style="bauhaus"] .blog-post-title {
+  color: var(--text);
+  font-weight: 500;
+  font-size: clamp(32px, 4.4vw, 42px);
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+}
+
+[data-style="bauhaus"] .blog-post-content h2 {
+  color: var(--text);
+  border-left: 14px solid var(--primary);
+  padding-left: 16px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: lowercase;
+}
+
+[data-style="bauhaus"] .blog-post-content h3 {
+  color: var(--text);
+  font-weight: 500;
+}
+
+[data-style="bauhaus"] .blog-post-content blockquote {
+  border-left: 14px solid #f6c52e;
+  color: var(--text80);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="bauhaus"] .blog-post-content pre {
+  border: 3px solid var(--text);
+}
+
+/* Inline code: white chips in hairline frames (the higher-specificity pre
+   rule unwinds this for fenced blocks). Radius is a literal 4px in
+   blog-styles. */
+[data-style="bauhaus"] .blog-post-content code {
+  background-color: var(--secondary);
+  border: 1px solid var(--text30);
+  border-radius: 0;
+}
+
+[data-style="bauhaus"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+}
+
+[data-style="bauhaus"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 3px solid var(--text);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="bauhaus"] #metr-chart {
+  border: 3px solid var(--text);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="bauhaus"] #pareto-chart,
+[data-style="bauhaus"] #ara-objectives-chart,
+[data-style="bauhaus"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact ------------------------------------------------------------------- */
+
+[data-style="bauhaus"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+}
+
+/* The map prints as a framed plate, grayscale until hovered. */
+[data-style="bauhaus"] .contact-image-wrapper {
+  box-sizing: border-box;
+  border: 3px solid var(--text);
+}
+
+[data-style="bauhaus"] .contact-image {
+  filter: grayscale(1) contrast(1.06);
+  transition: filter 0.25s ease-in-out;
+}
+
+[data-style="bauhaus"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): index chips -------------- */
+
+[data-style="bauhaus"] .pill {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 500;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: lowercase;
+  padding: 4px 10px;
+}
+
+
+/* ---- Cycler dock: a framed panel -------------------------------------------------- */
+
+[data-style="bauhaus"] .tc-dock {
+  background: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-style="bauhaus"] .tc-toggle {
+  border-radius: 0;
+  border: 2px solid var(--text);
+  color: var(--text);
+  transition: none;
+}
+
+[data-style="bauhaus"] .tc-toggle:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="bauhaus"] .tc-action,
+[data-style="bauhaus"] .tc-presets button,
+[data-style="bauhaus"] .tc-schemes button {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ---------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Letterspaced Jost needs a smaller cap: the longest typed line must
+     clear a ~335px column on a 375px screen. */
+  [data-style="bauhaus"] #typing-text {
+    font-size: clamp(26px, 7.6vw, 32px);
+    letter-spacing: 0.07em;
+  }
+
+  [data-style="bauhaus"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.26em;
+    padding: 5px 9px;
+  }
+
+  [data-style="bauhaus"] #blog-typing-text {
+    font-size: clamp(26px, 7.6vw, 32px);
+    letter-spacing: 0.07em;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the
+     letterspaced display needs to wrap. */
+  [data-style="bauhaus"] .section-header {
+    white-space: normal;
+    font-size: clamp(22px, 6.4vw, 30px);
+  }
+
+  [data-style="bauhaus"] .section-header-wrapper {
+    border-left-width: 10px;
+    padding-left: 14px;
+    margin: 0 10px 28px;
+  }
+
+  [data-style="bauhaus"] .section-header-spacer {
+    height: 3px;
+  }
+
+  [data-style="bauhaus"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="bauhaus"] .static-menu-mobile .menu-item {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: lowercase;
+    color: var(--text);
+  }
+
+  [data-style="bauhaus"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch): hold the
+     red chip, and make the tap state the ink inversion instead. */
+  [data-style="bauhaus"] .name-logo:hover {
+    background-color: var(--primary);
+    color: var(--bg);
+  }
+
+  [data-style="bauhaus"] .name-logo:active {
+    background-color: var(--text);
+    color: var(--bg);
+  }
+
+  /* The mobile sheet re-cards these surfaces on --text10; keep them white
+     exhibition panels. */
+  [data-style="bauhaus"] .double-view-left,
+  [data-style="bauhaus"] .double-view-right {
+    background-color: var(--secondary);
+    border: 3px solid var(--text);
+  }
+
+  [data-style="bauhaus"] .menu-scroll-wrapper {
+    border-bottom: 3px solid var(--text);
+  }
+
+  [data-style="bauhaus"] .menu li {
+    border-bottom: none;
+  }
+
+  [data-style="bauhaus"] .highlight {
+    height: 4px !important;
+  }
+
+  [data-style="bauhaus"] .blog-card {
+    background-color: var(--secondary);
+    border: 3px solid var(--text);
+  }
+
+  [data-style="bauhaus"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* Framed plates need a real gutter between cards on the small sheet. */
+  [data-style="bauhaus"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="bauhaus"] .blog-post-title {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  [data-style="bauhaus"] .footer-container-mobile {
+    border-top: 3px solid var(--text);
+    padding-top: 12px;
+  }
+
+  [data-style="bauhaus"] .footer-text-mobile {
+    color: var(--text70);
+  }
+}

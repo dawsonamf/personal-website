@@ -47,13 +47,14 @@
 
 /* ---- Chrome: masthead nav, logo, footer colophon ------------------------ */
 
-/* Wider than the default 500px pill, the index numbers below need room. */
+/* Wider floor than the default 500px pill — the index numbers below need
+   room (the base menus are content-sized, so this only sets the minimum). */
 [data-style="studio"] .moving-menu,
 [data-style="studio"] .static-menu {
   background-color: var(--bg80);
   border: 1px solid var(--text15);
   box-shadow: none;
-  width: 580px;
+  min-width: 580px;
 }
 
 /* The header row is a stretch flexbox whose height comes from the logo's

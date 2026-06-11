@@ -152,7 +152,9 @@
 
   $(document).ready(function() {
     $('.menu-item').on('click', function(event) {
-      if ($(this).is(".resume-link") || $(this).is(".blog-page-link")) {
+      // tc-nav-trigger is the theme dropdown's button (js/theme-cycler.js),
+      // not an anchor — it has no hash to scroll to.
+      if ($(this).is(".resume-link") || $(this).is(".blog-page-link") || $(this).is(".tc-nav-trigger")) {
         return;
       }
       event.preventDefault();

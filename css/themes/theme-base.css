@@ -78,9 +78,12 @@
   display: none;
 }
 
-[data-still] .tc-toggle:hover,
-[data-still] .tc-randomize:hover {
+[data-still] .tc-toggle:hover {
   transform: none;
+}
+
+[data-still] .tc-dock.tc-dropdown {
+  animation: none;
 }
 
 /* No-tilt skins: hold the tilt targets flat. Covers a live instance's

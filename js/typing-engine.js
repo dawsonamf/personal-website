@@ -36,9 +36,14 @@
  *     the skin's .tw entrance reads word-by-word.
  * In both cursorless modes a deleted glyph gets .tw-out and lingers briefly
  * for the skin's exit animation (erase, flicker-off...) before leaving the
- * DOM. Spaces stay bare text nodes (a lone space inside an inline-block
- * span collapses to nothing); newlines stay <br>. The accent span contract
- * holds: glyphs typed after the second newline also carry .typing-accent.
+ * DOM. Deleted spaces and <br>s linger through that same drain (no visible
+ * exit, but yanking one early would jerk the still-fading glyphs on its
+ * right leftward), and an invisible zero-width anchor span stands where the
+ * caret would, so the last line's box survives the beat between the final
+ * erased glyph draining away and the retype landing. Spaces stay bare text
+ * nodes (a lone space inside an inline-block span collapses to nothing);
+ * newlines stay <br>. The accent span contract holds: glyphs typed after
+ * the second newline also carry .typing-accent.
  */
 function startTypingSequence(config) {
   const element = document.getElementById(config.elementId);
@@ -53,23 +58,41 @@ function startTypingSequence(config) {
     (typeof window.__styleTypingMode === 'function' ? window.__styleTypingMode() : 'cursor');
   const usesCursor = mode !== 'letter' && mode !== 'word';
 
-  // How long a .tw-out glyph stays in the DOM for its exit animation.
+  // How long a deleted node stays in the DOM for its exit animation.
   const ERASE_MS = 300;
+
+  // Nodes mid-drain: deleted but still holding layout while the exit
+  // animation runs. Membership lives here (not on a class) because spaces
+  // are bare text nodes, which can't carry .tw-out.
+  const draining = new Set();
+
+  function drainOut(node) {
+    draining.add(node);
+    setTimeout(function () {
+      draining.delete(node);
+      if (node.parentNode) node.parentNode.removeChild(node);
+    }, ERASE_MS);
+  }
 
   const steps = sequences[Math.floor(Math.random() * sequences.length)];
 
-  let cursor = null;
+  // The insertion anchor: the blinking caret in cursor mode. The cursorless
+  // modes get an invisible stand-in — a zero-width space — that keeps a
+  // line box alive on the last line even when every real glyph is gone.
+  const cursor = document.createElement('span');
   if (usesCursor) {
-    cursor = document.createElement('span');
     cursor.className = 'cursor';
-    element.appendChild(cursor);
+  } else {
+    cursor.className = 'tw-anchor';
+    cursor.textContent = '\u200B';
   }
+  element.appendChild(cursor);
 
   let newlineCount = 0;
   let newlineCbFired = false;
 
   function setCursorBlink(on) {
-    if (cursor) cursor.style.animation = on ? 'blink 1s infinite' : 'none';
+    if (usesCursor) cursor.style.animation = on ? 'blink 1s infinite' : 'none';
   }
 
   function insertBreak() {
@@ -93,16 +116,13 @@ function startTypingSequence(config) {
     return span;
   }
 
-  // Collect all text/br/glyph nodes before the cursor (all children in the
-  // cursorless modes) so we can delete from the end. Glyphs already running
-  // their exit animation are skipped — they're awaiting removal.
+  // Collect all text/br/glyph nodes before the cursor so we can delete from
+  // the end. Nodes already mid-drain are skipped — they're awaiting removal.
   function getContentNodes() {
     const nodes = [];
     let child = element.firstChild;
     while (child && child !== cursor) {
-      const isErasing = child.nodeType === Node.ELEMENT_NODE &&
-        child.classList && child.classList.contains('tw-out');
-      if (!isErasing) nodes.push(child);
+      if (!draining.has(child)) nodes.push(child);
       child = child.nextSibling;
     }
     return nodes;
@@ -228,23 +248,30 @@ function startTypingSequence(config) {
         if (last.nodeType === Node.TEXT_NODE) {
           if (last.textContent.length > 1) {
             last.textContent = last.textContent.slice(0, -1);
-          } else {
+          } else if (usesCursor) {
             element.removeChild(last);
+          } else {
+            // A deleted space holds its slot through the drain so the
+            // fading glyphs to its right don't jump left.
+            drainOut(last);
           }
           remaining--;
           setTimeout(deleteChar, deleteDelay);
         } else if (last.nodeName === 'BR') {
-          element.removeChild(last);
+          if (usesCursor) {
+            element.removeChild(last);
+          } else {
+            drainOut(last);
+          }
           newlineCount = Math.max(0, newlineCount - 1);
           remaining--;
           setTimeout(deleteChar, deleteDelay);
         } else if (last.nodeType === Node.ELEMENT_NODE && last.classList && last.classList.contains('tw')) {
           // Cursorless glyphs erase in place: the exit class runs the skin's
-          // animation, then the node leaves the DOM.
+          // animation while the drain holds layout, then the node leaves
+          // the DOM.
           last.classList.add('tw-out');
-          setTimeout(function () {
-            if (last.parentNode) last.parentNode.removeChild(last);
-          }, ERASE_MS);
+          drainOut(last);
           remaining--;
           setTimeout(deleteChar, deleteDelay);
         } else if (last.nodeType === Node.ELEMENT_NODE && last.classList && last.classList.contains('typing-accent')) {

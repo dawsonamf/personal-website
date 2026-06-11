@@ -298,6 +298,50 @@
   transform: none;
 }
 
+/* The same red-pen circle, generalized — but only to small STANDALONE
+   links with air around them: the desktop nav words (the Theme trigger
+   included) and the blog strip's "See all posts". Links inside running
+   text never get it (a ring overlaps the neighboring lines); those keep
+   the wavy pen underline above. Negative insets wrap the ring around the
+   word's text box. */
+[data-style="doodle"] .moving-menu .menu-item,
+[data-style="doodle"] .static-menu .menu-item,
+[data-style="doodle"] .blog-see-all .text-link {
+  position: relative;
+}
+
+[data-style="doodle"] .moving-menu .menu-item::after,
+[data-style="doodle"] .static-menu .menu-item::after,
+[data-style="doodle"] .blog-see-all .text-link::after {
+  content: '';
+  position: absolute;
+  inset: -5px -9px;
+  border: 2px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+  -webkit-mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  transition: --doodle-ring 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+[data-style="doodle"] .moving-menu .menu-item:hover::after,
+[data-style="doodle"] .static-menu .menu-item:hover::after,
+[data-style="doodle"] .blog-see-all .text-link:hover::after {
+  --doodle-ring: 100%;
+}
+
+/* Circled words hold their ink too — and the see-all link lifts its
+   underline while ringed (pen moves from under the word to around it). */
+[data-style="doodle"] .moving-menu .menu-item:hover,
+[data-style="doodle"] .static-menu .menu-item:hover {
+  color: var(--text);
+}
+
+[data-style="doodle"] .blog-see-all .text-link:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
 [data-style="doodle"] #socials-list .socials-menu-spacer,
 [data-style="doodle"] #blog-socials-list .socials-menu-spacer {
   border-color: var(--text30);

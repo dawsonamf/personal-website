@@ -1,5 +1,67 @@
 .tc-hidden { display: none !important; }
 
+/* Nav dropdown mode. js/nav-config.js renders a Theme trigger into each nav
+   menu (text + caret on desktop, palette icon in the mobile quick-links row)
+   and js/theme-cycler.js parks the dock under whichever trigger opened it.
+   The triggers also carry .menu-item / .socials-item, so the per-style menu
+   skins restyle them with no extra rules. Pages without the nav menus fall
+   back to the .tc-toggle FAB below. */
+
+.tc-nav-item {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.tc-nav-trigger {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tc-nav-caret {
+  font-size: 9px;
+  opacity: 0.8;
+  transition: transform 0.25s ease-in-out;
+}
+
+.tc-nav-item.tc-open .tc-nav-caret {
+  transform: rotate(180deg);
+}
+
+.tc-dock.tc-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  bottom: auto;
+  left: auto;
+  /* Hangs below the nav, so it gets less room than the bottom-anchored FAB
+     dock before the styles list has to scroll. */
+  max-height: calc(100vh - 160px);
+}
+
+/* Re-runs on every open (display: none -> block restarts it). Still skins
+   switch it off in themes/theme-base.css. */
+@media (prefers-reduced-motion: no-preference) {
+  .tc-dock.tc-dropdown {
+    animation: tc-drop 0.18s ease-out;
+  }
+}
+
+@keyframes tc-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
 .tc-toggle {
   position: fixed;
   right: 20px;
@@ -29,83 +91,177 @@
   right: 20px;
   bottom: 20px;
   z-index: 9999;
-  width: 200px;
+  width: 240px;
   padding: 14px;
   background: var(--text10);
   color: var(--text);
   border-radius: var(--border-radius);
-  font-family: sans-serif;
+  /* Defaults to sans-serif (the --font-body default); skins' body type
+     carries into the panel so it reads native to each style. */
+  font-family: var(--font-body, sans-serif);
   font-size: 13px;
   backdrop-filter: blur(12px);
   box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+  /* Column layout so the styles list can scroll on short viewports while
+     the header and action rows stay put. */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+}
+
+.tc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.tc-title {
+  font-size: 11px;
+  color: var(--text50);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .tc-close {
-  position: absolute;
-  top: 4px;
-  right: 6px;
   background: none;
   border: none;
   color: var(--text50);
   cursor: pointer;
   font-size: 15px;
-  padding: 4px 6px;
+  padding: 2px 4px;
+  margin: -2px -4px -2px 0;
   line-height: 1;
   transition: color 0.25s ease-in-out;
 }
 .tc-close:hover { color: var(--text); }
 
-.tc-randomize {
+/* Action rows: one full-width button per line, pinned above the styles
+   list (Shuffle, Reset, and the Advanced reveal). */
+.tc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.tc-action {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 9px;
   width: 100%;
-  padding: 8px 12px;
+  padding: 8px 11px;
   border-radius: 10px;
   background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  color: var(--text);
+  border: 1px solid var(--text20);
   cursor: pointer;
-  font-size: 16px;
+  font-size: 12px;
   font-family: inherit;
-  transition: 0.3s ease-in-out;
-  margin-top: 18px;
+  text-align: left;
+  transition: 0.25s ease-in-out;
 }
-.tc-randomize:hover {
+.tc-action i {
+  font-size: 13px;
+  width: 15px;
+  text-align: center;
+  color: var(--accent);
+  transition: color 0.25s ease-in-out;
+}
+.tc-action:hover {
   background: var(--accent);
+  border-color: var(--accent);
   color: var(--bg);
-  transform: translateY(-2px);
 }
+.tc-action:hover i { color: var(--bg); }
 
+.tc-action .tc-action-caret {
+  margin-left: auto;
+  width: auto;
+  font-size: 10px;
+  color: var(--text50);
+  transition: transform 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+.tc-action:hover .tc-action-caret { color: var(--bg); }
+.tc-action.tc-open .tc-action-caret { transform: rotate(180deg); }
+
+/* Styles list: one full-width row per style, each painted in its own
+   registry palette — bg as the row ground, text on the label, and
+   primary/secondary/accent as the dots (base colors; randomized palettes
+   don't repaint them). Scrolls when the viewport runs short. */
 .tc-presets {
   display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
-  margin-top: 10px;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--text20);
+  overflow-y: auto;
+  min-height: 110px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text25) transparent;
 }
 .tc-presets button {
-  flex: 1;
-  padding: 5px 10px;
-  border-radius: 999px;
-  border: 1px solid var(--text20);
-  background: transparent;
-  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  flex-shrink: 0;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--tc-row-text) 22%, transparent);
+  background: var(--tc-row-bg);
+  color: var(--tc-row-text);
   cursor: pointer;
   font-family: inherit;
   font-size: 12px;
-  transition: 0.25s ease-in-out;
+  line-height: 1.2;
+  text-align: left;
+  transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
 }
-.tc-presets button:hover { border-color: var(--accent); color: var(--accent); }
+.tc-presets button:hover { border-color: var(--tc-row-accent); }
 .tc-presets button.tc-sel {
-  background: var(--accent);
-  color: var(--bg);
-  border-color: var(--accent);
+  border-color: var(--tc-row-accent);
+  box-shadow: inset 0 0 0 1px var(--tc-row-accent);
 }
+
+.tc-row-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tc-row-dots {
+  display: flex;
+  gap: 3px;
+  flex-shrink: 0;
+}
+.tc-row-dots span {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tc-row-text) 30%, transparent);
+}
+.tc-row-dots span:nth-child(1) { background: var(--tc-row-primary); }
+.tc-row-dots span:nth-child(2) { background: var(--tc-row-secondary); }
+.tc-row-dots span:nth-child(3) { background: var(--tc-row-accent); }
+
+/* The check column is always reserved so dots line up across rows. */
+.tc-row-check {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--tc-row-accent);
+  visibility: hidden;
+}
+.tc-presets button.tc-sel .tc-row-check { visibility: visible; }
 
 .tc-advanced {
   border-top: 1px solid var(--text20);
   padding-top: 12px;
   margin-top: 12px;
+  flex-shrink: 0;
 }
 
 .tc-group { margin-bottom: 12px; }
@@ -146,15 +302,15 @@
 
 .tc-roles {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 5px;
 }
 
 .tc-role {
   display: flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 7px;
+  gap: 8px;
+  padding: 6px 8px;
   border-radius: 8px;
   background: var(--text5);
   position: relative;
@@ -162,14 +318,14 @@
 }
 
 .tc-sw {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 4px;
   flex-shrink: 0;
   border: 1px solid var(--text20);
 }
 
-.tc-hex {
+.tc-role-name {
   flex: 1;
   min-width: 0;
   font-size: 11px;
@@ -184,11 +340,15 @@
   border: none;
   color: var(--text50);
   cursor: pointer;
-  padding: 0;
-  font-size: 10px;
+  padding: 4px;
+  margin: -4px;
+  font-size: 11px;
   line-height: 1;
   transition: color 0.25s ease-in-out;
   flex-shrink: 0;
+  /* Lift above the row-covering color input so the lock is clickable. */
+  position: relative;
+  z-index: 1;
 }
 .tc-lk:hover { color: var(--text); }
 .tc-lk.tc-on { color: var(--accent); }
@@ -199,29 +359,3 @@
   opacity: 0;
   cursor: pointer;
 }
-
-.tc-footer {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 12px;
-}
-
-.tc-link {
-  text-decoration: none;
-  color: var(--accent);
-  font-size: 13px;
-  position: relative;
-  transition: color 0.25s ease-in-out;
-}
-.tc-link::before {
-  content: '';
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 0;
-  height: 0.5px;
-  opacity: 0.7;
-  background-color: var(--accent);
-  transition: width 0.25s ease-in-out;
-}
-.tc-link:hover::before { width: 100%; }

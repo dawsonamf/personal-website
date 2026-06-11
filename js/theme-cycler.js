@@ -56,12 +56,6 @@
       Math.round(hue2rgb(p,q,h-1/3)*255),
     ];
   }
-  function hslToHex(h,s,l) {
-    const [r,g,b] = hslFracToRgb(h/360, s/100, l/100);
-    return rgbToHex(r,g,b);
-  }
-  function invertL(hex) { const {h,s,l}=hexToHsl(hex); return hslToHex(h,s,100-l); }
-
   const uniform = (a,b) => Math.random()*(b-a)+a;
   const lerp    = (a,b,t) => a+(b-a)*t;
 
@@ -128,7 +122,6 @@
   // Session persistence: survives page-to-page navigation, but any reload
   // (including force-refresh) resets to defaults. Must agree with theme-bootstrap.js.
   const STORAGE_KEY = 'dawson-theme-cycler';
-  const UNLOCK_KEY  = 'dawson-cycler-unlocked';
   const STYLE_KEY   = 'dawson-style';
   function isReload() {
     try {
@@ -239,10 +232,9 @@
     if (!host) return;
     host.querySelectorAll('.tc-role').forEach((el, i) => {
       const sw = el.querySelector('.tc-sw');
-      const hex = el.querySelector('.tc-hex');
       const inp = el.querySelector('input[type="color"]');
-      if (sw)  sw.style.background = state.colors[i];
-      if (hex) hex.textContent = state.colors[i];
+      if (sw) sw.style.background = state.colors[i];
+      el.title = state.colors[i];
       if (inp && inp.value.toLowerCase() !== state.colors[i].toLowerCase()) {
         inp.value = state.colors[i];
       }
@@ -251,13 +243,6 @@
 
   function applyTheme() {
     root.setAttribute('data-theme', state.theme);
-  }
-
-  function flipTheme() {
-    state.theme = state.theme === 'dark' ? 'light' : 'dark';
-    state.colors = state.colors.map(invertL);
-    applyTheme();
-    applyColors();
   }
 
   function randomize() {
@@ -355,7 +340,17 @@
     if (!host) return;
     host.innerHTML = STYLE_ORDER.map(id => {
       const e = REGISTRY[id];
-      return `<button data-id="${id}" class="${state.style === id ? 'tc-sel' : ''}">${e ? e.label : id}</button>`;
+      if (!e) return '';
+      // Each row wears its own theme: the registry's bg paints the row, the
+      // text color sets the label, and primary/secondary/accent fill the dots
+      // (registry base colors — randomized palettes don't repaint them).
+      const [text, bg, primary, secondary, accent] = entryColors(e);
+      const sel = state.style === id;
+      return `<button data-id="${id}" class="${sel ? 'tc-sel' : ''}" aria-pressed="${sel}" style="--tc-row-text:${text};--tc-row-bg:${bg};--tc-row-primary:${primary};--tc-row-secondary:${secondary};--tc-row-accent:${accent}">
+        <span class="tc-row-name">${e.label}</span>
+        <span class="tc-row-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <i class="fa-solid fa-check tc-row-check" aria-hidden="true"></i>
+      </button>`;
     }).join('');
     host.querySelectorAll('button').forEach(b => {
       b.addEventListener('click', () => switchStyle(b.dataset.id));
@@ -379,7 +374,10 @@
     const panel = document.getElementById('tc-advanced');
     const link  = document.getElementById('tc-advanced-link');
     if (panel) panel.classList.toggle('tc-hidden', !state.advanced);
-    if (link)  link.textContent = state.advanced ? 'Simple' : 'Advanced';
+    if (link) {
+      link.classList.toggle('tc-open', state.advanced);
+      link.setAttribute('aria-expanded', state.advanced ? 'true' : 'false');
+    }
   }
 
   function renderRoles() {
@@ -388,9 +386,9 @@
     host.innerHTML = ROLES.map((r,i) => {
       const hex = state.colors[i];
       const locked = state.locks[i];
-      return `<label class="tc-role" title="${r.label}">
+      return `<label class="tc-role" title="${hex}">
         <span class="tc-sw" style="background:${hex}"></span>
-        <span class="tc-hex">${hex}</span>
+        <span class="tc-role-name">${r.label}</span>
         <button class="tc-lk ${locked?'tc-on':''}" data-i="${i}" aria-label="${locked?'Unlock':'Lock'} ${r.label}">
           <i class="fa-solid fa-${locked?'lock':'lock-open'}"></i>
         </button>
@@ -423,6 +421,151 @@
   }
 
   function injectDom() {
+    const dock = document.createElement('aside');
+    dock.className = 'tc-dock tc-hidden';
+    dock.id = 'tc-dock';
+    dock.setAttribute('aria-label', 'Theme controls');
+    dock.innerHTML = `
+      <div class="tc-header">
+        <span class="tc-title">Theme</span>
+        <button class="tc-close" id="tc-close" type="button" aria-label="Close">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="tc-actions">
+        <button class="tc-action" id="tc-randomize" type="button" title="Random palette for this theme">
+          <i class="fa-solid fa-dice" aria-hidden="true"></i>Shuffle colors
+        </button>
+        <button class="tc-action" id="tc-reset" type="button" title="Back to the default style and palette">
+          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>Reset
+        </button>
+        <button class="tc-action" id="tc-advanced-link" type="button" aria-expanded="false" aria-controls="tc-advanced">
+          <i class="fa-solid fa-sliders" aria-hidden="true"></i>Advanced
+          <i class="fa-solid fa-chevron-down tc-action-caret" aria-hidden="true"></i>
+        </button>
+      </div>
+
+      <div class="tc-advanced tc-hidden" id="tc-advanced">
+        <div class="tc-group">
+          <span class="tc-group-label">Scheme</span>
+          <div class="tc-schemes" id="tc-schemes"></div>
+        </div>
+        <div class="tc-roles" id="tc-roles"></div>
+      </div>
+
+      <div class="tc-presets" id="tc-presets"></div>
+    `;
+
+    // Pages with the nav menus get the dropdown (js/nav-config.js renders a
+    // .tc-nav-item trigger into each menu); pages without them (blog posts,
+    // privacy, lexchat, 404) keep the floating palette FAB.
+    const navItems = document.querySelectorAll('.tc-nav-item');
+    if (navItems.length) {
+      dock.classList.add('tc-dropdown');
+      navItems[0].appendChild(dock);
+      wireNavDropdown(dock, navItems);
+    } else {
+      document.body.appendChild(dock);
+      wireFab(dock);
+    }
+
+    document.getElementById('tc-randomize').addEventListener('click', randomize);
+    document.getElementById('tc-reset').addEventListener('click', resetToDefault);
+    document.getElementById('tc-advanced-link').addEventListener('click', toggleAdvanced);
+  }
+
+  // Nav dropdown: hover opens it on pointer-fine devices, click pins it,
+  // and outside click / Esc / the X close it. The single dock node reparents
+  // under whichever trigger opened it (static menu at the top of the page,
+  // moving menu once it appears on scroll-up, or the mobile quick-links row).
+  function wireNavDropdown(dock, navItems) {
+    let openItem = null;
+    let pinned = false;
+    let closeTimer = null;
+    const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+    function setExpanded(li, on) {
+      li.classList.toggle('tc-open', on);
+      const btn = li.querySelector('.tc-nav-trigger');
+      if (btn) btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+    // The dock hangs from right: 0 of its trigger li; with the trigger near
+    // the viewport's right edge (or a wide skin menu) that can land it
+    // partly off screen. After every open, nudge it back inside by writing
+    // an inline right offset (positive shifts left, negative shifts right).
+    function clampDock() {
+      dock.style.right = '';
+      const margin = 10;
+      const r = dock.getBoundingClientRect();
+      const overflowRight = r.right - (window.innerWidth - margin);
+      if (overflowRight > 0) dock.style.right = overflowRight + 'px';
+      else if (r.left < margin) dock.style.right = (r.left - margin) + 'px';
+    }
+    function open(li, pin) {
+      clearTimeout(closeTimer);
+      if (openItem && openItem !== li) setExpanded(openItem, false);
+      if (dock.parentElement !== li) li.appendChild(dock);
+      dock.classList.remove('tc-hidden');
+      setExpanded(li, true);
+      openItem = li;
+      pinned = !!pin;
+      clampDock();
+    }
+    function close() {
+      clearTimeout(closeTimer);
+      if (!openItem) return;
+      dock.classList.add('tc-hidden');
+      dock.style.right = '';
+      setExpanded(openItem, false);
+      openItem = null;
+      pinned = false;
+    }
+    window.addEventListener('resize', () => { if (openItem) clampDock(); });
+
+    navItems.forEach(li => {
+      const btn = li.querySelector('.tc-nav-trigger');
+      if (btn) {
+        btn.addEventListener('click', e => {
+          e.stopPropagation();
+          if (openItem === li) {
+            if (pinned) close();
+            else pinned = true;
+          } else {
+            open(li, true);
+          }
+        });
+      }
+      if (canHover) {
+        li.addEventListener('mouseenter', () => {
+          if (openItem === li) clearTimeout(closeTimer);
+          else open(li, false);
+        });
+        li.addEventListener('mouseleave', () => {
+          if (openItem !== li || pinned) return;
+          clearTimeout(closeTimer);
+          closeTimer = setTimeout(close, 300);
+        });
+      }
+    });
+
+    // Touching the controls pins a hover-opened dropdown, so it survives the
+    // pointer wandering off into a native color picker. stopPropagation keeps
+    // inside clicks from reaching the document-level close (preset clicks
+    // re-render their buttons, so the document handler can't recheck
+    // containment on a detached target).
+    dock.addEventListener('click', e => {
+      pinned = true;
+      e.stopPropagation();
+    });
+    document.getElementById('tc-close').addEventListener('click', close);
+    document.addEventListener('click', () => close());
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+  }
+
+  // Floating palette button, bottom right: the fallback surface for pages
+  // without the nav menus.
+  function wireFab(dock) {
     const toggle = document.createElement('button');
     toggle.className = 'tc-toggle';
     toggle.id = 'tc-toggle';
@@ -431,126 +574,23 @@
     toggle.innerHTML = '<i class="fa-solid fa-palette"></i>';
     document.body.appendChild(toggle);
 
-    const dock = document.createElement('aside');
-    dock.className = 'tc-dock tc-hidden';
-    dock.id = 'tc-dock';
-    dock.innerHTML = `
-      <button class="tc-close" id="tc-close" aria-label="Close">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-
-      <button class="tc-randomize" id="tc-randomize" type="button" aria-label="Randomize palette">
-        <i class="fa-solid fa-dice"></i>
-      </button>
-
-      <div class="tc-presets" id="tc-presets"></div>
-
-      <div class="tc-advanced tc-hidden" id="tc-advanced">
-        <div class="tc-group">
-          <span class="tc-group-label">Scheme</span>
-          <div class="tc-schemes" id="tc-schemes"></div>
-        </div>
-        <div class="tc-group">
-          <span class="tc-group-label">Colors</span>
-          <div class="tc-roles" id="tc-roles"></div>
-        </div>
-      </div>
-
-      <div class="tc-footer">
-        <a href="#" class="tc-link" id="tc-reset">Reset</a>
-        <a href="#" class="tc-link" id="tc-advanced-link">Advanced</a>
-      </div>
-    `;
-    document.body.appendChild(dock);
-
+    function closeDock() {
+      dock.classList.add('tc-hidden');
+      toggle.classList.remove('tc-hidden');
+    }
     toggle.addEventListener('click', () => {
       dock.classList.remove('tc-hidden');
       toggle.classList.add('tc-hidden');
     });
-    document.getElementById('tc-close').addEventListener('click', () => {
-      dock.classList.add('tc-hidden');
-      toggle.classList.remove('tc-hidden');
+    document.getElementById('tc-close').addEventListener('click', closeDock);
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && !dock.classList.contains('tc-hidden')) closeDock();
     });
-    document.getElementById('tc-randomize').addEventListener('click', randomize);
-    document.getElementById('tc-reset').addEventListener('click', e => { e.preventDefault(); resetToDefault(); });
-    document.getElementById('tc-advanced-link').addEventListener('click', e => { e.preventDefault(); toggleAdvanced(); });
-  }
-
-  // Easter-egg unlock: click the hero selfie to reveal the dock.
-  function isUnlocked() {
-    try { return sessionStorage.getItem(UNLOCK_KEY) === '1'; } catch { return false; }
-  }
-  function markUnlocked() {
-    try { sessionStorage.setItem(UNLOCK_KEY, '1'); } catch {}
-  }
-
-  function revealAtClick(event) {
-    if (isUnlocked()) return;
-    markUnlocked();
-
-    const toggle = document.getElementById('tc-toggle');
-    const dock   = document.getElementById('tc-dock');
-    if (!toggle) return;
-
-    // Dock stays closed. The FAB is what appears.
-    if (dock) dock.classList.add('tc-hidden');
-
-    toggle.classList.remove('tc-hidden');
-    const rect = toggle.getBoundingClientRect();
-    const cx = event.clientX;
-    const cy = event.clientY;
-    // Clamp so the FAB doesn't pop off-screen if clicked near an edge.
-    const startLeft = Math.max(8, Math.min(window.innerWidth  - rect.width  - 8, cx - rect.width / 2));
-    const startTop  = Math.max(8, Math.min(window.innerHeight - rect.height - 8, cy - rect.height / 2));
-
-    toggle.style.transition = 'none';
-    toggle.style.right  = 'auto';
-    toggle.style.bottom = 'auto';
-    toggle.style.left = startLeft + 'px';
-    toggle.style.top  = startTop  + 'px';
-    toggle.style.opacity = '0';
-
-    // Force reflow so the next transition actually animates.
-    // eslint-disable-next-line no-unused-expressions
-    toggle.offsetHeight;
-
-    toggle.style.transition = 'opacity 0.12s linear';
-    toggle.style.opacity = '1';
-
-    setTimeout(() => {
-      const r = toggle.getBoundingClientRect();
-      const targetLeft = window.innerWidth  - r.width  - 20;
-      const targetTop  = window.innerHeight - r.height - 20;
-
-      toggle.style.transition = 'left 0.32s cubic-bezier(0.22, 1, 0.36, 1), top 0.32s cubic-bezier(0.22, 1, 0.36, 1)';
-      toggle.style.left = targetLeft + 'px';
-      toggle.style.top  = targetTop  + 'px';
-
-      // Once docked, hand positioning back to the stylesheet.
-      setTimeout(() => {
-        toggle.style.transition = '';
-        toggle.style.left       = '';
-        toggle.style.top        = '';
-        toggle.style.right      = '';
-        toggle.style.bottom     = '';
-        toggle.style.opacity    = '';
-      }, 340);
-    }, 140);
-  }
-
-  function wireUnlockTrigger() {
-    // Only wire on the home page (where the selfie exists).
-    const selfie = document.getElementById('typing-image');
-    if (!selfie) return;
-    selfie.addEventListener('click', revealAtClick);
   }
 
   function boot() {
     if (isReload()) {
-      try {
-        sessionStorage.removeItem(STORAGE_KEY);
-        sessionStorage.removeItem(UNLOCK_KEY);
-      } catch {}
+      try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
     } else {
       restore();
     }
@@ -560,19 +600,11 @@
     renderSchemes();
     renderPresets();
 
-    // A non-default style always exposes the FAB (covers ?style= deep links)
-    // and unlocks the session so it stays available after returning to default.
-    if (state.style !== 'default') markUnlocked();
-
-    const toggle = document.getElementById('tc-toggle');
-    if (toggle && !isUnlocked()) toggle.classList.add('tc-hidden');
-    if (!isUnlocked()) wireUnlockTrigger();
-
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      const dockOpen = !document.getElementById('tc-dock').classList.contains('tc-hidden');
+      const dock = document.getElementById('tc-dock');
+      const dockOpen = dock && !dock.classList.contains('tc-hidden');
       if (e.code === 'Space' && dockOpen) { e.preventDefault(); randomize(); }
-      if (e.altKey && e.key.toLowerCase() === 't') { e.preventDefault(); flipTheme(); }
     });
   }
 

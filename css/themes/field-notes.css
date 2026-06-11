@@ -882,7 +882,7 @@
 
 /* Chips, not pills, on the dock buttons. (The FAB keeps its hover lift,
    this skin keeps its motion.) */
-[data-style="field-notes"] .tc-randomize,
+[data-style="field-notes"] .tc-action,
 [data-style="field-notes"] .tc-presets button,
 [data-style="field-notes"] .tc-schemes button {
   border-radius: var(--radius-pill);

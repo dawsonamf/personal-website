@@ -1,11 +1,19 @@
-# Style versions ("hella themes" easter egg)
+# Style versions ("hella themes")
 
-Same content, radically different design languages, behind the cycler-dock
-easter egg. Engine + eight skins (studio, brutalist, broadsheet, field-notes,
-blueprint, doodle, vapor, wheatpaste) shipped June 2026. **Queue: lava lounge** —
-approved visuals and per-style notes (palette roles, fonts, flags, technique)
-live as tiles in [test-styles.html](test-styles.html); the rest of that sheet
-is parked, TBD. Future engine work, in rough order: Layer-4 strings, a
+Same content, radically different design languages, surfaced as the nav's
+Theme dropdown (promoted from easter egg to feature June 2026). Engine +
+twelve skins (studio, brutalist, broadsheet, field-notes, blueprint, doodle,
+vapor, wheatpaste, bauhaus, chinoiserie, banknote, grid) shipped June 2026.
+**Queue, tiered June 2026 (overrides all earlier orderings) — Tier 1
+definite, in order: gallery (MN·1), wanted (WW·1),
+constructivist × rodchenko merge (06 + 06·B). Tier 2 soon: 8-bit console
+(PX·1) OR crt terminal (PX·3), one of the two, undecided. Tier 3: miami
+deco (AD·2), neo-pop × ben-day merge (02 + PA·1). Tier 4, likely deferred
+indefinitely: picture palace (07·C), harvest (11), riso (08), roadside
+motel (11·C).** Approved visuals and per-style notes (palette roles,
+fonts, flags, technique) live as tiles in
+[test-styles.html](test-styles.html); the rest of that sheet is parked,
+TBD. Future engine work, in rough order: Layer-4 strings, a
 read-only content API (`js/content-api.js`), Layer-5 takeover modes (a lazy
 JS module renders its own UI into an injected `#style-root`; the canonical
 DOM stays in place, hidden not removed).
@@ -23,13 +31,36 @@ DOM stays in place, hidden not removed).
   after the second newline) and mark deleting glyphs `.tw-out` for ~300ms —
   the skin sheet supplies the in/out animations (doodle draws/erases, vapor
   flickers, studio/broadsheet fade by word); the reduced-motion guard lives
-  in `theme-base.css`.
+  in `theme-base.css`. Deleted spaces and `<br>`s hold their slot through
+  the same ~300ms drain (so the fading tail never jumps left), and an
+  unstyled `span.tw-anchor` holding a zero-width space stands in for the
+  caret, keeping the last line's box alive between a delete and the retype.
 - **Attribute**: `data-style="<id>"` on `<html>`, absent for default.
   `data-theme` keeps its dark/light palette-toy meaning; the axes compose.
 - **Persistence**: session-only. sessionStorage carries the id across
   navigation; any reload returns to default. `?style=<id>` applies + seeds
-  the session (`?style=default` clears). A non-default style always shows the
-  FAB and unlocks the session, so deep links can't strand anyone.
+  the session (`?style=default` clears).
+- **UI**: a Theme item in the nav menus. `js/nav-config.js` renders the
+  trigger (`li.tc-nav-item > button.tc-nav-trigger`, gated on
+  `window.__THEME_CYCLER_ENABLED`; label + caret in the desktop menus,
+  palette icon in the mobile quick-links row) and `js/theme-cycler.js`
+  anchors the dock under whichever trigger opened it (`.tc-dock.tc-dropdown`,
+  one node reparented between static menu, moving menu, and mobile row).
+  Hover opens on pointer-fine devices, click pins, outside click/Esc/X
+  closes; clicks inside the dock pin it so native color pickers can't
+  hover-close it. Pages without nav menus (blog posts, privacy, lexchat,
+  404) keep the floating `.tc-toggle` FAB, now always visible — the
+  selfie-click unlock is gone. Triggers carry `.menu-item`/`.socials-item`,
+  so every skin's menu styling applies to them with no extra rules.
+  Panel layout: header (title + close), then full-width `.tc-action` rows
+  (Shuffle colors, Reset, and the Advanced reveal — scheme pills + named
+  role rows with locks and color inputs), then one full-width row per style:
+  each row is painted in its own registry palette (bg as the row ground,
+  text on the label, primary/secondary/accent as dots, an accent check marks
+  the active style). The list scrolls when the viewport runs short and the
+  dock self-clamps to the viewport on open. Invert/`flipTheme` (and its
+  Alt+T binding) is gone. The panel takes `var(--font-body)`, so skins'
+  body type carries into it.
 - **Tokens: the registry defines, skins consume.** Token values exist only in
   `css/styles.css :root` (defaults) and inline writes on `<html>` — never in
   skin sheets. Switching styles clears palette-toy overrides; when the toy
@@ -100,7 +131,7 @@ changes; `random:` profiles are a follow-up polish round.
 - **Code blocks + footers**: the `#0d1117` ground pin and the blog footer
   auto-margin restore live in `theme-base.css`; skins only add frames and chips.
 - **Stilled skins**: set `flags.still: true` and `theme-base.css` kills AOS
-  entrances, the cursor follower, and both dock lifts. Square-cornered
+  entrances, the cursor follower, and the dock FAB lift. Square-cornered
   skins: featured-carousel.js now treats a 0 radius as valid (no backdrop
   pin needed), but still grep all CSS for literal non-`var()` radii
   (`.fc-card-cta` is one).

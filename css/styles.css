@@ -148,10 +148,16 @@ h1, h2, h3, h4 {
 
 /* Header and menus */
 
+/* Both desktop menus size to their content (skins swap in wider type, and
+   the Theme item made the old fixed 500px a squeeze): at least the classic
+   500px pill, growing leftward as needed — the right edge stays anchored —
+   and capped to the viewport/row so items can't run off screen. */
 .static-menu {
   background-color: var(--bg50);
   border-radius: var(--border-radius);
-  width: 500px;
+  width: auto;
+  min-width: 500px;
+  max-width: calc(100% - 90px);
   z-index: 1;
   margin-right: 10px;
   margin-left: auto;
@@ -163,7 +169,9 @@ h1, h2, h3, h4 {
 .moving-menu {
   background-color: var(--bg50);
   border-radius: var(--border-radius);
-  width: 500px;
+  width: auto;
+  min-width: 500px;
+  max-width: calc(100vw - 40px);
   margin-right: 27px;
   margin-left: auto;
   position: fixed;
@@ -175,6 +183,15 @@ h1, h2, h3, h4 {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
   top: -70px;
   transition: top 0.3s ease-in-out;
+}
+
+/* Minimum air between entries once the pill is content-sized (space-evenly
+   still distributes any slack when min-width wins). Scoped to the desktop
+   menus so the mobile quick-links row keeps its own spacing. */
+.moving-menu .menu-list,
+.static-menu .menu-list {
+  gap: 12px;
+  padding: 0 18px;
 }
 
 @media screen and (max-width: 1250px) {

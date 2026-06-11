@@ -14,11 +14,17 @@ file to one line per item, and update both when something lands.
       the home-page carousel; the code already exists behind `EXPAND_VISUAL` in
       `js/featured-carousel.js`. Details in [CLEANUP_SPEC.md](CLEANUP_SPEC.md).
 - [ ] **Multiple full style versions (easter egg)** — themes over one content
-      source. Engine + eight skins (studio, brutalist, broadsheet, field-notes,
-      blueprint, doodle, vapor, wheatpaste) landed June 2026. Queue: lava lounge —
-      approved visuals + per-style notes in [test-styles.html](test-styles.html),
+      source. Engine + twelve skins (studio, brutalist, broadsheet,
+      field-notes, blueprint, doodle, vapor, wheatpaste, bauhaus, chinoiserie,
+      banknote, grid) landed June 2026. Queue is tiered as of June 2026
+      (overrides all earlier orderings): **T1 definite, in order — gallery,
+      wanted, constructivist×rodchenko merge · T2 soon — 8-bit console OR crt terminal
+      (one of the two, undecided) · T3 — miami deco, neo-pop×ben-day merge ·
+      T4 likely deferred indefinitely — picture palace, harvest, riso,
+      roadside motel.** Everything else on the sheet is unranked. Approved
+      visuals + per-style notes in [test-styles.html](test-styles.html),
       build protocol in [STYLE_VERSIONS_SPEC.md](STYLE_VERSIONS_SPEC.md).
-      The rest of the sheet is TBD; takeover modes remain after that.
+      Takeover modes remain after that.
 - [ ] **Astro migration (maybe, someday)** — only if style-mode authoring
       ergonomics hurt after 2–3 modes ship. Astro (islands, static-first) fits
       this site better than Next; it's still a rewrite + build step, so the

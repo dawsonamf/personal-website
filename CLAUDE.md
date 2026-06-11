@@ -33,12 +33,14 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
   Edit links there, not in the HTML.
 - **Shared animation helpers** live in `js/anim-utils.js` (loaded as a plain,
   non-defer script so end-of-body scripts can use it).
-- **Style versions (easter egg)**: the registry lives in `js/theme-bootstrap.js`
+- **Style versions (theme switcher)**: the registry lives in `js/theme-bootstrap.js`
   (synchronous, pre-paint); per-style skins in `css/themes/<id>.css` with every
   rule scoped under `[data-style="<id>"]` (root-absolute asset paths), plus
   `css/themes/theme-base.css` (shared pins, auto-loaded with any skin) keyed off
-  `data-style`/`data-still`/`data-no-tilt`. Activate via the cycler dock's
-  preset strip or `?style=<id>`; session-only, reload → default.
+  `data-style`/`data-still`/`data-no-tilt`. Activate via the nav's Theme
+  dropdown (trigger rendered by `js/nav-config.js`, dock anchored to it by
+  `js/theme-cycler.js`; pages without nav menus fall back to a floating
+  palette FAB) or `?style=<id>`; session-only, reload → default.
   Architecture: `todo/STYLE_VERSIONS_SPEC.md`.
 - **Page-scoped CSS lives beside its page** (`blog/blog-styles.css`,
   `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css`); only shared,
@@ -53,5 +55,5 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
 ## Planned work
 
 - Tracked in `todo/` — `todo/TODO.md` is the index. Specs live alongside it:
-  `todo/STYLE_VERSIONS_SPEC.md` (multi-theme easter egg) and
+  `todo/STYLE_VERSIONS_SPEC.md` (multi-theme switcher) and
   `todo/CLEANUP_SPEC.md` (remaining polish: README, .editorconfig, etc.).

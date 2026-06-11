@@ -254,8 +254,108 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&family=Permanent+Marker&family=Special+Elite&display=swap'],
       css: '/css/themes/wheatpaste.css',
     },
+    'bauhaus': {
+      id: 'bauhaus',
+      label: 'Bauhaus',
+      polarity: 'light',
+      // Tilt off: poster geometry lies flat on the sheet. No still flag —
+      // AOS entrances stay (motion limited to hard slide-ins) and the
+      // cursor follower stays: a blue circle-and-dot is already on-grammar.
+      flags: { tilt: false },
+      colors: { text:'#14110d', bg:'#f2eee6', primary:'#e0311f', secondary:'#ffffff', accent:'#1c52b5' },
+      tokens: {
+        '--font-body': "'Jost', sans-serif",
+        '--font-heading': "'Jost', sans-serif",
+        // --font-mono stays the default: code keeps a real mono face.
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#6f6a60',
+        // Selected jobs entry reads as a white exhibition panel.
+        '--jobs-menu-navy-dark': '#ffffff',
+        '--jobs-menu-navy': '#e7e2d4',
+        '--jobs-menu-slate': '#6f6a60',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600&display=swap'],
+      css: '/css/themes/bauhaus.css',
+    },
+    'chinoiserie': {
+      id: 'chinoiserie',
+      label: 'Chinoiserie',
+      polarity: 'light',
+      // Tilt off: porcelain doesn't wobble. No still flag — entrances and
+      // the cursor follower stay (the follower's accent dot reads as gilt).
+      flags: { tilt: false },
+      // Cursorless masthead: each glyph blooms in like cobalt soaking into
+      // glaze (the skin animates the engine's glyph spans).
+      typing: 'letter',
+      colors: { text:'#22335c', bg:'#f6f8f3', primary:'#2c4f9e', secondary:'#ffffff', accent:'#b08d3e' },
+      tokens: {
+        '--font-body': "'EB Garamond', serif",
+        '--font-heading': "'Marcellus', serif",
+        // --font-mono stays the default: code keeps a real mono face.
+        '--border-radius': '16px',
+        '--radius-pill': '999px',
+        '--neutral-gray': '#76809f',
+        '--jobs-menu-navy-dark': '#ffffff',
+        '--jobs-menu-navy': '#e9eef8',
+        '--jobs-menu-slate': '#5d6c94',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Marcellus&display=swap'],
+      css: '/css/themes/chinoiserie.css',
+    },
+    'banknote': {
+      id: 'banknote',
+      label: 'Banknote',
+      polarity: 'light',
+      // Tilt off and fully still: engraved certificates do not move.
+      flags: { tilt: false, still: true },
+      // Cursorless masthead: engraved print sets word-at-a-time, no caret —
+      // each word presses onto the bond like one intaglio pass.
+      typing: 'word',
+      colors: { text:'#1e2a22', bg:'#f3efdf', primary:'#1f5c40', secondary:'#f9f5e6', accent:'#a8842c' },
+      tokens: {
+        '--font-body': "'EB Garamond', serif",
+        '--font-heading': "'Cinzel', serif",
+        '--font-mono': "'IBM Plex Mono', monospace",
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#6e7b67',
+        // Selected jobs entry reads as the bright bond panel.
+        '--jobs-menu-navy-dark': '#f9f5e6',
+        '--jobs-menu-navy': '#e9e2cb',
+        '--jobs-menu-slate': '#5d6b60',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Cinzel:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;600&display=swap'],
+      css: '/css/themes/banknote.css',
+    },
+    'grid': {
+      id: 'grid',
+      label: 'Grid',
+      polarity: 'light',
+      // Müller-Brockmann doesn't move: tilt off, fully still. The visible
+      // column grid is drawn by the skin sheet, not a flag. No typing key:
+      // the classic caret stays — the sheet recolors it Swiss red, the
+      // masthead's one red mark.
+      flags: { tilt: false, still: true },
+      colors: { text:'#111111', bg:'#ffffff', primary:'#e30613', secondary:'#f4f4f4', accent:'#111111' },
+      tokens: {
+        // System Helvetica everywhere: the only zero-webfont-payload skin
+        // (no fonts array). --font-mono stays the default: code keeps a
+        // real mono face; the sheet retires mono from the site chrome.
+        '--font-body': "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        '--font-heading': "'Helvetica Neue', Helvetica, Arial, sans-serif",
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#6b6b6b',
+        // Selected jobs entry reads as a light gray panel on the white sheet.
+        '--jobs-menu-navy-dark': '#f4f4f4',
+        '--jobs-menu-navy': '#ececec',
+        '--jobs-menu-slate': '#6b6b6b',
+      },
+      css: '/css/themes/grid.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

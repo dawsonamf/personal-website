@@ -825,7 +825,7 @@
   border-radius: 0;
 }
 
-[data-style="broadsheet"] .tc-randomize,
+[data-style="broadsheet"] .tc-action,
 [data-style="broadsheet"] .tc-presets button,
 [data-style="broadsheet"] .tc-schemes button {
   border-radius: 0;

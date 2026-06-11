@@ -967,7 +967,7 @@
   color: var(--bg);
 }
 
-[data-style="wheatpaste"] .tc-randomize,
+[data-style="wheatpaste"] .tc-action,
 [data-style="wheatpaste"] .tc-presets button,
 [data-style="wheatpaste"] .tc-schemes button,
 [data-style="wheatpaste"] .tc-role,

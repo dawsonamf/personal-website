@@ -21,6 +21,14 @@
     SCROLL_THRESHOLD: 300,
   };
 
+  // Theme dropdown trigger (the style/palette controls in js/theme-cycler.js
+  // anchor to it). Rendered as a real nav item so every skin's menu styling
+  // applies; only present while the feature gate in js/theme-bootstrap.js is on.
+  if (window.__THEME_CYCLER_ENABLED) {
+    window.NAV_CONFIG.NAV_LINKS.push({ label: 'Theme', isThemeTrigger: true });
+    window.NAV_CONFIG.MOBILE_NAV_LINKS.push({ label: 'Theme', icon: 'fa-solid fa-palette', isThemeTrigger: true });
+  }
+
   // Single source of truth for social links. Rendered into the hero sidebar
   // (#socials-list / #blog-socials-list) and the contact-section menus.
   // The anchors are icon-only, so `label` becomes the aria-label.
@@ -87,6 +95,15 @@
   function buildNavItems(items) {
     return items.map(function (item, i) {
       const spacer = i < items.length - 1 ? '<li><span class="menu-spacer"></span></li>' : '';
+      if (item.isThemeTrigger) {
+        // A button, not a link: js/theme-cycler.js opens its dropdown here.
+        // menu-item / socials-item classes pull in the per-style menu skins.
+        const cls = (item.icon ? 'socials-item' : 'menu-item') + ' tc-nav-trigger';
+        const inner = item.icon
+          ? '<i class="' + item.icon + '" aria-hidden="true"></i>'
+          : item.label + '<i class="fa-solid fa-chevron-down tc-nav-caret" aria-hidden="true"></i>';
+        return '<li class="tc-nav-item"><button type="button" class="' + cls + '" aria-label="' + item.label + '" aria-haspopup="true" aria-expanded="false" aria-controls="tc-dock">' + inner + '</button></li>' + spacer;
+      }
       if (item.icon) {
         const aria = item.label ? ' aria-label="' + item.label + '"' : '';
         return '<li><a href="' + item.href + '" target="_blank" rel="noopener noreferrer" class="socials-item"' + aria + '><i class="' + item.icon + '" aria-hidden="true"></i></a></li>' + spacer;
