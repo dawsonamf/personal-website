@@ -2,7 +2,7 @@
 
 Same content, radically different design languages, behind the cycler-dock
 easter egg. Engine + five skins (studio, brutalist, broadsheet, field-notes,
-blueprint) shipped June 2026. **Queue: doodle → lava lounge → wheatpaste** —
+blueprint) shipped June 2026. **Queue: doodle → vapor → wheatpaste → lava lounge** —
 approved visuals and per-style notes (palette roles, fonts, flags, technique)
 live as tiles in [test-styles.html](test-styles.html); the rest of that sheet
 is parked, TBD. Future engine work, in rough order: Layer-4 strings, a
@@ -32,7 +32,7 @@ DOM stays in place, hidden not removed).
 - **Skin sheets** at `css/themes/<id>.css`: every rule scoped under
   `[data-style="<id>"]`, root-absolute asset paths, `@keyframes` names
   prefixed with the id (names are global — safe only because a sheet loads
-  solely while its style is active). **`css/themes/_base.css` loads with any
+  solely while its style is active). **`css/themes/theme-base.css` loads with any
   skin, before the skin sheet**, and carries the shared plumbing: code-block
   ground, blog footer centering, the mobile rail/contact-wrapper fixes, the
   stillness pack, and the tilt pins. Skin sheets carry only their own design.
@@ -41,11 +41,11 @@ DOM stays in place, hidden not removed).
   → 5 takeover. Flags: `flags.tilt: false` gates every `VanillaTilt.init`
   via `window.__styleAllowsTilt()` (live switches destroy instances) and
   `flags.still: true` marks a motionless skin. Both stamp `<html>`
-  attributes (`data-no-tilt`, `data-still`) consumed by `_base.css`.
+  attributes (`data-no-tilt`, `data-still`) consumed by `theme-base.css`.
 
 ## Building a skin (agent protocol)
 
-Read order: the style's tile in `test-styles.html` → `css/themes/_base.css`
+Read order: the style's tile in `test-styles.html` → `css/themes/theme-base.css`
 (what is already handled for you) → two shipped sheets in full
 (`css/themes/studio.css` + one loud one, e.g. `brutalist.css`) → this file →
 `css/styles.css` + `css/mobile-styles.css` + page HTML for selector truth. Touch exactly two files: create `css/themes/<id>.css`, and add the
@@ -85,20 +85,20 @@ changes; `random:` profiles are a follow-up polish round.
   bold smears.
 - **Hero width budget**: the typed masthead's longest line ("full stack
   engineer.") has ~795px of desktop column — size display type to fit.
-- **Tilt**: `flags.tilt: false` stamps `data-no-tilt` and `_base.css` holds
+- **Tilt**: `flags.tilt: false` stamps `data-no-tilt` and `theme-base.css` holds
   the targets flat (covers the flat inline transform destroy() leaves
   behind). Hover presses use `top/left` on `position: relative`, never
   transform, with the trigger on the element that moves. With tilt ON,
   never base-rotate a tilt target; rotation goes on non-tilt wrappers only.
 - **Code blocks + footers**: the `#0d1117` ground pin and the blog footer
-  auto-margin restore live in `_base.css`; skins only add frames and chips.
-- **Stilled skins**: set `flags.still: true` and `_base.css` kills AOS
+  auto-margin restore live in `theme-base.css`; skins only add frames and chips.
+- **Stilled skins**: set `flags.still: true` and `theme-base.css` kills AOS
   entrances, the cursor follower, and both dock lifts. Square-cornered
   skins: featured-carousel.js now treats a 0 radius as valid (no backdrop
   pin needed), but still grep all CSS for literal non-`var()` radii
   (`.fc-card-cta` is one).
 - **Mobile block**: the jobs rail border clear and `.contact-image-wrapper`
-  hide are in `_base.css`. The static menu still needs
+  hide are in `theme-base.css`. The static menu still needs
   `align-self: flex-start` if framed (its flexbox stretches it ~11px tall).
 - **Line/shadow policy**: pick a stance per sheet and document it in the
   header — fixed ink-toned shadows and white tape are fine as literals;

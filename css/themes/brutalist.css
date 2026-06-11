@@ -7,7 +7,7 @@
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
    todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
-   mobile fixes come from css/themes/_base.css via flags.still + flags.tilt.
+   mobile fixes come from css/themes/theme-base.css via flags.still + flags.tilt.
    Archivo Black registers as weight 400 only, so every place the site bolds
    heading-font text is pinned back to 400 below. Otherwise the browser
    synthesizes a smeared faux-bold. */
@@ -221,7 +221,8 @@
   box-shadow: 6px 6px 0 var(--text);
 }
 
-[data-style="brutalist"] #socials-list .socials-menu-spacer {
+[data-style="brutalist"] #socials-list .socials-menu-spacer,
+[data-style="brutalist"] #blog-socials-list .socials-menu-spacer {
   border-color: var(--text);
   border-left-width: 1.5px;
   border-right-width: 1.5px;
@@ -583,7 +584,7 @@
   border: 2px solid var(--text);
 }
 
-/* Code blocks: the shared dark-ground pin lives in _base.css. */
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
 [data-style="brutalist"] .blog-post-content pre {
   border: 3px solid var(--text);
   box-shadow: 6px 6px 0 var(--text);
@@ -637,22 +638,17 @@
   box-shadow: 8px 8px 0 var(--text);
 }
 
-[data-style="brutalist"] .contact-menu .menu-list {
-  gap: 8px;
-}
-
-[data-style="brutalist"] .contact-menu .socials-item {
-  width: 46px;
-  height: 46px;
-  border: 2px solid var(--text);
-}
-
-[data-style="brutalist"] .contact-menu .socials-item:hover {
-  background-color: var(--text);
-}
-
-[data-style="brutalist"] .contact-menu .socials-item:hover i {
-  color: var(--bg);
+/* No boxes: the icons run bare with the same bold ink bars as the hero
+   sidebar, drawn by the hidden spacer items between them. Hover stays the
+   global blue-ink .socials-item rule. */
+[data-style="brutalist"] .contact-menu .socials-menu-spacer2 {
+  display: inline-block;
+  border-style: solid;
+  border-color: var(--text);
+  border-left-width: 1.5px;
+  border-right-width: 1.5px;
+  border-top-width: 9px;
+  border-bottom-width: 9px;
 }
 
 /* The map ships raw and full-color in a hard frame, and presses like the
@@ -720,12 +716,17 @@
 
 @media screen and (max-width: 1100px) {
   /* mobile-styles.css pins nowrap and strips the left padding; the ink box
-     needs both back, smaller. */
+     needs both back, smaller. The grid puts the index number in its own
+     column so a wrapped headline's second line aligns with the first word,
+     not the number (the text run is one anonymous grid item). */
   [data-style="brutalist"] .section-header {
     white-space: normal;
     font-size: clamp(24px, 7.5vw, 34px);
     padding: 7px 12px 4px;
     margin: 0 0 0 10px;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
   }
 
   [data-style="brutalist"] .section-header-spacer {
@@ -796,11 +797,17 @@
     background-color: var(--secondary);
   }
 
+  /* Bare icons here too, matching the de-boxed contact row. */
   [data-style="brutalist"] .contact-menu-mobile .socials-item {
     width: 44px;
     height: 44px;
-    border: 2px solid var(--text);
     margin: 4px;
+  }
+
+  /* The plates' ink slabs need clearance: at the stock 16px gap the next
+     card rides the 10px shadow. */
+  [data-style="brutalist"] .featured-carousel-track {
+    gap: 32px;
   }
 
   [data-style="brutalist"] .footer-container-mobile {

@@ -29,14 +29,24 @@
   color: #f0f6fc;
 }
 
-/* Blog pages center the footer box with auto margins. A skin that sets
-   .footer-container margins would pin it left, so re-assert the defaults. */
-[data-style] .blog-footer {
+/* Blog pages center the footer box with auto margins and center its text.
+   Skins restyle .footer-container at the same 0-2-0 specificity and load
+   after this sheet, so these re-asserts need the extra class to win the
+   tie: a skin margin would otherwise pin the 750px box left, and a
+   flush-left skin footer reads as a bug on a centered article page. */
+[data-style] .footer-container.blog-footer {
   margin: 40px auto;
+  justify-content: center;
 }
 
-[data-style] .blog-listing-footer {
+[data-style] .footer-container.blog-listing-footer {
   margin: 0 auto 40px;
+  justify-content: center;
+}
+
+[data-style] .blog-footer .footer-text,
+[data-style] .blog-listing-footer .footer-text {
+  text-align: center;
 }
 
 /* Still skins: no scroll entrances, no cursor follower, no dock lifts.

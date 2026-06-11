@@ -1,19 +1,20 @@
 /* Field Notes: expedition journal. Kraft ground with faint topo contours,
    paper journal pages held down by tape strips, rubber-stamp chips in rust
    ink, dotted leaders and map-route links in ranger green, Zilla Slab
-   signage, Spectral body, IBM Plex Mono specimen labels, one Caveat pencil
-   tick. The warm, textured light skin (studio is cool and minimal,
-   broadsheet ink and dense), and the only one that keeps the site's motion:
-   tilt, AOS, and the cursor dot (a pencil tip) all stay on.
+   signage, Spectral body, IBM Plex Mono specimen labels. The warm, textured
+   light skin (studio is cool and minimal, broadsheet ink and dense), and
+   the one that keeps the site's motion: AOS entrances and the cursor dot
+   (a pencil tip) stay on. Tilt is off (flags.tilt: false) — every
+   photograph here is taped down, and taped paper doesn't wiggle.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. No flags, so only the universal _base.css
-   rules apply here. Because tilt stays on, all pasted-in rotation lives on
-   non-tilt wrappers and chips (#typing-right, .name-logo, date stamps, tape
-   pseudos); vanilla-tilt's inline transform would eat a base rotate() on
-   its targets. Literal colors here: the tape's translucent white (tape is
-   white under any palette) and ink-toned shadows. Zilla Slab loads 500/600
-   only, so bolded heading-font text is pinned to 600 below. */
+   todo/STYLE_VERSIONS_SPEC.md. The tilt pins come from css/themes/theme-base.css
+   via flags.tilt; there is no still flag, so the motion pack stays. All
+   pasted-in rotation still lives on wrappers and chips (#typing-right,
+   .name-logo, date stamps, tape pseudos), never on .card/.blog-card —
+   theme-base.css holds those flat. Literal colors here: the tape's translucent
+   white (tape is white under any palette) and ink-toned shadows. Zilla Slab
+   loads 500/600 only, so bolded heading-font text is pinned to 600 below. */
 
 
 /* ---- Foundations: kraft ground, contours, pencil-and-stamp grammar ------- */
@@ -103,6 +104,8 @@
 [data-style="field-notes"] .blog-card::after,
 [data-style="field-notes"] .blog-post-container::before,
 [data-style="field-notes"] .contact-view-left::after,
+[data-style="field-notes"] .contact-image-wrapper::before,
+[data-style="field-notes"] .contact-image-wrapper::after,
 [data-style="field-notes"] .tc-dock::before {
   content: '';
   position: absolute;
@@ -202,21 +205,6 @@
   color: var(--text60);
 }
 
-/* The one Caveat annotation in the skin: a pencil check in the register.
-   Glyph-only, no content words (Layer-4 stays future work). */
-[data-style="field-notes"] .footer-text::after,
-[data-style="field-notes"] .footer-text-mobile::after {
-  content: " \2713";
-  font-family: 'Caveat', cursive;
-  font-weight: 600;
-  font-size: 19px;
-  line-height: 1;
-  color: var(--primary);
-  display: inline-block;
-  transform: rotate(-6deg) translateY(2px);
-  margin-left: 6px;
-}
-
 /* ---- Hero: signage masthead + specimen label + taped photograph ----------- */
 
 /* Zilla Slab 600 at signage scale. The longest typed line ("full stack
@@ -246,9 +234,9 @@
 
 /* The selfie becomes a photograph taped into the journal: paper matte +
    hairline, sepia until hovered, two tape strips on the WRAPPER (the image
-   is the .card tilt target, it wiggles under the static tape, the wrapper
-   carries the crooked paste-in rotation). Stays clickable, it is still the
-   cycler unlock. */
+   is a .card target held flat by theme-base.css, so the wrapper carries the
+   crooked paste-in rotation and the tape). Stays clickable, it is still
+   the cycler unlock. */
 [data-style="field-notes"] #typing-right {
   position: relative;
   transform: rotate(-1.2deg);
@@ -280,41 +268,9 @@
   transform: rotate(28deg);
 }
 
-/* Socials: stamped icon chips, ink frames, rust fill on hover. Scoped to
-   the sidebar/contact menus so the mobile header's bare email glyph stays a
-   glyph. */
-[data-style="field-notes"] #socials-list .socials-item,
-[data-style="field-notes"] #blog-socials-list .socials-item,
-[data-style="field-notes"] .contact-menu .socials-item,
-[data-style="field-notes"] .contact-menu-mobile .socials-item {
-  border: 1px solid var(--text);
-  border-radius: var(--radius-pill);
-  margin: 3px 4px;
-  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
-}
-
-[data-style="field-notes"] #socials-list .socials-item i,
-[data-style="field-notes"] #blog-socials-list .socials-item i,
-[data-style="field-notes"] .contact-menu .socials-item i,
-[data-style="field-notes"] .contact-menu-mobile .socials-item i {
-  font-size: 21px;
-}
-
-[data-style="field-notes"] #socials-list .socials-item:hover,
-[data-style="field-notes"] #blog-socials-list .socials-item:hover,
-[data-style="field-notes"] .contact-menu .socials-item:hover,
-[data-style="field-notes"] .contact-menu-mobile .socials-item:hover {
-  background-color: var(--accent);
-  border-color: var(--accent);
-}
-
-[data-style="field-notes"] #socials-list .socials-item:hover i,
-[data-style="field-notes"] #blog-socials-list .socials-item:hover i,
-[data-style="field-notes"] .contact-menu .socials-item:hover i,
-[data-style="field-notes"] .contact-menu-mobile .socials-item:hover i {
-  color: var(--bg);
-  transform: none;
-}
+/* Socials: bare ink glyphs, no chips — the journal margin stays quiet. The
+   default hover (rust via --accent, with the small lift; this skin keeps
+   its motion) already speaks this skin's language. */
 
 [data-style="field-notes"] #socials-list .socials-menu-spacer,
 [data-style="field-notes"] #blog-socials-list .socials-menu-spacer {
@@ -522,8 +478,8 @@
 }
 
 /* Plates become photographs in a paper matte; sepia until the card is
-   hovered. The matte lives on .fc-card-image (tilt writes transform there,
-   never layout), the tape on .fc-card. */
+   hovered. The matte lives on .fc-card-image (held flat by theme-base.css), the
+   tape on .fc-card. */
 [data-style="field-notes"] .fc-style-floating .fc-card-image {
   padding: 8px;
   background-color: var(--secondary);
@@ -620,8 +576,8 @@
 
 
 /* ---- Blog: journal entries ----------------------------------------------------
-   Paper-slip cards with tape and rust date stamps. The cards are tilt
-   targets, so they never base-rotate, their tape and stamps do. */
+   Paper-slip cards with tape and rust date stamps. The cards never
+   base-rotate (theme-base.css holds them flat), their tape and stamps do. */
 
 [data-style="field-notes"] .blog-card {
   position: relative;
@@ -732,14 +688,23 @@
 
 /* ---- Blog post page: a paper sheet floating on kraft --------------------------- */
 
+/* border-box keeps the sheet's outer edge at the 750px column, so it lines
+   up with the nav and the footer rule; the nav sheds its side padding so
+   the D stamp sits flush with the sheet's left edge. */
 [data-style="field-notes"] .blog-post-container {
   position: relative;
+  box-sizing: border-box;
   background-color: var(--secondary);
   border: 1px solid var(--text25);
   border-radius: var(--border-radius);
   box-shadow: 0 10px 28px rgba(51, 41, 26, 0.15);
   padding: 44px 48px;
   margin: 24px auto 0;
+}
+
+[data-style="field-notes"] .blog-nav {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 /* One strip of tape holds the sheet to the page. */
@@ -781,9 +746,10 @@
 }
 
 /* Post photographs paste in with a kraft matte and the sepia treatment
-   (.blog-image is a tilt target, filter and padding only, never rotation).
-   border-box keeps the matte inside blog-styles' max-width: 100%, the site
-   is content-box, so padding would otherwise overhang the column by 18px. */
+   (.blog-image is held flat by theme-base.css; filter and padding only, never
+   rotation). border-box keeps the matte inside blog-styles' max-width:
+   100%, the site is content-box, so padding would otherwise overhang the
+   column by 18px. */
 [data-style="field-notes"] .blog-post-content img.blog-image {
   box-sizing: border-box;
   padding: 8px;
@@ -797,7 +763,7 @@
   filter: none;
 }
 
-/* Code blocks: the shared dark-ground pin lives in _base.css. */
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
 [data-style="field-notes"] .blog-post-content pre {
   border: 1px solid var(--text25);
 }
@@ -850,10 +816,26 @@
   line-height: 1.7;
 }
 
-/* The map is the route sketch: hairline frame, sepia until hovered. (The
-   wrapper is a .card tilt target, frame and filter only.) */
+/* The map is the route sketch: hairline frame, sepia until hovered, and
+   taped in at the top corners like the hero photograph. overflow opens so
+   the strips can lap the edge (the image rounds its own corners, so
+   nothing needs the clip). theme-base.css holds the wrapper's transform flat,
+   which also keeps the tape from riding an AOS slide. */
 [data-style="field-notes"] .contact-image-wrapper {
   border: 1px solid var(--text25);
+  overflow: visible;
+}
+
+[data-style="field-notes"] .contact-image-wrapper::before {
+  top: -13px;
+  left: -18px;
+  transform: rotate(-32deg);
+}
+
+[data-style="field-notes"] .contact-image-wrapper::after {
+  top: -13px;
+  right: -18px;
+  transform: rotate(28deg);
 }
 
 [data-style="field-notes"] .contact-image {

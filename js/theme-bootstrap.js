@@ -23,7 +23,7 @@
       id: 'studio',
       label: 'Studio',
       polarity: 'light',
-      flags: { still: true },
+      flags: { tilt: false, still: true },
       colors: { text:'#1b1a17', bg:'#f4f2ec', primary:'#d44000', secondary:'#e9e6dd', accent:'#d44000' },
       // Random-palette profile (consumed by js/theme-cycler.js): quiet paper
       // and ink, with the saturation in primary/accent only.
@@ -69,7 +69,7 @@
       label: 'Brutalist',
       polarity: 'light',
       // tilt gates the hover physics via window.__styleAllowsTilt below.
-      // still and tilt also stamp html attributes read by css/themes/_base.css.
+      // still and tilt also stamp html attributes read by css/themes/theme-base.css.
       flags: { tilt: false, still: true },
       colors: { text:'#0a0a0a', bg:'#ffe600', primary:'#1400ff', secondary:'#ffffff', accent:'#1400ff' },
       // Random-palette profile: acid poster. The ground is the loud color,
@@ -135,7 +135,9 @@
       id: 'field-notes',
       label: 'Field Notes',
       polarity: 'light',
-      // No flags. Tilt and motion stay on for this skin.
+      // No still flag: AOS entrances and the cursor dot stay on. Tilt is off,
+      // though — taped-down photographs don't wiggle under their tape.
+      flags: { tilt: false },
       colors: { text:'#33291a', bg:'#ece2cb', primary:'#3f6f4f', secondary:'#f7f0df', accent:'#b3502a' },
       tokens: {
         '--font-body': "'Spectral', serif",
@@ -148,7 +150,7 @@
         '--jobs-menu-navy': '#d8c9a6',
         '--jobs-menu-slate': '#6e6350',
       },
-      fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=IBM+Plex+Mono:wght@400;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=Zilla+Slab:wght@500;600&display=swap'],
+      fonts: ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=Zilla+Slab:wght@500;600&display=swap'],
       css: '/css/themes/field-notes.css',
     },
     'blueprint': {
@@ -230,9 +232,9 @@
       });
     }
     // This is a blocking script in <head>, so links appended here also block
-    // first paint. _base.css carries shared skin rules; load it before the
+    // first paint. theme-base.css carries shared skin rules; load it before the
     // skin sheet so the skin wins specificity ties.
-    (entry.fonts || []).concat(['/css/themes/_base.css'], entry.css ? [entry.css] : []).forEach(function (href) {
+    (entry.fonts || []).concat(['/css/themes/theme-base.css'], entry.css ? [entry.css] : []).forEach(function (href) {
       var link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = href;

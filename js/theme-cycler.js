@@ -336,7 +336,7 @@
 
     clearStyleAssets();
     (entry.fonts || []).forEach(addStyleAsset);
-    if (id !== 'default') addStyleAsset('/css/themes/_base.css');
+    if (id !== 'default') addStyleAsset('/css/themes/theme-base.css');
     if (entry.css) addStyleAsset(entry.css);
 
     if (prev && prev.tokens) Object.keys(prev.tokens).forEach(k => root.style.removeProperty(k));

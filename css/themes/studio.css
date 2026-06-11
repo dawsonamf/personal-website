@@ -1,10 +1,20 @@
-/* Studio: Swiss editorial print. A printed portfolio issue, paper ground,
-   ink display type (Space Grotesk), burnt-orange folio marks, full-width
-   rules, mono micro-labels, no cards, no entrance motion.
+/* Studio: Swiss editorial print. A printed portfolio issue: paper ground,
+   ink display type (Space Grotesk), burnt-orange folio marks, mono
+   micro-labels, and quiet paper panels — solid blocks of deeper paper in
+   the Swiss color-block manner — carrying the site's card structure. One
+   strong rule opens each section; everything else is type, panel, and air.
+   Fully still: no entrances, no tilt, no lifts.
+
+   (v2: the first cut de-carded every surface, which left the site's
+   two-column/card skeleton showing through as disconnected fragments, and
+   ran display type to 132px with 2px rules repeating on every blog teaser.
+   This cut re-grounds each surface on a panel, caps the display scale, and
+   reserves heavy rules for section openers only.)
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
-   mobile fixes come from css/themes/_base.css via flags.still. */
+   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, the tilt
+   pins, and the mobile fixes come from css/themes/theme-base.css via
+   flags.still + flags.tilt. */
 
 
 /* ---- Foundations: ink on paper, stillness ------------------------------- */
@@ -22,13 +32,6 @@
   letter-spacing: -0.02em;
 }
 
-/* Cards hold flat under their live tilt instances. The carousel plates keep
-   their tilt; this skin has no tilt flag. */
-[data-style="studio"] .card,
-[data-style="studio"] .blog-card {
-  transform: none !important;
-}
-
 /* Links carry a printed underline at rest; color stays the press orange. */
 [data-style="studio"] .text-link::before {
   width: 100%;
@@ -36,9 +39,9 @@
   opacity: 0.45;
 }
 
-/* Print spreads: sections sit in roughly twice the app layout's air. */
+/* Print spreads: more air than the app layout, less than a empty gallery. */
 [data-style="studio"] .section-spacer {
-  height: 14em;
+  height: 10em;
 }
 
 
@@ -90,7 +93,7 @@
 [data-style="studio"] .static-menu .menu-item::before {
   content: counter(studio-nav, decimal-leading-zero);
   color: var(--primary);
-  margin-right: 6px;
+  margin-right: 10px;
 }
 
 [data-style="studio"] .menu-spacer {
@@ -104,13 +107,15 @@
   border-color: var(--text);
 }
 
+/* Print is still: the fill swap stays, the default hover lift goes. */
 [data-style="studio"] .name-logo:hover {
+  transform: none;
   background-color: var(--text);
   color: var(--bg);
 }
 
-/* Colophon: flush left under a hairline, like everything else on the grid,
-   never centered. */
+/* Colophon: flush left under a hairline on the home page, like everything
+   else on the grid. (Blog pages re-center it via theme-base.css.) */
 [data-style="studio"] .footer-container {
   justify-content: flex-start;
   border-top: 1px solid var(--text20);
@@ -138,7 +143,7 @@
    "full stack engineer.", must fit the ~795px column at the size cap. */
 [data-style="studio"] #typing-text {
   font-family: var(--font-heading);
-  font-size: clamp(64px, 5.2vw, 76px);
+  font-size: clamp(60px, 5vw, 72px);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: -0.03em;
@@ -155,6 +160,12 @@
   text-transform: uppercase;
 }
 
+/* Socials: small ink glyphs that turn orange in place — no lift, print is
+   still. */
+[data-style="studio"] .socials-item:hover i {
+  transform: none;
+}
+
 /* The selfie becomes a framed press photo (stays clickable, it is still the
    cycler unlock). */
 [data-style="studio"] #typing-image {
@@ -169,13 +180,16 @@
 
 
 /* ---- Section headers: editorial folios ----------------------------------
-   Rule above, orange folio number, then the title at display scale in ink. */
+   One strong rule above, orange folio number, then the title in ink at a
+   display scale that opens the section without shouting over it. The heavy
+   rule is reserved for these openers — nothing else on the page repeats
+   it. */
 
 [data-style="studio"] .section-header-wrapper {
   display: block;
   border-top: 2px solid var(--text);
-  padding-top: 16px;
-  margin: 0 10px 56px;
+  padding-top: 14px;
+  margin: 0 10px 48px;
 }
 
 [data-style="studio"] .section-header-spacer {
@@ -185,10 +199,10 @@
 [data-style="studio"] .section-header {
   margin: 0;
   padding: 0;
-  font-size: clamp(44px, 6.5vw, 92px);
+  font-size: clamp(40px, 4.8vw, 64px);
   font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: -0.03em;
+  line-height: 1;
+  letter-spacing: -0.02em;
   text-transform: uppercase;
   color: var(--text);
 }
@@ -199,16 +213,9 @@
 [data-style="studio"] #jobs-header,
 [data-style="studio"] #project-header,
 [data-style="studio"] #blog-header,
-[data-style="studio"] #contact-section-header {
+[data-style="studio"] #contact-section-header,
+[data-style="studio"] .blog-section-header {
   color: var(--text);
-}
-
-/* Optical sizing: the short titles run bigger so every headline approaches
-   the measure (the long ones, 02 and 03, set the 92px cap above). */
-[data-style="studio"] #about-section-header,
-[data-style="studio"] #blog-header,
-[data-style="studio"] #contact-section-header {
-  font-size: clamp(48px, 9.5vw, 132px);
 }
 
 [data-style="studio"] .sec-num {
@@ -218,19 +225,18 @@
   font-weight: 500;
   letter-spacing: 0.3em;
   color: var(--primary);
-  margin: 0 0 12px;
+  margin: 0 0 10px;
 }
 
 
-/* ---- About / Skills: de-carded manuscript columns ----------------------- */
+/* ---- About / Skills: paper panels ---------------------------------------- */
 
+/* The Swiss color-block: a solid panel of deeper paper, square, unframed.
+   This is the surface grammar for the whole skin (about, skills, jobs,
+   blog teasers, contact). */
 [data-style="studio"] .card-style {
-  background-color: transparent;
-}
-
-[data-style="studio"] .double-view-right {
-  border-left: 1px solid var(--text20);
-  padding-left: 32px;
+  background-color: var(--secondary);
+  padding: 28px;
 }
 
 /* "About Me" / "Skills" become mono department labels. */
@@ -252,7 +258,7 @@
 }
 
 /* Print body: smaller size, looser leading, capped measure. The rag of empty
-   column to the right of the skills text is deliberate. */
+   panel to the right of the skills text is deliberate. */
 [data-style="studio"] .about-text,
 [data-style="studio"] .skills-text,
 [data-style="studio"] .contact-text {
@@ -261,20 +267,37 @@
   max-width: 64ch;
 }
 
+[data-style="studio"] .skills-text {
+  border-bottom: 1px solid var(--text15);
+}
 
-/* ---- Experience: index list + dossier ------------------------------------ */
+[data-style="studio"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: index list + dossier panel ------------------------------ */
 
 [data-style="studio"] .nav-container {
   border-left: 1px solid var(--text20);
 }
 
+/* Mono caps at the old 0.16em tracking ran "JOHNS HOPKINS UNIVERSITY" past
+   the 225px rail and the scroll wrapper clipped it — ease the tracking and
+   widen the rail (desktop only; mobile lays the rail out horizontally). */
 [data-style="studio"] .menu li {
   font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.16em;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text50);
   border-radius: 0;
+}
+
+@media (min-width: 1101px) {
+  [data-style="studio"] .menu {
+    width: 248px;
+  }
 }
 
 [data-style="studio"] .menu li:hover {
@@ -282,7 +305,7 @@
 }
 
 [data-style="studio"] .menu li.selected {
-  background: transparent;
+  background: var(--secondary);
   color: var(--text);
 }
 
@@ -294,14 +317,15 @@
   border-radius: 0 !important;
 }
 
+/* The dossier sits on the same panel grammar as about/skills. */
 [data-style="studio"] .job-content {
-  background-color: transparent;
-  padding: 6px 0 0;
+  background-color: var(--secondary);
+  padding: 26px 30px;
 }
 
 [data-style="studio"] .job-title {
   color: var(--text);
-  font-size: 26px;
+  font-size: 25px;
   letter-spacing: -0.02em;
 }
 
@@ -430,16 +454,18 @@
 }
 
 
-/* ---- Blog: front-page teasers -------------------------------------------- */
+/* ---- Blog: front-page teaser panels --------------------------------------
+   Teasers sit on the panel grammar, not on repeated heavy rules — the 2px
+   stroke belongs to section openers alone. Hover deepens the paper one
+   step (the registry's --jobs-menu-navy is that step). */
 
 [data-style="studio"] .blog-card {
-  background-color: transparent;
-  border-top: 2px solid var(--text);
-  padding: 18px 2px 0;
+  background-color: var(--secondary);
+  padding: 24px 26px;
 }
 
 [data-style="studio"] .blog-card:hover {
-  background-color: transparent;
+  background-color: var(--jobs-menu-navy);
 }
 
 [data-style="studio"] .blog-card-title {
@@ -465,6 +491,37 @@
   text-transform: uppercase;
 }
 
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="studio"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="studio"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--jobs-menu-navy);
+}
+
+[data-style="studio"] .blog-listing-grid .blog-card .blog-card-date {
+  color: var(--text40);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the masthead
+   face and the loaded 700. */
+[data-style="studio"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(56px, 4.8vw, 70px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+[data-style="studio"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.65;
+}
+
 /* Listing-page filters: outlined, ink-filled when active. */
 [data-style="studio"] .filter-pill {
   background-color: transparent;
@@ -483,7 +540,7 @@
   color: var(--bg);
 }
 
-/* Code blocks: the shared dark-ground pin lives in _base.css. */
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
 [data-style="studio"] .blog-post-content pre {
   border: 1px solid var(--text20);
 }
@@ -504,7 +561,7 @@
 /* ---- Contact -------------------------------------------------------------- */
 
 [data-style="studio"] .contact-view-left {
-  background-color: transparent;
+  background-color: var(--secondary);
 }
 
 /* Social row sits flush left under the contact text. */
@@ -544,6 +601,19 @@
   color: var(--text60);
 }
 
+/* Without chips the post-meta entries (date, tags, read time) ran
+   together; slash separators give them the same caption rhythm as the
+   carousel tech lines. */
+[data-style="studio"] .blog-post-meta {
+  gap: 8px 12px;
+}
+
+[data-style="studio"] .blog-post-meta .pill + .pill::before {
+  content: "/";
+  color: var(--text30);
+  margin-right: 10px;
+}
+
 
 /* ---- Cycler dock: frosted-light ------------------------------------------ */
 
@@ -556,11 +626,46 @@
 /* ---- Mobile (site breakpoint: 1100px) ------------------------------------ */
 
 @media screen and (max-width: 1100px) {
+  /* Masthead scale on the small sheet: the mobile ID rule pins 34px, and
+     unscaled display type overflows the 125px hero box into the about
+     section. */
+  [data-style="studio"] #typing-text {
+    font-size: clamp(28px, 8vw, 32px);
+  }
+
+  [data-style="studio"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.2em;
+  }
+
+  [data-style="studio"] #blog-typing-text {
+    font-size: clamp(28px, 8vw, 34px);
+  }
+
+  /* This skin hides the menu spacers, so the mobile quick links need their
+     own air or the mail glyph, Blog, and Resume run together. */
+  [data-style="studio"] .static-menu-mobile .menu-list {
+    gap: 16px;
+  }
+
+  [data-style="studio"] .static-menu-mobile .menu-item {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text60);
+  }
+
+  [data-style="studio"] .static-menu-mobile .socials-item {
+    color: var(--text60);
+  }
+
   /* mobile-styles.css pins nowrap for the small inline headers; the display
-     scale needs to wrap. */
+     scale needs to wrap. (.sec-num is its own block line, so wrapped lines
+     stay flush left.) */
   [data-style="studio"] .section-header {
     white-space: normal;
-    font-size: clamp(34px, 10vw, 44px);
+    font-size: clamp(32px, 9.5vw, 42px);
   }
 
   [data-style="studio"] .section-header-wrapper {
@@ -569,38 +674,24 @@
   }
 
   [data-style="studio"] .section-spacer {
-    height: 9em;
+    height: 7em;
   }
 
-  [data-style="studio"] .double-view-left,
-  [data-style="studio"] .double-view-right {
-    background-color: transparent;
-  }
-
-  [data-style="studio"] .double-view-right {
-    border-left: none;
-    border-top: 1px solid var(--text20);
-    padding-left: 20px;
-    padding-top: 28px;
-    margin-top: 28px;
+  /* Framed plates need a real gutter between cards on the small sheet. */
+  [data-style="studio"] .featured-carousel-track {
+    gap: 28px;
   }
 
   [data-style="studio"] .menu-scroll-wrapper {
     border-bottom: 1px solid var(--text20);
   }
 
+  [data-style="studio"] .job-content {
+    padding: 20px;
+  }
+
   [data-style="studio"] .blog-card {
-    background-color: transparent;
-    border-top: 2px solid var(--text);
-    padding: 16px 2px 0;
-  }
-
-  [data-style="studio"] .contact-view-left {
-    background-color: transparent;
-  }
-
-  [data-style="studio"] .contact-menu-mobile .menu-list {
-    justify-content: flex-start;
+    padding: 20px;
   }
 
   [data-style="studio"] .footer-container-mobile {

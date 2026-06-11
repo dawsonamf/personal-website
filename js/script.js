@@ -94,16 +94,6 @@
       deleteDelay: 40,
       sequences: [
         [
-          { action: 'type', text: "Hi,\nI'm Dawson,\nfrontend" },
-          { action: 'pause', duration: 200 },
-          { action: 'delete', count: 8 },
-          { action: 'type', text: "backend" },
-          { action: 'pause', duration: 200 },
-          { action: 'delete', count: 7 },
-          { action: 'type', text: "software engineer." },
-          { action: 'callback', fn: startAnimations },
-        ],
-        [
           { action: 'type', text: "Hi,\nI'm Dawson,\nweb developer." },
           { action: 'callback', fn: startAnimations },
           { action: 'pause', duration: 1500 },

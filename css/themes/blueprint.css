@@ -8,7 +8,7 @@
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
    todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
-   mobile fixes come from css/themes/_base.css via flags.still + flags.tilt.
+   mobile fixes come from css/themes/theme-base.css via flags.still + flags.tilt.
    Every line in this sheet derives from the alpha ramps (panel borders
    --text85, cell rules --text55, grid --text5/--text10, dimension lines
    --accent) so the palette toy keeps working, and no rule draws a shadow.
@@ -158,12 +158,11 @@
   -webkit-backdrop-filter: none;
 }
 
-/* Footer: the title block, a bordered strip of three cells with the
-   existing credit line in the center cell (preview .bp-title). The side
-   cells stay empty: no worded pseudo-content (SHEET/SCALE strings are
-   recorded Layer-4 future work, not built). */
+/* Footer: a dimension line. The credit reads as the measurement label
+   between two yellow extension lines with outward arrowheads — the section
+   spacers' grammar — instead of the old title-block cells, which drew a
+   box inside a box. */
 [data-style="blueprint"] .footer-container {
-  border: 1.5px solid var(--text85);
   margin: 0 10px;
   padding: 0;
 }
@@ -174,20 +173,41 @@
   margin: 0;
   padding: 0;
   border: none;
-  align-self: stretch;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  height: 10px;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 1px;
 }
 
-[data-style="blueprint"] .footer-spacer:first-of-type {
-  border-right: 1px solid var(--text55);
+[data-style="blueprint"] .footer-spacer:first-of-type::before,
+[data-style="blueprint"] .footer-spacer:last-of-type::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+}
+
+[data-style="blueprint"] .footer-spacer:first-of-type::before {
+  border-left-width: 0;
+  border-right-color: var(--accent);
 }
 
 [data-style="blueprint"] .footer-spacer:last-of-type {
-  border-left: 1px solid var(--text55);
+  justify-content: flex-end;
+}
+
+[data-style="blueprint"] .footer-spacer:last-of-type::after {
+  border-right-width: 0;
+  border-left-color: var(--accent);
 }
 
 [data-style="blueprint"] .footer-text {
   margin: 0;
-  padding: 15px 26px;
+  padding: 15px 18px;
   font-family: var(--font-mono);
   font-weight: 600;
   font-size: 11px;
@@ -354,13 +374,15 @@
   margin-right: 14px;
 }
 
-/* The spacer becomes ◄──────────►: the element draws the 1px yellow line as
-   a background layer; its two pseudos are the outward arrowheads (the
-   border-triangle technique from the preview's .bp-arrow-l/r). */
+/* The spacer becomes ──────────►: the element draws the 1px yellow line as
+   a background layer; the pseudo is the single outward arrowhead (the
+   border-triangle technique from the preview's .bp-arrow-r). A callout
+   leader pointing away from the title — a second head at the title end
+   pointed back at the text and muddied the direction. */
 [data-style="blueprint"] .section-header-spacer {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   height: 10px;
   background-color: transparent;
   background-image: linear-gradient(var(--accent), var(--accent));
@@ -369,20 +391,11 @@
   background-size: 100% 1px;
 }
 
-[data-style="blueprint"] .section-header-spacer::before,
 [data-style="blueprint"] .section-header-spacer::after {
   content: '';
   width: 0;
   height: 0;
   border: 5px solid transparent;
-}
-
-[data-style="blueprint"] .section-header-spacer::before {
-  border-left-width: 0;
-  border-right-color: var(--accent);
-}
-
-[data-style="blueprint"] .section-header-spacer::after {
   border-right-width: 0;
   border-left-color: var(--accent);
 }
@@ -815,10 +828,19 @@
    The article sits inside its own sheet border, the header ruled off like a
    revision strip. */
 
+/* border-box keeps the sheet's outer frame at the 750px column, so it lines
+   up with the nav and footer; the nav sheds its side padding so the D
+   title-block cell sits flush with the sheet's left edge. */
 [data-style="blueprint"] .blog-post-container {
+  box-sizing: border-box;
   border: 1.5px solid var(--text85);
   padding: 44px 48px;
   margin: 24px auto 0;
+}
+
+[data-style="blueprint"] .blog-nav {
+  padding-left: 0;
+  padding-right: 0;
 }
 
 [data-style="blueprint"] .blog-post-header {
@@ -889,7 +911,7 @@
   filter: none;
 }
 
-/* Code blocks: the shared dark-ground pin lives in _base.css. */
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
 [data-style="blueprint"] .blog-post-content pre {
   border: 1px solid var(--text25);
 }
@@ -1026,10 +1048,15 @@
   }
 
   /* mobile-styles.css pins nowrap for the small inline headers; the caps
-     titles need to wrap. */
+     titles need to wrap. The grid keeps a wrapped title's second line
+     aligned with the first word instead of the FIG-number column (the text
+     run after .sec-num is one anonymous grid item). */
   [data-style="blueprint"] .section-header {
     white-space: normal;
     font-size: clamp(24px, 7vw, 30px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
   }
 
   /* Dimension lines simplify to plain rules: arrowheads off, a 1px yellow
@@ -1040,7 +1067,6 @@
     background-image: none;
   }
 
-  [data-style="blueprint"] .section-header-spacer::before,
   [data-style="blueprint"] .section-header-spacer::after {
     display: none;
   }
