@@ -310,22 +310,27 @@
       // Tilt off and fully still: engraved certificates do not move.
       flags: { tilt: false, still: true },
       // Cursorless masthead: engraved print sets word-at-a-time, no caret —
-      // each word presses onto the bond like one intaglio pass.
+      // each word presses onto the security paper like one intaglio pass.
       typing: 'word',
-      colors: { text:'#1e2a22', bg:'#f3efdf', primary:'#1f5c40', secondary:'#f9f5e6', accent:'#a8842c' },
+      // Currency duotone: treasury-green intaglio ink on green-tinted
+      // security paper; the accent role is the second ink, overprint red
+      // (serials, stamps, SPECIMEN marks). No gold — foil gilt read as
+      // chinoiserie's gilt thread.
+      colors: { text:'#1c281d', bg:'#dee3cb', primary:'#1a5b3d', secondary:'#eff1de', accent:'#9c3a2a' },
       tokens: {
-        '--font-body': "'EB Garamond', serif",
+        '--font-body': "'Libre Caslon Text', serif",
         '--font-heading': "'Cinzel', serif",
         '--font-mono': "'IBM Plex Mono', monospace",
         '--border-radius': '0px',
         '--radius-pill': '0px',
-        '--neutral-gray': '#6e7b67',
-        // Selected jobs entry reads as the bright bond panel.
-        '--jobs-menu-navy-dark': '#f9f5e6',
-        '--jobs-menu-navy': '#e9e2cb',
-        '--jobs-menu-slate': '#5d6b60',
+        '--neutral-gray': '#6d7a64',
+        // Selected jobs entry reads as the bright bond panel; hover is a
+        // deeper green-paper wash.
+        '--jobs-menu-navy-dark': '#eff1de',
+        '--jobs-menu-navy': '#cfd8b6',
+        '--jobs-menu-slate': '#56624f',
       },
-      fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Cinzel:wght@700&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=IBM+Plex+Mono:wght@400;600&display=swap'],
+      fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Cinzel:wght@700;900&family=IBM+Plex+Mono:wght@400;600&family=Libre+Caslon+Text:ital,wght@0,400;0,700;1,400&display=swap'],
       css: '/css/themes/banknote.css',
     },
     'grid': {
