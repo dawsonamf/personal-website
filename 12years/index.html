@@ -96,7 +96,7 @@
     z-index: 1;
   }
 
-  /* Title — centered in viewport */
+  /* Title: centered in viewport */
   .title-group {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -108,7 +108,7 @@
     letter-spacing: 0.2em; color: var(--cream);
     opacity: 0; text-transform: uppercase;
   }
-  /* Intro messages — centered */
+  /* Intro messages: centered */
   .intro-msg {
     position: absolute; top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -167,7 +167,7 @@
     transition: opacity 0.5s ease;
   }
 
-  /* Flower SVG — bigger */
+  /* Flower SVG: bigger */
   .flower-svg {
     width: min(85vw, 85vh, 780px);
     height: min(85vw, 85vh, 780px);
@@ -394,7 +394,7 @@
     </div>
   </div>
 
-  <!-- SECTION 2: Petals — SPECIAL flower section -->
+  <!-- SECTION 2: Petals: SPECIAL flower section -->
   <div class="section" id="section-2" data-section="2">
     <div class="section-pin">
       <div class="section-visual section-visual--left" id="visual-2">
@@ -863,7 +863,7 @@ window.scrollTo(0, 0);
 
 (function() {
   /* ================================================================
-     SECTIONS CONFIG — Task 2: background colors & particle tints
+     SECTIONS CONFIG (Task 2): background colors & particle tints
      ================================================================ */
   const SECTIONS = [
     { id: 'breaths',        bg: { top: '#1a1818', bot: '#2a2525' }, particleTint: [210, 200, 195] },
@@ -1032,7 +1032,7 @@ window.scrollTo(0, 0);
 
 
   /* ================================================================
-     PARTICLES — pollen motes, sparkles, soft drifting
+     PARTICLES: pollen motes, sparkles, soft drifting
      ================================================================ */
   const cvs = document.getElementById('particles');
   const ctx = cvs.getContext('2d');
@@ -1070,7 +1070,7 @@ window.scrollTo(0, 0);
     }
   }
 
-  // Wind trail wisps — spawned behind cursor
+  // Wind trail wisps: spawned behind cursor
   let windTrail = [];
   let prevMX = innerWidth / 2, prevMY = innerHeight / 2;
   let spawnAccum = 0;
@@ -1109,13 +1109,13 @@ window.scrollTo(0, 0);
     }
   });
 
-  // Current particle tint target — updated each frame from scroll position
+  // Current particle tint target, updated each frame from scroll position
   let currentTint = [215, 195, 165];
 
   function drawPts(t) {
     ctx.clearRect(0, 0, cvs.width, cvs.height);
 
-    // Ambient particles — pushed gently by cursor proximity
+    // Ambient particles: pushed gently by cursor proximity
     // Each particle's col slowly lerps toward the current section tint
     for (const p of pts) {
       // Lerp particle color toward current tint
@@ -1203,7 +1203,7 @@ window.scrollTo(0, 0);
     .to('.scroll-hint .scroll-line', { opacity: 0.6, duration: 0.8 }, 1.8);
 
   /* ================================================================
-     GSAP ScrollTrigger SETUP — Task 3
+     GSAP ScrollTrigger SETUP (Task 3)
      ================================================================ */
   gsap.registerPlugin(ScrollTrigger);
 
@@ -1415,7 +1415,7 @@ window.scrollTo(0, 0);
   });
 
   /* ================================================================
-     FLOWER — Task 4: section 7 local scroll context
+     FLOWER (Task 4): section 7 local scroll context
      ================================================================ */
   const stemEl = document.getElementById('stem');
   const stemLen = stemEl.getTotalLength();
@@ -1709,7 +1709,7 @@ window.scrollTo(0, 0);
     const strength = Math.min(dist / maxD, 1);
     const wAngle = Math.atan2(dy, dx);
 
-    // Stem bending — gentle sway toward cursor
+    // Stem bending: gentle sway toward cursor
     const targetBend = (dx / maxD) * 12;
     stemBend += (targetBend - stemBend) * 0.025;
 
@@ -1739,7 +1739,7 @@ window.scrollTo(0, 0);
       flowerHeadEl.setAttribute('transform', `translate(${topX},${STEM_TOP_Y})`);
     }
 
-    // Leaf cursor sway — leaves tilt toward/away from cursor
+    // Leaf cursor sway: leaves tilt toward/away from cursor
     const leafInfluence = (dx / maxD);
     const targetLeafL = leafInfluence * -8;
     const targetLeafR = leafInfluence * 8;
@@ -1753,7 +1753,7 @@ window.scrollTo(0, 0);
       leafSwayL2El.setAttribute('transform', `rotate(${leafSwayL2})`);
     }
 
-    // Greenery sway — ferns and grass react to cursor
+    // Greenery sway: ferns and grass react to cursor
     const greeneryVisible = p > STEM_START + 0.04;
     if (greeneryVisible) {
       const targetFernL = leafInfluence * -5;
@@ -1777,7 +1777,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     CLOCK — Task 6: section 4 clock face
+     CLOCK (Task 6): section 4 clock face
      ================================================================ */
   const clockMarkersGroup = document.getElementById('clockMarkers');
   const clockDotsGroup = document.getElementById('clockDots');
@@ -1787,7 +1787,7 @@ window.scrollTo(0, 0);
   for (let i = 0; i < 12; i++) {
     const angle = (i * 30 - 90) * Math.PI / 180;
 
-    // Hour marker — short line at radius 135 to 148
+    // Hour marker: short line at radius 135 to 148
     const mx1 = 200 + Math.cos(angle) * 135;
     const my1 = 200 + Math.sin(angle) * 135;
     const mx2 = 200 + Math.cos(angle) * 148;
@@ -1847,7 +1847,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     BREATHING CIRCLE — Task 5: section 12 breathing orb
+     BREATHING CIRCLE (Task 5): section 12 breathing orb
      ================================================================ */
   const breathCircle = document.getElementById('breathCircle');
   const breathRings = document.getElementById('breathRings');
@@ -1857,7 +1857,7 @@ window.scrollTo(0, 0);
   let breathWasCrossing = false;
 
   function tickBreathing(time) {
-    // Breathing runs continuously in rAF — always update regardless of visibility
+    // Breathing runs continuously in rAF, always update regardless of visibility
     const cycle = (time / 1000) * 0.2 * Math.PI * 2;
     const sinVal = Math.sin(cycle);
 
@@ -1917,7 +1917,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     CONSTELLATIONS — Task 7: section 5 star field
+     CONSTELLATIONS (Task 7): section 5 star field
      ================================================================ */
   const CONSTELLATIONS = [
     // Aries - curved ram's horn (Hamal, Sheratan, Mesarthim, 41 Ari)
@@ -2085,7 +2085,7 @@ window.scrollTo(0, 0);
       }
     }
 
-    // Ambient shooting stars — streak across periodically while section is visible
+    // Ambient shooting stars: streak across periodically while section is visible
     if (p > 0.10 && p < 0.90) {
       ambientSSTimer++;
       if (ambientSSTimer > 180 + Math.sin(time * 0.00071) * 80 && shootingStars.length < 5) {
@@ -2142,7 +2142,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     CALENDAR WHEEL — Task 8: section 1 months ring
+     CALENDAR WHEEL (Task 8): section 1 months ring
      ================================================================ */
   const MONTH_COLORS = [
     '#5a9e6f', '#78b88a', '#a0d4a0', // Jan-Mar (Spring)
@@ -2214,7 +2214,7 @@ window.scrollTo(0, 0);
       monthDotEls[i].setAttribute('opacity', arcT);
     }
 
-    // Cursor tilt (perspective) — only when section 1 is active
+    // Cursor tilt (perspective): only when section 1 is active
     if (monthsActive) {
       const monthsSvg = document.querySelector('.months-svg');
       if (monthsSvg) {
@@ -2262,7 +2262,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     MOONS — Task 9: section 6 twelve moons (lunar cycle phases)
+     MOONS (Task 9): section 6 twelve moons (lunar cycle phases)
      ================================================================ */
   const moonsGroup = document.getElementById('moonsGroup');
   const tidePath = document.getElementById('tidePath');
@@ -2275,10 +2275,10 @@ window.scrollTo(0, 0);
   function moonShadowPath(phaseAngle, cx, cy, r) {
     const angle = ((phaseAngle % 360) + 360) % 360;
 
-    // Full moon — no shadow
+    // Full moon: no shadow
     if (angle === 180) return null;
 
-    // New moon — entire disc is dark
+    // New moon: entire disc is dark
     if (angle === 0 || angle === 360) {
       return 'M' + cx + ',' + (cy - r) +
         ' A' + r + ',' + r + ' 0 1,1 ' + cx + ',' + (cy + r) +
@@ -2406,7 +2406,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     PIANO — Task 10: section 2 twelve notes (piano keys)
+     PIANO (Task 10): section 2 twelve notes (piano keys)
      ================================================================ */
   const pianoKeysGroup = document.getElementById('pianoKeys');
   const soundWavePath = document.getElementById('soundWave');
@@ -2530,7 +2530,7 @@ window.scrollTo(0, 0);
       // Must be within the piano key area vertically
       if (svgY < pianoY0 || svgY > pianoY0 + whiteKeyH) return;
 
-      // Find which key was clicked — check black keys first (they overlay white keys)
+      // Find which key was clicked, check black keys first (they overlay white keys)
       let hitIdx = -1;
 
       // Black keys: only if click is in the shorter black key region
@@ -2670,7 +2670,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     ROSES — Task 11: section 3 a dozen roses
+     ROSES (Task 11): section 3 a dozen roses
      ================================================================ */
   const rosesGroup = document.getElementById('rosesGroup');
   const ROSE_POSITIONS = [
@@ -2725,7 +2725,7 @@ window.scrollTo(0, 0);
 
     const g = document.createElementNS(NS, 'g');
 
-    // Stem path — runs from gathering point at bottom up to the rose head
+    // Stem path: runs from gathering point at bottom up to the rose head
     const stemBaseX = 195 + Math.sin(i * 1.7) * 15; // slight spread at base (190-210)
     const stemBaseY = 420;
     // Control point: midway vertically, shifted toward center to create natural curve
@@ -2846,11 +2846,11 @@ window.scrollTo(0, 0);
       const rd = roseData[idx];
       const rStart = drawStart + seq * eachRose;
 
-      // Stem draws on first — starts at rStart, finishes in first 50% of the rose's window
+      // Stem draws on first, starts at rStart, finishes in first 50% of the rose's window
       const stemT = Math.max(0, Math.min(1, (p - rStart) / (eachRose * 0.5)));
       rd.stemEl.style.strokeDashoffset = rd.stemLen * (1 - stemT);
 
-      // Spiral draws on after stem starts — begins at 30% into window, takes 50% of window
+      // Spiral draws on after stem starts, begins at 30% into window, takes 50% of window
       const spiralStart = rStart + eachRose * 0.3;
       const spiralT = Math.max(0, Math.min(1, (p - spiralStart) / (eachRose * 0.5)));
       rd.spiralEl.style.strokeDashoffset = rd.spiralLen * (1 - spiralT);
@@ -2896,7 +2896,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     BLUES EQUALIZER — Task 12: section 9 twelve bars
+     BLUES EQUALIZER (Task 12): section 9 twelve bars
      ================================================================ */
   const staffLinesGroup = document.getElementById('staffLines');
   const eqBarsGroup = document.getElementById('eqBars');
@@ -3001,7 +3001,7 @@ window.scrollTo(0, 0);
           osc.start(now);
           osc.stop(now + 0.6);
 
-          // Visual flash — briefly boost opacity and add glow
+          // Visual flash: briefly boost opacity and add glow
           var origOpacity = bar.opacity;
           bar.el.setAttribute('opacity', '1');
           bar.el.setAttribute('filter', 'url(#bluesBarGlow)');
@@ -3105,7 +3105,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     TWELVE YEARS — section 12: glowing "12" number
+     TWELVE YEARS: section 12: glowing "12" number
      ================================================================ */
   function tickTwelveYears(time) {
     if (twelveProgress <= 0 && !twelveActive) return;
@@ -3134,7 +3134,7 @@ window.scrollTo(0, 0);
   });
 
   /* ================================================================
-     JUPITER ORBIT — Task 14: section 11 solar system
+     JUPITER ORBIT (Task 14): section 11 solar system
      ================================================================ */
   const earthOrbitEl = document.getElementById('earthOrbit');
   const jupiterOrbitEl = document.getElementById('jupiterOrbit');
@@ -3237,7 +3237,7 @@ window.scrollTo(0, 0);
   }
 
   /* ================================================================
-     DODECAHEDRON — Task 15: section 8 wireframe dodecahedron
+     DODECAHEDRON (Task 15): section 8 wireframe dodecahedron
      ================================================================ */
   const dodecaEdgesGroup = document.getElementById('dodecaEdges');
   const dodecaSvg = document.querySelector('.dodeca-svg');

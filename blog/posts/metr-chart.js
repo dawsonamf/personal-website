@@ -1,8 +1,11 @@
 (function () {
+  // Snapshot of metr.org/assets/benchmark_results_1_1.yaml (taken 2026-06-10),
+  // used only when the live fetch fails. Regenerate it from the YAML rather
+  // than appending by hand, since METR also revises older estimates.
   const FALLBACK_DATA = [
-    {name: "gpt2", date: "2019-02-14", p50_min: 0.039762, p80_min: 0.005652},
-    {name: "davinci_002", date: "2020-05-28", p50_min: 0.148793, p80_min: 0.034139},
-    {name: "gpt_3_5_turbo_instruct", date: "2022-03-15", p50_min: 0.604245, p80_min: 0.1731},
+    {name: "gpt2", date: "2019-02-14", p50_min: 0.053778, p80_min: 0.0128},
+    {name: "davinci_002", date: "2020-05-28", p50_min: 0.144057, p80_min: 0.056238},
+    {name: "gpt_3_5_turbo_instruct", date: "2022-03-15", p50_min: 0.599247, p80_min: 0.25538},
     {name: "gpt_4", date: "2023-03-14", p50_min: 3.987428, p80_min: 0.889561},
     {name: "gpt_4_1106_inspect", date: "2023-11-06", p50_min: 4.044959, p80_min: 0.783032},
     {name: "claude_3_opus_inspect", date: "2024-03-04", p50_min: 3.952262, p80_min: 0.638973},
@@ -22,8 +25,45 @@
     {name: "claude_opus_4_5_inspect", date: "2025-11-24", p50_min: 292.994594, p80_min: 49.430584},
     {name: "gpt_5_2", date: "2025-12-11", p50_min: 352.249302, p80_min: 66.002649},
     {name: "claude_opus_4_6_inspect", date: "2026-02-05", p50_min: 718.80683, p80_min: 69.874587},
-    {name: "gpt_5_3_codex", date: "2026-02-05", p50_min: 349.530732, p80_min: 54.739407}
+    {name: "gpt_5_3_codex", date: "2026-02-05", p50_min: 349.530732, p80_min: 54.739407},
+    {name: "gemini_3_1_pro", date: "2026-02-19", p50_min: 384.147435, p80_min: 89.801503},
+    {name: "gpt_5_4", date: "2026-03-05", p50_min: 341.735276, p80_min: 53.877851},
+    {name: "claude_mythos_preview_early_inspect", date: "2026-04-07", p50_min: 1044.780145, p80_min: 185.911829}
   ];
+
+  // Chart chrome reads the CSS variables at draw time so it follows the live
+  // palette. At the default palette these resolve to the chart's original
+  // colors. Trace colors stay fixed; they're series identity, not chrome.
+  function cssVar(name, fallback) {
+    const v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function hexToRgb(hex) {
+    const m = hex.replace('#', '');
+    return { r: parseInt(m.substring(0, 2), 16), g: parseInt(m.substring(2, 4), 16), b: parseInt(m.substring(4, 6), 16) };
+  }
+  function blendHex(a, b, t) {
+    const A = hexToRgb(a), B = hexToRgb(b);
+    const h = x => Math.round(Math.max(0, Math.min(255, x))).toString(16).padStart(2, '0');
+    return '#' + h(A.r + (B.r - A.r) * t) + h(A.g + (B.g - A.g) * t) + h(A.b + (B.b - A.b) * t);
+  }
+  function chartTheme() {
+    const theme = {
+      panel: cssVar('--secondary', '#2c2c2c'),
+      text: cssVar('--text', '#e6f1ff'),
+      label: cssVar('--neutral-gray', '#a2a2a3'),
+      grid: '#333',
+      legendBg: 'rgba(44,44,44,0.9)',
+    };
+    // The engine only ever writes 6-digit hexes; keep the defaults otherwise.
+    const isHex = h => /^#[0-9a-f]{6}$/i.test(h);
+    if (isHex(theme.panel) && isHex(theme.text)) {
+      theme.grid = blendHex(theme.panel, theme.text, 0.04);
+      const p = hexToRgb(theme.panel);
+      theme.legendBg = `rgba(${p.r},${p.g},${p.b},0.9)`;
+    }
+    return theme;
+  }
 
   function parseYamlToRawData(yaml) {
     const results = yaml.results;
@@ -130,24 +170,25 @@
       makeLine(trends.p99_recent, '#2ca02c', 'solid', 'P99 Post-2023'),
     ];
 
+    const T = chartTheme();
     Plotly.newPlot('metr-chart', traces, {
       yaxis: {
-        type: 'log', title: { text: 'Effective Horizon (Hours)', font: { color: '#a2a2a3', size: 13 } },
+        type: 'log', title: { text: 'Effective Horizon (Hours)', font: { color: T.label, size: 13 } },
         range: [-4.5, 4],
         tickvals: [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000],
         ticktext: ['0.0001', '0.001', '0.01', '0.1', '1', '10', '100', '1K', '10K'],
-        gridcolor: '#333', tickfont: { color: '#a2a2a3' }, zerolinecolor: '#333'
+        gridcolor: T.grid, tickfont: { color: T.label }, zerolinecolor: T.grid
       },
       xaxis: {
-        title: { text: 'Release Date', font: { color: '#a2a2a3', size: 13 } },
+        title: { text: 'Release Date', font: { color: T.label, size: 13 } },
         type: 'date', range: ['2019-01-01', '2027-06-01'],
-        gridcolor: '#333', tickfont: { color: '#a2a2a3' }, zerolinecolor: '#333'
+        gridcolor: T.grid, tickfont: { color: T.label }, zerolinecolor: T.grid
       },
       hovermode: 'closest',
       dragmode: 'pan',
-      plot_bgcolor: '#2c2c2c',
-      paper_bgcolor: '#2c2c2c',
-      legend: { x: 0.01, y: 0.99, bgcolor: 'rgba(44,44,44,0.9)', font: { color: '#e6f1ff', size: 11 } },
+      plot_bgcolor: T.panel,
+      paper_bgcolor: T.panel,
+      legend: { x: 0.01, y: 0.99, bgcolor: T.legendBg, font: { color: T.text, size: 11 } },
       margin: { t: 20, r: 20, b: 60, l: 60 }
     }, { responsive: true, scrollZoom: true, displayModeBar: false });
 
@@ -162,6 +203,16 @@
 
   const YAML_URL = 'https://corsproxy.io/?' + encodeURIComponent('https://metr.org/assets/benchmark_results_1_1.yaml');
 
+  // Redraw with the same data when the theme cycler changes the palette.
+  // Debounced: the color-picker fires once per drag tick.
+  let lastData = null;
+  let redrawTimer = null;
+  window.addEventListener('dawson:palette', () => {
+    if (!lastData) return;
+    clearTimeout(redrawTimer);
+    redrawTimer = setTimeout(() => buildChart(lastData), 150);
+  });
+
   fetch(YAML_URL)
     .then(res => {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -171,9 +222,11 @@
       const yaml = jsyaml.load(text);
       const fetched = parseYamlToRawData(yaml);
       if (fetched.length === 0) throw new Error("Parsed zero entries");
-      buildChart(fetched);
+      lastData = fetched;
+      buildChart(lastData);
     })
     .catch(() => {
-      buildChart(FALLBACK_DATA);
+      lastData = FALLBACK_DATA;
+      buildChart(lastData);
     });
 })();

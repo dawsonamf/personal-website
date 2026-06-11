@@ -1,0 +1,85 @@
+/* Shared plumbing for style versions. Loaded with any non-default style,
+   before the skin's own sheet, so a skin wins specificity ties. Skins keep
+   only their own look; rules every skin needs live here.
+
+   data-style sits on <html> while a style version is active.
+   data-still is added when the registry entry sets flags.still.
+   data-no-tilt is added when the registry entry sets flags.tilt: false. */
+
+
+/* Post code blocks sit on github-dark's own ground. The hljs token colors
+   are pinned by that sheet and can't follow a light or randomized palette,
+   so the ground stays fixed. Skins add their own frames. */
+[data-style] .blog-post-content pre {
+  background-color: #0d1117;
+}
+
+/* Also unwinds any inline-code chip styling inside fenced blocks. */
+[data-style] .blog-post-content pre code {
+  background: none;
+  border: none;
+  color: #c9d1d9;
+}
+
+[data-style] .blog-post-content pre.has-copy-btn .code-copy-btn {
+  color: #8b949e;
+}
+
+[data-style] .blog-post-content pre.has-copy-btn .code-copy-btn:hover {
+  color: #f0f6fc;
+}
+
+/* Blog pages center the footer box with auto margins. A skin that sets
+   .footer-container margins would pin it left, so re-assert the defaults. */
+[data-style] .blog-footer {
+  margin: 40px auto;
+}
+
+[data-style] .blog-listing-footer {
+  margin: 0 auto 40px;
+}
+
+/* Still skins: no scroll entrances, no cursor follower, no dock lifts.
+   Intro reveals are left alone (they pin final styles on animationend). */
+[data-still] [data-aos] {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+[data-still] #cursor-container {
+  display: none;
+}
+
+[data-still] .tc-toggle:hover,
+[data-still] .tc-randomize:hover {
+  transform: none;
+}
+
+/* No-tilt skins: hold the tilt targets flat. Covers a live instance's
+   writes and the flat inline transform a destroyed instance leaves behind.
+   Glare overlays can outlive a live style switch, so hide those too. */
+[data-no-tilt] .card,
+[data-no-tilt] .blog-card,
+[data-no-tilt] .fc-card-image,
+[data-no-tilt] .blog-image {
+  transform: none !important;
+}
+
+[data-no-tilt] .js-tilt-glare {
+  display: none;
+}
+
+/* Mobile traps every skin hits. mobile-styles.css clears the jobs rail
+   border at lower specificity than a skin rule, and hides .contact-image
+   but not its wrapper, so a skin frame on the wrapper would print as a
+   stray rule. */
+@media screen and (max-width: 1100px) {
+  html[data-style] .nav-container {
+    border-left: none;
+  }
+
+  html[data-style] .contact-image-wrapper {
+    display: none;
+  }
+}

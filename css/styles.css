@@ -9,17 +9,59 @@
   --secondary: #2c2c2c;
   --accent:    #61ffda;
 
+  /* Typography tokens. Style versions override these via the registry in
+     js/theme-bootstrap.js; the defaults match the site as-built. */
+  --font-body:    sans-serif;
+  --font-heading: var(--font-body);
+  --font-mono:    'SF Mono', monospace;
+
   --border-radius: 20px;
+  --radius-pill: 20px;
   --socials-menu-spacer-height: 45px;
 
   --sec-num-color: var(--accent);
 
-  /* Static neutrals + the jobs-menu navy palette. Deliberately not driven by
-     the theme cycler yet — see todo/STYLE_VERSIONS_SPEC.md prerequisites. */
+  /* Static neutrals + the jobs-menu navy palette. These are the at-rest
+     values; once the palette toy diverges from the active style's base
+     colors, js/theme-cycler.js derives scheme-coherent replacements. */
   --neutral-gray: #a2a2a3;
   --jobs-menu-navy-dark: #192232;
   --jobs-menu-navy: #253347;
   --jobs-menu-slate: #7B8A9A;
+
+  /* Alpha ramps, declared statically so the design system exists without JS
+     and lives in one greppable place. js/theme-bootstrap.js regenerates the
+     same values inline pre-paint (inline wins), so with JS on these are
+     overridden by identical values. Keep both in sync. */
+  --text5:  hsla(214,100%,95%,5%);  --text10: hsla(214,100%,95%,10%); --text15: hsla(214,100%,95%,15%); --text20: hsla(214,100%,95%,20%);
+  --text25: hsla(214,100%,95%,25%); --text30: hsla(214,100%,95%,30%); --text35: hsla(214,100%,95%,35%); --text40: hsla(214,100%,95%,40%);
+  --text45: hsla(214,100%,95%,45%); --text50: hsla(214,100%,95%,50%); --text55: hsla(214,100%,95%,55%); --text60: hsla(214,100%,95%,60%);
+  --text65: hsla(214,100%,95%,65%); --text70: hsla(214,100%,95%,70%); --text75: hsla(214,100%,95%,75%); --text80: hsla(214,100%,95%,80%);
+  --text85: hsla(214,100%,95%,85%); --text90: hsla(214,100%,95%,90%); --text95: hsla(214,100%,95%,95%);
+
+  --bg5:  hsla(0,0%,11%,5%);  --bg10: hsla(0,0%,11%,10%); --bg15: hsla(0,0%,11%,15%); --bg20: hsla(0,0%,11%,20%);
+  --bg25: hsla(0,0%,11%,25%); --bg30: hsla(0,0%,11%,30%); --bg35: hsla(0,0%,11%,35%); --bg40: hsla(0,0%,11%,40%);
+  --bg45: hsla(0,0%,11%,45%); --bg50: hsla(0,0%,11%,50%); --bg55: hsla(0,0%,11%,55%); --bg60: hsla(0,0%,11%,60%);
+  --bg65: hsla(0,0%,11%,65%); --bg70: hsla(0,0%,11%,70%); --bg75: hsla(0,0%,11%,75%); --bg80: hsla(0,0%,11%,80%);
+  --bg85: hsla(0,0%,11%,85%); --bg90: hsla(0,0%,11%,90%); --bg95: hsla(0,0%,11%,95%);
+
+  --primary5:  hsla(166,100%,69%,5%);  --primary10: hsla(166,100%,69%,10%); --primary15: hsla(166,100%,69%,15%); --primary20: hsla(166,100%,69%,20%);
+  --primary25: hsla(166,100%,69%,25%); --primary30: hsla(166,100%,69%,30%); --primary35: hsla(166,100%,69%,35%); --primary40: hsla(166,100%,69%,40%);
+  --primary45: hsla(166,100%,69%,45%); --primary50: hsla(166,100%,69%,50%); --primary55: hsla(166,100%,69%,55%); --primary60: hsla(166,100%,69%,60%);
+  --primary65: hsla(166,100%,69%,65%); --primary70: hsla(166,100%,69%,70%); --primary75: hsla(166,100%,69%,75%); --primary80: hsla(166,100%,69%,80%);
+  --primary85: hsla(166,100%,69%,85%); --primary90: hsla(166,100%,69%,90%); --primary95: hsla(166,100%,69%,95%);
+
+  --secondary5:  hsla(0,0%,17%,5%);  --secondary10: hsla(0,0%,17%,10%); --secondary15: hsla(0,0%,17%,15%); --secondary20: hsla(0,0%,17%,20%);
+  --secondary25: hsla(0,0%,17%,25%); --secondary30: hsla(0,0%,17%,30%); --secondary35: hsla(0,0%,17%,35%); --secondary40: hsla(0,0%,17%,40%);
+  --secondary45: hsla(0,0%,17%,45%); --secondary50: hsla(0,0%,17%,50%); --secondary55: hsla(0,0%,17%,55%); --secondary60: hsla(0,0%,17%,60%);
+  --secondary65: hsla(0,0%,17%,65%); --secondary70: hsla(0,0%,17%,70%); --secondary75: hsla(0,0%,17%,75%); --secondary80: hsla(0,0%,17%,80%);
+  --secondary85: hsla(0,0%,17%,85%); --secondary90: hsla(0,0%,17%,90%); --secondary95: hsla(0,0%,17%,95%);
+
+  --accent5:  hsla(166,100%,69%,5%);  --accent10: hsla(166,100%,69%,10%); --accent15: hsla(166,100%,69%,15%); --accent20: hsla(166,100%,69%,20%);
+  --accent25: hsla(166,100%,69%,25%); --accent30: hsla(166,100%,69%,30%); --accent35: hsla(166,100%,69%,35%); --accent40: hsla(166,100%,69%,40%);
+  --accent45: hsla(166,100%,69%,45%); --accent50: hsla(166,100%,69%,50%); --accent55: hsla(166,100%,69%,55%); --accent60: hsla(166,100%,69%,60%);
+  --accent65: hsla(166,100%,69%,65%); --accent70: hsla(166,100%,69%,70%); --accent75: hsla(166,100%,69%,75%); --accent80: hsla(166,100%,69%,80%);
+  --accent85: hsla(166,100%,69%,85%); --accent90: hsla(166,100%,69%,90%); --accent95: hsla(166,100%,69%,95%);
 }
 
 
@@ -31,7 +73,7 @@ body {
 }
 
 #main-body {
-  font-family: sans-serif;
+  font-family: var(--font-body);
   color: var(--text);
   padding: 20px;
   max-width: 1200px;
@@ -40,6 +82,12 @@ body {
   position: relative;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+
+/* Headings route through the heading token (defaults to the body font) so
+   style versions can swap display type without touching layout rules. */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
 }
 
 
@@ -281,7 +329,7 @@ body {
   font-size: 14px;
   position: relative;
   opacity: 0;
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
 }
 
 @keyframes fadein {
@@ -610,7 +658,7 @@ body {
   margin-bottom: 5px;
 }
 .job-dates {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 15px;
   color: var(--text50);
 }
@@ -629,13 +677,13 @@ body {
 
 #project-header { color: var(--accent); }
 
-/* Pills — shared by the carousel tech tags, blog cards, post meta, and privacy meta. */
+/* Pills, shared by the carousel tech tags, blog cards, post meta, and privacy meta. */
 
 .pill {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 5px 14px;
   background-color: var(--text10);
   white-space: nowrap;
@@ -836,7 +884,7 @@ body {
 }
 
 .blog-card-date {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
   margin: 0 0 14px 0;

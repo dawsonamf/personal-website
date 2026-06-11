@@ -1,5 +1,5 @@
 /* ============================================
-   Featured Carousel — shared across home & blog
+   Featured Carousel: shared across home & blog
    ============================================ */
 
 .featured-carousel-section {
@@ -208,7 +208,7 @@
 
 
 /* ============================================
-   Card layout — shared base
+   Card layout: shared base
    ============================================ */
 
 .fc-card {
@@ -240,7 +240,7 @@
 }
 
 
-/* Style: unified — image + text in one card */
+/* Style: unified. Image + text in one card. */
 
 .fc-style-unified .fc-card {
   border-radius: var(--border-radius);
@@ -253,7 +253,7 @@
 }
 
 
-/* Style: floating — image in a card, text on background */
+/* Style: floating. Image in a card, text on background. */
 
 .fc-style-floating .fc-card {
   gap: 28px;

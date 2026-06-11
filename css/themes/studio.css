@@ -1,0 +1,615 @@
+/* Studio: Swiss editorial print. A printed portfolio issue, paper ground,
+   ink display type (Space Grotesk), burnt-orange folio marks, full-width
+   rules, mono micro-labels, no cards, no entrance motion.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   mobile fixes come from css/themes/_base.css via flags.still. */
+
+
+/* ---- Foundations: ink on paper, stillness ------------------------------- */
+
+[data-style="studio"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+[data-style="studio"] h1,
+[data-style="studio"] h2,
+[data-style="studio"] h3,
+[data-style="studio"] h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Cards hold flat under their live tilt instances. The carousel plates keep
+   their tilt; this skin has no tilt flag. */
+[data-style="studio"] .card,
+[data-style="studio"] .blog-card {
+  transform: none !important;
+}
+
+/* Links carry a printed underline at rest; color stays the press orange. */
+[data-style="studio"] .text-link::before {
+  width: 100%;
+  height: 1px;
+  opacity: 0.45;
+}
+
+/* Print spreads: sections sit in roughly twice the app layout's air. */
+[data-style="studio"] .section-spacer {
+  height: 14em;
+}
+
+
+/* ---- Chrome: masthead nav, logo, footer colophon ------------------------ */
+
+/* Wider than the default 500px pill, the index numbers below need room. */
+[data-style="studio"] .moving-menu,
+[data-style="studio"] .static-menu {
+  background-color: var(--bg80);
+  border: 1px solid var(--text15);
+  box-shadow: none;
+  width: 580px;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list, invisible on the default pill, obvious once a skin frames it.
+   Size it to content like the floating menu. */
+[data-style="studio"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="studio"] .menu-item {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+[data-style="studio"] .menu-item:hover {
+  color: var(--text);
+}
+
+/* Index-numbered nav: 01 ABOUT, 02 EXPERIENCE, … The hidden spacer <li>s
+   would still bump a counter incremented on list items, so the increment
+   lives on the link elements themselves. */
+[data-style="studio"] .moving-menu .menu-list,
+[data-style="studio"] .static-menu .menu-list {
+  counter-reset: studio-nav;
+}
+
+[data-style="studio"] .moving-menu .menu-item,
+[data-style="studio"] .static-menu .menu-item {
+  counter-increment: studio-nav;
+}
+
+[data-style="studio"] .moving-menu .menu-item::before,
+[data-style="studio"] .static-menu .menu-item::before {
+  content: counter(studio-nav, decimal-leading-zero);
+  color: var(--primary);
+  margin-right: 6px;
+}
+
+[data-style="studio"] .menu-spacer {
+  display: none;
+}
+
+[data-style="studio"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text);
+  border-color: var(--text);
+}
+
+[data-style="studio"] .name-logo:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+/* Colophon: flush left under a hairline, like everything else on the grid,
+   never centered. */
+[data-style="studio"] .footer-container {
+  justify-content: flex-start;
+  border-top: 1px solid var(--text20);
+  margin: 0 10px;
+  padding: 18px 0 10px;
+}
+
+[data-style="studio"] .footer-spacer {
+  display: none;
+}
+
+[data-style="studio"] .footer-text,
+[data-style="studio"] .footer-text-mobile {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text40);
+  text-align: left;
+}
+
+/* ---- Hero: poster masthead ---------------------------------------------- */
+
+/* Sentence case is the Swiss poster idiom. The longest typed line,
+   "full stack engineer.", must fit the ~795px column at the size cap. */
+[data-style="studio"] #typing-text {
+  font-family: var(--font-heading);
+  font-size: clamp(64px, 5.2vw, 76px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+[data-style="studio"] .cursor {
+  background-color: var(--text);
+  width: 6px;
+}
+
+[data-style="studio"] #sub-text {
+  color: var(--text70);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+/* The selfie becomes a framed press photo (stays clickable, it is still the
+   cycler unlock). */
+[data-style="studio"] #typing-image {
+  border: 1px solid var(--text);
+  filter: grayscale(1) contrast(1.04);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="studio"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: editorial folios ----------------------------------
+   Rule above, orange folio number, then the title at display scale in ink. */
+
+[data-style="studio"] .section-header-wrapper {
+  display: block;
+  border-top: 2px solid var(--text);
+  padding-top: 16px;
+  margin: 0 10px 56px;
+}
+
+[data-style="studio"] .section-header-spacer {
+  display: none;
+}
+
+[data-style="studio"] .section-header {
+  margin: 0;
+  padding: 0;
+  font-size: clamp(44px, 6.5vw, 92px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep the titles ink. */
+[data-style="studio"] #about-section-header,
+[data-style="studio"] #jobs-header,
+[data-style="studio"] #project-header,
+[data-style="studio"] #blog-header,
+[data-style="studio"] #contact-section-header {
+  color: var(--text);
+}
+
+/* Optical sizing: the short titles run bigger so every headline approaches
+   the measure (the long ones, 02 and 03, set the 92px cap above). */
+[data-style="studio"] #about-section-header,
+[data-style="studio"] #blog-header,
+[data-style="studio"] #contact-section-header {
+  font-size: clamp(48px, 9.5vw, 132px);
+}
+
+[data-style="studio"] .sec-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--primary);
+  margin: 0 0 12px;
+}
+
+
+/* ---- About / Skills: de-carded manuscript columns ----------------------- */
+
+[data-style="studio"] .card-style {
+  background-color: transparent;
+}
+
+[data-style="studio"] .double-view-right {
+  border-left: 1px solid var(--text20);
+  padding-left: 32px;
+}
+
+/* "About Me" / "Skills" become mono department labels. */
+[data-style="studio"] .card-title,
+[data-style="studio"] .about-header,
+[data-style="studio"] .skills-header {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text50);
+  margin-bottom: 18px;
+}
+
+[data-style="studio"] .skills-section-header {
+  color: var(--text);
+  font-size: 19px;
+}
+
+/* Print body: smaller size, looser leading, capped measure. The rag of empty
+   column to the right of the skills text is deliberate. */
+[data-style="studio"] .about-text,
+[data-style="studio"] .skills-text,
+[data-style="studio"] .contact-text {
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+
+
+/* ---- Experience: index list + dossier ------------------------------------ */
+
+[data-style="studio"] .nav-container {
+  border-left: 1px solid var(--text20);
+}
+
+[data-style="studio"] .menu li {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text50);
+  border-radius: 0;
+}
+
+[data-style="studio"] .menu li:hover {
+  background: var(--text5);
+}
+
+[data-style="studio"] .menu li.selected {
+  background: transparent;
+  color: var(--text);
+}
+
+/* Flat ink-orange index bar, no glow. JS sets the bar's geometry inline on
+   every move (including border-radius), hence the !important. */
+[data-style="studio"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+[data-style="studio"] .job-content {
+  background-color: transparent;
+  padding: 6px 0 0;
+}
+
+[data-style="studio"] .job-title {
+  color: var(--text);
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+
+[data-style="studio"] .job-dates {
+  color: var(--text40);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-style="studio"] .job-bullets {
+  list-style-type: square;
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+
+[data-style="studio"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* Panel changes turn the page instead of sliding off it. script.js drives the
+   swap with timeouts (not animationend), so retiming these is safe. */
+[data-style="studio"] .job-in-right {
+  transform: none;
+  animation-name: studioJobFadeIn;
+}
+
+[data-style="studio"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
+
+@keyframes studioJobFadeIn {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: catalog plates -------------------------------------- */
+
+[data-style="studio"] .fc-style-floating .fc-card-image {
+  border: 1px solid var(--text);
+  background-color: var(--secondary);
+}
+
+/* Plates print in halftone gray; hovering the card restores the color. */
+[data-style="studio"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="studio"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Caption block hangs from the plate's top edge, no vertical centering. */
+[data-style="studio"] .fc-style-floating .fc-card-body {
+  justify-content: flex-start;
+  padding-top: 2px;
+}
+
+[data-style="studio"] .fc-card-title {
+  color: var(--text);
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+
+[data-style="studio"] .fc-card-desc {
+  color: var(--text80);
+}
+
+/* Tech tags: a slash-separated mono caption line instead of chips. */
+[data-style="studio"] .fc-card-tech {
+  gap: 8px 12px;
+}
+
+[data-style="studio"] .fc-card-tech .pill {
+  padding: 0;
+  letter-spacing: 0.04em;
+}
+
+[data-style="studio"] .fc-card-tech .pill + .pill::before {
+  content: "/";
+  color: var(--text30);
+  margin-right: 10px;
+}
+
+[data-style="studio"] .fc-card-cta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  border: 1px solid var(--text);
+  border-radius: 0;
+  padding: 10px 18px;
+}
+
+[data-style="studio"] .fc-card-cta:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="studio"] .featured-carousel-dots {
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+[data-style="studio"] .fc-dot {
+  border-radius: 0;
+  background-color: var(--text);
+  opacity: 0.18;
+}
+
+[data-style="studio"] .fc-dot:hover {
+  opacity: 0.45;
+}
+
+[data-style="studio"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Blog: front-page teasers -------------------------------------------- */
+
+[data-style="studio"] .blog-card {
+  background-color: transparent;
+  border-top: 2px solid var(--text);
+  padding: 18px 2px 0;
+}
+
+[data-style="studio"] .blog-card:hover {
+  background-color: transparent;
+}
+
+[data-style="studio"] .blog-card-title {
+  font-size: 21px;
+  letter-spacing: -0.01em;
+  transition: color 0.25s ease-in-out;
+}
+
+[data-style="studio"] .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+/* Dateline above the headline, as printed. */
+[data-style="studio"] .blog-card > .blog-card-date {
+  order: -1;
+  margin: 0 0 10px;
+}
+
+[data-style="studio"] .blog-card-date {
+  color: var(--text40);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Listing-page filters: outlined, ink-filled when active. */
+[data-style="studio"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--text25);
+  color: var(--text60);
+}
+
+[data-style="studio"] .filter-pill:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+[data-style="studio"] .filter-pill.active {
+  background-color: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* Code blocks: the shared dark-ground pin lives in _base.css. */
+[data-style="studio"] .blog-post-content pre {
+  border: 1px solid var(--text20);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="studio"] #metr-chart {
+  border: 1px solid var(--text20);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="studio"] #pareto-chart,
+[data-style="studio"] #ara-objectives-chart,
+[data-style="studio"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact -------------------------------------------------------------- */
+
+[data-style="studio"] .contact-view-left {
+  background-color: transparent;
+}
+
+/* Social row sits flush left under the contact text. */
+[data-style="studio"] .contact-menu {
+  margin-left: 0;
+}
+
+[data-style="studio"] .contact-menu .menu-list {
+  justify-content: flex-start;
+}
+
+[data-style="studio"] .contact-menu .socials-item {
+  width: auto;
+  margin-right: 26px;
+  justify-content: flex-start;
+}
+
+[data-style="studio"] .contact-image-wrapper {
+  border: 1px solid var(--text);
+}
+
+[data-style="studio"] .contact-image {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="studio"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills elsewhere (post meta, privacy): plain mono captions ----------- */
+
+[data-style="studio"] .pill {
+  background-color: transparent;
+  padding: 0;
+  color: var(--text60);
+}
+
+
+/* ---- Cycler dock: frosted-light ------------------------------------------ */
+
+[data-style="studio"] .tc-dock {
+  border: 1px solid var(--text15);
+  box-shadow: 0 14px 40px rgba(30, 26, 18, 0.12);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------ */
+
+@media screen and (max-width: 1100px) {
+  /* mobile-styles.css pins nowrap for the small inline headers; the display
+     scale needs to wrap. */
+  [data-style="studio"] .section-header {
+    white-space: normal;
+    font-size: clamp(34px, 10vw, 44px);
+  }
+
+  [data-style="studio"] .section-header-wrapper {
+    padding-top: 12px;
+    margin-bottom: 36px;
+  }
+
+  [data-style="studio"] .section-spacer {
+    height: 9em;
+  }
+
+  [data-style="studio"] .double-view-left,
+  [data-style="studio"] .double-view-right {
+    background-color: transparent;
+  }
+
+  [data-style="studio"] .double-view-right {
+    border-left: none;
+    border-top: 1px solid var(--text20);
+    padding-left: 20px;
+    padding-top: 28px;
+    margin-top: 28px;
+  }
+
+  [data-style="studio"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text20);
+  }
+
+  [data-style="studio"] .blog-card {
+    background-color: transparent;
+    border-top: 2px solid var(--text);
+    padding: 16px 2px 0;
+  }
+
+  [data-style="studio"] .contact-view-left {
+    background-color: transparent;
+  }
+
+  [data-style="studio"] .contact-menu-mobile .menu-list {
+    justify-content: flex-start;
+  }
+
+  [data-style="studio"] .footer-container-mobile {
+    border-top: 1px solid var(--text20);
+    padding-top: 16px;
+  }
+
+  [data-style="studio"] .footer-text-mobile {
+    margin: 0;
+    text-align: left;
+  }
+}

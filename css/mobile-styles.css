@@ -128,7 +128,7 @@
     font-size: 8px;
     position: relative;
     opacity: 0;
-    font-family: 'SF Mono', monospace;
+    font-family: var(--font-mono);
   }
 
   #socials-list {

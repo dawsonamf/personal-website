@@ -24,7 +24,20 @@
   // Single source of truth for social links. Rendered into the hero sidebar
   // (#socials-list / #blog-socials-list) and the contact-section menus.
   // The anchors are icon-only, so `label` becomes the aria-label.
-  const CALENDLY_URL = 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda';
+  // Calendly popup colors follow the active theme: the URL is built at click
+  // time from the CSS variables (fallbacks match the as-built palette).
+  const CALENDLY_BASE = 'https://calendly.com/dawsonamf/30min';
+  function calendlyUrl() {
+    const css = getComputedStyle(document.documentElement);
+    const hex = function (name, fallback) {
+      const v = (css.getPropertyValue(name) || '').trim().replace('#', '');
+      return v || fallback;
+    };
+    return CALENDLY_BASE +
+      '?background_color=' + hex('--bg', '1d1d1d') +
+      '&text_color=' + hex('--text', 'e6f1ff') +
+      '&primary_color=' + hex('--primary', '61ffda');
+  }
   window.SOCIAL_LINKS = [
     { href: 'https://www.linkedin.com/in/dawsonamf7/', icon: 'fab fa-linkedin', label: 'LinkedIn' },
     { href: 'https://twitter.com/dawsonamf7', icon: 'fa-brands fa-x-twitter', label: 'X (Twitter)' },
@@ -105,7 +118,7 @@
   document.querySelectorAll('.calendly-link').forEach(function (link) {
     link.addEventListener('click', function (e) {
       e.preventDefault();
-      Calendly.initPopupWidget({ url: CALENDLY_URL });
+      Calendly.initPopupWidget({ url: calendlyUrl() });
     });
   });
 

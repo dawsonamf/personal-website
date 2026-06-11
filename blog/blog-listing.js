@@ -116,14 +116,17 @@
       </div>`;
     }).join('');
 
-    VanillaTilt.init(grid.querySelectorAll('.blog-card'), {
-      max: 8,
-      speed: 400,
-      perspective: 1200,
-      scale: 1.02,
-      glare: false,
-      gyroscope: false
-    });
+    // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+    if (!window.__styleAllowsTilt || window.__styleAllowsTilt()) {
+      VanillaTilt.init(grid.querySelectorAll('.blog-card'), {
+        max: 8,
+        speed: 400,
+        perspective: 1200,
+        scale: 1.02,
+        glare: false,
+        gyroscope: false
+      });
+    }
   }
 
 

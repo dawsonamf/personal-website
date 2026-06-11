@@ -178,7 +178,7 @@ function startTypingSequence(config) {
       return;
     }
 
-    // Unknown action — skip
+    // Unknown action, skip
     runStep(index + 1);
   }
 

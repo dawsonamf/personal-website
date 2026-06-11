@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test styles — dawsonamf.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Baloo+2:wght@600;800&family=Bangers&family=Caveat:wght@600&family=Cinzel:wght@500;700&family=Comic+Neue:wght@400;700&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Exo+2:ital,wght@0,400;0,600;1,800&family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,900;1,9..144,900&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;800&family=Josefin+Sans:wght@400;600&family=Jost:wght@400;500;700&family=Limelight&family=Marcellus&family=Monoton&family=Patrick+Hand&family=Permanent+Marker&family=Sedgwick+Ave+Display&family=Shippori+Mincho:wght@400;600;800&family=Shrikhand&family=Space+Grotesk:wght@400;500;700&family=Special+Elite&family=Staatliches&display=swap">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#0b0d11; color:#e8ecf3; font:16px/1.6 Inter,-apple-system,sans-serif; }
+  .shell { max-width:1100px; margin:0 auto; padding:56px 26px 110px; }
+
+  /* ---- intro / legend ---- */
+  .intro h1 { font-size:34px; font-weight:800; letter-spacing:-.02em; }
+  .intro .sub { color:#9aa3b2; max-width:78ch; margin-top:12px; font-size:15px; }
+  .intro .sub b { color:#cdd5e1; font-weight:600; }
+  .legend { display:flex; flex-wrap:wrap; gap:8px; margin-top:18px; }
+  .legend span, .toc a { font:500 11px/1 'IBM Plex Mono',monospace; letter-spacing:.06em; padding:7px 11px;
+    border:1px solid #2a2f3a; border-radius:999px; color:#9aa3b2; text-decoration:none; }
+  .toc { display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+  .toc a:hover { color:#e8ecf3; border-color:#4a5263; }
+
+  /* ---- shared tile skeleton (per-tile fonts/colors via custom props) ---- */
+  .tile { --hf:Inter,sans-serif; --bf:Inter,sans-serif; --mf:'IBM Plex Mono',monospace;
+    border-radius:18px; margin-top:48px; overflow:hidden; box-shadow:0 16px 44px rgba(0,0,0,.4); }
+  .tin { padding:44px 48px 38px; font-family:var(--bf); }
+  .meta { display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; }
+  .num { font:600 12px var(--mf); opacity:.5; letter-spacing:.12em; }
+  .tname { font-family:var(--hf); font-size:32px; line-height:1.1; }
+  .tagline { font:13px var(--mf); opacity:.65; }
+  .chips { display:flex; gap:7px; flex-wrap:wrap; margin-left:auto; }
+  .chip { font:500 10px/1 var(--mf); letter-spacing:.08em; text-transform:uppercase;
+    border:1px solid currentColor; border-radius:999px; padding:5px 9px; opacity:.6; }
+  .chip.go { opacity:1; border-width:2px; font-weight:700; }
+  .blurb { margin-top:16px; }
+  .blurb p { max-width:78ch; font-size:14.5px; line-height:1.68; opacity:.92; margin-top:8px; }
+  .band { display:flex; align-items:center; gap:12px; font:600 10.5px var(--mf);
+    letter-spacing:.24em; text-transform:uppercase; opacity:.55; margin:30px 0 12px; }
+  .band::after { content:''; flex:1; border-top:1px solid currentColor; opacity:.4; }
+  .swatches { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; }
+  .sw { height:60px; border-radius:8px; box-shadow:inset 0 0 0 1px rgba(127,127,127,.4); }
+  .swl { margin-top:7px; font:10.5px/1.55 var(--mf); opacity:.78; }
+  .spec-h { font-family:var(--hf); font-size:34px; line-height:1.15; }
+  .spec-b { font-size:15.5px; max-width:70ch; opacity:.92; }
+  .spec-m { font:13.5px var(--mf); opacity:.85; }
+  .cap { font:10.5px var(--mf); opacity:.5; margin:5px 0 16px; letter-spacing:.04em; }
+  .demo { display:flex; flex-wrap:wrap; gap:18px; align-items:flex-start; }
+  .impl { margin-top:28px; font:11.5px/1.8 var(--mf); opacity:.7; border-top:1px dashed currentColor; padding-top:14px; }
+  @media (max-width:720px) {
+    .tin { padding:30px 22px 28px; }
+    .swatches { grid-template-columns:repeat(3,1fr); }
+  }
+
+  /* =========== 01 VAPOR =========== */
+  .s-vapor { --hf:'Monoton',cursive; --bf:'Exo 2',sans-serif; }
+  .s-vapor .tin { background:linear-gradient(180deg, #1c0840 0%, #2b0c5e 60%, #12062e 100%); color:#f3eaff; }
+  .s-vapor .tname { font-size:26px; color:#00e5ff; text-shadow:0 0 8px rgba(0,229,255,.7), 0 0 26px rgba(255,46,196,.6); }
+  .vp-stage { position:relative; width:100%; height:240px; overflow:hidden; border:1px solid rgba(0,229,255,.35);
+    background:linear-gradient(180deg, #2a0a55 0%, #4a0e63 52%, #160736 52%); }
+  .vp-sun { position:absolute; left:50%; top:46%; width:130px; height:130px; border-radius:50%;
+    transform:translate(-50%,-58%); background:linear-gradient(#ffd23f 12%, #ff8a00 45%, #ff2ec4 90%);
+    box-shadow:0 0 50px rgba(255,46,196,.55); }
+  .vp-sun::after { content:''; position:absolute; inset:50% 0 0 0;
+    background:repeating-linear-gradient(0deg, #3a0c5e 0 4px, transparent 4px 15px); }
+  .vp-floor { position:absolute; left:-20%; right:-20%; bottom:-12px; height:52%;
+    background:repeating-linear-gradient(90deg, rgba(0,229,255,.5) 0 1px, transparent 1px 48px),
+      repeating-linear-gradient(0deg, rgba(0,229,255,.5) 0 1px, transparent 1px 30px);
+    transform:perspective(240px) rotateX(58deg); transform-origin:50% 0; opacity:.65; }
+  .vp-neon { position:absolute; width:100%; top:30px; text-align:center; font:34px var(--hf); color:#00e5ff;
+    text-shadow:0 0 7px rgba(0,229,255,.9), 0 0 30px rgba(255,46,196,.8); letter-spacing:.08em; }
+  .vp-chrome { position:absolute; width:100%; top:84px; text-align:center; font:italic 800 17px var(--bf);
+    letter-spacing:.3em; text-transform:uppercase; background:linear-gradient(#fff, #9be7ff 48%, #ff8ad8);
+    -webkit-background-clip:text; background-clip:text; color:transparent; }
+  .vp-btn { border:1px solid #00e5ff; background:transparent; color:#00e5ff; font:600 14px var(--bf);
+    letter-spacing:.22em; padding:11px 24px; box-shadow:0 0 14px rgba(0,229,255,.35), inset 0 0 14px rgba(0,229,255,.12); }
+
+  /* =========== 02 NEO-POP =========== */
+  .s-neopop { --hf:'Inter',sans-serif; --bf:'DM Sans',sans-serif; }
+  .s-neopop .tin { background:#fff7e6; color:#1a1a1a; }
+  .s-neopop .tname { font-weight:800; text-transform:uppercase; font-size:36px; -webkit-text-stroke:1px #1a1a1a; color:#ffdd53; }
+  .np-box { background:#ffffff; border:3px solid #1a1a1a; box-shadow:6px 6px 0px #1a1a1a; padding:20px; width:min(440px,100%); }
+  .np-tag { display:inline-block; background:#ff6b6b; border:2px solid #1a1a1a; font-weight:700; font-size:11px; padding:3px 8px; text-transform:uppercase; margin-bottom:10px; color:#fff; }
+  .np-box h4 { font-size:20px; font-weight:800; margin-bottom:6px; }
+  .np-btn { display:inline-block; background:#4dadf7; border:3px solid #1a1a1a; font-weight:700; padding:10px 18px; text-transform:uppercase; box-shadow:4px 4px 0px #1a1a1a; cursor:pointer; font-size:13px; }
+
+  /* =========== 03 BAUHAUS (merged) =========== */
+  .s-bauhaus { --hf:'Jost',sans-serif; --bf:'Jost',sans-serif; }
+  .s-bauhaus .tin { background:#f2eee6; color:#14110d; border-left:16px solid #e0311f; }
+  .s-bauhaus .tname { font-weight:500; letter-spacing:.26em; text-transform:lowercase; }
+  .bh-poster { width:min(440px,100%); background:#fff; border:3px solid #14110d; padding:26px 26px 22px; }
+  .bh-row { display:flex; gap:22px; align-items:flex-end; }
+  .bh-circle { width:96px; height:96px; border-radius:50%; background:#e0311f; }
+  .bh-tri { width:0; height:0; border-left:50px solid transparent; border-right:50px solid transparent; border-bottom:88px solid #f6c52e; }
+  .bh-sq { width:80px; height:80px; background:#1c52b5; }
+  .bh-word { font:500 24px var(--hf); letter-spacing:.3em; text-transform:lowercase; margin-top:20px; }
+  .bh-stripe { height:12px; margin-top:14px; background:repeating-linear-gradient(45deg, #14110d 0 10px, transparent 10px 22px); }
+  .bh-markers { display:flex; flex-direction:column; gap:14px; justify-content:center; font:500 15px var(--hf); letter-spacing:.18em; text-transform:lowercase; }
+  .bh-markers span { display:flex; align-items:center; gap:13px; }
+  .bh-m1 { width:18px; height:18px; border-radius:50%; background:#e0311f; flex-shrink:0; }
+  .bh-m2 { width:0; height:0; border-left:11px solid transparent; border-right:11px solid transparent; border-bottom:19px solid #f6c52e; flex-shrink:0; }
+  .bh-m3 { width:17px; height:17px; background:#1c52b5; flex-shrink:0; }
+
+  /* =========== 04 MEMPHIS =========== */
+  .s-memphis { --hf:'Baloo 2',cursive; --bf:'DM Sans',sans-serif; }
+  .s-memphis .tin { background:#fff6ec; color:#2b2730;
+    background-image:radial-gradient(rgba(43,39,48,.13) 1.2px, transparent 1.2px); background-size:24px 24px; }
+  .s-memphis .tname { font-weight:800; color:#ff4f7e; text-shadow:2.5px 2.5px 0 #7ce0d3; }
+  .mm-card { width:min(440px,100%); background:#fff; border:3px solid #2b2730; border-radius:16px 16px 16px 4px;
+    box-shadow:8px 8px 0 #7ce0d3; padding:20px 22px; transform:rotate(-1.2deg); }
+  .mm-tag { display:inline-block; background:#ffd23f; border:2.5px solid #2b2730; border-radius:999px;
+    font:700 11px var(--bf); text-transform:uppercase; letter-spacing:.06em; padding:4px 10px; margin-bottom:10px; }
+  .mm-card h4 { font:800 22px var(--hf); margin-bottom:6px; }
+  .mm-card p { font-size:14px; line-height:1.55; color:#4a4550; }
+  .mm-btn { margin-top:14px; background:#ff4f7e; color:#fff; border:2.5px solid #2b2730; border-radius:12px 2px 12px 2px;
+    font:700 13px var(--bf); padding:9px 16px; box-shadow:4px 4px 0 #2b2730; cursor:pointer; }
+  .mm-shapes { display:flex; flex-direction:column; gap:16px; align-items:center; padding-top:8px; }
+  .mm-dot { width:30px; height:30px; border-radius:50%; background:#00bfa8; border:2.5px solid #2b2730; }
+  .mm-tri { width:0; height:0; border-left:18px solid transparent; border-right:18px solid transparent;
+    border-bottom:30px solid #ffd23f; filter:drop-shadow(2.5px 2.5px 0 #2b2730); }
+  .mm-squig { font:800 30px/0.5 var(--bf); color:transparent; text-decoration:underline wavy #ff4f7e 4px; }
+  .mm-pill { width:44px; height:18px; border-radius:999px; background:#2b2730; transform:rotate(24deg); }
+  .mm-zig { width:64px; height:16px; background:repeating-linear-gradient(45deg, transparent 0 7px, #00bfa8 7px 10px); transform:rotate(-12deg); }
+  /* =========== 05 POP ART (merged) =========== */
+  .s-pop { --hf:'Bangers',cursive; --bf:'Comic Neue',cursive; }
+  .s-pop .tin { background:#fdf6e3; color:#11100e;
+    background-image:radial-gradient(rgba(29,111,242,.14) 1.6px, transparent 1.6px); background-size:13px 13px; }
+  .s-pop .tname { letter-spacing:.04em; color:#ef3340; text-shadow:2.5px 2.5px 0 #ffd400; }
+  .s-pop .blurb p { font-weight:700; }
+  .pp-panel { width:min(460px,100%); border:3px solid #11100e; box-shadow:8px 8px 0 #11100e;
+    padding:20px 22px 24px; background-color:#ffd83d;
+    background-image:radial-gradient(rgba(226,42,42,.30) 2px, transparent 2.5px); background-size:14px 14px; }
+  .pp-cap { display:inline-block; font:700 11.5px var(--bf); letter-spacing:.06em; text-transform:uppercase;
+    background:#1d6ff2; color:#fff; padding:5px 10px; border:3px solid #11100e; transform:rotate(-2deg); margin-bottom:16px; }
+  .pp-bubble { position:relative; background:#fff; border:3px solid #11100e; border-radius:18px;
+    padding:14px 18px; font:22px/1.3 var(--hf); letter-spacing:.04em; }
+  .pp-bubble::after { content:''; position:absolute; bottom:-20px; left:44px; border:10px solid transparent; border-top-color:#11100e; }
+  .pp-bubble::before { content:''; position:absolute; bottom:-13px; left:46px; border:8px solid transparent; border-top-color:#fff; z-index:1; }
+  .pp-btn { font:18px var(--hf); letter-spacing:.05em; background:#ef3340; color:#fff; border:3px solid #11100e;
+    box-shadow:5px 5px 0 #11100e; padding:9px 18px; margin-top:26px; cursor:pointer; }
+  .pp-star { width:124px; height:124px; background:#ffd400; display:grid; place-items:center;
+    font:26px var(--hf); color:#ef3340; transform:rotate(-8deg); text-shadow:1.5px 1.5px 0 #fff;
+    filter:drop-shadow(3px 3px 0 #11100e);
+    clip-path:polygon(50% 0%, 57.8% 21%, 75% 6.7%, 71.2% 28.8%, 93.3% 25%, 79% 42.2%, 100% 50%, 79% 57.8%, 93.3% 75%, 71.2% 71.2%, 75% 93.3%, 57.8% 79%, 50% 100%, 42.2% 79%, 25% 93.3%, 28.8% 71.2%, 6.7% 75%, 21% 57.8%, 0% 50%, 21% 42.2%, 6.7% 25%, 28.8% 28.8%, 25% 6.7%, 42.2% 21%); }
+
+  /* =========== 06 CONSTRUCTIVIST =========== */
+  .s-construct { --hf:'Anton',sans-serif; --bf:'Inter',sans-serif; }
+  .s-construct .tin { background:#f3e9d2; color:#211d18; }
+  .s-construct .tname { text-transform:uppercase; color:#cf2b1d; letter-spacing:.01em; }
+  .ct-poster { position:relative; width:min(440px,100%); height:250px; background:#efe3c8; border:3px solid #211d18; overflow:hidden; }
+  .ct-wedge { position:absolute; inset:0; background:#cf2b1d; clip-path:polygon(0 84%, 100% 14%, 100% 38%, 0 100%); }
+  .ct-circle { position:absolute; width:84px; height:84px; border-radius:50%; background:#211d18; right:22px; top:20px; }
+  .ct-type { position:absolute; left:20px; top:22px; transform:rotate(-7deg); display:flex; flex-direction:column; }
+  .ct-type .a { font:64px/0.95 var(--hf); color:#211d18; }
+  .ct-type .b { font:20px/1.3 var(--hf); color:#cf2b1d; letter-spacing:.12em; }
+  .ct-foot { position:absolute; left:14px; bottom:10px; font:600 10.5px var(--mf); letter-spacing:.22em; color:#f3e9d2; }
+  .ct-list { list-style:none; font:26px/1.5 var(--hf); text-transform:uppercase; }
+  .ct-list li { display:flex; align-items:center; gap:12px; }
+  .ct-list i { width:16px; height:16px; background:#cf2b1d; flex-shrink:0; }
+  .ct-list li:nth-child(2) { color:#cf2b1d; }
+  .ct-list li:nth-child(2) i { background:#211d18; }
+
+  /* =========== 07 MIDNIGHT MATINEE =========== */
+  .s-matinee { --hf:'Staatliches',sans-serif; --bf:'DM Sans',sans-serif; }
+  .s-matinee .tin { background:#181114; color:#f4e8d8; }
+  .s-matinee .tname { letter-spacing:.05em; color:#ff7a1a; }
+  .mt-poster { position:relative; width:min(320px,100%); height:300px; background:#100b0d; border:1px solid #33262b; overflow:hidden; padding:22px; }
+  .mt-cut { position:absolute; left:-6%; right:-6%; bottom:-4px; top:46%; background:#ff7a1a;
+    clip-path:polygon(0 100%, 6% 38%, 14% 70%, 24% 22%, 33% 64%, 45% 8%, 55% 58%, 66% 28%, 76% 74%, 87% 40%, 94% 88%, 100% 56%, 100% 100%); }
+  .mt-title { position:relative; font:44px/0.95 var(--hf); letter-spacing:.04em; }
+  .mt-credit { position:absolute; left:0; right:0; bottom:12px; text-align:center; font:600 9.5px var(--mf); letter-spacing:.26em; color:#100b0d; }
+  .mt-side { display:flex; flex-direction:column; gap:18px; justify-content:center; min-height:300px; }
+  .mt-bars { display:flex; gap:7px; align-items:flex-end; height:74px; }
+  .mt-bars i { width:13px; background:#e8443a; }
+  .mt-bars i:nth-child(1) { height:58%; transform:rotate(-2deg); }
+  .mt-bars i:nth-child(2) { height:92%; background:#ff7a1a; }
+  .mt-bars i:nth-child(3) { height:44%; transform:rotate(2deg); }
+  .mt-bars i:nth-child(4) { height:78%; }
+  .mt-bars i:nth-child(5) { height:64%; background:#ff7a1a; transform:rotate(-3deg); }
+  .mt-roll { font:15px/1.7 var(--bf); color:rgba(244,232,216,.75); }
+  .mt-roll b { font:400 18px var(--hf); letter-spacing:.06em; color:#f4e8d8; }
+
+  /* =========== 08 RISO =========== */
+  .s-riso { --hf:'Space Grotesk',sans-serif; --bf:'Space Grotesk',sans-serif; }
+  .s-riso .tin { background:#f6f1e6; color:#2b2b33;
+    background-image:radial-gradient(rgba(43,43,51,.08) 1px, transparent 1px); background-size:5px 5px; }
+  .s-riso .tname { font-weight:700; text-shadow:2px 1px 0 rgba(255,72,176,.8), -2px -1px 0 rgba(0,120,191,.7); }
+  .rs-card { position:relative; width:min(460px,100%); background:#fdfaf3; border:2px solid #2b2b33; padding:20px 22px; overflow:hidden; }
+  .rs-ink { position:absolute; border-radius:50%; mix-blend-mode:multiply; opacity:.8; pointer-events:none; }
+  .rs-ink.p { width:190px; height:190px; background:#ff48b0; top:-70px; right:-50px; }
+  .rs-ink.b { width:150px; height:150px; background:#0078bf; top:-50px; right:60px; }
+  .rs-issue { font:600 10.5px var(--mf); letter-spacing:.2em; color:#0078bf; margin-bottom:8px; }
+  .rs-head { position:relative; font:700 24px/1.1 var(--hf); letter-spacing:-.01em; margin-bottom:8px;
+    text-shadow:2px 1px 0 rgba(255,72,176,.85), -2px -1px 0 rgba(0,120,191,.75); }
+  .rs-body { position:relative; font-size:14px; line-height:1.6; color:#43434d; max-width:46ch; }
+  .rs-stamp { font:600 12px var(--mf); letter-spacing:.14em; color:#ff48b0; border:2px solid #ff48b0;
+    padding:8px 12px; transform:rotate(-5deg); align-self:center; }
+
+  /* =========== 09 LAVA LOUNGE =========== */
+  .s-lava { --hf:'Shrikhand',cursive; --bf:'DM Sans',sans-serif; }
+  .s-lava .tin { background:#1f0b33; color:#ffd07a; }
+  .s-lava .tname { color:#ff5fa2; text-shadow:0 0 16px rgba(255,95,162,.45); font-weight:400; }
+  .ps-poster { width:min(460px,100%); min-height:250px; border:3px solid #ffd07a; border-radius:16px;
+    background:repeating-conic-gradient(from 0deg at 50% 40%, #371253 0deg 9deg, #1f0b33 9deg 18deg);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; padding:26px; text-align:center; }
+  .ps-poster .l1 { font:46px/1 var(--hf); color:#9fff4a; transform:rotate(-4deg);
+    text-shadow:3px 3px 0 #1f0b33, 0 0 24px rgba(159,255,74,.35); }
+  .ps-poster .l2 { font:italic 700 16px/1.4 var(--bf); letter-spacing:.3em; text-transform:uppercase; color:#ffd07a; }
+  .ps-poster .l3 { font:46px/1 var(--hf); color:#ff5fa2; transform:rotate(3deg);
+    text-shadow:3px 3px 0 #1f0b33, 0 0 24px rgba(255,95,162,.4); }
+  .ps-ticket { font:600 11px var(--mf); letter-spacing:.18em; border:2px dashed #ff5fa2; color:#ff9dc6;
+    padding:10px 14px; border-radius:6px; }
+
+  /* =========== 10 GATSBY (merged) =========== */
+  .s-deco { --hf:'Limelight',cursive; --bf:'Josefin Sans',sans-serif; }
+  .s-deco .tin { background:#131110; color:#f1e7d0; }
+  .s-deco .tname { color:#d8b765; letter-spacing:.06em; }
+  .dc-frame { width:min(480px,100%); border:1.5px solid #d8b765; outline:1px solid rgba(216,183,101,.4);
+    outline-offset:6px; padding:0 26px 26px; text-align:center; margin:8px; }
+  .dc-fan { height:64px; margin:0 -26px 18px;
+    background:repeating-conic-gradient(from -90deg at 50% 100%, rgba(216,183,101,.75) 0 1.4deg, transparent 1.4deg 10deg);
+    border-bottom:1px solid rgba(216,183,101,.4); }
+  .dc-mono { font:42px/1 var(--hf); color:#d8b765; letter-spacing:.12em; }
+  .dc-rule { width:54px; border:0; border-top:1px solid rgba(216,183,101,.55); margin:14px auto; }
+  .dc-title { font:22px/1.3 var(--hf); letter-spacing:.14em; }
+  .dc-div { color:#1f8a70; letter-spacing:.2em; font-size:12px; margin:10px 0 8px; }
+  .dc-sub { font:600 11px var(--bf); letter-spacing:.34em; color:rgba(241,231,208,.8); }
+  .dc-btn { margin-top:18px; background:transparent; border:1px solid #d8b765; color:#d8b765;
+    font:600 11px var(--bf); letter-spacing:.3em; padding:11px 24px; cursor:pointer; }
+
+  /* =========== 11 HARVEST (absorbs boho) =========== */
+  .s-harvest { --hf:'Fraunces',serif; --bf:'DM Sans',sans-serif; }
+  .s-harvest .tin { background:#f7ead2; color:#3d2b1f; }
+  .s-harvest .tname { font-weight:900; color:#d96c2c; }
+  .hv-arc { position:relative; width:230px; height:118px; flex-shrink:0; }
+  .hv-arc i { position:absolute; bottom:0; left:50%; transform:translateX(-50%); border-radius:999px 999px 0 0; }
+  .hv-arch { position:relative; width:124px; height:150px; border-radius:120px 120px 0 0; background:#c1693c; flex-shrink:0; }
+  .hv-arch::before { content:''; position:absolute; left:16px; right:16px; top:16px; bottom:0;
+    border-radius:120px 120px 0 0; background:#d9a420; }
+  .hv-arch::after { content:''; position:absolute; left:32px; right:32px; top:32px; bottom:0;
+    border-radius:120px 120px 0 0; background:#6b8f3d; }
+  .hv-card { width:min(400px,100%); background:#f3e0bd; border-radius:26px; padding:22px 24px; box-shadow:0 8px 0 rgba(217,108,44,.35); }
+  .hv-kick { font:600 10.5px var(--mf); letter-spacing:.22em; text-transform:uppercase; color:#6b8f3d; margin-bottom:6px; }
+  .hv-card h4 { font:900 26px/1.1 var(--hf); color:#7a4a21; margin-bottom:8px; }
+  .hv-card p { font-size:14px; line-height:1.6; color:#5c452f; }
+  .hv-btn { margin-top:16px; background:#d96c2c; color:#fff7e8; border:0; border-radius:999px;
+    font:700 13.5px var(--bf); padding:11px 22px; box-shadow:0 4px 0 #7a4a21; cursor:pointer; }
+  /* =========== 12 UKIYO-E =========== */
+  .s-ukiyo { --hf:'Shippori Mincho',serif; --bf:'Shippori Mincho',serif; }
+  .s-ukiyo .tin { background:#1d2a44; color:#f2e8d5; }
+  .s-ukiyo .tname { font-weight:800; }
+  .uk-print { position:relative; width:min(310px,100%); height:240px; background:#f2e8d5; border:1px solid #0f1830;
+    box-shadow:0 14px 34px rgba(0,0,0,.35); overflow:hidden; flex-shrink:0; }
+  .uk-sun { position:absolute; left:30px; top:28px; width:52px; height:52px; border-radius:50%; background:#c73e2e; }
+  .uk-vert { position:absolute; right:14px; top:14px; writing-mode:vertical-rl; font:600 13px var(--hf);
+    letter-spacing:.4em; color:#1d2a44; }
+  .uk-seig { position:absolute; left:0; right:0; bottom:0; height:88px; background-color:#24344f; border-top:2px solid #1d2a44;
+    background-image:
+      radial-gradient(circle at 50% 130%, #24344f 9px, #7fa8c9 9.5px, #24344f 11px, #24344f 16px, #7fa8c9 16.5px, #24344f 18px, #24344f 23px, #7fa8c9 23.5px, #24344f 25px, transparent 25.5px),
+      radial-gradient(circle at 50% 130%, #24344f 9px, #7fa8c9 9.5px, #24344f 11px, #24344f 16px, #7fa8c9 16.5px, #24344f 18px, #24344f 23px, #7fa8c9 23.5px, #24344f 25px, transparent 25.5px);
+    background-size:50px 25px; background-position:0 0, 25px 12.5px; }
+  .uk-hanko { position:absolute; right:16px; bottom:100px; width:34px; height:34px; background:#c73e2e; color:#f2e8d5;
+    display:grid; place-items:center; font:700 16px var(--hf); border-radius:4px; }
+  .uk-caption { max-width:420px; }
+  .uk-caption h4 { font:800 22px/1.3 var(--hf); margin-bottom:8px; }
+  .uk-caption p { font-size:14px; line-height:1.75; color:rgba(242,232,213,.8); }
+
+  /* =========== 13 NEOCLASSICAL =========== */
+  .s-neo { --hf:'Cinzel',serif; --bf:'EB Garamond',serif; }
+  .s-neo .tin { background:#f1ede6; color:#29251f;
+    background-image:radial-gradient(90% 60% at 14% 0%, rgba(125,107,79,.07), transparent 60%); }
+  .s-neo .tname { letter-spacing:.1em; }
+  .nc-temple { width:250px; text-align:center; flex-shrink:0; padding:0 18px; }
+  .nc-ped { height:44px; background:#e7e0d1; clip-path:polygon(50% 0, 100% 100%, 0 100%);
+    filter:drop-shadow(0 1px 0 #b8ab92); }
+  .nc-arch { height:13px; background:#efe8d9; border:1px solid #b8ab92; }
+  .nc-cols { display:flex; justify-content:space-between; padding:0 20px; }
+  .nc-col { width:25px; height:100px; border:1px solid #b8ab92; border-top:0; border-bottom:0;
+    background:repeating-linear-gradient(90deg, #e9e2d3 0 4px, #d6cbb4 4px 7px); }
+  .nc-base1 { height:11px; background:#efe8d9; border:1px solid #b8ab92; }
+  .nc-base2 { height:11px; background:#e7e0d1; border:1px solid #b8ab92; border-top:0; margin:0 -9px; }
+  .nc-base3 { height:11px; background:#ddd5c2; border:1px solid #b8ab92; border-top:0; margin:0 -18px; }
+  .nc-cap { margin-top:14px; font:700 13px var(--hf); letter-spacing:.3em; color:#7d6b4f; }
+  .nc-card { width:min(320px,100%); background:#faf7f1; border:1px solid #cfc4ae;
+    box-shadow:0 0 0 4px #faf7f1, 0 0 0 5px #cfc4ae; margin:5px; padding:24px 24px 20px; text-align:center; }
+  .nc-laurel { font-size:18px; color:#7d6b4f; letter-spacing:.3em; }
+  .nc-card h4 { font:700 18px var(--hf); letter-spacing:.18em; margin-top:8px; }
+  .nc-card hr { border:0; border-top:3px double #b8ab92; margin:12px 18px; }
+  .nc-card p { font:16px/1.55 var(--bf); }
+  .nc-roman { font:600 12px var(--hf); letter-spacing:.26em; color:#8c3030; margin-top:12px; }
+
+  /* =========== 14 CHINOISERIE =========== */
+  .s-chin { --hf:'Marcellus',serif; --bf:'EB Garamond',serif; }
+  .s-chin .tin { background:#f6f8f3; color:#22335c; }
+  .ch-plate { position:relative; width:180px; height:180px; border-radius:50%; flex-shrink:0; background:#fff;
+    box-shadow:inset 0 0 0 5px #2c4f9e, inset 0 0 0 8px #fff, inset 0 0 0 9.5px rgba(44,79,158,.55),
+      0 10px 24px rgba(34,51,92,.16);
+    display:grid; place-items:center; }
+  .ch-plate::before { content:''; position:absolute; inset:20px; border-radius:50%; border:2px dashed rgba(44,79,158,.5); }
+  .ch-plate span { font:64px var(--hf); color:#2c4f9e; }
+  .ch-card { width:min(330px,100%); background:#fff; border:1px solid #2c4f9e;
+    box-shadow:0 0 0 4px #fff, 0 0 0 5px #2c4f9e; margin:5px; }
+  .ch-scallop { height:18px; background:radial-gradient(circle at 10px -4px, transparent 12px, #2c4f9e 13px);
+    background-size:20px 18px; }
+  .ch-card .pad { padding:18px 20px 20px; }
+  .ch-card h4 { font:21px var(--hf); letter-spacing:.05em; }
+  .ch-card p { font:15.5px var(--bf); color:#41538a; margin-top:6px; }
+  .ch-gold { font:600 10.5px var(--bf); letter-spacing:.24em; text-transform:uppercase; color:#b08d3e; margin-top:12px; }
+  .ch-lattice { width:100%; height:16px;
+    background:repeating-linear-gradient(45deg, rgba(44,79,158,.5) 0 1.5px, transparent 1.5px 9px),
+      repeating-linear-gradient(-45deg, rgba(44,79,158,.5) 0 1.5px, transparent 1.5px 9px);
+    border-top:1px solid #2c4f9e; border-bottom:1px solid #2c4f9e; }
+  /* =========== 15 DOODLE =========== */
+  .s-doodle { --hf:'Patrick Hand',cursive; --bf:'Patrick Hand',cursive; }
+  .s-doodle .tin { background:#fdfbf4; color:#2b2b2b;
+    background-image:linear-gradient(rgba(47,111,222,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(47,111,222,.07) 1px, transparent 1px);
+    background-size:26px 26px; }
+  .s-doodle .blurb p { font-size:16.5px; }
+  .dd-card { width:min(430px,100%); background:#fff; border:2px solid #2b2b2b;
+    border-radius:255px 15px 225px 15px/15px 225px 15px 255px; padding:20px 24px; transform:rotate(-.6deg); }
+  .dd-num { display:inline-grid; place-items:center; width:40px; height:36px; border:2.5px solid #e2483d;
+    border-radius:64% 36% 58% 42%/45% 60% 40% 55%; transform:rotate(-4deg); font:20px var(--hf); color:#e2483d;
+    margin-right:10px; vertical-align:middle; }
+  .dd-card h4 { font:24px var(--hf); display:inline-block; vertical-align:middle; }
+  .dd-hl { background:linear-gradient(transparent 50%, #ffe066 50% 92%, transparent 92%); padding:0 4px; }
+  .dd-card p { font:17px var(--bf); margin-top:12px; }
+  .dd-under { text-decoration:underline wavy #2f6fde 2.5px; text-underline-offset:5px; }
+  .dd-arrow { font:600 25px 'Caveat',cursive; color:#2f6fde; transform:rotate(6deg); align-self:center; }
+  .dd-sticky { position:relative; width:152px; background:#fff3a3; padding:14px 14px 20px;
+    font:600 17px/1.35 'Caveat',cursive; transform:rotate(2.4deg); box-shadow:2px 5px 10px rgba(0,0,0,.15); }
+  .dd-sticky::after { content:''; position:absolute; right:0; bottom:0; width:0; height:0;
+    border-left:14px solid #e3cf6f; border-bottom:14px solid #fdfbf4; }
+
+  /* =========== 16 WHEATPASTE (punk + graffiti) =========== */
+  .s-paste { --hf:'Permanent Marker',cursive; --bf:Inter,sans-serif; }
+  .s-paste .tin { background:#1f2125; color:#f0ede4;
+    background-image:radial-gradient(circle 220px at 80% 16%, rgba(255,79,163,.07), transparent),
+      radial-gradient(circle 260px at 10% 90%, rgba(200,255,61,.05), transparent),
+      radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);
+    background-size:auto, auto, 7px 7px; }
+  .s-paste .tname { color:#ff4fa3; transform:rotate(-1.5deg); display:inline-block; text-shadow:2px 2px 0 #141519; }
+  .wp-ransom span { display:inline-block; padding:2px 9px; margin:2px 1px; }
+  .wp-r1 { font:21px 'Anton',sans-serif; background:#f0ede4; color:#17181c; transform:rotate(-3deg); text-transform:uppercase; }
+  .wp-r2 { font:18px 'Special Elite',cursive; background:#d4242a; color:#fff; transform:rotate(2deg); }
+  .wp-r3 { font:600 16px var(--mf); background:#f2e94e; color:#17181c; transform:rotate(-1.5deg); }
+  .wp-r4 { font:italic 600 19px 'EB Garamond',serif; background:#fff; color:#17181c; transform:rotate(3deg); }
+  .wp-flyer { width:min(320px,100%); background:#ece8dd; color:#17181c; padding:18px 18px 30px;
+    transform:rotate(-1.6deg); font:14.5px/1.55 'Special Elite',cursive; box-shadow:0 10px 24px rgba(0,0,0,.45);
+    clip-path:polygon(0 0,100% 0,100% 93%,94% 100%,86% 94%,78% 100%,70% 95%,60% 100%,52% 94%,42% 100%,34% 95%,24% 100%,16% 94%,8% 100%,0 95%); }
+  .wp-flyer h4 { font:26px 'Anton',sans-serif; text-transform:uppercase; letter-spacing:.02em; margin:4px 0; }
+  .wp-tag { display:inline-block; font:40px/1.1 var(--hf); color:#ff4fa3; transform:rotate(-2.5deg);
+    text-shadow:3px 3px 0 #141519, -1px -1px 0 #141519, 1px -1px 0 #141519, -1px 1px 0 #141519,
+      7px 9px 16px rgba(0,0,0,.5); }
+  .wp-drip { display:inline-block; width:6px; height:26px; background:#ff4fa3; border-radius:0 0 6px 6px;
+    margin-left:-10px; vertical-align:-20px; box-shadow:1px 1px 0 #141519; }
+  .wp-throw { font:28px var(--hf); color:transparent; -webkit-text-stroke:2px #c8ff3d;
+    letter-spacing:.05em; transform:rotate(1.5deg); margin-top:10px; }
+  .wp-sticker { width:200px; background:#fff; color:#17181c; border-radius:9px; padding:0 0 12px;
+    transform:rotate(2.4deg); box-shadow:0 8px 18px rgba(0,0,0,.45); overflow:hidden; }
+  .wp-sticker .top { background:#d4242a; color:#fff; padding:7px 10px 5px; text-align:center;
+    font:700 10.5px var(--bf); letter-spacing:.1em; text-transform:uppercase; }
+  .wp-sticker .top small { display:block; font-weight:500; letter-spacing:.03em; text-transform:none; opacity:.85; }
+  .wp-sticker .name { font:30px var(--hf); text-align:center; margin-top:8px; transform:rotate(-1.5deg); }
+  .wp-stamp { font:24px 'Anton',sans-serif; color:#d4242a; border:3px solid #d4242a; padding:6px 14px 4px;
+    transform:rotate(-7deg); letter-spacing:.08em; text-transform:uppercase; align-self:center; opacity:.92; }
+
+  /* =========== 17 GRAFFITI =========== */
+  .s-graf { --hf:'Sedgwick Ave Display',cursive; --bf:Inter,sans-serif; }
+  .s-graf .tin { background:#232529; color:#f1f0ec;
+    background-image:radial-gradient(circle 240px at 82% 12%, rgba(52,195,255,.07), transparent),
+      radial-gradient(circle 260px at 8% 88%, rgba(255,122,0,.06), transparent),
+      radial-gradient(rgba(255,255,255,.035) 1px, transparent 1px);
+    background-size:auto, auto, 6px 6px; }
+  .s-graf .tname { font-size:30px; color:#ff7a00; text-shadow:3px 3px 0 #101113; transform:rotate(-1.5deg); display:inline-block; }
+  .gr-wall { position:relative; width:100%; padding:46px 16px 30px; text-align:center; overflow:hidden;
+    border:1px solid #1a1b1e; box-shadow:inset 0 0 90px rgba(0,0,0,.55);
+    background-color:#5c3a2e;
+    background-image:
+      linear-gradient(335deg, #7d4839 23px, transparent 23px),
+      linear-gradient(155deg, #8a5240 23px, transparent 23px),
+      linear-gradient(335deg, #74432f 23px, transparent 23px),
+      linear-gradient(155deg, #835043 23px, transparent 23px);
+    background-size:58px 58px;
+    background-position:0 2px, 4px 35px, 29px 31px, 34px 6px; }
+  .gr-burst { position:absolute; left:50%; top:42%; width:80%; height:74%; transform:translate(-50%,-50%);
+    background:radial-gradient(55% 60% at 50% 50%, rgba(255,210,63,.42), rgba(255,122,0,.25) 55%, transparent 78%);
+    filter:blur(8px); pointer-events:none; }
+  .gr-piece { position:relative; display:inline-block; }
+  .gr-word { display:inline-block; font:74px/1 var(--hf); letter-spacing:.01em; transform:rotate(-3deg);
+    background:linear-gradient(180deg, #fefefe 0%, #c7ccd6 38%, #87909f 50%, #eef1f6 56%, #98a1b1 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    -webkit-text-stroke:3px #101113;
+    filter:drop-shadow(5px 6px 0 #101113) drop-shadow(0 0 16px rgba(0,0,0,.4)); }
+  .gr-crown { position:absolute; top:-26px; left:-14px; font-size:34px; color:#ffd23f; transform:rotate(-14deg);
+    text-shadow:2px 3px 0 #101113; }
+  .gr-spark1, .gr-spark2 { position:absolute; color:#fff; text-shadow:0 0 8px rgba(255,255,255,.7); }
+  .gr-spark1 { top:26px; right:13%; font-size:20px; }
+  .gr-spark2 { bottom:60px; left:11%; font-size:14px; }
+  .gr-drips { display:flex; gap:32px; justify-content:center; margin-top:-3px; }
+  .gr-drips i { width:7px; background:#101113; border-radius:0 0 7px 7px; }
+  .gr-drips i:nth-child(1) { height:22px; }
+  .gr-drips i:nth-child(2) { height:34px; background:#aab2c0; }
+  .gr-drips i:nth-child(3) { height:14px; }
+  .gr-drips i:nth-child(4) { height:27px; }
+  .gr-drips i:nth-child(5) { height:17px; background:#aab2c0; }
+  .gr-sig { display:block; margin-top:16px; font:20px 'Permanent Marker',cursive; color:#f1f0ec;
+    transform:rotate(-2deg); text-shadow:2px 2px 0 #101113; }
+  .gr-splat { position:relative; width:112px; height:104px; background:#34c3ff;
+    border-radius:58% 42% 55% 45%/52% 46% 54% 48%; display:grid; place-items:center; transform:rotate(-6deg);
+    font:17px 'Permanent Marker',cursive; color:#101113; flex-shrink:0; }
+  .gr-splat::before { content:''; position:absolute; left:-14px; top:16px; width:15px; height:15px; border-radius:50%;
+    background:#34c3ff; box-shadow:120px 56px 0 -5px #34c3ff, 102px -10px 0 -8px #34c3ff, -4px 72px 0 -7px #34c3ff; }
+  .gr-tagline { font:26px 'Permanent Marker',cursive; color:#ff7a00; transform:rotate(2deg);
+    text-shadow:2px 3px 0 #101113; align-self:center; }
+
+  /* ---- outro ---- */
+  .outro { margin-top:56px; border-top:1px solid #2a2f3a; padding-top:26px; color:#9aa3b2; font-size:14.5px; }
+  .outro b { color:#e8ecf3; font-weight:600; }
+  .outro p { max-width:80ch; margin-top:10px; }
+</style>
+</head>
+<body>
+<div class="shell">
+
+  <header class="intro">
+    <h1>Test styles — dawsonamf.com</h1>
+    <p class="sub">Round three: the round-two survivors merged with the v2 sheet, deduped down to the core artistic
+      directions — <b>17 tiles</b>. Cut: broadsheet, blueprint, and field-notes (<b>already shipped</b> in the
+      registry), bento and y2k (cut in round three), press-start (cut in round one, stays cut), japandi (quiet
+      tier), and naive/kawaii/kidcore (gag tier — doodle carries the hand-drawn flag alone). Merged: the two
+      bauhauses, pop-art + halftone, art-deco + luxury + gatsby, boho into harvest, and punk + graffiti into one
+      wall. Late addition by request: true street graffiti — sprayed, not pasted (№ 17). Each tile renders in
+      its own style with the palette mapped to the five registry roles (<b>text / bg / primary / secondary /
+      accent</b>). Shipped registry: 2 dark / 4 light — this sheet runs <b>7 dark / 10 light</b>.</p>
+    <p class="sub"><b>Build queue (locked 2026-06-10): doodle (15) → lava lounge (09) → wheatpaste (16).</b>
+      Everything else: to be determined. Each build is one registry entry in <b>js/theme-bootstrap.js</b> + one
+      scoped sheet at <b>css/themes/&lt;id&gt;.css</b>; the tile carries the palette roles, fonts, flags, and
+      technique notes — build protocol and JS contracts in <b>STYLE_VERSIONS_SPEC.md</b>.</p>
+    <div class="legend">
+      <span>BUILD 1–3 · locked implementation queue</span>
+      <span>KEPT · survivor from round two</span>
+      <span>MERGED · two or more directions combined</span>
+      <span>NEW · from the v2 sheet, redesigned</span>
+    </div>
+    <nav class="toc">
+      <a href="#vapor">01 vapor</a><a href="#neopop">02 neo-pop</a><a href="#bauhaus">03 bauhaus</a>
+      <a href="#memphis">04 memphis</a><a href="#popart">05 pop-art</a><a href="#construct">06 constructivist</a>
+      <a href="#matinee">07 matinee</a><a href="#riso">08 riso</a><a href="#lava">09 lava-lounge</a>
+      <a href="#deco">10 gatsby</a><a href="#harvest">11 harvest</a>
+      <a href="#ukiyo">12 ukiyo-e</a><a href="#neoclassical">13 neoclassical</a>
+      <a href="#chinoiserie">14 chinoiserie</a><a href="#doodle">15 doodle</a><a href="#paste">16 wheatpaste</a><a href="#graffiti">17 graffiti</a>
+    </nav>
+  </header>
+
+  <!-- ============ 01 VAPOR ============ -->
+  <section class="tile s-vapor" id="vapor">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">01</span><h2 class="tname">VAPOR</h2><span class="tagline">outrun · synthwave · vaporwave</span>
+        <div class="chips"><span class="chip">dark</span><span class="chip">kept</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Vaporwave and outrun: the 2010s internet's nostalgia for an '80s that never quite happened — neon
+        sunset gradients, chrome italics, sign-glow display type, the perspective grid running to the horizon.
+        Equal parts mall tech, Miami, and TRON.</p>
+        <p>The crowd-pleaser: instantly legible, screenshots beautifully, and your tilt physics and cursor
+        follower finally get to be loud on purpose. Carousel plates go neon-jukebox, section numbers glow like
+        signage. Commit hard or it reads as a gradient pack; keep glow off body text.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#f3eaff"></div><div class="swl">--text<br>#f3eaff</div></div>
+        <div><div class="sw" style="background:#20094a"></div><div class="swl">--bg<br>#20094a</div></div>
+        <div><div class="sw" style="background:#ff2ec4"></div><div class="swl">--primary<br>#ff2ec4</div></div>
+        <div><div class="sw" style="background:#2c1160"></div><div class="swl">--secondary<br>#2c1160</div></div>
+        <div><div class="sw" style="background:#00e5ff"></div><div class="swl">--accent<br>#00e5ff</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-size:28px; color:#00e5ff; text-shadow:0 0 8px rgba(0,229,255,.8), 0 0 28px rgba(255,46,196,.6);">DAWSON</p>
+      <p class="cap">display: Monoton, glow-shadowed — single lines only, never body copy</p>
+      <p class="spec-b" style="font-family:'Exo 2',sans-serif;">Body and UI run in Exo 2; chrome-gradient italics are reserved for one subtitle per page.</p>
+      <p class="cap">body: Exo 2 400/600 · chrome: Exo 2 800 italic + background-clip text</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="flex-direction:column;">
+        <div class="vp-stage">
+          <div class="vp-sun"></div>
+          <div class="vp-floor"></div>
+          <div class="vp-neon">DAWSON</div>
+          <div class="vp-chrome">Metzger-Fleetwood</div>
+        </div>
+        <button class="vp-btn">ENTER ►</button>
+      </div>
+      <p class="impl">registry: polarity dark · tilt ON, motion high — the one skin that turns the dials up · fonts: Monoton + Exo 2 · sunset-gradient hero, grid-horizon footer via rotateX'd repeating gradients, neon borders on cards. Legibility rule: glow on display type and chrome only.</p>
+    </div>
+  </section>
+
+  <!-- ============ 02 NEO-POP ============ -->
+  <section class="tile s-neopop" id="neopop">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">02</span><h2 class="tname">Neo-Pop</h2><span class="tagline">high-energy comic-brutalist</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">kept</span><span class="chip">layer 1 · ~150 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>A fun, high-impact aesthetic celebrating thick black outlines, deliberate comic block offsets, vibrant pastel fills, and distinct flat shadows. It ditches sleek modern gradients for unapologetic shapes.</p>
+        <p>This layout gives interactive elements real weight. Cards bounce physically when pressed, links carry chunky dark frames, and color blocks emphasize discrete layout partitions directly.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#1a1a1a"></div><div class="swl">--text<br>#1a1a1a</div></div>
+        <div><div class="sw" style="background:#fff7e6"></div><div class="swl">--bg<br>#fff7e6</div></div>
+        <div><div class="sw" style="background:#ffdd53"></div><div class="swl">--primary<br>#ffdd53</div></div>
+        <div><div class="sw" style="background:#ffffff"></div><div class="swl">--secondary<br>#ffffff</div></div>
+        <div><div class="sw" style="background:#ff6b6b"></div><div class="swl">--accent<br>#ff6b6b</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:800; text-transform:uppercase; color:#ff6b6b; -webkit-text-stroke:1.5px #1a1a1a;">Dawson M-F</p>
+      <p class="cap">display: Inter Black / thick text stroke</p>
+      <p class="spec-b" style="font-weight:700;">Building clean web components, iOS tools, and intelligent data systems with loud, bold execution layouts.</p>
+      <p class="cap">body: DM Sans Bold · labels: IBM Plex Mono 600</p>
+      <div class="band">In practice</div>
+      <div class="demo">
+        <div class="np-box">
+          <span class="np-tag">Engineering Log</span>
+          <h4>01 · Core Focus</h4>
+          <p style="font-size:14px; margin-bottom:14px; color:#333;">Components scale with crisp structural definition. No smooth gradients, no blur, just hard lines and high focus.</p>
+          <button class="np-btn">Launch App</button>
+        </div>
+      </div>
+      <p class="impl">registry: polarity light · flags { hardShadows: true, bounceInteract: true } · fonts: Inter + DM Sans · card structures gain thick solid borders and pixel-shifted translation transitions on interactive states.</p>
+    </div>
+  </section>
+
+  <!-- ============ 03 BAUHAUS (merged) ============ -->
+  <section class="tile s-bauhaus" id="bauhaus">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">03</span><h2 class="tname">bauhaus</h2><span class="tagline">form follows function</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">merged ×2</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>The Weimar school, 1919–1933: primary colors, primary shapes, lowercase type, and the conviction that
+        geometry plus function is beauty enough. Circle, triangle, square in red, yellow, blue; thick black rules;
+        diagonal energy. Most of modern design is downstream of it.</p>
+        <p>Both sheets had a bauhaus — this is the merge: the circle/triangle/square poster grammar and Jost (the
+        Futura stand-in) from v2, the heavy border-left section accent from round two. Each section claims one
+        shape-and-color pair as its marker, recycled in nav dots and list bullets, and the carousel plates become
+        composition posters.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#14110d"></div><div class="swl">--text<br>#14110d</div></div>
+        <div><div class="sw" style="background:#f2eee6"></div><div class="swl">--bg<br>#f2eee6</div></div>
+        <div><div class="sw" style="background:#e0311f"></div><div class="swl">--primary<br>#e0311f</div></div>
+        <div><div class="sw" style="background:#ffffff"></div><div class="swl">--secondary<br>#ffffff</div></div>
+        <div><div class="sw" style="background:#1c52b5"></div><div class="swl">--accent<br>#1c52b5</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:500; letter-spacing:.18em; text-transform:lowercase; font-size:28px;">dawson metzger-fleetwood</p>
+      <p class="cap">display: Jost 500 lowercase, letterspaced — yellow #f6c52e rides along as garnish</p>
+      <p class="spec-b">Body stays Jost 400; hierarchy comes from scale, spacing, and the three shapes.</p>
+      <p class="cap">body: Jost 400 · labels: Jost 700 caps, generous tracking</p>
+      <div class="band">In practice</div>
+      <div class="demo">
+        <div class="bh-poster">
+          <div class="bh-row"><div class="bh-circle"></div><div class="bh-tri"></div><div class="bh-sq"></div></div>
+          <div class="bh-word">web · ios · ml</div>
+          <div class="bh-stripe"></div>
+        </div>
+        <div class="bh-markers">
+          <span><i class="bh-m1"></i>01 / about</span>
+          <span><i class="bh-m2"></i>02 / where i've worked</span>
+          <span><i class="bh-m3"></i>03 / blog</span>
+        </div>
+      </div>
+      <p class="impl">registry: polarity light · flags { tilt:false } — motion limited to hard slide-ins · fonts: Jost only · radius 0, 3px black borders, 16px border-left section accents, shapes via pure CSS · section 01 = red circle, 02 = yellow triangle, 03 = blue square.</p>
+    </div>
+  </section>
+
+  <!-- ============ 04 MEMPHIS ============ -->
+  <section class="tile s-memphis" id="memphis">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">04</span><h2 class="tname">Memphis</h2><span class="tagline">Milan 1981 · squiggle confetti</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">kept</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>The Memphis Group, Milan 1981 — Sottsass and friends throwing out "good taste": squiggles, confetti
+        shapes, clashing pastels pinned down by hard black ink lines, geometry used as a punchline. The look that
+        defined every '80s notebook cover and most of the current revival.</p>
+        <p>Sits exactly between neo-pop's chunk and bauhaus's geometry, but plays it for comedy. Cards tilt a
+        degree off-axis, shapes loiter behind sections like unswept confetti, and the cursor follower becomes a
+        confetti dot. The danger is kitsch — keep the canvas calm and let the shapes do the talking.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#2b2730"></div><div class="swl">--text<br>#2b2730</div></div>
+        <div><div class="sw" style="background:#fff6ec"></div><div class="swl">--bg<br>#fff6ec</div></div>
+        <div><div class="sw" style="background:#ff4f7e"></div><div class="swl">--primary<br>#ff4f7e</div></div>
+        <div><div class="sw" style="background:#ffffff"></div><div class="swl">--secondary<br>#ffffff</div></div>
+        <div><div class="sw" style="background:#00bfa8"></div><div class="swl">--accent<br>#00bfa8</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:800;">Dawson Metzger-Fleetwood</p>
+      <p class="cap">display: Baloo 2 800 — chunky, rounded, a little cartoon</p>
+      <p class="spec-b">Body keeps a straight face in DM Sans so the shapes can be the joke.</p>
+      <p class="cap">body: DM Sans · labels: IBM Plex Mono · yellow #ffd23f as garnish, never a role</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="mm-card">
+          <span class="mm-tag">01 · About</span>
+          <h4>Hello, I'm Dawson!</h4>
+          <p>Cards keep a 3px ink border, the shadow goes mint, and everything sits a degree off-axis. The dotted
+          canvas replaces the particle field.</p>
+          <button class="mm-btn">Say hi</button>
+        </div>
+        <div class="mm-shapes">
+          <span class="mm-dot"></span>
+          <span class="mm-tri"></span>
+          <span class="mm-squig">~~~~~</span>
+          <span class="mm-pill"></span>
+          <span class="mm-zig"></span>
+        </div>
+      </div>
+      <p class="impl">registry: polarity light · flags { tilt:subtle, confettiCursor:true } · fonts: Baloo 2 + DM Sans · dotted canvas via radial-gradient, shape sprites as positioned divs behind sections, pastel offset shadows, wavy-underline squiggles for free.</p>
+    </div>
+  </section>
+
+  <!-- ============ 05 POP ART (merged) ============ -->
+  <section class="tile s-pop" id="popart">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">05</span><h2 class="tname">POP ART</h2><span class="tagline">ben-day dots &amp; speech bubbles</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">merged ×2</span><span class="chip">layer 2 · ~220 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Lichtenstein's ben-day dots and the four-color comic press: CMYK dot screens, 3px ink keylines, speech
+        bubbles, starburst stickers, onomatopoeia in display caps. Print imperfection promoted to the whole
+        aesthetic — loud, ironic, legible from across a gallery.</p>
+        <p>Round two's halftone and v2's pop-art were the same skin; this is the merge — bubble and starburst from
+        one, the yellow halftone panel and caption chips from the other. The typed hero becomes a speech bubble,
+        section numbers become issue numbers. Same family as neo-pop and memphis: pick one of the three.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#11100e"></div><div class="swl">--text<br>#11100e</div></div>
+        <div><div class="sw" style="background:#fdf6e3"></div><div class="swl">--bg<br>#fdf6e3</div></div>
+        <div><div class="sw" style="background:#ef3340"></div><div class="swl">--primary<br>#ef3340</div></div>
+        <div><div class="sw" style="background:#ffd83d"></div><div class="swl">--secondary<br>#ffd83d</div></div>
+        <div><div class="sw" style="background:#1d6ff2"></div><div class="swl">--accent<br>#1d6ff2</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="letter-spacing:.04em; color:#ef3340; text-shadow:3px 3px 0 #ffd400;">DAWSON SAVES THE DAY!</p>
+      <p class="cap">display: Bangers + flat yellow offset — headlines only</p>
+      <p class="spec-b" style="font-weight:700;">Body copy runs in Comic Neue bold, like lettering inside the panel borders.</p>
+      <p class="cap">body: Comic Neue 700 · captions: caption chips in accent blue</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="pp-panel">
+          <span class="pp-cap">Meanwhile, at the keyboard…</span><br>
+          <div class="pp-bubble">I BUILD FOR WEB, iOS &amp; visionOS — ALL BEFORE LUNCH!</div>
+          <br><button class="pp-btn">READ THE BLOG →</button>
+        </div>
+        <div class="pp-star">POW!</div>
+      </div>
+      <p class="impl">registry: polarity light · flags { hardShadows:true } — hover states snap (scale + rotate), no easing · fonts: Bangers + Comic Neue · ben-day canvas via radial-gradient dots, halftone panels at background-size 14px, bubble tails via pseudo-element border triangles, clip-path starbursts kept crisp with drop-shadow() outlines. Dots stay off body-copy surfaces.</p>
+    </div>
+  </section>
+
+  <!-- ============ 06 CONSTRUCTIVIST ============ -->
+  <section class="tile s-construct" id="construct">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">06</span><h2 class="tname">Constructivist</h2><span class="tagline">red wedge agitprop</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">kept</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Rodchenko and El Lissitzky: red, black, and unbleached paper; condensed caps stacked on the diagonal;
+        circles and wedges doing the layout work. <i>Beat the Whites with the Red Wedge</i> — graphic design as
+        a shout.</p>
+        <p>Bauhaus's louder sibling — where bauhaus arranges, constructivism agitates. Headlines rotate seven
+        degrees, the red wedge cuts through section dividers, skills muster as a manifesto list. Your numbered
+        sections already read like a five-year plan. Pick this or bauhaus, not both.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#211d18"></div><div class="swl">--text<br>#211d18</div></div>
+        <div><div class="sw" style="background:#f3e9d2"></div><div class="swl">--bg<br>#f3e9d2</div></div>
+        <div><div class="sw" style="background:#cf2b1d"></div><div class="swl">--primary<br>#cf2b1d</div></div>
+        <div><div class="sw" style="background:#eadfc4"></div><div class="swl">--secondary<br>#eadfc4</div></div>
+        <div><div class="sw" style="background:#cf2b1d"></div><div class="swl">--accent<br>#cf2b1d</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="text-transform:uppercase;">BUILD <span style="color:#cf2b1d;">/</span> SHIP <span style="color:#cf2b1d;">/</span> REPEAT</p>
+      <p class="cap">display: Anton — heavy condensed grotesque, caps, often rotated</p>
+      <p class="spec-b" style="font-weight:500;">Body stays small and flat in Inter; the hierarchy is carried entirely by scale and the one red.</p>
+      <p class="cap">body: Inter 500 · labels: IBM Plex Mono caps</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="ct-poster">
+          <div class="ct-wedge"></div>
+          <div class="ct-circle"></div>
+          <div class="ct-type">
+            <span class="a">BUILD!</span>
+            <span class="b">TEST · SHIP · REPEAT</span>
+          </div>
+          <div class="ct-foot">№ 01 — WORKERS OF THE WEB</div>
+        </div>
+        <ul class="ct-list">
+          <li><i></i>WEB — SINCE 2019</li>
+          <li><i></i>iOS / visionOS</li>
+          <li><i></i>ML / RL PIPELINES</li>
+        </ul>
+      </div>
+      <p class="impl">registry: polarity light · flags { animations:minimal } · fonts: Anton + Inter · clip-path wedges through section breaks, rotated headline blocks, square red bullet markers, radius 0 — shares the brutalist skeleton, swaps the voice from gallery to agitprop.</p>
+    </div>
+  </section>
+
+  <!-- ============ 07 MIDNIGHT MATINEE ============ -->
+  <section class="tile s-matinee" id="matinee">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">07</span><h2 class="tname">MIDNIGHT MATINEE</h2><span class="tagline">Saul Bass title sequence</span>
+        <div class="chips"><span class="chip">dark</span><span class="chip">kept</span><span class="chip">layer 2 · ~180 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Saul Bass title sequences, 1955–65: hand-cut paper shapes, jagged silhouettes, one hot orange against
+        black, condensed caps stacked like film credits. <i>Vertigo</i>, <i>Anatomy of a Murder</i>, <i>The Man
+        with the Golden Arm</i>.</p>
+        <p>The most art-directed dark theme on this sheet — it keeps your dark polarity but swaps engineer-dark
+        for cinema-dark. Sections become title cards, jobs become "starring" credits, the footer is the end-credit
+        roll. Motion should behave like cuts, not fades.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#f4e8d8"></div><div class="swl">--text<br>#f4e8d8</div></div>
+        <div><div class="sw" style="background:#181114"></div><div class="swl">--bg<br>#181114</div></div>
+        <div><div class="sw" style="background:#ff7a1a"></div><div class="swl">--primary<br>#ff7a1a</div></div>
+        <div><div class="sw" style="background:#241a1e"></div><div class="swl">--secondary<br>#241a1e</div></div>
+        <div><div class="sw" style="background:#e8443a"></div><div class="swl">--accent<br>#e8443a</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="letter-spacing:.05em;">THE MAN WITH THE GOLDEN REPO</p>
+      <p class="cap">display: Staatliches — condensed poster caps, stacked tight</p>
+      <p class="spec-b">Credits and body run small in DM Sans; the cut-paper shapes carry the drama.</p>
+      <p class="cap">body: DM Sans · credit lines: IBM Plex Mono letterspaced caps</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:stretch;">
+        <div class="mt-poster">
+          <div class="mt-cut"></div>
+          <div class="mt-title">ANATOMY<br>OF A<br>PORTFOLIO</div>
+          <div class="mt-credit">A SITE BY DAWSON METZGER-FLEETWOOD</div>
+        </div>
+        <div class="mt-side">
+          <div class="mt-bars"><i></i><i></i><i></i><i></i><i></i></div>
+          <p class="mt-roll">starring<br><b>WEB</b> · <b>iOS</b> · <b>visionOS</b><br>with <b>ML/RL</b> as themselves</p>
+        </div>
+      </div>
+      <p class="impl">registry: polarity dark · flags { motion:'cuts' } · fonts: Staatliches + DM Sans · clip-path jagged cutouts as section art, hand-cut uneven bar motifs, one orange + one red on near-black, radius 0. The carousel becomes a film-strip.</p>
+    </div>
+  </section>
+
+  <!-- ============ 08 RISO ============ -->
+  <section class="tile s-riso" id="riso">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">08</span><h2 class="tname">Riso</h2><span class="tagline">two-ink zine overprint</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">kept</span><span class="chip">layer 1–2 · ~160 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Risograph zines: two fluorescent soy inks overprinting on uncoated paper, multiply blends where they
+        cross, slight misregistration on every pass, grain everywhere. The default look of small-press print and
+        indie club posters right now.</p>
+        <p>The cheapest big-personality skin here — two ink colors plus paper do all the work. Headlines pick up
+        a misregistration shadow, images duotone into pink/blue, cards become print blocks with ink blobs bleeding
+        through. Reads current without chasing a trend that expires next year.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#2b2b33"></div><div class="swl">--text<br>#2b2b33</div></div>
+        <div><div class="sw" style="background:#f6f1e6"></div><div class="swl">--bg<br>#f6f1e6</div></div>
+        <div><div class="sw" style="background:#ff48b0"></div><div class="swl">--primary<br>#ff48b0</div></div>
+        <div><div class="sw" style="background:#fdfaf3"></div><div class="swl">--secondary<br>#fdfaf3</div></div>
+        <div><div class="sw" style="background:#0078bf"></div><div class="swl">--accent<br>#0078bf</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:700; text-shadow:2px 1px 0 rgba(255,72,176,.8), -2px -1px 0 rgba(0,120,191,.7);">Dawson Metzger-Fleetwood</p>
+      <p class="cap">display: Space Grotesk 700 + two-ink misregistration shadow</p>
+      <p class="spec-b">One grotesk does everything — the inks are the personality, not the type.</p>
+      <p class="cap">body: Space Grotesk 400 · labels: IBM Plex Mono</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="rs-card">
+          <i class="rs-ink p"></i><i class="rs-ink b"></i>
+          <p class="rs-issue">ZINE № 07 — SUMMER 2026</p>
+          <h4 class="rs-head">Dawson prints in two colors</h4>
+          <p class="rs-body">Fluorescent pink and federal blue, multiplied where they overlap. Every image duotones;
+          every headline drifts two pixels off-register.</p>
+        </div>
+        <span class="rs-stamp">RISO · 2-COLOR · 1 PASS</span>
+      </div>
+      <p class="impl">registry: polarity light · flags { duotoneImages:true } · fonts: Space Grotesk only — lightest payload on the sheet · mix-blend-multiply ink layers, misregistration via layered text-shadow, paper grain via 5px dot pattern.</p>
+    </div>
+  </section>
+
+  <!-- ============ 09 LAVA LOUNGE ============ -->
+  <section class="tile s-lava" id="lava">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">09</span><h2 class="tname">Lava Lounge</h2><span class="tagline">Fillmore '67 psychedelia</span>
+        <div class="chips"><span class="chip go">build 2</span><span class="chip">dark</span><span class="chip">kept</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Fillmore and Avalon Ballroom posters, San Francisco 1966–68: Wes Wilson's melting lettering, vibrating
+        complementary colors, sunburst rays, type packed until it becomes texture. The poster was the product.</p>
+        <p>Vapor's older sibling — the same maximal impulse, a different decade of nostalgia. A conic-gradient
+        sunburst does the heavy lifting, Shrikhand gets you 80% of the melt without custom lettering, and the
+        palette vibrates on purpose. Same rule as vapor: commit hard, keep body copy sober.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#ffd07a"></div><div class="swl">--text<br>#ffd07a</div></div>
+        <div><div class="sw" style="background:#1f0b33"></div><div class="swl">--bg<br>#1f0b33</div></div>
+        <div><div class="sw" style="background:#ff5fa2"></div><div class="swl">--primary<br>#ff5fa2</div></div>
+        <div><div class="sw" style="background:#2d1247"></div><div class="swl">--secondary<br>#2d1247</div></div>
+        <div><div class="sw" style="background:#9fff4a"></div><div class="swl">--accent<br>#9fff4a</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:400; color:#9fff4a; text-shadow:3px 3px 0 #1f0b33, 0 0 22px rgba(159,255,74,.3);">dawson plays the internet</p>
+      <p class="cap">display: Shrikhand — fat, syrupy, already halfway melted</p>
+      <p class="spec-b" style="font-family:'DM Sans',sans-serif;">Body runs straight in DM Sans; only headlines and section numbers get to wobble.</p>
+      <p class="cap">body: DM Sans · tickets + labels: IBM Plex Mono</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="flex-direction:column; align-items:flex-start;">
+        <div class="ps-poster">
+          <span class="l1">DAWSON</span>
+          <span class="l2">plays the</span>
+          <span class="l3">INTERNET</span>
+        </div>
+        <div class="ps-ticket">ADMIT ONE ✶ EVERY NIGHT ✶ FREE WITH ?style=lava</div>
+      </div>
+      <p class="impl">registry: polarity dark · tilt ON, motion mid-high · fonts: Shrikhand + DM Sans · repeating-conic sunbursts behind heroes, blob border-radius cards, vibrating complement pairs (green-on-purple, pink-on-gold). Glow stays off body text.</p>
+    </div>
+  </section>
+
+  <!-- ============ 10 GATSBY (merged) ============ -->
+  <section class="tile s-deco" id="deco">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">10</span><h2 class="tname">Gatsby</h2><span class="tagline">art deco marquee &amp; monogram</span>
+        <div class="chips"><span class="chip">dark</span><span class="chip">merged ×3</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>1925 Paris by way of the Chrysler Building: gold linework on near-black, sunburst fans, marquee
+        lettering, symmetry as luxury. This tile merges three directions — round two's gatsby, v2's art-deco
+        (which folded in the filigree and Victorian entries), and v2's luxury-typography, whose D·MF monogram and
+        hairline-rule discipline survive the merge.</p>
+        <p>The dressed-up dark theme — where the default says engineer, this says opening night. Gold double
+        frames replace card borders, the fan rises behind section heads, numbers go roman (a Layer-4 strings
+        candidate), and the one jade accent keeps it from going full casino. Restraint rule: gold lines and type,
+        never gold fills.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#f1e7d0"></div><div class="swl">--text<br>#f1e7d0</div></div>
+        <div><div class="sw" style="background:#131110"></div><div class="swl">--bg<br>#131110</div></div>
+        <div><div class="sw" style="background:#d8b765"></div><div class="swl">--primary<br>#d8b765</div></div>
+        <div><div class="sw" style="background:#1d1a16"></div><div class="swl">--secondary<br>#1d1a16</div></div>
+        <div><div class="sw" style="background:#1f8a70"></div><div class="swl">--accent<br>#1f8a70</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="color:#d8b765; letter-spacing:.08em;">THE DAWSON REVUE</p>
+      <p class="cap">display: Limelight — marquee deco, generously letterspaced</p>
+      <p class="spec-b" style="font-family:'Josefin Sans',sans-serif; letter-spacing:.04em;">Body runs in Josefin Sans — geometric enough to feel period, light enough to read.</p>
+      <p class="cap">body: Josefin Sans · datelines: letterspaced caps · monogram: Limelight</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="flex-direction:column; align-items:flex-start;">
+        <div class="dc-frame">
+          <div class="dc-fan"></div>
+          <div class="dc-mono">D·MF</div>
+          <hr class="dc-rule">
+          <h4 class="dc-title">THE DAWSON REVUE</h4>
+          <p class="dc-div">◆ ─────── ✦ ─────── ◆</p>
+          <p class="dc-sub">WEB · iOS · VISIONOS · MACHINE LEARNING</p>
+          <button class="dc-btn">RESERVE A TABLE</button>
+        </div>
+      </div>
+      <p class="impl">registry: polarity dark · flags { tilt:false, cursorFollow:false } — stillness is the brand · fonts: Limelight + Josefin Sans · sunburst fans via repeating-conic-gradient from the baseline, double-line gold frames via border + offset outline, ◆ dividers, giant ghosted roman numerals for sections.</p>
+    </div>
+  </section>
+
+  <!-- ============ 11 HARVEST (absorbs boho) ============ -->
+  <section class="tile s-harvest" id="harvest">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">11</span><h2 class="tname">Harvest</h2><span class="tagline">1972 supergraphic warmth</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">absorbs boho</span><span class="chip">layer 2 · ~200 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>The 1972 kitchen palette: harvest gold, burnt orange, avocado, chocolate — rounded everything,
+        concentric rainbow arcs, Cooper Black warmth. The '70s revival that's been running through record sleeves
+        and rebrands for five years and shows no sign of stopping.</p>
+        <p>v2's boho folds in here — same earth palette, same Fraunces, so it contributes its nested-arch doorway
+        motif and asymmetric corners rather than a separate skin. Still the warmest thing on this sheet by a mile
+        and the counterweight to all the neon: arc supergraphic in the hero, biscuit cards with fat radii,
+        friendly without being childish. The blog especially would wear it well.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#3d2b1f"></div><div class="swl">--text<br>#3d2b1f</div></div>
+        <div><div class="sw" style="background:#f7ead2"></div><div class="swl">--bg<br>#f7ead2</div></div>
+        <div><div class="sw" style="background:#d96c2c"></div><div class="swl">--primary<br>#d96c2c</div></div>
+        <div><div class="sw" style="background:#f3e0bd"></div><div class="swl">--secondary<br>#f3e0bd</div></div>
+        <div><div class="sw" style="background:#6b8f3d"></div><div class="swl">--accent<br>#6b8f3d</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:900; color:#7a4a21;">Stay groovy, ship daily</p>
+      <p class="cap">display: Fraunces 900 — the free Cooper Black</p>
+      <p class="spec-b">Body in DM Sans keeps it from tipping into novelty; numerals go tabular in the mono.</p>
+      <p class="cap">body: DM Sans · labels: IBM Plex Mono · mustard #d9a420 + chocolate #7a4a21 as garnish</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="hv-arc">
+          <i style="width:230px;height:115px;background:#d96c2c;"></i>
+          <i style="width:178px;height:89px;background:#d9a420;"></i>
+          <i style="width:126px;height:63px;background:#6b8f3d;"></i>
+          <i style="width:74px;height:37px;background:#7a4a21;"></i>
+        </div>
+        <div class="hv-arch"></div>
+        <div class="hv-card">
+          <p class="hv-kick">side a · track 01</p>
+          <h4>Stay groovy, ship daily</h4>
+          <p>Fat radii, sun-faded palette, pill buttons, biscuit cards. The arc supergraphic replaces the particle
+          field; the boho arch frames the avatar.</p>
+          <button class="hv-btn">Drop the needle</button>
+        </div>
+      </div>
+      <p class="impl">registry: polarity light · flags { radius:'xl' } · fonts: Fraunces (SOFT axis) + DM Sans · concentric arcs from stacked border-radius half-circles, nested-arch doorways via pseudo-elements, flat 4px chocolate shadows, AOS fades actually feel right here.</p>
+    </div>
+  </section>
+
+  <!-- ============ 12 UKIYO-E ============ -->
+  <section class="tile s-ukiyo" id="ukiyo">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">12</span><h2 class="tname">Ukiyo-e</h2><span class="tagline">indigo woodblock print</span>
+        <div class="chips"><span class="chip">dark</span><span class="chip">kept</span><span class="chip">layer 2 · ~220 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Edo woodblock prints: aizome indigo, washi cream, one vermillion seal, seigaiha wave scales, captions
+        set vertical in the margin. Hokusai's palette was basically a five-token registry already.</p>
+        <p>The quietest tile that survives the cut — because it's still a poster language, not product chrome.
+        Cards become print plates with hanko stamps, the seigaiha pattern replaces the grid texture, section
+        labels run vertical in the gutter. Motion goes to zero; prints don't animate. (Japandi got cut; its
+        vertical-text idea lives on here.)</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#f2e8d5"></div><div class="swl">--text<br>#f2e8d5</div></div>
+        <div><div class="sw" style="background:#1d2a44"></div><div class="swl">--bg<br>#1d2a44</div></div>
+        <div><div class="sw" style="background:#c73e2e"></div><div class="swl">--primary<br>#c73e2e</div></div>
+        <div><div class="sw" style="background:#24344f"></div><div class="swl">--secondary<br>#24344f</div></div>
+        <div><div class="sw" style="background:#7fa8c9"></div><div class="swl">--accent<br>#7fa8c9</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:800;">Dawson Metzger-Fleetwood</p>
+      <p class="cap">display: Shippori Mincho 800 — brushy mincho serifs, Latin subset only</p>
+      <p class="spec-b">One serif family at three weights; hierarchy comes from spacing, not from new fonts.</p>
+      <p class="cap">body: Shippori Mincho 400 · seals + labels: IBM Plex Mono</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="uk-print">
+          <i class="uk-sun"></i>
+          <span class="uk-vert">DAWSON · MMXXVI</span>
+          <span class="uk-hanko">大</span>
+          <div class="uk-seig"></div>
+        </div>
+        <div class="uk-caption">
+          <h4>The Great Wave off Washington</h4>
+          <p>Cards become print plates: washi cream on indigo, one vermillion seal per page, captions set vertical
+          with writing-mode. The seigaiha scales tile from two offset radial-gradients.</p>
+        </div>
+      </div>
+      <p class="impl">registry: polarity dark · flags { motion:0, tilt:false } · fonts: Shippori Mincho (subset to Latin — CJK payloads are huge) · seigaiha via offset radial-gradient tiles, writing-mode:vertical-rl gutter labels, hanko block as the only saturated mark per view.</p>
+    </div>
+  </section>
+
+  <!-- ============ 13 NEOCLASSICAL ============ -->
+  <section class="tile s-neo" id="neoclassical">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">13</span><h2 class="tname">Neoclassical</h2><span class="tagline">marble, columns &amp; roman caps</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">new</span><span class="chip">layer 2 · ~240 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>The 18th-century revival of Greco-Roman order: Trajan-column capitals, pediments and fluted columns,
+        laurel ornament, engraved double rules, marble and bronze. The visual language of museums, courthouses,
+        and anything that wants to feel permanent.</p>
+        <p>You live in D.C. — the entire city is this skin. Sections open under a pediment, dates render as Roman
+        numerals (EST. MMXIX), jobs become a frieze of institutions, and the laurel marks the active nav item.
+        It also inherits the quiet-luxury register from the cut luxury tile, but with architecture instead of
+        fashion. The temple is pure CSS: clip-path pediment, repeating-gradient fluting, stepped stylobate.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#29251f"></div><div class="swl">--text<br>#29251f</div></div>
+        <div><div class="sw" style="background:#f1ede6"></div><div class="swl">--bg<br>#f1ede6</div></div>
+        <div><div class="sw" style="background:#7d6b4f"></div><div class="swl">--primary<br>#7d6b4f</div></div>
+        <div><div class="sw" style="background:#faf7f1"></div><div class="swl">--secondary<br>#faf7f1</div></div>
+        <div><div class="sw" style="background:#8c3030"></div><div class="swl">--accent<br>#8c3030</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-weight:700; letter-spacing:.14em; font-size:26px;">DAWSON METZGER-FLEETWOOD</p>
+      <p class="cap">display: Cinzel 700 — Trajan-inscription capitals</p>
+      <p class="spec-b">EB Garamond carries the body like a museum wall label: unhurried, bookish, exact.</p>
+      <p class="cap">body: EB Garamond 400/600 · numerals: Roman where ceremonial</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="nc-temple">
+          <div class="nc-ped"></div>
+          <div class="nc-arch"></div>
+          <div class="nc-cols"><div class="nc-col"></div><div class="nc-col"></div><div class="nc-col"></div><div class="nc-col"></div></div>
+          <div class="nc-base1"></div>
+          <div class="nc-base2"></div>
+          <div class="nc-base3"></div>
+          <div class="nc-cap">PORTFOLIVM</div>
+        </div>
+        <div class="nc-card">
+          <div class="nc-laurel">❧ ✦ ❧</div>
+          <h4>I · ABOVT</h4>
+          <hr>
+          <p>Engineer of software for web, headset, and model — works exhibited on request.</p>
+          <div class="nc-roman">EST. MMXIX · WASHINGTON</div>
+        </div>
+      </div>
+      <p class="impl">registry: polarity light · flags { tilt:false, motion:0 } · fonts: Cinzel + EB Garamond · marble wash via faint radial-gradients, fluting via repeating-linear-gradient, pediment via clip-path, stepped bases via negative margins · radius 0 · oxblood reserved for active states and Roman-numeral dates.</p>
+    </div>
+  </section>
+
+  <!-- ============ 14 CHINOISERIE ============ -->
+  <section class="tile s-chin" id="chinoiserie">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">14</span><h2 class="tname">Chinoiserie</h2><span class="tagline">blue-and-white porcelain</span>
+        <div class="chips"><span class="chip">light</span><span class="chip">new</span><span class="chip">layer 2 · ~230 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>Europe's 17th–18th-century romance with Chinese export porcelain: cobalt blue painted on white glaze,
+        scalloped rims, lattice borders, and a single gilt line where the budget allowed. One pigment, infinite
+        pattern — the original monochrome design system.</p>
+        <p>A genuinely rare look for a dev site: cobalt-on-porcelain with scalloped card headers, lattice section
+        dividers, and a plate treatment for the avatar and carousel medallions. Strict two-color discipline plus a
+        thread of gold keeps it elegant rather than themed-restaurant. Same craft family as ukiyo-e — porcelain
+        vs print, light vs dark — pick one.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#22335c"></div><div class="swl">--text<br>#22335c</div></div>
+        <div><div class="sw" style="background:#f6f8f3"></div><div class="swl">--bg<br>#f6f8f3</div></div>
+        <div><div class="sw" style="background:#2c4f9e"></div><div class="swl">--primary<br>#2c4f9e</div></div>
+        <div><div class="sw" style="background:#ffffff"></div><div class="swl">--secondary<br>#ffffff</div></div>
+        <div><div class="sw" style="background:#b08d3e"></div><div class="swl">--accent<br>#b08d3e</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="font-size:28px; letter-spacing:.05em;">Dawson Metzger-Fleetwood</p>
+      <p class="cap">display: Marcellus — engraved roman, single weight</p>
+      <p class="spec-b">EB Garamond body in cobalt-ink blue; gold appears only as a hairline and small-caps thread.</p>
+      <p class="cap">body: EB Garamond 400 · labels: letterspaced gold caps</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="ch-plate"><span>D</span></div>
+        <div class="ch-card">
+          <div class="ch-scallop"></div>
+          <div class="pad">
+            <h4>01 · About</h4>
+            <p>Software engineer across web, iOS and visionOS, and ML/RL — painted in one pigment.</p>
+            <div class="ch-gold">Fired · Glazed · Shipped</div>
+          </div>
+        </div>
+        <div class="ch-lattice"></div>
+      </div>
+      <p class="impl">registry: polarity light · flags { tilt:false } · fonts: Marcellus + EB Garamond · scalloped rims via radial-gradient strips, plates via inset box-shadow rings + dashed inner ring, lattice dividers via crossed repeating-linear-gradients · every blue derives from --primary's alpha ramp.</p>
+    </div>
+  </section>
+
+  <!-- ============ 15 DOODLE ============ -->
+  <section class="tile s-doodle" id="doodle">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">15</span><h2 class="tname">Doodle</h2><span class="tagline">engineering notebook margins</span>
+        <div class="chips"><span class="chip go">build 1</span><span class="chip">light</span><span class="chip">new</span><span class="chip">layer 2 · ~220 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>The look of ideas before they're cleaned up — wobbly hand-drawn boxes, marker underlines, arrows
+        pointing at things, sticky notes, highlighter swipes. Whiteboard-session energy; Notion and Figma have
+        mined it for "we're still playing" warmth.</p>
+        <p>It reads as the engineering-notebook skin: every card becomes a sketched rectangle (the uneven
+        border-radius trick), section numbers get circled by hand, the hero name sits on a highlighter swipe, and
+        one sticky note in the jobs section says "currently here →". It carries the whole hand-drawn flag alone —
+        naive, kawaii, and kidcore got cut as the gag tier, and this is their grown-up sibling.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#2b2b2b"></div><div class="swl">--text<br>#2b2b2b</div></div>
+        <div><div class="sw" style="background:#fdfbf4"></div><div class="swl">--bg<br>#fdfbf4</div></div>
+        <div><div class="sw" style="background:#2f6fde"></div><div class="swl">--primary<br>#2f6fde</div></div>
+        <div><div class="sw" style="background:#fff3a3"></div><div class="swl">--secondary<br>#fff3a3</div></div>
+        <div><div class="sw" style="background:#e2483d"></div><div class="swl">--accent<br>#e2483d</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h">Dawson Metzger-Fleetwood</p>
+      <p class="cap">display: Patrick Hand — print handwriting, reads at size</p>
+      <p class="spec-b">Body stays in Patrick Hand too; Caveat handles the margin notes and arrows-with-captions.</p>
+      <p class="cap">body: Patrick Hand · annotations: Caveat 600</p>
+      <div class="band">In practice</div>
+      <div class="demo">
+        <div class="dd-card">
+          <span class="dd-num">01</span><h4>About <span class="dd-hl">me</span></h4>
+          <p>Software engineer — web, iOS/visionOS, ML. Boxes are drawn with the
+          <span class="dd-under">uneven border-radius trick</span> so every card wobbles differently.</p>
+        </div>
+        <span class="dd-arrow">← this one!</span>
+        <div class="dd-sticky">currently @<br>About Objects ✓</div>
+      </div>
+      <p class="impl">registry: polarity light · flags { tilt:false, cursorFollow:true } — cursor becomes a pencil dot · fonts: Patrick Hand + Caveat · sketchy borders via asymmetric border-radius (255px 15px 225px 15px / 15px 225px 15px 255px), grid-paper canvas, wavy marker underlines, sticky notes with a dog-eared corner via border triangles.</p>
+    </div>
+  </section>
+
+  <!-- ============ 16 WHEATPASTE (punk + graffiti) ============ -->
+  <section class="tile s-paste" id="paste">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">16</span><h2 class="tname">Wheatpaste</h2><span class="tagline">tags, ransom notes &amp; xeroxed flyers</span>
+        <div class="chips"><span class="chip go">build 3</span><span class="chip">dark</span><span class="chip">merged: punk + graffiti</span><span class="chip">layer 2 · ~260 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>v2's punk-grunge and graffiti shared a wall, so they're one skin now: Jamie Reid's ransom-note
+        lettering and xeroxed gig flyers wheatpasted over a concrete ground, with marker tags, drips, and
+        stickers slapped on top. '77 London and '80s NYC, photocopied one generation too many.</p>
+        <p>Your jobs render as gig flyers ("ONE NIGHT ONLY — ABOUT OBJECTS"), the hero name gets the ransom
+        treatment with each letter-group on its own scrap, section dividers are torn-paper edges, project cards
+        become stickers at slight rotations, and one red HIRE ME stamp hides in the contact section. Anti-design
+        as design — the shipped brutalist skin's feral cousin, and the loudest dark on the sheet after vapor.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#f0ede4"></div><div class="swl">--text<br>#f0ede4</div></div>
+        <div><div class="sw" style="background:#1f2125"></div><div class="swl">--bg<br>#1f2125</div></div>
+        <div><div class="sw" style="background:#d4242a"></div><div class="swl">--primary<br>#d4242a</div></div>
+        <div><div class="sw" style="background:#2e3238"></div><div class="swl">--secondary<br>#2e3238</div></div>
+        <div><div class="sw" style="background:#c8ff3d"></div><div class="swl">--accent<br>#c8ff3d</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h wp-ransom"><span class="wp-r1">DAW</span><span class="wp-r2">son</span><span class="wp-r3">METZ</span><span class="wp-r4">ger</span><span class="wp-r1">-F</span></p>
+      <p class="cap">display: ransom scraps — Anton / Special Elite / mono / serif chips, mixed rotations</p>
+      <p class="spec-b" style="font-family:'Special Elite',cursive; font-size:14.5px;">Body copy hammers out on Special Elite, a dirty typewriter face that photocopies well; tags go up in Permanent Marker.</p>
+      <p class="cap">body: Special Elite · tags + stickers: Permanent Marker · stamps: Anton</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="align-items:center;">
+        <div class="wp-flyer">
+          ONE NIGHT ONLY
+          <h4>About Objects</h4>
+          feat. iOS · visionOS · web — doors 2019 · no cover
+        </div>
+        <div>
+          <span class="wp-tag">dawson was here</span><span class="wp-drip"></span>
+          <div class="wp-throw">WEB·iOS·ML</div>
+        </div>
+        <div class="wp-sticker">
+          <div class="top">HELLO<small>my name is</small></div>
+          <div class="name">Dawson</div>
+        </div>
+        <div class="wp-stamp">HIRE<br>ME</div>
+      </div>
+      <p class="impl">registry: polarity dark · flags { tilt:true, motion:low } — paste-ups sit rotated ±2°, nothing animates smoothly · fonts: Permanent Marker + Anton + Special Elite + Inter · concrete via layered radial noise, torn edges via jittered polygon() clip-path, throw-ups via -webkit-text-stroke + offset shadow, ransom chips alternate inversion + rotation.</p>
+    </div>
+  </section>
+
+  <!-- ============ 17 GRAFFITI ============ -->
+  <section class="tile s-graf" id="graffiti">
+    <div class="tin">
+      <div class="meta">
+        <span class="num">17</span><h2 class="tname">GRAFFITI</h2><span class="tagline">chrome throwie on brick</span>
+        <div class="chips"><span class="chip">dark</span><span class="chip">new · requested</span><span class="chip">layer 2 · ~260 lines</span></div>
+      </div>
+      <div class="blurb">
+        <p>The real thing this time — not the wheatpasted wall, the sprayed one. Graffiti has its own hierarchy:
+        the tag (a one-line signature), the throw-up (two-color bubble letters, done in minutes), and the piece
+        (full color, shine, fat outline, and a crown if you've earned it). The silver-fill "chromie" on brick is
+        the canonical NYC throwie, and drips are a feature, not a flaw.</p>
+        <p>On the site: the hero name goes up as a chrome throwie over brick, section headers are tags in marker,
+        skills become spray-splat badges, the carousel becomes a wall of pieces, and body copy stays on clean
+        panels — you read the flyer, not the wall. Pairs with wheatpaste as the same wall's two layers: pick
+        sprayed or pasted, not both.</p>
+      </div>
+      <div class="band">Palette</div>
+      <div class="swatches">
+        <div><div class="sw" style="background:#f1f0ec"></div><div class="swl">--text<br>#f1f0ec</div></div>
+        <div><div class="sw" style="background:#232529"></div><div class="swl">--bg<br>#232529</div></div>
+        <div><div class="sw" style="background:#ff7a00"></div><div class="swl">--primary<br>#ff7a00</div></div>
+        <div><div class="sw" style="background:#2e3136"></div><div class="swl">--secondary<br>#2e3136</div></div>
+        <div><div class="sw" style="background:#34c3ff"></div><div class="swl">--accent<br>#34c3ff</div></div>
+      </div>
+      <div class="band">Type</div>
+      <p class="spec-h" style="color:#ff7a00; text-shadow:4px 4px 0 #101113; transform:rotate(-2deg); display:inline-block;">DAWSON ONE</p>
+      <p class="cap">display: Sedgwick Ave Display — the throwie face, always a few degrees off level</p>
+      <p class="spec-b">Body copy runs clean Inter on solid panels; Permanent Marker handles tags and margin scrawl.</p>
+      <p class="cap">body: Inter 400/600 · tags + splats: Permanent Marker · crowns earned, not given</p>
+      <div class="band">In practice</div>
+      <div class="demo" style="flex-direction:column; align-items:flex-start;">
+        <div class="gr-wall">
+          <div class="gr-burst"></div>
+          <span class="gr-spark1">✦</span><span class="gr-spark2">✦</span>
+          <span class="gr-piece"><span class="gr-crown">♛</span><span class="gr-word">DAWSON</span></span>
+          <div class="gr-drips"><i></i><i></i><i></i><i></i><i></i></div>
+          <span class="gr-sig">— dawsonamf · washington dc · '26</span>
+        </div>
+        <div style="display:flex; gap:26px; flex-wrap:wrap; align-items:center;">
+          <div class="gr-splat">est. 2019</div>
+          <span class="gr-tagline">01 · about ↴</span>
+        </div>
+      </div>
+      <p class="impl">registry: polarity dark · flags { tilt:false, cursorFollow:'sprayDot' } · fonts: Sedgwick Ave Display + Permanent Marker + Inter · brick via four offset diagonal gradients, chrome fill via background-clip:text + 3px text-stroke, drips as flex bars, splats via blob radius + box-shadow satellites, haze via blurred radial-gradients. Body copy never sits on brick.</p>
+    </div>
+  </section>
+
+  <footer class="outro">
+    <div class="band" style="color:#9aa3b2;">Families &amp; picks</div>
+    <p>Pick one per family or it muddies: <b>{neo-pop · pop-art · memphis}</b> share the ink-line + hard-shadow
+    energy; <b>{bauhaus · constructivist}</b> are arrange vs agitate; <b>{lava · vapor}</b> are the same maximal
+    impulse two decades apart — '60s and '80s; <b>{riso · wheatpaste}</b> are clean zine
+    vs dirty zine; <b>{wheatpaste · graffiti}</b> are one wall — pasted-on vs sprayed-on; <b>{ukiyo-e · chinoiserie}</b> are print vs porcelain; <b>{gatsby · neoclassical}</b> are
+    ornament-dark vs ornament-light. <b>Matinee</b>, <b>harvest</b>, and <b>doodle</b> stand alone.</p>
+    <p><b>Queue (locked 2026-06-10): doodle (15) → lava lounge (09) → wheatpaste (16)</b> — a light and two
+    darks; the hand-drawn flag, the '60s poster, and the loudest wall. Everything else is parked: to be
+    determined after these three land. Every id slots straight into the registry pattern — one entry in
+    js/theme-bootstrap.js (polarity + the five roles from the tile's palette + font/radius/jobs-menu tokens +
+    Google Fonts URL + flags from the impl line) and one scoped css/themes/&lt;id&gt;.css. Build protocol, JS
+    contracts, and per-skin QA: STYLE_VERSIONS_SPEC.md.</p>
+  </footer>
+
+</div>
+</body>
+</html>

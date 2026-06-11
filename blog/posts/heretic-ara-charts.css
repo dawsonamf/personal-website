@@ -9,7 +9,9 @@
 
 .chart-caption {
   text-align: center;
-  color: #a2a2a3;
+  /* Resolves to the same #a2a2a3 at the default palette; follows the
+     active style / palette toy elsewhere. */
+  color: var(--neutral-gray);
   font-size: 14px;
   line-height: 1.5;
   margin: 0.25em 0 2em 0;

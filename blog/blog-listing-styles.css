@@ -78,10 +78,10 @@
 }
 
 .filter-pill {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 6px 16px;
   background-color: var(--text10);
   border: 1px solid transparent;
@@ -146,7 +146,7 @@
 }
 
 .blog-listing-grid .blog-card .blog-card-date {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
   margin: 0 0 14px 0;
@@ -192,7 +192,7 @@
 }
 
 
-/* Section headings — reuse home page .section-header-wrapper / .section-header */
+/* Section headings: reuse the home page .section-header-wrapper / .section-header */
 
 .blog-section-header {
   color: var(--accent);

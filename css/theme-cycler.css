@@ -77,6 +77,31 @@
   transform: translateY(-2px);
 }
 
+.tc-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+.tc-presets button {
+  flex: 1;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--text20);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  transition: 0.25s ease-in-out;
+}
+.tc-presets button:hover { border-color: var(--accent); color: var(--accent); }
+.tc-presets button.tc-sel {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
 .tc-advanced {
   border-top: 1px solid var(--text20);
   padding-top: 12px;

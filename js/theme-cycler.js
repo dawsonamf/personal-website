@@ -4,7 +4,13 @@
   // Feature gate lives in js/theme-bootstrap.js; read it from the window.
   if (!window.__THEME_CYCLER_ENABLED) return;
 
-  const DEFAULT_COLORS = ['#e6f1ff','#1d1d1d','#61ffda','#2c2c2c','#61ffda'];
+  // The style registry in js/theme-bootstrap.js is the single source of truth
+  // for the default palette and every style version.
+  const REGISTRY    = window.__THEME_REGISTRY || {};
+  const STYLE_ORDER = window.__THEME_ORDER || ['default'];
+  const entryColors = e => [e.colors.text, e.colors.bg, e.colors.primary, e.colors.secondary, e.colors.accent];
+
+  const DEFAULT_COLORS = REGISTRY.default ? entryColors(REGISTRY.default) : ['#e6f1ff','#1d1d1d','#61ffda','#2c2c2c','#61ffda'];
   const DEFAULT_THEME  = 'dark';
 
   function hexToRgb(hex) {
@@ -68,33 +74,52 @@
     'tetradic': 0.75,
   };
 
+  // Random-palette profiles. Roles are [text, bg, primary, secondary, accent].
+  // Each role has a lightness band, hueT (its share of the scheme's hue
+  // spread), and optionally its own saturation range; without one, all roles
+  // share a single saturation draw, which keeps a palette cohesive. These
+  // numbers match the original generator, so styles without a `random`
+  // profile (including the default) keep the old distribution exactly.
+  const DEFAULT_RANDOM = {
+    dark: {
+      sat: [0.10, 1.00],
+      roles: [
+        { l: [0.90, 0.95], hueT: 0 },     // text
+        { l: [0.02, 0.08], hueT: 0 },     // bg
+        { l: [0.70, 0.75], hueT: 0 },     // primary
+        { l: [0.30, 0.35], hueT: 0.75 },  // secondary
+        { l: [0.50, 0.60], hueT: 1.00 },  // accent
+      ],
+    },
+    light: {
+      sat: [0.10, 1.00],
+      roles: [
+        { l: [0.02, 0.08], hueT: 0 },
+        { l: [0.96, 0.99], hueT: 0 },
+        { l: [0.50, 0.55], hueT: 0 },
+        { l: [0.70, 0.75], hueT: 0.75 },
+        { l: [0.60, 0.65], hueT: 1.00 },
+      ],
+    },
+  };
+
   function generatePalette(scheme, baseHueDeg, isDark) {
-    const lightnessTargets = isDark ? [
-      uniform(0.90,0.95),
-      uniform(0.02,0.08),
-      uniform(0.70,0.75),
-      uniform(0.30,0.35),
-      uniform(0.50,0.60),
-    ] : [
-      uniform(0.02,0.08),
-      uniform(0.96,0.99),
-      uniform(0.50,0.55),
-      uniform(0.70,0.75),
-      uniform(0.60,0.65),
-    ];
+    const mode  = isDark ? 'dark' : 'light';
+    const entry = REGISTRY[state.style];
+    const prof  = (entry && entry.random && entry.random[mode]) || DEFAULT_RANDOM[mode];
 
     const baseHueFrac = baseHueDeg / 360;
     const hueContrast = lerp(0.33, 1.00, Math.random());
-    const satFixed    = lerp(0.10, 1.00, Math.random());
+    const satShared   = uniform(prof.sat[0], prof.sat[1]);
     const mult        = SCHEME_MULT[scheme] ?? 0;
 
     const out = [];
     for (let i=0; i<5; i++) {
-      const t = i/4;
-      let hueOff = (i<3) ? 0 : t * hueContrast;
-      hueOff *= mult;
+      const role = prof.roles[i];
+      let hueOff = role.hueT * hueContrast * mult;
       if (scheme !== 'monochromatic') hueOff += (Math.random()*2-1)*0.01;
-      const [r,g,b] = hslFracToRgb(baseHueFrac + hueOff, satFixed, lightnessTargets[i]);
+      const sat = role.sat ? uniform(role.sat[0], role.sat[1]) : satShared;
+      const [r,g,b] = hslFracToRgb(baseHueFrac + hueOff, sat, uniform(role.l[0], role.l[1]));
       out.push(rgbToHex(r,g,b));
     }
     return out;
@@ -104,6 +129,7 @@
   // (including force-refresh) resets to defaults. Must agree with theme-bootstrap.js.
   const STORAGE_KEY = 'dawson-theme-cycler';
   const UNLOCK_KEY  = 'dawson-cycler-unlocked';
+  const STYLE_KEY   = 'dawson-style';
   function isReload() {
     try {
       const nav = performance.getEntriesByType('navigation')[0];
@@ -144,11 +170,15 @@
   ];
   const root = document.documentElement;
 
+  // theme-bootstrap.js already resolved the active style pre-paint.
+  const activeEntry = REGISTRY[window.__ACTIVE_STYLE] || REGISTRY.default || null;
+
   let state = {
-    colors:   DEFAULT_COLORS.slice(),
+    style:    activeEntry ? activeEntry.id : 'default',
+    colors:   activeEntry ? entryColors(activeEntry) : DEFAULT_COLORS.slice(),
     locks:    [false,false,false,false,false],
     scheme:   'random',
-    theme:    DEFAULT_THEME,
+    theme:    activeEntry && activeEntry.polarity ? activeEntry.polarity : DEFAULT_THEME,
     advanced: false,
   };
 
@@ -161,13 +191,49 @@
         `hsla(${h.toFixed(0)},${s.toFixed(0)}%,${l.toFixed(0)}%,${a}%)`
       ));
     });
+    applyDerivedNeutrals();
     persist();
+    // Page widgets that paint with the palette (the Plotly dashboards in blog
+    // posts) re-read the CSS variables on this signal and redraw.
+    try { window.dispatchEvent(new CustomEvent('dawson:palette')); } catch {}
     if (writeUi) renderRoles();
     else updateRoleSwatches();
   }
 
-  // In-place DOM update for live color-picker dragging — avoids destroying
-  // the <input type="color"> element, which would close the native picker.
+  // The jobs-menu navy palette and --neutral-gray are static (styles.css or
+  // registry tokens), so a randomized palette would leave them behind. Once
+  // the toy diverges from the active style's base colors, derive replacements
+  // from the live roles; on return to base, restore the style's tokens or the
+  // static defaults. --code-bg/--code-fg ride along so code blocks keep a
+  // dark ground that matches the pinned hljs token colors.
+  const DERIVED_NEUTRALS = ['--jobs-menu-navy-dark', '--jobs-menu-navy', '--jobs-menu-slate', '--neutral-gray', '--code-bg', '--code-fg'];
+  function blendHex(a, b, t) {
+    const A = hexToRgb(a), B = hexToRgb(b);
+    return rgbToHex(A.r + (B.r - A.r) * t, A.g + (B.g - A.g) * t, A.b + (B.b - A.b) * t);
+  }
+  function applyDerivedNeutrals() {
+    const entry = REGISTRY[state.style];
+    const base = entry ? entryColors(entry) : DEFAULT_COLORS;
+    const diverged = state.colors.some((c, i) => String(c).toLowerCase() !== String(base[i]).toLowerCase());
+    if (!diverged) {
+      DERIVED_NEUTRALS.forEach(k => {
+        const v = entry && entry.tokens && entry.tokens[k];
+        if (v) root.style.setProperty(k, v);
+        else root.style.removeProperty(k);
+      });
+      return;
+    }
+    const [text, bg, , secondary] = state.colors;
+    root.style.setProperty('--jobs-menu-navy-dark', secondary);
+    root.style.setProperty('--jobs-menu-navy', blendHex(secondary, text, 0.18));
+    root.style.setProperty('--jobs-menu-slate', blendHex(text, bg, 0.42));
+    root.style.setProperty('--neutral-gray', blendHex(text, bg, 0.40));
+    root.style.setProperty('--code-bg', '#0d1117');
+    root.style.setProperty('--code-fg', '#c9d1d9');
+  }
+
+  // In-place DOM update for live color-picker dragging. Rebuilding would
+  // destroy the <input type="color"> and close the native picker.
   function updateRoleSwatches() {
     const host = document.getElementById('tc-roles');
     if (!host) return;
@@ -210,7 +276,94 @@
     applyColors();
   }
 
+  // ---- Style versions (preset strip) --------------------------------------
+
+  function clearStyleAssets() {
+    document.querySelectorAll('link[data-style-asset]').forEach(l => l.remove());
+  }
+  function addStyleAsset(href) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    link.setAttribute('data-style-asset', '1');
+    document.head.appendChild(link);
+  }
+
+  // Styles with flags.tilt === false get their vanilla-tilt instances
+  // destroyed on a live switch (page scripts already skip init at load via
+  // window.__styleAllowsTilt). Switching back to a tilting style re-enables
+  // on the next page load, which is fine for a session toy.
+  const TILT_TARGETS = '.card, .blog-card, .fc-card-image, .blog-image';
+  function applyBehaviorFlags(entry) {
+    if (entry && entry.flags && entry.flags.tilt === false) {
+      document.querySelectorAll(TILT_TARGETS).forEach(el => {
+        if (el.vanillaTilt) {
+          el.vanillaTilt.destroy();
+          // destroy() exits through reset(), which writes a flat inline
+          // transform and leaves it there. Inline style would override a
+          // skin's :hover press, so clear it.
+          el.style.transform = '';
+          el.style.transition = '';
+          el.style.willChange = '';
+        }
+      });
+    }
+  }
+
+  // Activate a style version live: stamp the attributes, swap assets and
+  // tokens, and reset the palette toy to the style's own palette. Palette
+  // overrides don't survive a style switch.
+  function switchStyle(id) {
+    const entry = REGISTRY[id];
+    if (!entry || id === state.style) return;
+    const prev = REGISTRY[state.style];
+    state.style = id;
+    window.__ACTIVE_STYLE = id;
+    applyBehaviorFlags(entry);
+
+    try {
+      if (id === 'default') sessionStorage.removeItem(STYLE_KEY);
+      else sessionStorage.setItem(STYLE_KEY, id);
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch {}
+
+    if (id === 'default') root.removeAttribute('data-style');
+    else root.setAttribute('data-style', id);
+    if (entry.flags && entry.flags.still) root.setAttribute('data-still', '');
+    else root.removeAttribute('data-still');
+    if (entry.flags && entry.flags.tilt === false) root.setAttribute('data-no-tilt', '');
+    else root.removeAttribute('data-no-tilt');
+
+    clearStyleAssets();
+    (entry.fonts || []).forEach(addStyleAsset);
+    if (id !== 'default') addStyleAsset('/css/themes/_base.css');
+    if (entry.css) addStyleAsset(entry.css);
+
+    if (prev && prev.tokens) Object.keys(prev.tokens).forEach(k => root.style.removeProperty(k));
+    if (entry.tokens) Object.keys(entry.tokens).forEach(k => root.style.setProperty(k, entry.tokens[k]));
+
+    state.theme  = entry.polarity || 'dark';
+    state.locks  = [false,false,false,false,false];
+    state.colors = entryColors(entry);
+    applyTheme();
+    applyColors();
+    renderPresets();
+  }
+
+  function renderPresets() {
+    const host = document.getElementById('tc-presets');
+    if (!host) return;
+    host.innerHTML = STYLE_ORDER.map(id => {
+      const e = REGISTRY[id];
+      return `<button data-id="${id}" class="${state.style === id ? 'tc-sel' : ''}">${e ? e.label : id}</button>`;
+    }).join('');
+    host.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => switchStyle(b.dataset.id));
+    });
+  }
+
   function resetToDefault() {
+    switchStyle('default');
     state.colors = DEFAULT_COLORS.slice();
     state.locks  = [false,false,false,false,false];
     state.scheme = 'random';
@@ -290,6 +443,8 @@
         <i class="fa-solid fa-dice"></i>
       </button>
 
+      <div class="tc-presets" id="tc-presets"></div>
+
       <div class="tc-advanced tc-hidden" id="tc-advanced">
         <div class="tc-group">
           <span class="tc-group-label">Scheme</span>
@@ -337,7 +492,7 @@
     const dock   = document.getElementById('tc-dock');
     if (!toggle) return;
 
-    // Dock stays closed — the FAB is what appears.
+    // Dock stays closed. The FAB is what appears.
     if (dock) dock.classList.add('tc-hidden');
 
     toggle.classList.remove('tc-hidden');
@@ -403,6 +558,11 @@
     applyTheme();
     applyColors();
     renderSchemes();
+    renderPresets();
+
+    // A non-default style always exposes the FAB (covers ?style= deep links)
+    // and unlocks the session so it stays available after returning to default.
+    if (state.style !== 'default') markUnlocked();
 
     const toggle = document.getElementById('tc-toggle');
     if (toggle && !isUnlocked()) toggle.classList.add('tc-hidden');

@@ -33,6 +33,13 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
   Edit links there, not in the HTML.
 - **Shared animation helpers** live in `js/anim-utils.js` (loaded as a plain,
   non-defer script so end-of-body scripts can use it).
+- **Style versions (easter egg)**: the registry lives in `js/theme-bootstrap.js`
+  (synchronous, pre-paint); per-style skins in `css/themes/<id>.css` with every
+  rule scoped under `[data-style="<id>"]` (root-absolute asset paths), plus
+  `css/themes/_base.css` (shared pins, auto-loaded with any skin) keyed off
+  `data-style`/`data-still`/`data-no-tilt`. Activate via the cycler dock's
+  preset strip or `?style=<id>`; session-only, reload → default.
+  Architecture: `todo/STYLE_VERSIONS_SPEC.md`.
 - **Page-scoped CSS lives beside its page** (`blog/blog-styles.css`,
   `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css`); only shared,
   multi-page CSS goes in `css/`.

@@ -1,0 +1,819 @@
+/* Brutalist: acid poster. Screen-printed flyer, acid yellow ground,
+   screaming Archivo Black, 3px ink borders and hard offset shadows on
+   everything, Courier stamps, electric-blue interactives, no easing
+   anywhere. Every state change is a hard cut. The structural opposite of
+   Studio: where Studio de-carded and added air, this re-boxes and
+   compresses.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   mobile fixes come from css/themes/_base.css via flags.still + flags.tilt.
+   Archivo Black registers as weight 400 only, so every place the site bolds
+   heading-font text is pinned back to 400 below. Otherwise the browser
+   synthesizes a smeared faux-bold. */
+
+
+/* ---- Foundations: ink on acid, zero easing ------------------------------ */
+
+[data-style="brutalist"] ::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* The page scrollbar joins the system: ink thumb in a taped yellow track.
+   ([data-style] sits on <html>, so these select the root scrollbar.) */
+[data-style="brutalist"] {
+  scrollbar-color: var(--text) var(--bg);
+}
+
+[data-style="brutalist"]::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+[data-style="brutalist"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 2px solid var(--text);
+}
+
+[data-style="brutalist"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 2px solid var(--bg);
+}
+
+/* Archivo Black is a single 400-weight face, see header note. */
+[data-style="brutalist"] h1,
+[data-style="brutalist"] h2,
+[data-style="brutalist"] h3,
+[data-style="brutalist"] h4 {
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* Links: no underline. Blue ink at weight is the link marker, blue marks
+   every interactive surface in this skin, and hover is a full inverse
+   block, the same grammar as the menu items and logo. The default's
+   animated underline (.text-link::before) is suppressed outright. */
+[data-style="brutalist"] .text-link {
+  color: var(--primary);
+  font-weight: 700;
+  transition: none;
+}
+
+[data-style="brutalist"] .text-link::before {
+  display: none;
+}
+
+[data-style="brutalist"] .text-link:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+}
+
+/* Poster density: tighter than the default app air, half of Studio's. */
+[data-style="brutalist"] .section-spacer {
+  height: 7em;
+}
+
+
+/* ---- Chrome: taped-on nav, stamp logo, slab footer ----------------------- */
+
+[data-style="brutalist"] .moving-menu,
+[data-style="brutalist"] .static-menu {
+  background-color: var(--bg);
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: none;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list, invisible on the default pill, obvious on a hard box. Size it to
+   content like the floating menu. */
+[data-style="brutalist"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="brutalist"] .menu-item {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  padding: 4px 6px;
+  transition: none;
+}
+
+[data-style="brutalist"] .menu-item:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  transition: none;
+}
+
+/* Item separators become visible ink ticks, table-rules energy. */
+[data-style="brutalist"] .menu-spacer {
+  border-color: var(--text);
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+[data-style="brutalist"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--text);
+  border: 3px solid var(--text);
+  transition: none;
+}
+
+[data-style="brutalist"] .name-logo:hover {
+  transform: none;
+  background-color: var(--text);
+  color: var(--bg);
+  transition: none;
+}
+
+/* Footer: a solid ink slab across the page. */
+[data-style="brutalist"] .footer-container {
+  background-color: var(--text);
+  margin: 0 10px 10px;
+  padding: 14px 18px;
+}
+
+[data-style="brutalist"] .footer-spacer {
+  display: none;
+}
+
+[data-style="brutalist"] .footer-text,
+[data-style="brutalist"] .footer-text-mobile {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bg);
+}
+
+/* ---- Hero: flyer headline ------------------------------------------------ */
+
+/* Archivo Black runs about 25% wider than the default sans. The longest
+   typed line ("full stack engineer.") must clear the ~795px column at the cap. */
+[data-style="brutalist"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(46px, 4.5vw, 58px);
+  line-height: 1.08;
+}
+
+[data-style="brutalist"] .cursor {
+  background-color: var(--text);
+  width: 12px;
+}
+
+/* The cursor block is baseline-bottomed (height: 1em, inline-block), so the
+   accent highlight's descender band pokes out below it. text-bottom drops
+   the bar's bottom edge exactly to the highlight's lower edge (both are the
+   bottom of the h1's content area), and the extra height re-covers the
+   ascent. Scoped to the home hero, the blog hero has no highlight and its
+   cursor sits fine as-is. */
+[data-style="brutalist"] #typing-text .cursor {
+  height: 1.25em;
+  vertical-align: text-bottom;
+}
+
+/* The typed accent words sit in a blue highlighter block that grows with the
+   typing. clone keeps the block intact if the span ever wraps. */
+[data-style="brutalist"] #typing-text .typing-accent {
+  background-color: var(--primary);
+  color: var(--bg);
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* The strapline becomes a ticker-tape stamp, pasted on slightly crooked. */
+[data-style="brutalist"] #sub-text {
+  display: inline-block;
+  background-color: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 5px 10px;
+  transform: rotate(-1.2deg);
+  transform-origin: left center;
+}
+
+/* Full-color and hard-framed, with a silkscreen punch-up. Stays clickable
+   (it is still the cycler unlock). Presses via top/left because the .card
+   tilt kill holds transform at none. */
+[data-style="brutalist"] #typing-image {
+  position: relative;
+  border: 3px solid var(--text);
+  box-shadow: 10px 10px 0 var(--text);
+  filter: contrast(1.08) saturate(1.12);
+  transition: none;
+}
+
+[data-style="brutalist"] #typing-image:hover {
+  top: 4px;
+  left: 4px;
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+[data-style="brutalist"] #socials-list .socials-menu-spacer {
+  border-color: var(--text);
+  border-left-width: 1.5px;
+  border-right-width: 1.5px;
+}
+
+[data-style="brutalist"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="brutalist"] .socials-item i {
+  transition: none;
+}
+
+[data-style="brutalist"] .socials-item:hover i {
+  color: var(--primary);
+  transform: none;
+}
+
+
+/* ---- Section headers: ink blocks + slab rules ----------------------------
+   The headline sits inside a solid black box; the spacer thickens into a slab
+   running to the page edge. */
+
+[data-style="brutalist"] .section-header-wrapper {
+  margin-bottom: 28px;
+}
+
+[data-style="brutalist"] .section-header {
+  background-color: var(--text);
+  color: var(--bg);
+  font-size: clamp(36px, 5.7vw, 72px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  padding: 12px 22px 8px;
+  margin: 10px 0 0 10px;
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every headline yellow-on-ink. */
+[data-style="brutalist"] #about-section-header,
+[data-style="brutalist"] #jobs-header,
+[data-style="brutalist"] #project-header,
+[data-style="brutalist"] #blog-header,
+[data-style="brutalist"] #contact-section-header,
+[data-style="brutalist"] .blog-section-header {
+  color: var(--bg);
+}
+
+[data-style="brutalist"] .section-header-spacer {
+  background-color: var(--text);
+  height: 8px;
+  margin-left: 18px;
+  transform: translateY(0);
+}
+
+[data-style="brutalist"] .sec-num {
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.45em;
+  margin-right: 14px;
+  letter-spacing: 0;
+}
+
+
+/* ---- About / Skills: pasted-up panels ------------------------------------ */
+
+[data-style="brutalist"] .card-style {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+}
+
+/* "About Me" / "Skills" become inverse stamp labels. */
+[data-style="brutalist"] .card-title,
+[data-style="brutalist"] .about-header,
+[data-style="brutalist"] .skills-header {
+  width: fit-content;
+  background-color: var(--text);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  margin-bottom: 16px;
+}
+
+[data-style="brutalist"] .skills-section-header {
+  color: var(--text);
+  font-size: 19px;
+  text-transform: uppercase;
+}
+
+[data-style="brutalist"] .skills-section-header::before {
+  content: "■ ";
+  color: var(--primary);
+}
+
+[data-style="brutalist"] .skills-text {
+  border-bottom: 2px solid var(--text);
+}
+
+[data-style="brutalist"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: spine list + dossier panel ------------------------------- */
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Archivo arrives after that measure,
+   font-relative line boxes would leave the bar sized to the fallback font. */
+[data-style="brutalist"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  color: var(--text60);
+  border-radius: 0;
+  padding: 12px 14px;
+  transition: none;
+}
+
+[data-style="brutalist"] .menu li:hover {
+  background: var(--text10);
+}
+
+[data-style="brutalist"] .menu li.selected {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* Flat blue marker, snapped moves, JS writes the geometry and transition
+   inline on every move, hence the !importants. */
+[data-style="brutalist"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+  transition: none !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="brutalist"] .highlight {
+    width: 8px !important;
+  }
+}
+
+[data-style="brutalist"] .job-content {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  padding: 24px;
+}
+
+[data-style="brutalist"] .job-title {
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+[data-style="brutalist"] .job-dates {
+  color: var(--text60);
+  font-weight: 700;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+
+[data-style="brutalist"] .job-bullets {
+  list-style-type: square;
+  line-height: 1.55;
+}
+
+[data-style="brutalist"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* Panel changes hard-cut instead of sliding. script.js drives the swap with
+   timeouts (not animationend), so killing these animations is safe: the old
+   panel holds until the JS hides it, then the new one simply appears. */
+[data-style="brutalist"] .job-in-right {
+  transform: none;
+  animation: none;
+}
+
+[data-style="brutalist"] .job-out-right {
+  transform: none;
+  transition: none;
+}
+
+
+/* ---- Selected Works: poster plates ---------------------------------------- */
+
+[data-style="brutalist"] .fc-style-floating .fc-card-image {
+  position: relative;
+  border: 3px solid var(--text);
+  background-color: var(--secondary);
+  box-shadow: 10px 10px 0 var(--text);
+  transition: none;
+}
+
+/* Hovering the plate itself presses it into its shadow, top/left like the
+   other presses, since the transform pin above holds transform at none.
+   Scoped to the image so hovering the title/CTA side of the card (e.g. the
+   View-on-GitHub button) doesn't move the plate. */
+[data-style="brutalist"] .fc-style-floating .fc-card-image:hover {
+  top: 4px;
+  left: 4px;
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+/* Silkscreen punch so raw screenshots hold their own on the acid ground. */
+[data-style="brutalist"] .fc-style-floating .fc-card-image img {
+  filter: contrast(1.08) saturate(1.12);
+}
+
+[data-style="brutalist"] .fc-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+[data-style="brutalist"] .fc-card-desc {
+  color: var(--text);
+}
+
+/* Blue body, ink shadow: blue marks every interactive surface, and shadows
+   stay ink everywhere so the press physics read as one system. */
+[data-style="brutalist"] .fc-card-cta {
+  background-color: var(--primary);
+  color: var(--bg);
+  border: 3px solid var(--text);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  box-shadow: 5px 5px 0 var(--text);
+  transition: none;
+}
+
+/* Hover = the button physically presses into its shadow. */
+[data-style="brutalist"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--text);
+}
+
+[data-style="brutalist"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="brutalist"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+[data-style="brutalist"] .fc-dot {
+  width: 13px;
+  height: 13px;
+  border: 2px solid var(--text);
+  background-color: transparent;
+  opacity: 1;
+  transition: none;
+}
+
+[data-style="brutalist"] .fc-dot:hover {
+  background-color: var(--text30);
+  opacity: 1;
+}
+
+[data-style="brutalist"] .fc-dot.active {
+  background-color: var(--text);
+  transform: none;
+}
+
+
+/* ---- Blog: flyer stack ----------------------------------------------------- */
+
+/* Presses via top/left because the tilt kill above holds transform at none. */
+[data-style="brutalist"] .blog-card {
+  position: relative;
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+  padding: 22px;
+  transition: none;
+}
+
+[data-style="brutalist"] .blog-card:hover {
+  background-color: var(--bg);
+  top: 3px;
+  left: 3px;
+  box-shadow: 3px 3px 0 var(--text);
+}
+
+[data-style="brutalist"] .blog-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 17px;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+[data-style="brutalist"] .blog-card-date {
+  color: var(--text50);
+  font-weight: 700;
+}
+
+[data-style="brutalist"] .blog-card-excerpt {
+  color: var(--text);
+}
+
+/* Listing-page filters: toggle chips, ink-filled when active. */
+[data-style="brutalist"] .filter-pill {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+  transition: none;
+}
+
+[data-style="brutalist"] .filter-pill:hover,
+[data-style="brutalist"] .filter-pill.active {
+  background-color: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* Post page: ink headline, slab-ruled subheads. */
+[data-style="brutalist"] .blog-post-title {
+  color: var(--text);
+  font-size: 36px;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+[data-style="brutalist"] .blog-post-content h2 {
+  color: var(--text);
+  text-transform: uppercase;
+  border-bottom: 4px solid var(--text);
+  padding-bottom: 6px;
+}
+
+[data-style="brutalist"] .blog-post-content blockquote {
+  border-left: 4px solid var(--text);
+  color: var(--text70);
+}
+
+[data-style="brutalist"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+}
+
+/* Code blocks: the shared dark-ground pin lives in _base.css. */
+[data-style="brutalist"] .blog-post-content pre {
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+[data-style="brutalist"] .blog-post-content pre code {
+  font-weight: 400;
+}
+
+[data-style="brutalist"] .blog-post-content pre.has-copy-btn .code-copy-btn {
+  transition: none;
+}
+
+/* Inline code: stamped ink chips (the higher-specificity pre rule above
+   unwinds this for fenced blocks). Radius is a literal 4px in blog-styles. */
+[data-style="brutalist"] .blog-post-content code {
+  background-color: var(--text);
+  color: var(--bg);
+  font-weight: 700;
+  border-radius: 0;
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js);
+   the frame matches the other plates. */
+[data-style="brutalist"] #metr-chart {
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="brutalist"] #pareto-chart,
+[data-style="brutalist"] #ara-objectives-chart,
+[data-style="brutalist"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+/* Blog-listing hero: the typed h1 carries an ID-level bold that the blanket
+   heading rule can't reach. */
+[data-style="brutalist"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 54px;
+}
+
+
+/* ---- Contact ---------------------------------------------------------------- */
+
+[data-style="brutalist"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+}
+
+[data-style="brutalist"] .contact-menu .menu-list {
+  gap: 8px;
+}
+
+[data-style="brutalist"] .contact-menu .socials-item {
+  width: 46px;
+  height: 46px;
+  border: 2px solid var(--text);
+}
+
+[data-style="brutalist"] .contact-menu .socials-item:hover {
+  background-color: var(--text);
+}
+
+[data-style="brutalist"] .contact-menu .socials-item:hover i {
+  color: var(--bg);
+}
+
+/* The map ships raw and full-color in a hard frame, and presses like the
+   plates (top/left, it is a .card tilt target too). */
+[data-style="brutalist"] .contact-image-wrapper {
+  border: 3px solid var(--text);
+  box-shadow: 10px 10px 0 var(--text);
+  transition: none;
+}
+
+[data-style="brutalist"] .contact-image-wrapper:hover {
+  top: 4px;
+  left: 4px;
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+[data-style="brutalist"] .contact-image {
+  filter: contrast(1.08) saturate(1.12);
+}
+
+
+/* ---- Pills everywhere: hard chips ------------------------------------------ */
+
+[data-style="brutalist"] .pill {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+}
+
+
+/* ---- Cycler dock: taped to the corner --------------------------------------- */
+
+[data-style="brutalist"] .tc-dock {
+  background: var(--bg);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  backdrop-filter: none;
+}
+
+[data-style="brutalist"] .tc-toggle {
+  border-radius: 0;
+  border: 2px solid var(--text);
+  color: var(--text);
+  transition: none;
+}
+
+[data-style="brutalist"] .tc-toggle:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+[data-style="brutalist"] .tc-randomize,
+[data-style="brutalist"] .tc-presets button,
+[data-style="brutalist"] .tc-schemes button {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ---------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* mobile-styles.css pins nowrap and strips the left padding; the ink box
+     needs both back, smaller. */
+  [data-style="brutalist"] .section-header {
+    white-space: normal;
+    font-size: clamp(24px, 7.5vw, 34px);
+    padding: 7px 12px 4px;
+    margin: 0 0 0 10px;
+  }
+
+  [data-style="brutalist"] .section-header-spacer {
+    height: 6px;
+    background-color: var(--text);
+  }
+
+  [data-style="brutalist"] .section-spacer {
+    height: 5em;
+  }
+
+  /* Archivo Black is too wide for the default 34px, the longest typed line
+     must clear a ~335px column on a 375px screen. */
+  [data-style="brutalist"] #typing-text {
+    font-size: 26px;
+  }
+
+  [data-style="brutalist"] #sub-text {
+    font-size: 9px;
+    padding: 4px 8px;
+  }
+
+  [data-style="brutalist"] .static-menu-mobile .menu-item,
+  [data-style="brutalist"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  [data-style="brutalist"] .static-menu-mobile .menu-item {
+    font-weight: 700;
+    font-size: 13px;
+    text-transform: uppercase;
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that,
+     and make the tap state the inversion instead. */
+  [data-style="brutalist"] .name-logo:hover {
+    background-color: var(--bg);
+    color: var(--text);
+  }
+
+  [data-style="brutalist"] .name-logo:active {
+    background-color: var(--text);
+    color: var(--bg);
+  }
+
+  [data-style="brutalist"] .double-view-left,
+  [data-style="brutalist"] .double-view-right {
+    background-color: var(--secondary);
+    border: 3px solid var(--text);
+    box-shadow: 6px 6px 0 var(--text);
+  }
+
+  [data-style="brutalist"] .menu-scroll-wrapper {
+    border-bottom: 3px solid var(--text);
+  }
+
+  [data-style="brutalist"] .highlight {
+    height: 5px !important;
+  }
+
+  [data-style="brutalist"] .blog-card {
+    background-color: var(--secondary);
+    border: 3px solid var(--text);
+    box-shadow: 5px 5px 0 var(--text);
+  }
+
+  [data-style="brutalist"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  [data-style="brutalist"] .contact-menu-mobile .socials-item {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--text);
+    margin: 4px;
+  }
+
+  [data-style="brutalist"] .footer-container-mobile {
+    background-color: var(--text);
+    padding: 12px 14px;
+    box-sizing: border-box;
+  }
+
+  [data-style="brutalist"] .footer-text-mobile {
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+}

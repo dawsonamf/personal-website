@@ -1,0 +1,1144 @@
+/* Blueprint: cyanotype drafting room. Prussian-blue contact print, grid
+   paper in the ground, white linework everywhere, Saira Condensed all-caps
+   display, Saira body, IBM Plex Mono callouts, annotation yellow (--accent)
+   as the only second color. Dead flat by rule: zero glow, zero radius, zero
+   shadows. Everything is a drawn line, and the site annotates itself
+   (dimension-line spacers, notched FIG. caption chips, title-block cells,
+   crop marks, tick-mark dots).
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   mobile fixes come from css/themes/_base.css via flags.still + flags.tilt.
+   Every line in this sheet derives from the alpha ramps (panel borders
+   --text85, cell rules --text55, grid --text5/--text10, dimension lines
+   --accent) so the palette toy keeps working, and no rule draws a shadow.
+   The body crosshair is the cursor gimmick. Loaded weights only: Saira
+   Condensed 700 headings, Saira 400/500 body (strong pins 500), mono
+   chrome 600. */
+
+
+/* ---- Foundations: grid paper, crosshair, drafting stillness -------------- */
+
+[data-style="blueprint"] ::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* The grid: 12px minor lines at the 5% ramp under 60px major lines at 10%
+   (preview .s-blueprint .tin). Attachment stays the default scroll, fixed
+   would repaint the full field on every scroll tick. */
+[data-style="blueprint"] body {
+  background-image:
+    linear-gradient(var(--text5) 1px, transparent 1px),
+    linear-gradient(90deg, var(--text5) 1px, transparent 1px),
+    linear-gradient(var(--text10) 1px, transparent 1px),
+    linear-gradient(90deg, var(--text10) 1px, transparent 1px);
+  background-size: 12px 12px, 12px 12px, 60px 60px, 60px 60px;
+  cursor: crosshair;
+}
+
+/* Thin white scrollbar, yellow on hover. ([data-style] sits on <html>, so
+   these select the root scrollbar.) */
+[data-style="blueprint"] {
+  scrollbar-color: var(--text) var(--bg);
+  scrollbar-width: thin;
+}
+
+[data-style="blueprint"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-style="blueprint"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text15);
+}
+
+[data-style="blueprint"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 2px solid var(--bg);
+}
+
+[data-style="blueprint"]::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Saira Condensed has no 400 or bold-bold, pin every heading to the loaded
+   700 so nothing smears into synthesized weights. */
+[data-style="blueprint"] h1,
+[data-style="blueprint"] h2,
+[data-style="blueprint"] h3,
+[data-style="blueprint"] h4 {
+  font-weight: 700;
+}
+
+/* Saira body loads 400/500 only; <strong> would synthesize a 700. Drafting
+   lettering keeps a uniform stroke anyway, emphasis is the loaded 500. */
+[data-style="blueprint"] b,
+[data-style="blueprint"] strong {
+  font-weight: 500;
+}
+
+/* Links sitewide: yellow annotation with a 1px dashed underline, solid on
+   hover. The default's animated underline pseudo is suppressed outright. */
+[data-style="blueprint"] .text-link {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-style: dashed;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+[data-style="blueprint"] .text-link::before {
+  display: none;
+}
+
+[data-style="blueprint"] .text-link:hover {
+  color: var(--accent);
+  text-decoration-style: solid;
+}
+
+
+/* ---- Chrome: title-block logo, mono menus, ruled strip -------------------- */
+
+/* The logo "D" as a title-block cell: a 1.5px line box, Saira Condensed,
+   white linework; hover fills it with annotation yellow. (Its intro fadein
+   only animates opacity, retiming nothing here.) */
+[data-style="blueprint"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text);
+  border: 1.5px solid var(--text85);
+}
+
+[data-style="blueprint"] .name-logo:hover {
+  transform: none;
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+/* Departments in mono caps, letterspaced; white at rest, yellow on hover. */
+[data-style="blueprint"] .menu-item {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="blueprint"] .menu-item:hover {
+  color: var(--accent);
+}
+
+/* Item separators read as cell dividers. */
+[data-style="blueprint"] .menu-spacer {
+  border-color: var(--text55);
+}
+
+/* Static menu: a ruled strip, hairline top and bottom rules, no fill. The
+   header row is a stretch flexbox sized by the logo's margin box (~67px), so
+   the strip must size to its own 3.5em list or the rules land ~11px apart. */
+[data-style="blueprint"] .static-menu {
+  background-color: transparent;
+  border-top: 1px solid var(--text85);
+  border-bottom: 1px solid var(--text85);
+  box-shadow: none;
+  align-self: flex-start;
+}
+
+/* Floating menu: a solid sheet panel in a 1.5px line box, no blur, no
+   shadow, nothing translucent on a drafting print. */
+[data-style="blueprint"] .moving-menu {
+  background-color: var(--bg);
+  border: 1.5px solid var(--text85);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Footer: the title block, a bordered strip of three cells with the
+   existing credit line in the center cell (preview .bp-title). The side
+   cells stay empty: no worded pseudo-content (SHEET/SCALE strings are
+   recorded Layer-4 future work, not built). */
+[data-style="blueprint"] .footer-container {
+  border: 1.5px solid var(--text85);
+  margin: 0 10px;
+  padding: 0;
+}
+
+[data-style="blueprint"] .footer-spacer {
+  flex: 1;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: none;
+  align-self: stretch;
+}
+
+[data-style="blueprint"] .footer-spacer:first-of-type {
+  border-right: 1px solid var(--text55);
+}
+
+[data-style="blueprint"] .footer-spacer:last-of-type {
+  border-left: 1px solid var(--text55);
+}
+
+[data-style="blueprint"] .footer-text {
+  margin: 0;
+  padding: 15px 26px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text70);
+}
+
+/* ---- Hero: single-stroke caps + yellow annotation + cyanotype plate ------- */
+
+/* Saira Condensed 700, all caps. Condensed is width-safe: the longest typed
+   line ("FULL STACK ENGINEER.") runs ≈ 9.6em ≈ 750px at the 78px cap, plus
+   the .02em tracking ≈ 780px, inside the ~795px column budget. */
+[data-style="blueprint"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(56px, 5vw, 78px);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* The strapline is the yellow mono annotation under the lettering. (It
+   already follows --accent and --font-mono; this sets the callout scale.) */
+[data-style="blueprint"] #sub-text {
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* Socials: a strip of joined line-box icon cells, title-block grammar. The
+   anchors are contiguous siblings, so adjacent cells share their 1px rule.
+   Scoped to the sidebar/contact menus so the mobile header's bare email
+   glyph stays a glyph. */
+[data-style="blueprint"] #socials-list .socials-item,
+[data-style="blueprint"] #blog-socials-list .socials-item,
+[data-style="blueprint"] .contact-menu .socials-item,
+[data-style="blueprint"] .contact-menu-mobile .socials-item {
+  position: relative;
+  border: 1px solid var(--text55);
+  transition: background-color 0.25s ease-in-out, border-color 0.25s ease-in-out;
+}
+
+[data-style="blueprint"] #socials-list .socials-item + .socials-item,
+[data-style="blueprint"] #blog-socials-list .socials-item + .socials-item {
+  margin-top: -1px;
+}
+
+/* The contact rows are <li>-wrapped (with hidden spacer items between), so
+   the joins ride the list items; the empty spacer <li>s have zero width. */
+[data-style="blueprint"] .contact-menu .menu-list li + li .socials-item,
+[data-style="blueprint"] .contact-menu-mobile .menu-list li + li .socials-item {
+  margin-left: -1px;
+}
+
+[data-style="blueprint"] #socials-list .socials-item i,
+[data-style="blueprint"] #blog-socials-list .socials-item i,
+[data-style="blueprint"] .contact-menu .socials-item i,
+[data-style="blueprint"] .contact-menu-mobile .socials-item i {
+  font-size: 20px;
+}
+
+[data-style="blueprint"] #socials-list .socials-item:hover,
+[data-style="blueprint"] #blog-socials-list .socials-item:hover,
+[data-style="blueprint"] .contact-menu .socials-item:hover,
+[data-style="blueprint"] .contact-menu-mobile .socials-item:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  z-index: 1;
+}
+
+[data-style="blueprint"] #socials-list .socials-item:hover i,
+[data-style="blueprint"] #blog-socials-list .socials-item:hover i,
+[data-style="blueprint"] .contact-menu .socials-item:hover i,
+[data-style="blueprint"] .contact-menu-mobile .socials-item:hover i {
+  color: var(--bg);
+  transform: none;
+}
+
+/* The sidebar's extension line runs into the first cell. */
+[data-style="blueprint"] #socials-list .socials-menu-spacer,
+[data-style="blueprint"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text55);
+}
+
+/* The selfie becomes a cyanotype plate: contact-print blues in a 1.5px white
+   frame, full color restored on hover. Stays clickable, it is still the
+   cycler unlock. (It is a .card tilt target, held flat above; the crop marks
+   live on the wrapper.) */
+[data-style="blueprint"] #typing-image {
+  border: 1.5px solid var(--text);
+  filter: grayscale(1) sepia(0.2) hue-rotate(170deg) saturate(2.2) brightness(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="blueprint"] #typing-image:hover {
+  filter: none;
+}
+
+/* Crop-mark ticks on opposite corners of the plate, drawn by the wrapper's
+   pseudos. Geometry: the wrapper pads 60px top / 20px left, and the framed
+   image box is 228×403 (225×400 + 1.5px borders, content-box), each 14px
+   L-tick sits 6px outside its corner. */
+[data-style="blueprint"] #typing-right {
+  position: relative;
+}
+
+[data-style="blueprint"] #typing-right::before,
+[data-style="blueprint"] #typing-right::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+}
+
+[data-style="blueprint"] #typing-right::before {
+  top: 54px;
+  left: 14px;
+  border-top: 1.5px solid var(--text);
+  border-left: 1.5px solid var(--text);
+}
+
+[data-style="blueprint"] #typing-right::after {
+  top: 455px;
+  left: 240px;
+  border-bottom: 1.5px solid var(--text);
+  border-right: 1.5px solid var(--text);
+}
+
+
+/* ---- Section headers: drawing titles + the dimension-line spacer ----------
+   Saira Condensed caps with the index number as a yellow mono callout, and
+   the spacer line redrawn as a dimension line with border-triangle
+   arrowheads at both ends, the signature move (preview .bp-dim). */
+
+[data-style="blueprint"] .section-header {
+  font-weight: 700;
+  font-size: clamp(38px, 4vw, 48px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them so the titles stay white linework, the yellow lives in the
+   number and the dimension line. */
+[data-style="blueprint"] #about-section-header,
+[data-style="blueprint"] #jobs-header,
+[data-style="blueprint"] #project-header,
+[data-style="blueprint"] #blog-header,
+[data-style="blueprint"] #contact-section-header,
+[data-style="blueprint"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="blueprint"] .sec-num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-right: 14px;
+}
+
+/* The spacer becomes ◄──────────►: the element draws the 1px yellow line as
+   a background layer; its two pseudos are the outward arrowheads (the
+   border-triangle technique from the preview's .bp-arrow-l/r). */
+[data-style="blueprint"] .section-header-spacer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 10px;
+  background-color: transparent;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 1px;
+}
+
+[data-style="blueprint"] .section-header-spacer::before,
+[data-style="blueprint"] .section-header-spacer::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border: 5px solid transparent;
+}
+
+[data-style="blueprint"] .section-header-spacer::before {
+  border-left-width: 0;
+  border-right-color: var(--accent);
+}
+
+[data-style="blueprint"] .section-header-spacer::after {
+  border-right-width: 0;
+  border-left-color: var(--accent);
+}
+
+
+/* ---- About / Skills: figure panels with notched captions ------------------
+   The .bp-panel grammar: transparent panels in a 1.5px line box, with the
+   existing "About Me" / "Skills" titles restyled as caption chips notched
+   into the border line (background: var(--bg) interrupts the stroke,
+   preview .bp-cap). */
+
+[data-style="blueprint"] .card-style {
+  background-color: transparent;
+  border: 1.5px solid var(--text85);
+  padding: 26px 22px 20px;
+}
+
+[data-style="blueprint"] .double-view-left,
+[data-style="blueprint"] .double-view-right {
+  position: relative;
+}
+
+[data-style="blueprint"] .card-title,
+[data-style="blueprint"] .about-header,
+[data-style="blueprint"] .skills-header {
+  position: absolute;
+  top: -9px;
+  left: 14px;
+  margin: 0;
+  padding: 0 8px;
+  background-color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 18px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* Web / iOS / ML run as schedule rows: mono caps with a dashed leader
+   running to the panel edge (preview .bp-row). */
+[data-style="blueprint"] .skills-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin: 1.8em 0 0.8em;
+}
+
+[data-style="blueprint"] .skills-section-header::after {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed var(--text50);
+}
+
+[data-style="blueprint"] .skills-section-header:first-of-type {
+  margin-top: 0.4em;
+}
+
+[data-style="blueprint"] .about-text,
+[data-style="blueprint"] .skills-text {
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+
+[data-style="blueprint"] .skills-text {
+  border-bottom: 1px dashed var(--text20);
+}
+
+[data-style="blueprint"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the drawing schedule -------------------------------------- */
+
+/* Index rail: a 1px drawn line instead of the 3px navy spine; the yellow
+   redline draws over it on the selected entry. */
+[data-style="blueprint"] .nav-container {
+  border-left: 1px solid var(--text55);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight, and Plex Mono arrives after that measure,
+   font-relative line boxes would leave the redline sized to the fallback
+   font. Hover/selected fills stay token-driven (the registry's Prussian navy
+   ramp), selected text goes annotation yellow via the default accent rule. */
+[data-style="blueprint"] .menu li {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text60);
+  border-radius: 0;
+}
+
+/* The 2px yellow redline. JS writes geometry, border-radius, and transition
+   inline on every move, radius and transition take the blanket !important;
+   the thickness override lives in the desktop block below because width is a
+   JS constant only on desktop (mobile's inline height is already 2px). */
+[data-style="blueprint"] .highlight {
+  background: var(--accent);
+  box-shadow: none;
+  border-radius: 0 !important;
+  transition: none !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="blueprint"] .highlight {
+    left: -2px !important;
+    width: 2px !important;
+  }
+}
+
+/* The dossier panel becomes a drawing sheet: a 1.5px line box with the date
+   line notched into its top border as the caption chip. overflow is opened
+   up for the chip, the default's hidden adds nothing here (the swap slides
+   whole panels, clipped by #main-body, and this skin fades instead). */
+[data-style="blueprint"] .job-content {
+  background-color: transparent;
+  border: 1.5px solid var(--text85);
+  padding: 26px 28px 22px;
+  overflow: visible;
+}
+
+[data-style="blueprint"] .job-dates {
+  position: absolute;
+  top: -9px;
+  left: 14px;
+  background-color: var(--bg);
+  padding: 0 8px;
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 18px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+[data-style="blueprint"] .job-title {
+  color: var(--text);
+  font-size: 24px;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-style="blueprint"] .job-bullets {
+  list-style-type: square;
+  line-height: 1.65;
+}
+
+[data-style="blueprint"] .job-bullets li::marker {
+  color: var(--accent);
+}
+
+/* Sheet swap: a quick local fade, drafting still, no slide. script.js
+   drives the swap with timeouts (not animationend), so retiming is safe. */
+[data-style="blueprint"] .job-in-right {
+  transform: none;
+  animation-name: blueprintJobFadeIn;
+  animation-duration: 0.25s;
+}
+
+[data-style="blueprint"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-out;
+}
+
+@keyframes blueprintJobFadeIn {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: numbered figures --------------------------------------- */
+
+/* Figure numbering for the captions (the track renders .fc-card elements
+   only, so a card-level counter is safe). */
+[data-style="blueprint"] .featured-carousel-track {
+  counter-reset: blueprintFig;
+}
+
+[data-style="blueprint"] .fc-card {
+  position: relative;
+  counter-increment: blueprintFig;
+}
+
+/* Plates print as cyanotype figures in hairline frames; full color when the
+   figure is hovered. */
+[data-style="blueprint"] .fc-style-floating .fc-card-image {
+  border: 1px solid var(--text85);
+}
+
+[data-style="blueprint"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(1) sepia(0.2) hue-rotate(170deg) saturate(2.2) brightness(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="blueprint"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Crop-mark ticks on the plate's opposite corners, drawn by the card's
+   pseudos (the image clips its own overflow). The framed plate is 512×342
+   and vertically centered, so its corners sit at 50% ∓ 171px; each tick is
+   6px outside, the -6px left overhang stays inside the track's 8px side
+   padding (first-card clip rule). */
+[data-style="blueprint"] .fc-card::before,
+[data-style="blueprint"] .fc-card::after {
+  content: '';
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+[data-style="blueprint"] .fc-card::before {
+  top: calc(50% - 177px);
+  left: -6px;
+  border-top: 1.5px solid var(--text);
+  border-left: 1.5px solid var(--text);
+}
+
+[data-style="blueprint"] .fc-card::after {
+  top: calc(50% + 163px);
+  left: 504px;
+  border-bottom: 1.5px solid var(--text);
+  border-right: 1.5px solid var(--text);
+}
+
+/* Captions: a yellow mono "FIG. n" callout over a Condensed caps title.
+   (The FIG counter chrome is specified by the skin queue; no other content
+   words are added anywhere.) */
+[data-style="blueprint"] .fc-card-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-style="blueprint"] .fc-card-title::before {
+  content: "FIG. " counter(blueprintFig, decimal-leading-zero);
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+[data-style="blueprint"] .fc-card-desc {
+  color: var(--text80);
+}
+
+/* CTA: a title-block cell, mono caps annotation in a 1.5px line box; hover
+   fills with yellow and prints the label in Prussian. featured-carousel.css
+   pins a literal 10px radius, not the token, hence the explicit zero. */
+[data-style="blueprint"] .fc-card-cta {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1.5px solid var(--text85);
+  border-radius: 0;
+  padding: 10px 18px;
+}
+
+[data-style="blueprint"] .fc-card-cta:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="blueprint"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="blueprint"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots become ruler tick marks: thin white strokes, the active one a taller
+   yellow major tick. No scale pop, nothing on this sheet moves. */
+[data-style="blueprint"] .featured-carousel-dots {
+  align-items: center;
+}
+
+[data-style="blueprint"] .fc-dot {
+  width: 2px;
+  height: 14px;
+  border-radius: 0;
+  background-color: var(--text);
+  opacity: 0.35;
+}
+
+[data-style="blueprint"] .fc-dot:hover {
+  opacity: 0.7;
+}
+
+[data-style="blueprint"] .fc-dot.active {
+  background-color: var(--accent);
+  opacity: 1;
+  height: 18px;
+  transform: none;
+}
+
+
+/* ---- Blog: the index of drawings ---------------------------------------------
+   Cards become indexed line boxes: Condensed caps titles with a dashed
+   leader running from the title block to the mono date. */
+
+[data-style="blueprint"] .blog-card {
+  background-color: transparent;
+  border: 1px solid var(--text55);
+}
+
+[data-style="blueprint"] .blog-card:hover {
+  background-color: transparent;
+  border-color: var(--accent);
+}
+
+[data-style="blueprint"] .blog-card-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 19px;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* The leader: dashes run from under the title across to the date, set right
+   (preview .bp-row). */
+[data-style="blueprint"] .blog-card-date {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text70);
+  margin: 0 0 14px;
+}
+
+[data-style="blueprint"] .blog-card-date::before {
+  content: '';
+  flex: 1;
+  border-top: 1px dashed var(--text50);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="blueprint"] .blog-listing-grid .blog-card {
+  background-color: transparent;
+  border: 1px solid var(--text55);
+}
+
+[data-style="blueprint"] .blog-listing-grid .blog-card:hover {
+  background-color: transparent;
+  border-color: var(--accent);
+}
+
+[data-style="blueprint"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 19px;
+}
+
+[data-style="blueprint"] .blog-listing-grid .blog-card .blog-card-date {
+  font-size: 10.5px;
+  color: var(--text70);
+  margin: 0 0 14px;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the lettering
+   face, the loaded 700, and the caps. */
+[data-style="blueprint"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(56px, 5vw, 78px);
+  line-height: 1.1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+[data-style="blueprint"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.7;
+}
+
+/* Filters: mono caps cells; the active one is a filled yellow annotation. */
+[data-style="blueprint"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--text55);
+  color: var(--text70);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-style="blueprint"] .filter-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+[data-style="blueprint"] .filter-pill.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+
+/* ---- Blog post page: a drawing sheet -------------------------------------------
+   The article sits inside its own sheet border, the header ruled off like a
+   revision strip. */
+
+[data-style="blueprint"] .blog-post-container {
+  border: 1.5px solid var(--text85);
+  padding: 44px 48px;
+  margin: 24px auto 0;
+}
+
+[data-style="blueprint"] .blog-post-header {
+  border-bottom: 1px solid var(--text55);
+  padding-bottom: 20px;
+  margin-bottom: 36px;
+}
+
+[data-style="blueprint"] .blog-post-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: clamp(32px, 4.2vw, 40px);
+  line-height: 1.15;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Crossheads: caps lettering over a dashed drawn rule. */
+[data-style="blueprint"] .blog-post-content h2 {
+  color: var(--text);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border-bottom: 1px dashed var(--text25);
+  padding-bottom: 6px;
+}
+
+[data-style="blueprint"] .blog-post-content h3 {
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+/* Margin notes: a yellow revision bar. */
+[data-style="blueprint"] .blog-post-content blockquote {
+  border-left: 2px solid var(--accent);
+  color: var(--text70);
+}
+
+/* Section breaks are drawn, dashed. */
+[data-style="blueprint"] .blog-post-content hr {
+  border-top: 1px dashed var(--text35);
+}
+
+/* Tables as title-block grids. */
+[data-style="blueprint"] .blog-post-content th,
+[data-style="blueprint"] .blog-post-content td {
+  border: 1px solid var(--text25);
+}
+
+/* blog-styles bolds th to 600, which Saira doesn't load (400/500), pin the
+   loaded 500 so table heads never synthesize. */
+[data-style="blueprint"] .blog-post-content th {
+  background-color: var(--secondary);
+  font-weight: 500;
+}
+
+/* Post photographs print as cyanotype plates in a 1.5px white frame, full
+   color on hover. border-box keeps the frame inside blog-styles'
+   max-width: 100%, the site is content-box, so the border would otherwise
+   overhang the column. */
+[data-style="blueprint"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 1.5px solid var(--text);
+  filter: grayscale(1) sepia(0.2) hue-rotate(170deg) saturate(2.2) brightness(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="blueprint"] .blog-post-content img.blog-image:hover {
+  filter: none;
+}
+
+/* Code blocks: the shared dark-ground pin lives in _base.css. */
+[data-style="blueprint"] .blog-post-content pre {
+  border: 1px solid var(--text25);
+}
+
+/* Inline code: yellow annotation on deeper Prussian chips (the
+   higher-specificity pre rule above unwinds this for fenced blocks).
+   blog-styles pins a literal 4px radius, zeroed here. */
+[data-style="blueprint"] .blog-post-content code {
+  background-color: var(--secondary);
+  color: var(--accent);
+  border: 1px solid var(--text15);
+  border-radius: 0;
+}
+
+/* Diagrams sit on the deeper panel blue in a hairline frame (mermaid reads
+   the palette at render time via blog/post.html); node corners go square
+   with the rest of the sheet. */
+[data-style="blueprint"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+}
+
+[data-style="blueprint"] .blog-post-content .mermaid .node rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="blueprint"] #metr-chart {
+  border: 1px solid var(--text25);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="blueprint"] #pareto-chart,
+[data-style="blueprint"] #ara-objectives-chart,
+[data-style="blueprint"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the last panel on the sheet ----------------------------------- */
+
+[data-style="blueprint"] .contact-view-left {
+  background-color: transparent;
+  border: 1.5px solid var(--text85);
+}
+
+[data-style="blueprint"] .contact-text {
+  line-height: 1.7;
+}
+
+/* The map prints as a cyanotype site plan in a white frame; color on hover.
+   (The wrapper is a .card tilt target, frame and filter only.) */
+[data-style="blueprint"] .contact-image-wrapper {
+  border: 1.5px solid var(--text);
+}
+
+[data-style="blueprint"] .contact-image {
+  filter: grayscale(1) sepia(0.2) hue-rotate(170deg) saturate(2.2) brightness(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="blueprint"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): callout cells --------- */
+
+[data-style="blueprint"] .pill {
+  background-color: transparent;
+  border: 1px solid var(--text55);
+  color: var(--text70);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+}
+
+
+/* ---- Cycler dock: a pinned title block ---------------------------------------- */
+
+[data-style="blueprint"] .tc-dock {
+  background: var(--bg);
+  border: 1.5px solid var(--text85);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-style="blueprint"] .tc-toggle {
+  border-radius: 0;
+}
+
+[data-style="blueprint"] .tc-randomize,
+[data-style="blueprint"] .tc-presets button,
+[data-style="blueprint"] .tc-schemes button,
+[data-style="blueprint"] .tc-role,
+[data-style="blueprint"] .tc-sw {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------ */
+
+@media screen and (max-width: 1100px) {
+  /* Drop the 12px minor grid on the small sheet; the 60px major stays. */
+  [data-style="blueprint"] body {
+    background-image:
+      linear-gradient(var(--text10) 1px, transparent 1px),
+      linear-gradient(90deg, var(--text10) 1px, transparent 1px);
+    background-size: 60px 60px, 60px 60px;
+  }
+
+  /* Condensed caps on the small sheet (the mobile ID rule pins 34px; caps at
+     34px would graze a ~280px column on the narrowest screens). */
+  [data-style="blueprint"] #typing-text {
+    font-size: clamp(28px, 8.5vw, 34px);
+  }
+
+  [data-style="blueprint"] #sub-text {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+
+  [data-style="blueprint"] #blog-typing-text {
+    font-size: clamp(28px, 8.5vw, 34px);
+  }
+
+  /* The hero photo is hidden on mobile, hide its now-orphaned crop marks. */
+  [data-style="blueprint"] #typing-right::before,
+  [data-style="blueprint"] #typing-right::after {
+    display: none;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the caps
+     titles need to wrap. */
+  [data-style="blueprint"] .section-header {
+    white-space: normal;
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  /* Dimension lines simplify to plain rules: arrowheads off, a 1px yellow
+     hairline stays. */
+  [data-style="blueprint"] .section-header-spacer {
+    height: 1px;
+    background-color: var(--accent);
+    background-image: none;
+  }
+
+  [data-style="blueprint"] .section-header-spacer::before,
+  [data-style="blueprint"] .section-header-spacer::after {
+    display: none;
+  }
+
+  [data-style="blueprint"] .static-menu-mobile .menu-item {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  [data-style="blueprint"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that,
+     and make the tap state the yellow fill instead. */
+  [data-style="blueprint"] .name-logo:hover {
+    background-color: transparent;
+    border-color: var(--text85);
+    color: var(--text);
+  }
+
+  [data-style="blueprint"] .name-logo:active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+  }
+
+  /* Panel borders thin to 1px on the small sheet; the mobile sheet also
+     re-cards these surfaces, keep them transparent linework. */
+  [data-style="blueprint"] .card-style {
+    border-width: 1px;
+  }
+
+  [data-style="blueprint"] .double-view-left,
+  [data-style="blueprint"] .double-view-right {
+    background-color: transparent;
+  }
+
+  /* Jobs rail runs horizontal: the rule moves to the wrapper's bottom edge.
+     The redline keeps the JS-written 2px height, which is already the spec
+     thickness on mobile. */
+  [data-style="blueprint"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text55);
+  }
+
+  [data-style="blueprint"] .job-content {
+    border-width: 1px;
+    padding: 22px 18px 18px;
+  }
+
+  /* Plates: the image is width: 100% on mobile, so the frame must draw
+     inside the box (content-box would overflow the card); crop marks come
+     off with the rest of the small-sheet ornament. */
+  [data-style="blueprint"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+  }
+
+  [data-style="blueprint"] .fc-card::before,
+  [data-style="blueprint"] .fc-card::after {
+    display: none;
+  }
+
+  [data-style="blueprint"] .blog-card {
+    background-color: transparent;
+  }
+
+  [data-style="blueprint"] .contact-view-left {
+    background-color: transparent;
+    border-width: 1px;
+  }
+
+  [data-style="blueprint"] .blog-post-container {
+    border-width: 1px;
+    padding: 28px 18px;
+    margin-top: 18px;
+  }
+
+  [data-style="blueprint"] .blog-post-title {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  /* The mobile footer becomes a single title-block cell. */
+  [data-style="blueprint"] .footer-container-mobile {
+    border: 1px solid var(--text85);
+    padding: 10px 12px;
+    box-sizing: border-box;
+  }
+
+  [data-style="blueprint"] .footer-text-mobile {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text70);
+  }
+}

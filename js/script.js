@@ -199,6 +199,8 @@
 
 
   $(document).ready(function() {
+    // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+    if (window.__styleAllowsTilt && !window.__styleAllowsTilt()) return;
     const cards = $('.card').get();
     VanillaTilt.init(cards, {
       max: 10,
@@ -251,6 +253,22 @@
     window.addEventListener("load", () => {
       if (jobsSelectedItem) moveHighlight(jobsSelectedItem, true);
     });
+    // Re-seat the bar when the items change size without a resize or click:
+    // a live style switch restyles the list, and a late webfont can rewrap a
+    // label. The initial observe delivery is skipped so the bar still first
+    // paints on window load.
+    if (window.ResizeObserver) {
+      let menuObserverPrimed = false;
+      const menuObserver = new ResizeObserver(() => {
+        if (!menuObserverPrimed) {
+          menuObserverPrimed = true;
+          return;
+        }
+        if (jobsSelectedItem) moveHighlight(jobsSelectedItem, false);
+      });
+      menuObserver.observe(jobsMenuList);
+      jobsMenuList.querySelectorAll("li").forEach((li) => menuObserver.observe(li));
+    }
     const scrollWrapper = document.querySelector('.menu-scroll-wrapper');
     if (scrollWrapper) {
       scrollWrapper.addEventListener("scroll", () => {
@@ -321,14 +339,17 @@
       </a>
     `).join('');
 
-    VanillaTilt.init(track.querySelectorAll('.blog-card'), {
-      max: 8,
-      speed: 400,
-      perspective: 1200,
-      scale: 1.02,
-      glare: false,
-      gyroscope: false
-    });
+    // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+    if (!window.__styleAllowsTilt || window.__styleAllowsTilt()) {
+      VanillaTilt.init(track.querySelectorAll('.blog-card'), {
+        max: 8,
+        speed: 400,
+        perspective: 1200,
+        scale: 1.02,
+        glare: false,
+        gyroscope: false
+      });
+    }
   }
 
   function setupBlogScrollFade() {

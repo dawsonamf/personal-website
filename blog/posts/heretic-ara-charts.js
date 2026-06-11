@@ -1,27 +1,49 @@
 (function () {
   'use strict';
 
-  var COLORS = {
-    accent: '#61ffda',
-    red: '#F05138',
-    blue: '#64B5F6',
-    white: '#e6f1ff',
-    gray: '#a2a2a3',
-    bg: '#1d1d1d',
-    cardBg: '#2c2c2c',
-  };
-
-  var PLOTLY_LAYOUT_BASE = {
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: COLORS.cardBg,
-    font: { family: 'SF Mono, monospace', color: COLORS.white, size: 12 },
-    margin: { t: 30, r: 30, b: 50, l: 60 },
-    hoverlabel: {
-      bgcolor: COLORS.cardBg,
-      bordercolor: COLORS.gray,
-      font: { color: COLORS.white, size: 12 },
-    },
-  };
+  // Chart chrome follows the live palette (style versions + the palette toy):
+  // each render re-reads the CSS variables, which resolve to the original
+  // hardcoded colors at the default palette. The red/blue series colors are
+  // identity (Swift orange, steering blue) and stay fixed.
+  function cssVar(name, fallback) {
+    var v = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    return v || fallback;
+  }
+  function rgbaFromHex(hex, alpha, fallback) {
+    var m = /^#([0-9a-f]{6})$/i.exec(hex.trim());
+    if (!m) return fallback;
+    var n = parseInt(m[1], 16);
+    return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + alpha + ')';
+  }
+  function currentColors() {
+    var C = {
+      accent: cssVar('--accent', '#61ffda'),
+      red: '#F05138',
+      blue: '#64B5F6',
+      white: cssVar('--text', '#e6f1ff'),
+      gray: cssVar('--neutral-gray', '#a2a2a3'),
+      bg: cssVar('--bg', '#1d1d1d'),
+      cardBg: cssVar('--secondary', '#2c2c2c'),
+    };
+    C.grid10 = rgbaFromHex(C.gray, 0.1, 'rgba(162,162,163,0.1)');
+    C.grid15 = rgbaFromHex(C.gray, 0.15, 'rgba(162,162,163,0.15)');
+    C.grid30 = rgbaFromHex(C.gray, 0.3, 'rgba(162,162,163,0.3)');
+    C.legendBg = rgbaFromHex(C.cardBg, 0.85, 'rgba(44,44,44,0.85)');
+    return C;
+  }
+  function plotlyLayoutBase(COLORS) {
+    return {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: COLORS.cardBg,
+      font: { family: 'SF Mono, monospace', color: COLORS.white, size: 12 },
+      margin: { t: 30, r: 30, b: 50, l: 60 },
+      hoverlabel: {
+        bgcolor: COLORS.cardBg,
+        bordercolor: COLORS.gray,
+        font: { color: COLORS.white, size: 12 },
+      },
+    };
+  }
 
   var PLOTLY_CONFIG = {
     displayModeBar: false,
@@ -33,6 +55,8 @@
   function renderParetoChart() {
     var el = document.getElementById('pareto-chart');
     if (!el) return;
+    var COLORS = currentColors();
+    var PLOTLY_LAYOUT_BASE = plotlyLayoutBase(COLORS);
 
     var paretoRefusals = [3, 4, 5, 6, 7, 8, 9, 10, 12, 15, 20, 30];
     var paretoKL = [0.4059, 0.32, 0.24, 0.21, 0.17, 0.14, 0.1077, 0.09, 0.07, 0.05, 0.035, 0.02];
@@ -86,7 +110,7 @@
       xaxis: {
         title: { text: 'Refusals (out of 100)', standoff: 10 },
         color: COLORS.gray,
-        gridcolor: 'rgba(162,162,163,0.15)',
+        gridcolor: COLORS.grid15,
         range: [-2, 105],
         dtick: 20,
         zeroline: false,
@@ -94,14 +118,14 @@
       yaxis: {
         title: { text: 'KL Divergence', standoff: 10 },
         color: COLORS.gray,
-        gridcolor: 'rgba(162,162,163,0.15)',
+        gridcolor: COLORS.grid15,
         range: [-0.02, 0.52],
         zeroline: false,
       },
       showlegend: true,
       legend: {
         x: 1, y: 1, xanchor: 'right', yanchor: 'top',
-        bgcolor: 'rgba(44,44,44,0.85)',
+        bgcolor: COLORS.legendBg,
         bordercolor: COLORS.gray,
         borderwidth: 1,
         font: { size: 11 },
@@ -126,6 +150,8 @@
   function renderARAObjectivesChart() {
     var el = document.getElementById('ara-objectives-chart');
     if (!el) return;
+    var COLORS = currentColors();
+    var PLOTLY_LAYOUT_BASE = plotlyLayoutBase(COLORS);
 
     var harmlessX = [], harmlessY = [];
     for (var i = 0; i < 40; i++) {
@@ -176,7 +202,7 @@
         x: [harmfulOrigX[a], harmfulSteeredX[a]],
         y: [harmfulOrigY[a], harmfulSteeredY[a]],
         mode: 'lines',
-        line: { color: 'rgba(162,162,163,0.3)', width: 1, dash: 'dot' },
+        line: { color: COLORS.grid30, width: 1, dash: 'dot' },
         showlegend: false,
         hoverinfo: 'skip',
       });
@@ -186,21 +212,21 @@
       xaxis: {
         title: { text: 'Activation Dimension 1', standoff: 10 },
         color: COLORS.gray,
-        gridcolor: 'rgba(162,162,163,0.1)',
+        gridcolor: COLORS.grid10,
         showticklabels: false,
         zeroline: false,
       },
       yaxis: {
         title: { text: 'Activation Dimension 2', standoff: 10 },
         color: COLORS.gray,
-        gridcolor: 'rgba(162,162,163,0.1)',
+        gridcolor: COLORS.grid10,
         showticklabels: false,
         zeroline: false,
       },
       showlegend: true,
       legend: {
         x: 1, y: 1, xanchor: 'right', yanchor: 'top',
-        bgcolor: 'rgba(44,44,44,0.85)',
+        bgcolor: COLORS.legendBg,
         bordercolor: COLORS.gray,
         borderwidth: 1,
         font: { size: 11 },
@@ -243,6 +269,8 @@
   function renderKLExplainerChart() {
     var el = document.getElementById('kl-explainer-chart');
     if (!el) return;
+    var COLORS = currentColors();
+    var PLOTLY_LAYOUT_BASE = plotlyLayoutBase(COLORS);
 
     var tokens = ['The', 'cat', 'sat', 'on', 'a', 'mat', 'rug', 'chair', 'floor', 'bed'];
     var originalProbs = [0.02, 0.15, 0.05, 0.08, 0.03, 0.25, 0.18, 0.10, 0.09, 0.05];
@@ -278,12 +306,12 @@
       xaxis: {
         title: { text: 'Next Token', standoff: 10 },
         color: COLORS.gray,
-        gridcolor: 'rgba(162,162,163,0.1)',
+        gridcolor: COLORS.grid10,
       },
       yaxis: {
         title: { text: 'Probability', standoff: 10 },
         color: COLORS.gray,
-        gridcolor: 'rgba(162,162,163,0.15)',
+        gridcolor: COLORS.grid15,
         tickformat: '.0%',
         range: [0, 0.30],
         zeroline: false,
@@ -291,7 +319,7 @@
       showlegend: true,
       legend: {
         x: 1, y: 1, xanchor: 'right', yanchor: 'top',
-        bgcolor: 'rgba(44,44,44,0.85)',
+        bgcolor: COLORS.legendBg,
         bordercolor: COLORS.gray,
         borderwidth: 1,
         font: { size: 11 },
@@ -316,4 +344,12 @@
     renderARAObjectivesChart();
     renderKLExplainerChart();
   }
+
+  // Redraw when the theme cycler changes the palette. Debounced: the
+  // color-picker fires once per drag tick.
+  var redrawTimer = null;
+  window.addEventListener('dawson:palette', function () {
+    clearTimeout(redrawTimer);
+    redrawTimer = setTimeout(init, 150);
+  });
 })();

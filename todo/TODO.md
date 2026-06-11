@@ -13,6 +13,14 @@ file to one line per item, and update both when something lands.
 - [ ] **Selected Works scroll-expand treatment** — possible visual upgrade for
       the home-page carousel; the code already exists behind `EXPAND_VISUAL` in
       `js/featured-carousel.js`. Details in [CLEANUP_SPEC.md](CLEANUP_SPEC.md).
-- [ ] **Multiple full style versions (easter egg)** — 90s / newspaper / SaaS /
-      art-style themes over one content source.
-      Full architecture in [STYLE_VERSIONS_SPEC.md](STYLE_VERSIONS_SPEC.md).
+- [ ] **Multiple full style versions (easter egg)** — themes over one content
+      source. Engine + five skins (studio, brutalist, broadsheet, field-notes,
+      blueprint) landed June 2026. Queue: doodle → lava lounge → wheatpaste —
+      approved visuals + per-style notes in [test-styles.html](test-styles.html),
+      build protocol in [STYLE_VERSIONS_SPEC.md](STYLE_VERSIONS_SPEC.md).
+      The rest of the sheet is TBD; takeover modes remain after that.
+- [ ] **Astro migration (maybe, someday)** — only if style-mode authoring
+      ergonomics hurt after 2–3 modes ship. Astro (islands, static-first) fits
+      this site better than Next; it's still a rewrite + build step, so the
+      default is to stay no-build. Context in
+      [STYLE_VERSIONS_SPEC.md](STYLE_VERSIONS_SPEC.md).

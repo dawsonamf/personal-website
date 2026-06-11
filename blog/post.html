@@ -24,23 +24,36 @@
   <script src="../js/blog-data.js"></script>
   <script src="../js/cursor-follow.js" defer></script>
   <script>
-    mermaid.initialize({
-      startOnLoad: false,
-      theme: 'base',
-      themeVariables: {
-        darkMode: true,
-        background: '#2c2c2c',
-        primaryColor: '#2c2c2c',
-        primaryTextColor: '#e6f1ff',
-        primaryBorderColor: '#a2a2a3',
-        lineColor: '#a2a2a3',
-        nodeTextColor: '#e6f1ff',
-        mainBkg: '#2c2c2c',
-        nodeBorder: '#a2a2a3',
-        edgeLabelBackground: '#2c2c2c',
-      },
-      flowchart: { curve: 'basis', padding: 16 },
-    });
+    // Mermaid colors come from the CSS variables (set inline pre-paint by
+    // theme-bootstrap.js), with the default palette as fallback. Diagrams
+    // render once, so a live theme switch shows on the next load.
+    (function () {
+      var css = getComputedStyle(document.documentElement);
+      function v(name, fallback) {
+        var val = (css.getPropertyValue(name) || '').trim();
+        return val || fallback;
+      }
+      var bgc  = v('--secondary', '#2c2c2c');
+      var txt  = v('--text', '#e6f1ff');
+      var line = v('--neutral-gray', '#a2a2a3');
+      mermaid.initialize({
+        startOnLoad: false,
+        theme: 'base',
+        themeVariables: {
+          darkMode: true,
+          background: bgc,
+          primaryColor: bgc,
+          primaryTextColor: txt,
+          primaryBorderColor: line,
+          lineColor: line,
+          nodeTextColor: txt,
+          mainBkg: bgc,
+          nodeBorder: line,
+          edgeLabelBackground: bgc,
+        },
+        flowchart: { curve: 'basis', padding: 16 },
+      });
+    })();
   </script>
 </head>
 
