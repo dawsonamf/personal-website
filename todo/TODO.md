@@ -14,8 +14,8 @@ file to one line per item, and update both when something lands.
       the home-page carousel; the code already exists behind `EXPAND_VISUAL` in
       `js/featured-carousel.js`. Details in [CLEANUP_SPEC.md](CLEANUP_SPEC.md).
 - [ ] **Multiple full style versions (easter egg)** — themes over one content
-      source. Engine + five skins (studio, brutalist, broadsheet, field-notes,
-      blueprint) landed June 2026. Queue: doodle → lava lounge → wheatpaste —
+      source. Engine + eight skins (studio, brutalist, broadsheet, field-notes,
+      blueprint, doodle, vapor, wheatpaste) landed June 2026. Queue: lava lounge —
       approved visuals + per-style notes in [test-styles.html](test-styles.html),
       build protocol in [STYLE_VERSIONS_SPEC.md](STYLE_VERSIONS_SPEC.md).
       The rest of the sheet is TBD; takeover modes remain after that.

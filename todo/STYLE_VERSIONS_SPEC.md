@@ -1,8 +1,8 @@
 # Style versions ("hella themes" easter egg)
 
 Same content, radically different design languages, behind the cycler-dock
-easter egg. Engine + five skins (studio, brutalist, broadsheet, field-notes,
-blueprint) shipped June 2026. **Queue: doodle → vapor → wheatpaste → lava lounge** —
+easter egg. Engine + eight skins (studio, brutalist, broadsheet, field-notes,
+blueprint, doodle, vapor, wheatpaste) shipped June 2026. **Queue: lava lounge** —
 approved visuals and per-style notes (palette roles, fonts, flags, technique)
 live as tiles in [test-styles.html](test-styles.html); the rest of that sheet
 is parked, TBD. Future engine work, in rough order: Layer-4 strings, a

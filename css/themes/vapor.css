@@ -1,0 +1,865 @@
+/* Vapor: outrun / synthwave. Violet night ground with a faint starfield and
+   a sunset wash behind the masthead, Monoton sign-glow display type (single
+   lines only, never body copy), Exo 2 body and UI, one chrome-gradient
+   italic subtitle per page, neon borders and blooms on every plate, and a
+   perspective grid running to the horizon under the footer. The one skin
+   that turns the dials up: tilt stays on, the motion pack stays on, and
+   the default's glow grammar gets louder instead of quieter.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. No flags — no still, no tilt-off; nothing in
+   this sheet adds a new @keyframes, so there is nothing new to guard for
+   prefers-reduced-motion. Line/shadow stance: every line, bloom, and glow
+   derives from the alpha ramps (cyan --accent*, magenta --primary*), so the
+   palette toy keeps working; the only literals are the chrome-metal text
+   gradient (chrome is chrome under any palette, the white-tape precedent)
+   and the default's own dark depth shadow under the floating menu.
+   Legibility rule: glow lives on display type and chrome only — body copy
+   never glows. Monoton registers as a single 400 face, so every Monoton
+   surface is pinned to 400; Exo 2 loads 400/600/800 + 800 italic, and
+   b/strong pin to the loaded 600. */
+
+
+/* ---- Foundations: night ground, starfield, neon selection ----------------- */
+
+[data-style="vapor"] ::selection {
+  background: var(--primary);
+  color: var(--text);
+}
+
+/* The night: two star layers over a violet wash that falls out of the top of
+   the page. Attachment stays the default scroll; fixed would repaint the
+   full field on every scroll tick. */
+[data-style="vapor"] body {
+  background-image:
+    radial-gradient(var(--text15) 1px, transparent 1.6px),
+    radial-gradient(var(--text10) 1px, transparent 1.6px),
+    linear-gradient(180deg, var(--secondary60) 0%, transparent 520px);
+  background-size: 130px 130px, 70px 70px, auto;
+  background-position: 0 0, 40px 60px, 0 0;
+}
+
+/* Neon scrollbar: magenta tube in the night, cyan when touched.
+   ([data-style] sits on <html>, so these select the root scrollbar.) */
+[data-style="vapor"] {
+  scrollbar-color: var(--primary) var(--bg);
+}
+
+[data-style="vapor"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="vapor"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text10);
+}
+
+[data-style="vapor"]::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 3px solid var(--bg);
+  border-radius: 6px;
+}
+
+[data-style="vapor"]::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Exo 2 headings run the loaded 800; Monoton surfaces re-pin to 400 below. */
+[data-style="vapor"] h1,
+[data-style="vapor"] h2,
+[data-style="vapor"] h3,
+[data-style="vapor"] h4 {
+  font-weight: 800;
+}
+
+/* Exo 2 loads no 700: <strong> pins to the loaded 600. */
+[data-style="vapor"] b,
+[data-style="vapor"] strong {
+  font-weight: 600;
+}
+
+/* Links keep the default cyan + animated underline (motion skin); the
+   underline just glows up a step. */
+[data-style="vapor"] .text-link::before {
+  height: 1.5px;
+  box-shadow: 0 0 6px var(--accent60);
+}
+
+
+/* ---- Chrome: neon-ring logo, glass menus, horizon footer ------------------- */
+
+/* The logo "D" as a little neon sign: Monoton in a glowing cyan ring. The
+   default hover (lift + cyan fill) already speaks this skin's language. */
+[data-style="vapor"] .name-logo {
+  font-family: 'Monoton', cursive;
+  font-weight: 400;
+  font-size: 19px;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 12px var(--accent30), inset 0 0 8px var(--accent15);
+  text-shadow: 0 0 8px var(--accent60);
+}
+
+[data-style="vapor"] .name-logo:hover {
+  text-shadow: none;
+}
+
+[data-style="vapor"] .menu-item {
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+[data-style="vapor"] .menu-item:hover {
+  color: var(--accent);
+  text-shadow: 0 0 8px var(--accent50);
+}
+
+[data-style="vapor"] .menu-spacer {
+  border-color: var(--accent30);
+}
+
+/* Static menu: a neon-edged glass strip, sized to its own list (the header
+   row is a stretch flexbox sized by the logo's margin box, ~11px taller). */
+[data-style="vapor"] .static-menu {
+  border: 1px solid var(--accent25);
+  align-self: flex-start;
+}
+
+/* Floating menu keeps the default glass blur and gains the neon edge and a
+   magenta bloom. */
+[data-style="vapor"] .moving-menu {
+  border: 1px solid var(--accent30);
+  box-shadow: 0 0 18px var(--primary25), 0 1px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Footer: the colophon stands on the perspective grid running to the
+   horizon (the signature move). The pseudo draws the grid as two repeating
+   gradients and rotateX's them away; z-index keeps it behind the text. */
+[data-style="vapor"] .footer-container {
+  position: relative;
+  z-index: 0;
+}
+
+[data-style="vapor"] .footer-container::before {
+  content: '';
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -14px;
+  height: 120px;
+  z-index: -1;
+  background-image:
+    repeating-linear-gradient(90deg, var(--accent45) 0 1px, transparent 1px 46px),
+    repeating-linear-gradient(0deg, var(--accent45) 0 1px, transparent 1px 26px);
+  transform: perspective(220px) rotateX(58deg);
+  transform-origin: 50% 0;
+  opacity: 0.45;
+  pointer-events: none;
+}
+
+[data-style="vapor"] .footer-spacer {
+  border-color: var(--primary40);
+}
+
+[data-style="vapor"] .footer-text,
+[data-style="vapor"] .footer-text-mobile {
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+/* ---- Hero: the neon sign + the chrome line + the lit plate ------------------ */
+
+/* A sunset wash glows up behind the masthead. */
+[data-style="vapor"] #typing-container {
+  background-image: radial-gradient(ellipse 58% 64% at 30% 60%, var(--primary15), transparent 72%);
+}
+
+/* Monoton, glow-shadowed, all caps — the typed masthead IS the sign. Monoton
+   is wide: "FULL STACK ENGINEER." runs ≈ 730px at the 50px cap with the
+   tracking, inside the ~795px column budget. */
+[data-style="vapor"] #typing-text {
+  font-family: 'Monoton', cursive;
+  font-weight: 400;
+  font-size: clamp(38px, 4.2vw, 50px);
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 7px var(--accent60), 0 0 28px var(--primary50);
+}
+
+/* The typed accent words switch tubes: magenta glass in the cyan sign. */
+[data-style="vapor"] #typing-text .typing-accent,
+[data-style="vapor"] #blog-typing-text .typing-accent {
+  color: var(--primary);
+  text-shadow: 0 0 7px var(--primary60), 0 0 28px var(--accent45);
+}
+
+/* The cursor is a lit tube segment. */
+[data-style="vapor"] .cursor {
+  background-color: var(--accent);
+  width: 5px;
+  box-shadow: 0 0 8px var(--accent70);
+}
+
+/* The strapline is the page's one chrome-gradient italic: Exo 2 800 italic
+   clipped to the metal ramp (chrome stays chrome under any palette). */
+[data-style="vapor"] #sub-text {
+  font-weight: 800;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  background-image: linear-gradient(180deg, #ffffff, #9be7ff 48%, #ff8ad8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The selfie becomes a lit plate: neon frame, cyan-magenta bloom, punched
+   saturation. It keeps its tilt — stays clickable, it is still the cycler
+   unlock. */
+[data-style="vapor"] #typing-image {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 16px var(--accent30), 0 0 44px var(--primary20);
+  filter: saturate(1.18) contrast(1.05);
+}
+
+[data-style="vapor"] .socials-item:hover i {
+  text-shadow: 0 0 10px var(--accent60);
+}
+
+[data-style="vapor"] #socials-list .socials-menu-spacer,
+[data-style="vapor"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--accent30);
+}
+
+
+/* ---- Section headers: signage numbers + neon rule ---------------------------
+   The index number glows like the sign out front (Monoton); the title runs
+   Exo 2 800 italic caps in plain light — glow stays off the words you read.
+   The spacer becomes a magenta-to-cyan neon tube. */
+
+[data-style="vapor"] .section-header {
+  font-weight: 800;
+  font-style: italic;
+  font-size: clamp(34px, 3.6vw, 46px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them so the titles stay light — the neon lives in the number and
+   the rule. */
+[data-style="vapor"] #about-section-header,
+[data-style="vapor"] #jobs-header,
+[data-style="vapor"] #project-header,
+[data-style="vapor"] #blog-header,
+[data-style="vapor"] #contact-section-header,
+[data-style="vapor"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="vapor"] .sec-num {
+  font-family: 'Monoton', cursive;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 0.72em;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  text-shadow: 0 0 7px var(--accent60), 0 0 22px var(--primary50);
+  margin-right: 16px;
+}
+
+[data-style="vapor"] .section-header-spacer {
+  height: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  box-shadow: 0 0 10px var(--primary40);
+  border-radius: 2px;
+}
+
+
+/* ---- About / Skills: lounge panels -------------------------------------------
+   The surface grammar for the whole skin: deep-violet panels with a
+   magenta-to-cyan neon strip along the top edge and a soft magenta bloom. */
+
+[data-style="vapor"] .card-style {
+  background-color: var(--secondary);
+  background-image: linear-gradient(90deg, var(--primary), var(--accent));
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--primary20);
+  box-shadow: 0 0 22px var(--primary15);
+  padding: 26px 28px;
+}
+
+/* "About Me" / "Skills" go up in cyan signage. */
+[data-style="vapor"] .card-title,
+[data-style="vapor"] .about-header,
+[data-style="vapor"] .skills-header {
+  font-weight: 800;
+  font-style: italic;
+  font-size: 21px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent35);
+}
+
+[data-style="vapor"] .skills-section-header {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 21px;
+  text-shadow: 0 0 12px var(--primary30);
+}
+
+[data-style="vapor"] .about-text,
+[data-style="vapor"] .skills-text,
+[data-style="vapor"] .contact-text {
+  line-height: 1.6;
+}
+
+[data-style="vapor"] .skills-text {
+  border-bottom: 1px solid var(--text15);
+}
+
+[data-style="vapor"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the line-up board --------------------------------------------- */
+
+[data-style="vapor"] .nav-container {
+  border-left: 1px solid var(--accent30);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Exo 2 arrives after that measure —
+   font-relative line boxes would leave the bar sized to the fallback font.
+   Hover/selected fills stay token-driven (the registry's violet ramp). */
+[data-style="vapor"] .menu li {
+  font-weight: 600;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-style="vapor"] .menu li.selected {
+  text-shadow: 0 0 8px var(--accent50);
+}
+
+/* The bar is already a lit tube in the default skin; turn it up. JS writes
+   the bar's geometry inline on every move. */
+[data-style="vapor"] .highlight {
+  box-shadow: 0 0 10px var(--accent), 0 0 24px var(--primary60);
+}
+
+/* The dossier sits on the panel grammar. */
+[data-style="vapor"] .job-content {
+  background-color: var(--secondary);
+  background-image: linear-gradient(90deg, var(--primary), var(--accent));
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--primary20);
+  box-shadow: 0 0 22px var(--primary15);
+  padding: 24px 28px;
+}
+
+[data-style="vapor"] .job-title {
+  color: var(--text);
+  font-weight: 800;
+  font-size: 24px;
+}
+
+[data-style="vapor"] .job-dates {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary85);
+}
+
+[data-style="vapor"] .job-bullets {
+  line-height: 1.6;
+}
+
+[data-style="vapor"] .job-bullets li::marker {
+  color: var(--accent);
+}
+
+/* The swap animation stays the default slide — motion high. */
+
+
+/* ---- Selected Works: the jukebox wall -------------------------------------------- */
+
+/* Plates in neon frames with a two-tube bloom; the screenshots run hot and
+   pump hotter when the card is hovered. (The plates keep their tilt —
+   shadows and filters only, never a base transform.) */
+[data-style="vapor"] .fc-style-floating .fc-card-image {
+  border: 1px solid var(--accent);
+  background-color: var(--secondary);
+  box-shadow: 0 0 14px var(--accent25), 0 0 36px var(--primary20);
+}
+
+[data-style="vapor"] .fc-style-floating .fc-card-image img {
+  filter: saturate(1.2) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="vapor"] .fc-card:hover .fc-card-image img {
+  filter: saturate(1.45) contrast(1.08);
+}
+
+[data-style="vapor"] .fc-card-title {
+  color: var(--text);
+  font-weight: 800;
+  font-style: italic;
+  font-size: 24px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-shadow: 0 0 14px var(--primary40);
+}
+
+[data-style="vapor"] .fc-card-desc {
+  color: var(--text80);
+}
+
+/* CTA: a neon tube button (featured-carousel.css pins a literal 10px radius,
+   not the pill token, so the chrome pill is re-applied here). The default
+   hover fill + lift stays — motion skin. */
+[data-style="vapor"] .fc-card-cta {
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 10px 22px;
+  box-shadow: 0 0 12px var(--accent25), inset 0 0 10px var(--accent10);
+}
+
+[data-style="vapor"] .fc-card-cta:hover {
+  box-shadow: 0 0 18px var(--accent45), inset 0 0 10px var(--accent10);
+}
+
+/* Dots: dim bulbs; the active one is lit (the scale pop stays). */
+[data-style="vapor"] .fc-dot.active {
+  background-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent60);
+}
+
+
+/* ---- Blog: backlit marquee cards --------------------------------------------------
+   Violet panels with a magenta edge that lights up under the pointer. The
+   cards keep their tilt. */
+
+[data-style="vapor"] .blog-card {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary25);
+}
+
+[data-style="vapor"] .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary);
+  box-shadow: 0 0 18px var(--primary30);
+}
+
+[data-style="vapor"] .blog-card-title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+[data-style="vapor"] .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent70);
+}
+
+[data-style="vapor"] .blog-card-excerpt {
+  color: var(--text80);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="vapor"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary25);
+}
+
+[data-style="vapor"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary);
+  box-shadow: 0 0 18px var(--primary30);
+}
+
+[data-style="vapor"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+  font-weight: 600;
+}
+
+[data-style="vapor"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent70);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the sign face to
+   its single 400 ("Blog." is a short line — the sign can run bigger here). */
+[data-style="vapor"] #blog-typing-text {
+  font-family: 'Monoton', cursive;
+  font-weight: 400;
+  font-size: clamp(40px, 5vw, 58px);
+  line-height: 1.3;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent);
+  text-shadow: 0 0 7px var(--accent60), 0 0 28px var(--primary50);
+}
+
+[data-style="vapor"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.7;
+}
+
+/* Filters: tube chips; the active one is lit cyan. */
+[data-style="vapor"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--accent25);
+  color: var(--text60);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-style="vapor"] .filter-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+[data-style="vapor"] .filter-pill.active {
+  background-color: var(--accent10);
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: 0 0 10px var(--accent20);
+}
+
+
+/* ---- Blog post page: the midnight read ---------------------------------------------- */
+
+/* The article sits on its own backlit panel; border-box keeps the frame at
+   the 750px column so it lines up with the nav and footer, and the nav
+   sheds its side padding so the neon D sits flush with the panel's edge. */
+[data-style="vapor"] .blog-post-container {
+  box-sizing: border-box;
+  background-color: var(--secondary45);
+  border: 1px solid var(--primary25);
+  border-radius: var(--border-radius);
+  box-shadow: 0 0 30px var(--primary10);
+  padding: 44px 48px;
+  margin: 24px auto 0;
+}
+
+[data-style="vapor"] .blog-nav {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[data-style="vapor"] .blog-post-title {
+  color: var(--text);
+  font-weight: 800;
+  font-size: clamp(32px, 4.2vw, 40px);
+  line-height: 1.2;
+  text-shadow: 0 0 18px var(--primary30);
+}
+
+/* Crossheads: cyan signage over a faint tube rule — the one glow allowed
+   near body copy, and it stays on the heading line. */
+[data-style="vapor"] .blog-post-content h2 {
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent25);
+  border-bottom: 1px solid var(--accent20);
+  padding-bottom: 6px;
+}
+
+[data-style="vapor"] .blog-post-content h3 {
+  color: var(--text);
+}
+
+/* Margin notes: a magenta tube with its light falling onto the page. */
+[data-style="vapor"] .blog-post-content blockquote {
+  border-left: 2px solid var(--primary);
+  background-image: linear-gradient(90deg, var(--primary10), transparent 60%);
+  color: var(--text70);
+}
+
+[data-style="vapor"] .blog-post-content hr {
+  border-top: 1px solid var(--primary25);
+}
+
+[data-style="vapor"] .blog-post-content th,
+[data-style="vapor"] .blog-post-content td {
+  border: 1px solid var(--text15);
+}
+
+[data-style="vapor"] .blog-post-content th {
+  background-color: var(--secondary);
+  font-weight: 600;
+}
+
+/* Post photographs run hot in neon frames; border-box keeps the frame inside
+   blog-styles' max-width: 100% (the site is content-box). The images keep
+   their tilt. */
+[data-style="vapor"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 1px solid var(--accent35);
+  filter: saturate(1.15) contrast(1.04);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="vapor"] .blog-post-content pre {
+  border: 1px solid var(--accent20);
+}
+
+/* Inline code: cyan annotation on deep violet chips (the higher-specificity
+   pre rule above unwinds this for fenced blocks). */
+[data-style="vapor"] .blog-post-content code {
+  background-color: var(--secondary);
+  color: var(--accent);
+  border: 1px solid var(--accent20);
+}
+
+/* Diagrams sit on the violet panel in a magenta hairline (mermaid reads the
+   palette at render time via blog/post.html). */
+[data-style="vapor"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary25);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="vapor"] #metr-chart {
+  border: 1px solid var(--primary25);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="vapor"] #pareto-chart,
+[data-style="vapor"] #ara-objectives-chart,
+[data-style="vapor"] #kl-explainer-chart {
+  border-radius: var(--border-radius);
+}
+
+
+/* ---- Contact: last call ---------------------------------------------------------------- */
+
+[data-style="vapor"] .contact-view-left {
+  background-color: var(--secondary);
+  background-image: linear-gradient(90deg, var(--primary), var(--accent));
+  background-size: 100% 3px;
+  background-repeat: no-repeat;
+  border: 1px solid var(--primary20);
+  box-shadow: 0 0 22px var(--primary15);
+}
+
+/* The map is a lit plate like the hero photo (it keeps its tilt). */
+[data-style="vapor"] .contact-image-wrapper {
+  border: 1px solid var(--accent);
+  box-shadow: 0 0 16px var(--accent25), 0 0 40px var(--primary15);
+}
+
+[data-style="vapor"] .contact-image {
+  filter: saturate(1.15) contrast(1.04);
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): tube chips ----------------------- */
+
+[data-style="vapor"] .pill {
+  background-color: transparent;
+  border: 1px solid var(--accent30);
+  color: var(--text70);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+}
+
+
+/* ---- Cycler dock: the mixing desk -------------------------------------------------------- */
+
+[data-style="vapor"] .tc-dock {
+  background: var(--bg85);
+  border: 1px solid var(--accent30);
+  box-shadow: 0 0 24px var(--primary25);
+}
+
+[data-style="vapor"] .tc-toggle {
+  box-shadow: 0 0 12px var(--accent30);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* One star layer on the small sheet; the wash stays. */
+  [data-style="vapor"] body {
+    background-image:
+      radial-gradient(var(--text10) 1px, transparent 1.6px),
+      linear-gradient(180deg, var(--secondary60) 0%, transparent 420px);
+    background-size: 90px 90px, auto;
+    background-position: 0 0, 0 0;
+  }
+
+  /* Monoton is very wide: "FULL STACK ENGINEER." must clear a ~335px column
+     on a 375px screen, which caps the sign at 22px. */
+  [data-style="vapor"] #typing-text {
+    font-size: clamp(19px, 5.8vw, 22px);
+    line-height: 1.4;
+  }
+
+  [data-style="vapor"] #sub-text {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
+
+  [data-style="vapor"] #blog-typing-text {
+    font-size: clamp(26px, 8vw, 32px);
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the caps
+     titles need to wrap. The grid keeps a wrapped title's second line
+     aligned with the first word instead of the signage number (the text run
+     after .sec-num is one anonymous grid item). */
+  [data-style="vapor"] .section-header {
+    white-space: normal;
+    font-size: clamp(22px, 6.8vw, 28px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  [data-style="vapor"] .sec-num {
+    margin-right: 12px;
+  }
+
+  /* The neon rule loses its bloom on the small sheet. */
+  [data-style="vapor"] .section-header-spacer {
+    box-shadow: none;
+  }
+
+  [data-style="vapor"] .static-menu-mobile .menu-item {
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text70);
+  }
+
+  [data-style="vapor"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that,
+     and make the tap state the cyan fill. */
+  [data-style="vapor"] .name-logo:hover {
+    background-color: transparent;
+    color: var(--accent);
+    text-shadow: 0 0 8px var(--accent60);
+  }
+
+  [data-style="vapor"] .name-logo:active {
+    background-color: var(--accent);
+    color: var(--bg);
+    text-shadow: none;
+  }
+
+  /* The mobile sheet re-cards these surfaces with the default tint; keep
+     them violet panels. */
+  [data-style="vapor"] .double-view-left,
+  [data-style="vapor"] .double-view-right {
+    background-color: var(--secondary);
+    border: 1px solid var(--primary20);
+  }
+
+  [data-style="vapor"] .blog-card {
+    background-color: var(--secondary);
+  }
+
+  [data-style="vapor"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* Jobs rail runs horizontal: the neon edge moves to the wrapper's bottom. */
+  [data-style="vapor"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--accent30);
+  }
+
+  [data-style="vapor"] .job-content {
+    padding: 20px;
+  }
+
+  /* The plate frame must draw inside the box on mobile (the image is
+     width: 100%; content-box would overflow the card). */
+  [data-style="vapor"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+  }
+
+  [data-style="vapor"] .blog-post-container {
+    padding: 28px 18px;
+    margin-top: 18px;
+  }
+
+  [data-style="vapor"] .blog-post-title {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  /* The mobile footer gets its own, smaller horizon. */
+  [data-style="vapor"] .footer-container-mobile {
+    position: relative;
+    z-index: 0;
+    padding-top: 8px;
+    padding-bottom: 26px;
+  }
+
+  [data-style="vapor"] .footer-container-mobile::before {
+    content: '';
+    position: absolute;
+    left: -4%;
+    right: -4%;
+    bottom: -10px;
+    height: 70px;
+    z-index: -1;
+    background-image:
+      repeating-linear-gradient(90deg, var(--accent45) 0 1px, transparent 1px 38px),
+      repeating-linear-gradient(0deg, var(--accent45) 0 1px, transparent 1px 22px);
+    transform: perspective(200px) rotateX(58deg);
+    transform-origin: 50% 0;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  [data-style="vapor"] .footer-text-mobile {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+  }
+}

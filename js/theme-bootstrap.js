@@ -173,8 +173,78 @@
       fonts: ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Saira:wght@400;500&family=Saira+Condensed:wght@500;700&display=swap'],
       css: '/css/themes/blueprint.css',
     },
+    'doodle': {
+      id: 'doodle',
+      label: 'Doodle',
+      polarity: 'light',
+      // Tilt off: sketches lie flat on the page. No still flag — AOS
+      // entrances and the cursor follower stay (the follower restyles into
+      // a pencil point in the skin sheet).
+      flags: { tilt: false },
+      colors: { text:'#2b2b2b', bg:'#fdfbf4', primary:'#2f6fde', secondary:'#fff3a3', accent:'#e2483d' },
+      tokens: {
+        '--font-body': "'Patrick Hand', cursive",
+        '--font-heading': "'Patrick Hand', cursive",
+        // The uneven-radius trick rides the tokens, so every token-rounded
+        // surface wobbles like it was drawn by hand. --font-mono stays the
+        // default: code keeps a real mono face.
+        '--border-radius': '255px 15px 225px 15px / 15px 225px 15px 255px',
+        '--radius-pill': '255px 15px 225px 15px / 15px 225px 15px 255px',
+        '--neutral-gray': '#8f8a7c',
+        // Selected jobs entry reads as a highlighted line: sticky yellow.
+        '--jobs-menu-navy-dark': '#fff3a3',
+        '--jobs-menu-navy': '#f4f0e0',
+        '--jobs-menu-slate': '#6e6a5e',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Patrick+Hand&display=swap'],
+      css: '/css/themes/doodle.css',
+    },
+    'vapor': {
+      id: 'vapor',
+      label: 'Vapor',
+      polarity: 'dark',
+      // No flags: tilt stays on and the motion pack stays — the one skin
+      // that turns the dials up instead of down.
+      colors: { text:'#f3eaff', bg:'#20094a', primary:'#ff2ec4', secondary:'#2c1160', accent:'#00e5ff' },
+      tokens: {
+        '--font-body': "'Exo 2', sans-serif",
+        '--font-heading': "'Exo 2', sans-serif",
+        '--border-radius': '14px',
+        '--radius-pill': '999px',
+        '--neutral-gray': '#8f7fb8',
+        '--jobs-menu-navy-dark': '#2c1160',
+        '--jobs-menu-navy': '#341473',
+        '--jobs-menu-slate': '#9d8ec7',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,800;1,800&family=Monoton&display=swap'],
+      css: '/css/themes/vapor.css',
+    },
+    'wheatpaste': {
+      id: 'wheatpaste',
+      label: 'Wheatpaste',
+      polarity: 'dark',
+      // still kills the scroll entrances, the cursor follower, and the dock
+      // lifts — nothing here animates smoothly. Tilt stays ON: a hovered
+      // paste-up peels off the wall (base rotation lives on wrappers and
+      // chips only, never on tilt targets).
+      flags: { still: true },
+      colors: { text:'#f0ede4', bg:'#1f2125', primary:'#d4242a', secondary:'#2e3238', accent:'#c8ff3d' },
+      tokens: {
+        '--font-body': "'Special Elite', cursive",
+        '--font-heading': "'Anton', sans-serif",
+        // --font-mono stays the default: code keeps a real mono face.
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#8a8d85',
+        '--jobs-menu-navy-dark': '#2e3238',
+        '--jobs-menu-navy': '#272a2f',
+        '--jobs-menu-slate': '#9a958a',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;600&family=Permanent+Marker&family=Special+Elite&display=swap'],
+      css: '/css/themes/wheatpaste.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

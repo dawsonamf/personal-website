@@ -1,0 +1,1114 @@
+/* Wheatpaste: tags, ransom notes & xeroxed flyers. A concrete wall (layered
+   radial ghosts + dot noise) with paper pasted over it: the jobs panel is a
+   gig flyer with a torn bottom edge, blog cards are xeroxed scraps, project
+   shots are die-cut stickers at slight rotations, section headers are
+   pasted paper-scrap headlines, the logo is a marker tag, and one red
+   HIRE ME stamp hides in the contact section. Anton shouts the headlines,
+   Special Elite hammers out the body, Permanent Marker tags the wall, and
+   Inter carries long-form article text (typewriter face for flyers, a clean
+   face for the one surface you actually read at length).
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. flags.still kills the scroll entrances, the
+   cursor follower, and the dock lifts — nothing here animates smoothly, and
+   every hover is a hard cut. Tilt stays ON: a hovered paste-up peels off
+   the wall, which is the one motion this skin wants. All base rotation
+   lives on wrappers, static chrome, and non-tilt elements (#typing-right,
+   .fc-card, .section-header, chips) — never on .card / .blog-card /
+   .fc-card-image / .blog-image, whose transforms belong to VanillaTilt.
+   Torn edges are fixed-depth clip-path polygons (calc'd in px so tall
+   panels don't tear deeper); clip-path clips box-shadow, so torn surfaces
+   are shadowless by rule — xerox paper lies flat. Line/shadow stance: paper
+   is var(--text) and ink on paper is the --bg ramp, so the palette toy
+   keeps working; the only literal is the ink-toned hard shadow (#101113)
+   under stickers and tags. Anton and the two marker faces load as single
+   400 faces — every bolded heading pins to 400, and emphasis re-routes to
+   marker color instead of synthesized bold. The strings 'ONE NIGHT ONLY'
+   and 'HIRE ME' are specified by the style queue; no other content words
+   are added anywhere. */
+
+
+/* ---- Foundations: the wall, marker selection, hard cuts ------------------- */
+
+[data-style="wheatpaste"] ::selection {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+/* Concrete: two faint spray ghosts bleeding through from older layers, over
+   fine dot noise. Attachment stays the default scroll. */
+[data-style="wheatpaste"] body {
+  background-image:
+    radial-gradient(circle 260px at 82% 12%, var(--primary10), transparent),
+    radial-gradient(circle 300px at 8% 88%, var(--accent5), transparent),
+    radial-gradient(var(--text5) 1px, transparent 1.4px);
+  background-size: auto, auto, 7px 7px;
+}
+
+/* Red-ink scrollbar on the wall. ([data-style] sits on <html>, so these
+   select the root scrollbar.) */
+[data-style="wheatpaste"] {
+  scrollbar-color: var(--primary) var(--bg);
+}
+
+[data-style="wheatpaste"]::-webkit-scrollbar {
+  width: 13px;
+  height: 13px;
+}
+
+[data-style="wheatpaste"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text15);
+}
+
+[data-style="wheatpaste"]::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 2px solid var(--bg);
+}
+
+/* Anton registers as a single 400 face, see header note. */
+[data-style="wheatpaste"] h1,
+[data-style="wheatpaste"] h2,
+[data-style="wheatpaste"] h3,
+[data-style="wheatpaste"] h4 {
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Special Elite has no bold: emphasis is marker ink, not weight. (Article
+   pages re-pin this in red on paper below.) */
+[data-style="wheatpaste"] b,
+[data-style="wheatpaste"] strong {
+  font-weight: 400;
+  color: var(--accent);
+}
+
+/* Links on the wall are marker green; hover is a full inverse block, hard
+   cut. The default's animated underline pseudo is suppressed outright. */
+[data-style="wheatpaste"] .text-link {
+  color: var(--accent);
+  transition: none;
+}
+
+[data-style="wheatpaste"] .text-link::before {
+  display: none;
+}
+
+[data-style="wheatpaste"] .text-link:hover {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+/* On paper the marker switches to red ink (green reads like spilled
+   highlighter on a xerox). */
+[data-style="wheatpaste"] .card-style .text-link,
+[data-style="wheatpaste"] .job-content .text-link,
+[data-style="wheatpaste"] .contact-view-left .text-link,
+[data-style="wheatpaste"] .blog-post-content .text-link {
+  color: var(--primary);
+}
+
+[data-style="wheatpaste"] .card-style .text-link:hover,
+[data-style="wheatpaste"] .job-content .text-link:hover,
+[data-style="wheatpaste"] .contact-view-left .text-link:hover,
+[data-style="wheatpaste"] .blog-post-content .text-link:hover {
+  background-color: var(--primary);
+  color: var(--text);
+}
+
+
+/* ---- Chrome: tagged logo, pasted menu strips, tagged footer ---------------- */
+
+/* The logo "D" goes up as a marker tag — no box, just ink and a hard ink
+   shadow. (.name-logo is not a tilt target, so a base rotation is safe;
+   its intro fadein only animates opacity.) */
+[data-style="wheatpaste"] .name-logo {
+  font-family: 'Permanent Marker', cursive;
+  font-weight: 400;
+  font-size: 27px;
+  color: var(--accent);
+  border: none;
+  text-shadow: 2px 2px 0 #101113;
+  transform: rotate(-5deg);
+  transition: none;
+}
+
+[data-style="wheatpaste"] .name-logo:hover {
+  transform: rotate(-5deg);
+  background-color: transparent;
+  color: var(--primary);
+  transition: none;
+}
+
+/* Menus: strips of pasted paper. Items print in ink and invert to red ink
+   blocks on hover — hard cuts. */
+[data-style="wheatpaste"] .moving-menu,
+[data-style="wheatpaste"] .static-menu {
+  background-color: var(--text);
+  box-shadow: 4px 4px 0 #101113;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: none;
+}
+
+/* The header row is a stretch flexbox sized by the logo's margin box
+   (~67px), so the strip must size to its own 3.5em list or the paper lands
+   ~11px too tall. The strip sits a little crooked — pasted, not aligned. */
+[data-style="wheatpaste"] .static-menu {
+  align-self: flex-start;
+  transform: rotate(-0.6deg);
+}
+
+[data-style="wheatpaste"] .menu-item {
+  font-family: 'Special Elite', cursive;
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bg70);
+  padding: 3px 6px;
+  transition: none;
+}
+
+[data-style="wheatpaste"] .menu-item:hover {
+  background-color: var(--primary);
+  color: var(--text);
+  transition: none;
+}
+
+/* Item separators read as typewriter rules in the paper. */
+[data-style="wheatpaste"] .menu-spacer {
+  border-color: var(--bg30);
+}
+
+/* Footer: somebody tagged the bottom of the wall. */
+[data-style="wheatpaste"] .footer-spacer {
+  border-color: var(--text25);
+}
+
+[data-style="wheatpaste"] .footer-text,
+[data-style="wheatpaste"] .footer-text-mobile {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 13.5px;
+  letter-spacing: 0.04em;
+  color: var(--text50);
+}
+
+/* ---- Hero: flyer headline + ransom scraps + stickered photo ----------------- */
+
+/* Anton caps, flyer-headline scale. "FULL STACK ENGINEER." runs ≈ 640px at
+   the 60px cap, inside the ~795px column budget. */
+[data-style="wheatpaste"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(46px, 4.6vw, 60px);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The typed accent words become ransom scraps: paper chips with ink type.
+   clone keeps a chip intact if the span ever wraps; no rotation here — the
+   span re-lays out on every typed character. */
+[data-style="wheatpaste"] #typing-text .typing-accent,
+[data-style="wheatpaste"] #blog-typing-text .typing-accent {
+  background-color: var(--text);
+  color: var(--bg);
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* The cursor is a fat red marker nib. */
+[data-style="wheatpaste"] .cursor {
+  background-color: var(--primary);
+  width: 10px;
+}
+
+/* The strapline hammers out on the typewriter, pasted slightly crooked. */
+[data-style="wheatpaste"] #sub-text {
+  display: inline-block;
+  font-family: 'Special Elite', cursive;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text60);
+  transform: rotate(-1deg);
+  transform-origin: left center;
+}
+
+/* The selfie becomes a die-cut sticker slapped on the wall: fat paper edge,
+   hard ink shadow, photocopied until hovered (hard cut back to color). The
+   image keeps its tilt — the sticker peels — so the paste-up crook lives on
+   the WRAPPER. Stays clickable, it is still the cycler unlock. */
+[data-style="wheatpaste"] #typing-right {
+  transform: rotate(1.2deg);
+}
+
+[data-style="wheatpaste"] #typing-image {
+  border: 4px solid var(--text);
+  border-radius: 12px;
+  box-shadow: 8px 8px 0 #101113;
+  filter: grayscale(0.85) contrast(1.15);
+  transition: none;
+}
+
+[data-style="wheatpaste"] #typing-image:hover {
+  filter: none;
+}
+
+/* Socials: bare glyphs, marker-green on touch, no lift — hard cuts. */
+[data-style="wheatpaste"] .socials-item i {
+  transition: none;
+}
+
+[data-style="wheatpaste"] .socials-item:hover i {
+  color: var(--accent);
+  transform: none;
+}
+
+[data-style="wheatpaste"] #socials-list .socials-menu-spacer,
+[data-style="wheatpaste"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text25);
+}
+
+
+/* ---- Section headers: pasted paper-scrap headlines ---------------------------
+   Each section opens with a strip of xeroxed paper slapped on the wall a
+   couple degrees off level: Anton caps in ink, the index number on its own
+   red chip, and the spacer redrawn as a marker swipe with a drip. */
+
+[data-style="wheatpaste"] .section-header {
+  background-color: var(--text);
+  color: var(--bg);
+  font-size: clamp(34px, 4.8vw, 56px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  padding: 12px 22px 8px;
+  margin: 10px 0 0 10px;
+  transform: rotate(-1.2deg);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every headline ink-on-paper. */
+[data-style="wheatpaste"] #about-section-header,
+[data-style="wheatpaste"] #jobs-header,
+[data-style="wheatpaste"] #project-header,
+[data-style="wheatpaste"] #blog-header,
+[data-style="wheatpaste"] #contact-section-header,
+[data-style="wheatpaste"] .blog-section-header {
+  color: var(--bg);
+}
+
+[data-style="wheatpaste"] .sec-num {
+  display: inline-block;
+  font-family: 'Special Elite', cursive;
+  font-weight: 400;
+  font-size: 0.42em;
+  letter-spacing: 0.04em;
+  background-color: var(--primary);
+  color: var(--text);
+  padding: 3px 9px 1px;
+  transform: rotate(2deg);
+  margin-right: 14px;
+  vertical-align: middle;
+}
+
+/* The spacer is a green marker swipe, ruled by hand, with one drip. */
+[data-style="wheatpaste"] .section-header-spacer {
+  position: relative;
+  height: 4px;
+  background-color: var(--accent);
+  transform: translateY(5px) rotate(0.5deg);
+}
+
+[data-style="wheatpaste"] .section-header-spacer::after {
+  content: '';
+  position: absolute;
+  right: 18%;
+  top: 3px;
+  width: 5px;
+  height: 20px;
+  background-color: var(--accent);
+  border-radius: 0 0 4px 4px;
+}
+
+
+/* ---- About / Skills: wheatpasted posters --------------------------------------
+   The surface grammar for the paper layer: a sheet of xerox paper
+   (var(--text)) with ink type (the --bg ramp), a torn bottom edge, and no
+   shadow (clip-path would cut it anyway — pasted paper lies flat). The
+   cards' intro slide pins an inline translateX at animationend, so the
+   posters themselves never rotate. */
+
+[data-style="wheatpaste"] .card-style {
+  background-color: var(--text);
+  color: var(--bg);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 94% 100%, 86% calc(100% - 14px), 78% 100%, 70% calc(100% - 12px), 60% 100%, 52% calc(100% - 15px), 42% 100%, 34% calc(100% - 12px), 24% 100%, 16% calc(100% - 14px), 8% 100%, 0 calc(100% - 11px));
+  padding: 24px 26px 40px;
+}
+
+/* "About Me" / "Skills" as flyer headlines with a fat red marker underline. */
+[data-style="wheatpaste"] .card-title,
+[data-style="wheatpaste"] .about-header,
+[data-style="wheatpaste"] .skills-header {
+  width: fit-content;
+  color: var(--bg);
+  font-size: 26px;
+  text-transform: uppercase;
+  border-bottom: 4px solid var(--primary);
+  padding-bottom: 2px;
+  margin-bottom: 16px;
+}
+
+/* Web / iOS / ML get tagged in red marker. */
+[data-style="wheatpaste"] .skills-section-header {
+  width: fit-content;
+  font-family: 'Permanent Marker', cursive;
+  font-weight: 400;
+  font-size: 21px;
+  color: var(--primary);
+  transform: rotate(-1deg);
+  transform-origin: left center;
+}
+
+[data-style="wheatpaste"] .about-text,
+[data-style="wheatpaste"] .skills-text,
+[data-style="wheatpaste"] .contact-text {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+[data-style="wheatpaste"] .skills-text {
+  border-bottom: 1px dashed var(--bg30);
+}
+
+[data-style="wheatpaste"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the gig flyer --------------------------------------------------- */
+
+[data-style="wheatpaste"] .nav-container {
+  border-left: 2px solid var(--text30);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Special Elite arrives after that
+   measure — font-relative line boxes would leave the bar sized to the
+   fallback font. */
+[data-style="wheatpaste"] .menu li {
+  font-family: 'Special Elite', cursive;
+  font-size: 12.5px;
+  line-height: 17px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-radius: 0;
+  transition: none;
+}
+
+/* Tonight's act gets the red paper chip. */
+[data-style="wheatpaste"] .menu li.selected {
+  background: var(--primary);
+  color: var(--text);
+}
+
+/* The bar is a green marker stroke, snapped moves. JS writes the bar's
+   geometry, border-radius, and transition inline on every move, hence the
+   !importants; width is a JS constant only on desktop. */
+[data-style="wheatpaste"] .highlight {
+  background: var(--accent);
+  box-shadow: none;
+  border-radius: 0 !important;
+  transition: none !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="wheatpaste"] .highlight {
+    width: 5px !important;
+  }
+}
+
+/* The dossier prints as the flyer itself: xerox paper, torn bottom, billing
+   centered like a bill of acts. The paste-up crook is pinned onto the swap
+   states too, so panel changes hard-cut in place instead of sliding
+   (script.js drives the swap with timeouts, so this is safe). */
+[data-style="wheatpaste"] .job-content {
+  background-color: var(--text);
+  color: var(--bg);
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 94% 100%, 86% calc(100% - 14px), 78% 100%, 70% calc(100% - 12px), 60% 100%, 52% calc(100% - 15px), 42% 100%, 34% calc(100% - 12px), 24% 100%, 16% calc(100% - 14px), 8% 100%, 0 calc(100% - 11px));
+  padding: 22px 28px 42px;
+  transform: rotate(-0.8deg);
+}
+
+[data-style="wheatpaste"] .job-in-right {
+  animation: none;
+  transform: rotate(-0.8deg);
+}
+
+[data-style="wheatpaste"] .job-out-right {
+  transition: none;
+  transform: rotate(-0.8deg);
+}
+
+/* The flyer's top line ('ONE NIGHT ONLY' is specified by the style queue;
+   no other content words are added anywhere). */
+[data-style="wheatpaste"] .job-content::before {
+  content: '\2736  ONE NIGHT ONLY  \2736';
+  align-self: center;
+  font-family: 'Special Elite', cursive;
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--bg60);
+  margin-bottom: 2px;
+}
+
+/* Headliner billing: centered Anton caps. */
+[data-style="wheatpaste"] .job-title {
+  align-self: center;
+  text-align: center;
+  color: var(--bg);
+  font-size: 26px;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+[data-style="wheatpaste"] .job-dates {
+  align-self: center;
+  font-family: 'Special Elite', cursive;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+[data-style="wheatpaste"] .job-bullets {
+  list-style-type: square;
+  line-height: 1.6;
+}
+
+[data-style="wheatpaste"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+
+/* ---- Selected Works: the sticker wall ---------------------------------------------
+   Project shots are die-cut stickers: fat paper edges, hard ink shadows,
+   photocopy tone until hovered. Rotation lives on .fc-card (a non-tilt
+   wrapper); the image inside keeps its tilt and peels. */
+
+[data-style="wheatpaste"] .fc-card:nth-child(odd) {
+  transform: rotate(-1.3deg);
+}
+
+[data-style="wheatpaste"] .fc-card:nth-child(even) {
+  transform: rotate(1.1deg);
+}
+
+[data-style="wheatpaste"] .fc-style-floating .fc-card-image {
+  border: 4px solid var(--text);
+  border-radius: 12px;
+  background-color: var(--text);
+  box-shadow: 8px 8px 0 #101113;
+}
+
+[data-style="wheatpaste"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(0.85) contrast(1.15);
+  transition: none;
+}
+
+[data-style="wheatpaste"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Captions: the title is a marker tag thrown up next to the sticker. */
+[data-style="wheatpaste"] .fc-card-title {
+  font-family: 'Permanent Marker', cursive;
+  font-weight: 400;
+  font-size: 27px;
+  color: var(--accent);
+  text-shadow: 2px 2px 0 #101113;
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+  width: fit-content;
+}
+
+[data-style="wheatpaste"] .fc-card-desc {
+  color: var(--text80);
+}
+
+/* CTA: a rubber stamp — red frame, Anton caps, presses with a hard cut
+   (featured-carousel.css pins a literal 10px radius, zeroed here). */
+[data-style="wheatpaste"] .fc-card-cta {
+  font-family: var(--font-heading);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 3px solid var(--primary);
+  border-radius: 0;
+  padding: 10px 20px;
+  transition: none;
+}
+
+[data-style="wheatpaste"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  color: var(--text);
+  transform: none;
+}
+
+[data-style="wheatpaste"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="wheatpaste"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots: stencil squares; the lit one is marker green. */
+[data-style="wheatpaste"] .fc-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  border: 2px solid var(--text);
+  background-color: transparent;
+  opacity: 1;
+  transition: none;
+}
+
+[data-style="wheatpaste"] .fc-dot:hover {
+  background-color: var(--text30);
+}
+
+[data-style="wheatpaste"] .fc-dot.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  transform: none;
+}
+
+
+/* ---- Blog: xeroxed scraps -----------------------------------------------------------
+   Cards are photocopied scraps pasted straight on (no base rotation — the
+   cards are tilt targets, and their transform belongs to VanillaTilt; the
+   peel on hover is the motion). Ink on paper, torn bottoms, hard cuts. */
+
+[data-style="wheatpaste"] .blog-card {
+  background-color: var(--text);
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 13px), 94% 100%, 86% calc(100% - 11px), 78% 100%, 70% calc(100% - 9px), 60% 100%, 52% calc(100% - 12px), 42% 100%, 34% calc(100% - 9px), 24% 100%, 16% calc(100% - 11px), 8% 100%, 0 calc(100% - 8px));
+  padding-bottom: 38px;
+  transition: none;
+}
+
+[data-style="wheatpaste"] .blog-card:hover {
+  background-color: var(--text);
+}
+
+[data-style="wheatpaste"] .blog-card-title {
+  color: var(--bg);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.25;
+  text-transform: uppercase;
+}
+
+[data-style="wheatpaste"] .blog-card-date {
+  font-family: 'Special Elite', cursive;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+}
+
+[data-style="wheatpaste"] .blog-card-excerpt {
+  color: var(--bg75);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="wheatpaste"] .blog-listing-grid .blog-card {
+  background-color: var(--text);
+  border-radius: 0;
+}
+
+[data-style="wheatpaste"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--text);
+}
+
+[data-style="wheatpaste"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--bg);
+  font-weight: 400;
+  font-size: 19px;
+}
+
+[data-style="wheatpaste"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: 'Special Elite', cursive;
+  font-size: 12px;
+  color: var(--primary);
+}
+
+[data-style="wheatpaste"] .blog-listing-grid .blog-card .blog-card-excerpt {
+  color: var(--bg75);
+}
+
+/* The listing cards keep their tags readable on paper. */
+[data-style="wheatpaste"] .blog-listing-grid .blog-card .blog-card-tags .pill {
+  border-color: var(--bg30);
+  color: var(--bg60);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the headline
+   face to its single 400. */
+[data-style="wheatpaste"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(44px, 4.6vw, 58px);
+  line-height: 1.12;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="wheatpaste"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.7;
+}
+
+/* Filters: ransom chips — paper scraps at mixed rotations (the pills are
+   never hidden by filtering, so nth-child alternation is safe here). */
+[data-style="wheatpaste"] .filter-pill {
+  background-color: var(--text);
+  border: none;
+  border-radius: 0;
+  color: var(--bg);
+  font-family: 'Special Elite', cursive;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  transition: none;
+}
+
+[data-style="wheatpaste"] .filter-pill:nth-child(odd) {
+  transform: rotate(-1.5deg);
+}
+
+[data-style="wheatpaste"] .filter-pill:nth-child(even) {
+  transform: rotate(1.2deg);
+}
+
+[data-style="wheatpaste"] .filter-pill:hover {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+[data-style="wheatpaste"] .filter-pill.active {
+  background-color: var(--primary);
+  color: var(--text);
+}
+
+
+/* ---- Blog post page: the full flyer ---------------------------------------------------
+   The article is one long sheet wheatpasted to the wall: paper ground, ink
+   type, torn bottom. Long-form body switches to Inter — you read the
+   flyer, not the typewriter; Special Elite stays on the chrome. */
+
+[data-style="wheatpaste"] .blog-post-container {
+  box-sizing: border-box;
+  background-color: var(--text);
+  color: var(--bg);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), 94% 100%, 86% calc(100% - 15px), 78% 100%, 70% calc(100% - 12px), 60% 100%, 52% calc(100% - 16px), 42% 100%, 34% calc(100% - 12px), 24% 100%, 16% calc(100% - 15px), 8% 100%, 0 calc(100% - 11px));
+  padding: 40px 48px 64px;
+  margin: 24px auto 0;
+}
+
+[data-style="wheatpaste"] .blog-nav {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[data-style="wheatpaste"] .blog-post-title {
+  color: var(--bg);
+  font-size: clamp(30px, 4vw, 38px);
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+/* Meta chips print in ink on the paper. */
+[data-style="wheatpaste"] .blog-post-meta .pill {
+  background-color: transparent;
+  border: 1.5px solid var(--bg30);
+  color: var(--bg60);
+}
+
+[data-style="wheatpaste"] .blog-post-content {
+  font-family: 'Inter', sans-serif;
+  color: var(--bg85);
+}
+
+/* Emphasis on paper is red ink (Inter loads 600). */
+[data-style="wheatpaste"] .blog-post-content b,
+[data-style="wheatpaste"] .blog-post-content strong {
+  font-weight: 600;
+  color: var(--primary);
+}
+
+/* Crossheads: flyer subheads over a fat ink rule. */
+[data-style="wheatpaste"] .blog-post-content h2 {
+  color: var(--bg);
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--bg);
+  padding-bottom: 4px;
+}
+
+[data-style="wheatpaste"] .blog-post-content h3 {
+  color: var(--bg);
+}
+
+/* Margin notes: red rule, typewriter voice. */
+[data-style="wheatpaste"] .blog-post-content blockquote {
+  border-left: 4px solid var(--primary);
+  font-family: 'Special Elite', cursive;
+  color: var(--bg70);
+}
+
+[data-style="wheatpaste"] .blog-post-content hr {
+  border-top: 2px dashed var(--bg40);
+}
+
+[data-style="wheatpaste"] .blog-post-content th,
+[data-style="wheatpaste"] .blog-post-content td {
+  border: 1px solid var(--bg30);
+}
+
+[data-style="wheatpaste"] .blog-post-content th {
+  background-color: var(--bg10);
+  font-weight: 600;
+}
+
+/* Post photographs paste in as photocopies in fat ink frames; hard cut back
+   to color on hover. border-box keeps the frame inside blog-styles'
+   max-width: 100% (the site is content-box). The images keep their tilt. */
+[data-style="wheatpaste"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 3px solid var(--bg);
+  filter: grayscale(0.85) contrast(1.2);
+  transition: none;
+}
+
+[data-style="wheatpaste"] .blog-post-content img.blog-image:hover {
+  filter: none;
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css — a dark
+   print pasted into the flyer, framed in ink. */
+[data-style="wheatpaste"] .blog-post-content pre {
+  border: 3px solid var(--bg);
+}
+
+/* Inline code: ink chips on the paper (the higher-specificity pre rule
+   above unwinds this for fenced blocks). blog-styles pins a literal 4px
+   radius, zeroed with the rest of the sheet. */
+[data-style="wheatpaste"] .blog-post-content code {
+  background-color: var(--bg10);
+  color: var(--bg);
+  border: 1px solid var(--bg20);
+  border-radius: 0;
+}
+
+/* Diagrams stay dark prints in ink frames (mermaid reads the palette — the
+   dark --secondary panel and light text — at render time via
+   blog/post.html); node corners square off with the sheet. */
+[data-style="wheatpaste"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 3px solid var(--bg);
+  border-radius: 0;
+}
+
+[data-style="wheatpaste"] .blog-post-content .mermaid .node rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="wheatpaste"] #metr-chart {
+  border: 3px solid var(--bg);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="wheatpaste"] #pareto-chart,
+[data-style="wheatpaste"] #ara-objectives-chart,
+[data-style="wheatpaste"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the poster with the stamp ------------------------------------------------ */
+
+[data-style="wheatpaste"] .contact-view-left {
+  position: relative;
+  background-color: var(--text);
+  color: var(--bg);
+  border-radius: 0;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 94% 100%, 86% calc(100% - 14px), 78% 100%, 70% calc(100% - 12px), 60% 100%, 52% calc(100% - 15px), 42% 100%, 34% calc(100% - 12px), 24% 100%, 16% calc(100% - 14px), 8% 100%, 0 calc(100% - 11px));
+  padding-bottom: 48px;
+}
+
+/* The red stamp ('HIRE ME' is specified by the style queue), pressed
+   crooked into the poster's corner. */
+[data-style="wheatpaste"] .contact-view-left::after {
+  content: 'HIRE ME';
+  position: absolute;
+  right: 26px;
+  bottom: 30px;
+  font-family: var(--font-heading);
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+  border: 4px solid var(--primary);
+  padding: 8px 14px 6px;
+  transform: rotate(-12deg);
+  opacity: 0.8;
+  pointer-events: none;
+}
+
+/* Social glyphs print in ink on the poster; red on touch, hard cut. */
+[data-style="wheatpaste"] .contact-menu .socials-item,
+[data-style="wheatpaste"] .contact-menu-mobile .socials-item {
+  color: var(--bg);
+}
+
+[data-style="wheatpaste"] .contact-menu .socials-item:hover i,
+[data-style="wheatpaste"] .contact-menu-mobile .socials-item:hover i {
+  color: var(--primary);
+}
+
+/* The map pastes up as a photocopied sticker like the hero shot (it keeps
+   its tilt; frame and filter only). */
+[data-style="wheatpaste"] .contact-image-wrapper {
+  border: 4px solid var(--text);
+  border-radius: 12px;
+  box-shadow: 8px 8px 0 #101113;
+}
+
+[data-style="wheatpaste"] .contact-image {
+  filter: grayscale(0.85) contrast(1.15);
+  transition: none;
+}
+
+[data-style="wheatpaste"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): stencil chips -------------------- */
+
+[data-style="wheatpaste"] .pill {
+  background-color: transparent;
+  border: 1.5px solid var(--text40);
+  border-radius: 0;
+  color: var(--text70);
+  font-family: 'Special Elite', cursive;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+
+/* ---- Cycler dock: bolted to the wall ------------------------------------------------------ */
+
+[data-style="wheatpaste"] .tc-dock {
+  background: var(--bg);
+  border: 2px solid var(--text);
+  box-shadow: 6px 6px 0 #101113;
+  backdrop-filter: none;
+}
+
+[data-style="wheatpaste"] .tc-toggle {
+  border-radius: 0;
+  border: 2px solid var(--accent);
+  color: var(--accent);
+  transition: none;
+}
+
+[data-style="wheatpaste"] .tc-toggle:hover {
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+[data-style="wheatpaste"] .tc-randomize,
+[data-style="wheatpaste"] .tc-presets button,
+[data-style="wheatpaste"] .tc-schemes button,
+[data-style="wheatpaste"] .tc-role,
+[data-style="wheatpaste"] .tc-sw {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* One spray ghost on the small wall; the noise stays. */
+  [data-style="wheatpaste"] body {
+    background-image:
+      radial-gradient(circle 220px at 85% 8%, var(--primary10), transparent),
+      radial-gradient(var(--text5) 1px, transparent 1.4px);
+    background-size: auto, 7px 7px;
+  }
+
+  /* Anton caps must clear a ~335px column with "FULL STACK ENGINEER." */
+  [data-style="wheatpaste"] #typing-text {
+    font-size: clamp(24px, 7.5vw, 30px);
+  }
+
+  [data-style="wheatpaste"] #sub-text {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  [data-style="wheatpaste"] #blog-typing-text {
+    font-size: clamp(26px, 8vw, 34px);
+  }
+
+  /* The hero photo is hidden on mobile; its wrapper sheds the paste-up
+     crook. */
+  [data-style="wheatpaste"] #typing-right {
+    transform: none;
+  }
+
+  /* mobile-styles.css pins nowrap and strips the left padding; the paper
+     scrap needs both back, smaller and barely crooked. The grid puts the
+     chip number in its own column so a wrapped headline's second line
+     aligns with the first word, not the chip. */
+  [data-style="wheatpaste"] .section-header {
+    white-space: normal;
+    font-size: clamp(22px, 7vw, 30px);
+    padding: 7px 12px 4px;
+    margin: 0 0 0 10px;
+    transform: rotate(-0.6deg);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  [data-style="wheatpaste"] .section-header-spacer {
+    height: 3px;
+  }
+
+  [data-style="wheatpaste"] .section-header-spacer::after {
+    top: 2px;
+    height: 12px;
+    width: 4px;
+  }
+
+  [data-style="wheatpaste"] .static-menu-mobile .menu-item {
+    font-family: 'Special Elite', cursive;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text70);
+  }
+
+  [data-style="wheatpaste"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* Rotations halve on the small sheet; mobile neutralizes the logo's hover
+     (sticky-hover on touch), so the tap state carries the red. */
+  [data-style="wheatpaste"] .name-logo {
+    transform: rotate(-3deg);
+  }
+
+  [data-style="wheatpaste"] .name-logo:hover {
+    transform: rotate(-3deg);
+    background-color: transparent;
+    color: var(--accent);
+  }
+
+  [data-style="wheatpaste"] .name-logo:active {
+    background-color: transparent;
+    color: var(--primary);
+  }
+
+  /* The mobile sheet re-cards these surfaces with the default tint; keep
+     them xerox paper. */
+  [data-style="wheatpaste"] .double-view-left,
+  [data-style="wheatpaste"] .double-view-right {
+    background-color: var(--text);
+    border-radius: 0;
+  }
+
+  [data-style="wheatpaste"] .blog-card {
+    background-color: var(--text);
+    border-radius: 0;
+  }
+
+  [data-style="wheatpaste"] .contact-view-left {
+    background-color: var(--text);
+  }
+
+  [data-style="wheatpaste"] .contact-view-left::after {
+    font-size: 21px;
+    border-width: 3px;
+    right: 14px;
+    bottom: 22px;
+  }
+
+  /* Jobs rail runs horizontal: the rule moves to the wrapper's bottom edge,
+     and the marker stroke keeps the JS-written height pinned thicker. */
+  [data-style="wheatpaste"] .menu-scroll-wrapper {
+    border-bottom: 2px solid var(--text30);
+  }
+
+  [data-style="wheatpaste"] .highlight {
+    height: 4px !important;
+  }
+
+  [data-style="wheatpaste"] .job-content {
+    padding: 18px 16px 38px;
+  }
+
+  [data-style="wheatpaste"] .job-content::before {
+    font-size: 10px;
+    letter-spacing: 0.22em;
+  }
+
+  /* Stickers: the hard shadows need clearance at the stock 16px gap, the
+     rotations halve, and the fat border must draw inside the box (the image
+     is width: 100% on mobile; content-box would overflow the card). */
+  [data-style="wheatpaste"] .featured-carousel-track {
+    gap: 32px;
+  }
+
+  [data-style="wheatpaste"] .fc-card:nth-child(odd) {
+    transform: rotate(-0.7deg);
+  }
+
+  [data-style="wheatpaste"] .fc-card:nth-child(even) {
+    transform: rotate(0.6deg);
+  }
+
+  [data-style="wheatpaste"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+    box-shadow: 5px 5px 0 #101113;
+  }
+
+  [data-style="wheatpaste"] #typing-image {
+    box-shadow: 5px 5px 0 #101113;
+  }
+
+  [data-style="wheatpaste"] .blog-post-container {
+    padding: 26px 16px 50px;
+    margin-top: 18px;
+  }
+
+  [data-style="wheatpaste"] .blog-post-title {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  [data-style="wheatpaste"] .footer-text-mobile {
+    font-size: 12px;
+  }
+}
