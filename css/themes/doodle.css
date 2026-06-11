@@ -4,7 +4,9 @@
    yellow highlighter swipes, sticky notes, and a pencil-point cursor.
    Patrick Hand carries display and body; Caveat handles annotations (dates,
    labels, margin notes). Motion stays on (AOS entrances, the cursor dot,
-   hover lifts) — tilt is off, sketches lie flat on the page.
+   hover lifts) — tilt is off, sketches lie flat on the page. The typed
+   masthead is cursorless (registry typing: 'letter'): glyphs draw in by
+   hand and erase out, see the .tw rules in the hero section.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
    todo/STYLE_VERSIONS_SPEC.md. The tilt pins come from css/themes/theme-base.css
@@ -22,6 +24,15 @@
 
 
 /* ---- Foundations: grid paper, pencil cursor, highlighter selection ------- */
+
+/* Sweep angle for the hand-drawn hover circle on social links. @property
+   can't be scoped, but the name is skin-prefixed and the sheet only loads
+   while doodle is active; registration makes the percentage transitionable. */
+@property --doodle-ring {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
 
 [data-style="doodle"] ::selection {
   background: var(--secondary);
@@ -189,20 +200,47 @@
   line-height: 1.12;
 }
 
-/* Graphite typing cursor — the line is being pencilled in. */
-[data-style="doodle"] .cursor {
-  background-color: var(--text);
-  width: 3.5px;
+/* Cursorless masthead: the registry sets typing: 'letter', so the engine
+   wraps each typed glyph in span.tw — letters draw themselves in like
+   handwriting (a left-to-right wipe settling out of a pencil wobble), and
+   on delete each glyph gets .tw-out and rubs away like an eraser pass
+   before the line is re-drawn. inline-block so the per-glyph transform and
+   clip have a box; the vertical clip insets run negative so ascenders and
+   descenders never crop. */
+[data-style="doodle"] #typing-text .tw,
+[data-style="doodle"] #blog-typing-text .tw {
+  display: inline-block;
+  animation: doodle-draw-in 0.28s ease-out backwards;
+}
+
+[data-style="doodle"] #typing-text .tw-out,
+[data-style="doodle"] #blog-typing-text .tw-out {
+  animation: doodle-erase 0.3s ease-in forwards;
+}
+
+@keyframes doodle-draw-in {
+  0%   { opacity: 0; clip-path: inset(-15% 100% -15% 0); transform: rotate(-4deg) translateY(0.04em); filter: blur(1.5px); }
+  55%  { opacity: 1; filter: blur(0.5px); }
+  100% { opacity: 1; clip-path: inset(-15% -10% -15% 0); transform: none; filter: none; }
+}
+
+@keyframes doodle-erase {
+  0%   { opacity: 1; transform: none; filter: none; }
+  35%  { opacity: 0.55; transform: translateY(-0.03em) rotate(2.5deg); filter: blur(1px); }
+  70%  { opacity: 0.25; transform: translateY(0.03em) rotate(-2.5deg); filter: blur(2px); }
+  100% { opacity: 0; transform: none; filter: blur(3px); }
 }
 
 /* The typed accent words sit on a yellow highlighter swipe in ink, the
    notebook's way of making a word important. clone keeps the swipe intact
-   if the span ever wraps. */
+   if the span ever wraps. In letter mode every glyph is its own span, so
+   the side padding is dropped — per-glyph padding would open gaps in the
+   swipe. */
 [data-style="doodle"] #typing-text .typing-accent,
 [data-style="doodle"] #blog-typing-text .typing-accent {
   color: var(--text);
   background-image: linear-gradient(transparent 58%, var(--secondary) 58%, var(--secondary) 96%, transparent 96%);
-  padding: 0 0.06em;
+  padding: 0;
   -webkit-box-decoration-break: clone;
   box-decoration-break: clone;
 }
@@ -228,8 +266,36 @@
   border: 2px solid var(--text);
 }
 
+/* Social links: hovering doesn't recolor the glyph — it circles it in red
+   pen. The ring is the pseudo's hand-drawn border revealed by a conic
+   mask whose sweep is a registered custom property, so it draws itself
+   around the icon on hover and un-draws when the pen lifts. Browsers
+   without @property still get the full circle on hover, just without the
+   sweep. */
+[data-style="doodle"] .socials-item {
+  position: relative;
+}
+
+[data-style="doodle"] .socials-item::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 2.5px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+  -webkit-mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  transition: --doodle-ring 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+[data-style="doodle"] .socials-item:hover::after {
+  --doodle-ring: 100%;
+}
+
+/* The glyph holds its ink and stays put — the circle is the hover signal. */
 [data-style="doodle"] .socials-item:hover i {
-  color: var(--accent);
+  color: var(--text);
+  transform: none;
 }
 
 [data-style="doodle"] #socials-list .socials-menu-spacer,
@@ -531,12 +597,17 @@
   border-radius: 2px;
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
   filter: drop-shadow(2px 5px 7px rgba(43, 43, 43, 0.16));
-  transition: filter 0.3s ease-in-out;
+  transition: filter 0.25s ease-in-out, translate 0.25s ease-in-out, rotate 0.25s ease-in-out;
 }
 
+/* Hover: the sticky note peels up off the page — it lifts, cocks a little,
+   and its shadow deepens. translate/rotate are the independent transform
+   properties, so they ride over theme-base's transform: none tilt pin. */
 [data-style="doodle"] .blog-card:hover {
   background-color: var(--secondary);
-  filter: drop-shadow(3px 8px 11px rgba(43, 43, 43, 0.22));
+  translate: 0 -6px;
+  rotate: -1.5deg;
+  filter: drop-shadow(5px 12px 14px rgba(43, 43, 43, 0.3));
 }
 
 [data-style="doodle"] .blog-card-title {

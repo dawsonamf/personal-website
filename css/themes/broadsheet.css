@@ -155,11 +155,30 @@
   letter-spacing: 0.01em;
 }
 
-/* Typed accent words print in oxblood via the --accent token; the cursor is
-   a pen stroke of ink. (Playfair's italic is only loaded at 500, never
-   italicize the 900 masthead.) */
-[data-style="broadsheet"] .cursor {
-  background-color: var(--text);
+/* Typed accent words print in oxblood via the --accent token. (Playfair's
+   italic is only loaded at 500, never italicize the 900 masthead.)
+
+   Cursorless masthead: the registry sets typing: 'word' — a headline comes
+   off the press a word at a time, no caret. Each word develops onto the
+   page (a soft ink blur settling sharp) and dissolves off under .tw-out. */
+[data-style="broadsheet"] #typing-text .tw,
+[data-style="broadsheet"] #blog-typing-text .tw {
+  animation: broadsheet-press-in 0.45s ease-out backwards;
+}
+
+[data-style="broadsheet"] #typing-text .tw-out,
+[data-style="broadsheet"] #blog-typing-text .tw-out {
+  animation: broadsheet-press-out 0.25s ease-in forwards;
+}
+
+@keyframes broadsheet-press-in {
+  from { opacity: 0; filter: blur(2.5px); }
+  to   { opacity: 1; filter: none; }
+}
+
+@keyframes broadsheet-press-out {
+  from { opacity: 1; filter: none; }
+  to   { opacity: 0; filter: blur(2.5px); }
 }
 
 /* The strapline becomes a dateline: small letterspaced caps in quiet ink. */

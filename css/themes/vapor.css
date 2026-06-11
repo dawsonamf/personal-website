@@ -1,23 +1,27 @@
-/* Vapor: outrun / synthwave. Violet night ground with a faint starfield and
-   a sunset wash behind the masthead, Monoton sign-glow display type (single
-   lines only, never body copy), Exo 2 body and UI, one chrome-gradient
-   italic subtitle per page, neon borders and blooms on every plate, and a
-   perspective grid running to the horizon under the footer. The one skin
-   that turns the dials up: tilt stays on, the motion pack stays on, and
-   the default's glow grammar gets louder instead of quieter.
+/* Vapor: outrun / synthwave. Violet night ground under a CRT scanline
+   raster, a slatted chrome-and-neon sun sinking behind the masthead,
+   Monoton sign-glow display type (single lines only, never body copy) with
+   VHS chromatic fringe, Exo 2 body and UI, chrome-gradient italics on the
+   strapline AND the section titles, neon borders and blooms on every
+   plate, and a perspective grid running to the horizon under the footer.
+   The one skin that turns the dials up: tilt stays on, the motion pack
+   stays on, and the default's glow grammar gets louder instead of quieter.
+   The typed masthead is cursorless (registry typing: 'letter'): each glyph
+   flickers alight like a warming tube, see the .tw rules in the hero
+   section (the engine's glyph spans; the reduced-motion guard for them
+   lives in theme-base.css).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. No flags — no still, no tilt-off; nothing in
-   this sheet adds a new @keyframes, so there is nothing new to guard for
-   prefers-reduced-motion. Line/shadow stance: every line, bloom, and glow
-   derives from the alpha ramps (cyan --accent*, magenta --primary*), so the
-   palette toy keeps working; the only literals are the chrome-metal text
-   gradient (chrome is chrome under any palette, the white-tape precedent)
-   and the default's own dark depth shadow under the floating menu.
-   Legibility rule: glow lives on display type and chrome only — body copy
-   never glows. Monoton registers as a single 400 face, so every Monoton
-   surface is pinned to 400; Exo 2 loads 400/600/800 + 800 italic, and
-   b/strong pin to the loaded 600. */
+   todo/STYLE_VERSIONS_SPEC.md. No flags — no still, no tilt-off.
+   Line/shadow stance: every line, bloom, and glow derives from the alpha
+   ramps (cyan --accent*, magenta --primary*), so the palette toy keeps
+   working; the only literals are the chrome-metal text gradient and the
+   dark scanline raster (chrome is chrome and a tube's shadow mask is dark
+   under any palette, the white-tape precedent) and the default's own dark
+   depth shadow under the floating menu. Legibility rule: glow lives on
+   display type and chrome only — body copy never glows. Monoton registers
+   as a single 400 face, so every Monoton surface is pinned to 400; Exo 2
+   loads 400/600/800 + 800 italic, and b/strong pin to the loaded 600. */
 
 
 /* ---- Foundations: night ground, starfield, neon selection ----------------- */
@@ -27,16 +31,19 @@
   color: var(--text);
 }
 
-/* The night: two star layers over a violet wash that falls out of the top of
-   the page. Attachment stays the default scroll; fixed would repaint the
+/* The night: a faint CRT scanline raster over two star layers over a violet
+   wash that falls out of the top of the page. The scanlines are a dark
+   literal — a tube's shadow mask is dark under any palette, the chrome
+   precedent. Attachment stays the default scroll; fixed would repaint the
    full field on every scroll tick. */
 [data-style="vapor"] body {
   background-image:
+    repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 1px, transparent 1px 4px),
     radial-gradient(var(--text15) 1px, transparent 1.6px),
     radial-gradient(var(--text10) 1px, transparent 1.6px),
     linear-gradient(180deg, var(--secondary60) 0%, transparent 520px);
-  background-size: 130px 130px, 70px 70px, auto;
-  background-position: 0 0, 40px 60px, 0 0;
+  background-size: auto, 130px 130px, 70px 70px, auto;
+  background-position: 0 0, 0 0, 40px 60px, 0 0;
 }
 
 /* Neon scrollbar: magenta tube in the night, cyan when touched.
@@ -178,12 +185,47 @@
 
 /* A sunset wash glows up behind the masthead. */
 [data-style="vapor"] #typing-container {
+  position: relative;
   background-image: radial-gradient(ellipse 58% 64% at 30% 60%, var(--primary15), transparent 72%);
 }
 
-/* Monoton, glow-shadowed, all caps — the typed masthead IS the sign. Monoton
-   is wide: "FULL STACK ENGINEER." runs ≈ 730px at the 50px cap with the
-   tracking, inside the ~795px column budget. */
+/* The signature move: a slatted outrun sun sinking behind the sign. One
+   disc, cyan falling into magenta, with the horizon slats cut by a mask
+   (the gaps widen toward the bottom, the way the sun melts into the grid).
+   The container's intro transform makes it a stacking context, so z-index
+   -1 keeps the sun behind the type but above the page. */
+[data-style="vapor"] #typing-container::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 56px;
+  right: 22%;
+  width: 330px;
+  height: 330px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--accent) 0%, var(--primary) 72%);
+  -webkit-mask-image: linear-gradient(180deg,
+    #000 0 52%, transparent 52% 55%,
+    #000 55% 64%, transparent 64% 68%,
+    #000 68% 76%, transparent 76% 81%,
+    #000 81% 87%, transparent 87% 93%,
+    #000 93% 97%, transparent 97%);
+  mask-image: linear-gradient(180deg,
+    #000 0 52%, transparent 52% 55%,
+    #000 55% 64%, transparent 64% 68%,
+    #000 68% 76%, transparent 76% 81%,
+    #000 81% 87%, transparent 87% 93%,
+    #000 93% 97%, transparent 97%);
+  opacity: 0.42;
+  filter: blur(0.6px) drop-shadow(0 0 36px var(--primary40));
+  pointer-events: none;
+}
+
+/* Monoton, glow-shadowed, all caps — the typed masthead IS the sign. The
+   hard 2px offsets are VHS chromatic fringe: a magenta ghost trailing right,
+   a dimmer cyan one left, under the usual tube bloom. Monoton is wide:
+   "FULL STACK ENGINEER." runs ≈ 730px at the 50px cap with the tracking,
+   inside the ~795px column budget. */
 [data-style="vapor"] #typing-text {
   font-family: 'Monoton', cursive;
   font-weight: 400;
@@ -192,21 +234,48 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
-  text-shadow: 0 0 7px var(--accent60), 0 0 28px var(--primary50);
+  text-shadow: 2px 0 0 var(--primary45), -2px 0 0 var(--accent25), 0 0 7px var(--accent60), 0 0 28px var(--primary50);
 }
 
-/* The typed accent words switch tubes: magenta glass in the cyan sign. */
+/* The typed accent words switch tubes: magenta glass in the cyan sign, with
+   the fringe colors swapped. */
 [data-style="vapor"] #typing-text .typing-accent,
 [data-style="vapor"] #blog-typing-text .typing-accent {
   color: var(--primary);
-  text-shadow: 0 0 7px var(--primary60), 0 0 28px var(--accent45);
+  text-shadow: 2px 0 0 var(--accent45), -2px 0 0 var(--primary25), 0 0 7px var(--primary60), 0 0 28px var(--accent45);
 }
 
-/* The cursor is a lit tube segment. */
-[data-style="vapor"] .cursor {
-  background-color: var(--accent);
-  width: 5px;
-  box-shadow: 0 0 8px var(--accent70);
+/* Cursorless masthead: the registry sets typing: 'letter', so the engine
+   wraps each typed glyph in span.tw — every tube flickers alight the way a
+   real sign warms up, and on delete each glyph gets .tw-out and sputters
+   back out before the sign is rewired. Opacity only: the glow rides the
+   glyph, so the flicker takes the bloom with it. */
+[data-style="vapor"] #typing-text .tw,
+[data-style="vapor"] #blog-typing-text .tw {
+  animation: vapor-flicker-in 0.5s linear backwards;
+}
+
+[data-style="vapor"] #typing-text .tw-out,
+[data-style="vapor"] #blog-typing-text .tw-out {
+  animation: vapor-flicker-out 0.25s linear forwards;
+}
+
+@keyframes vapor-flicker-in {
+  0%   { opacity: 0; }
+  7%   { opacity: 1; }
+  12%  { opacity: 0.15; }
+  20%  { opacity: 1; }
+  26%  { opacity: 0.4; }
+  36%  { opacity: 1; }
+  52%  { opacity: 0.7; }
+  64%, 100% { opacity: 1; }
+}
+
+@keyframes vapor-flicker-out {
+  0%   { opacity: 1; }
+  30%  { opacity: 0.15; }
+  45%  { opacity: 0.8; }
+  100% { opacity: 0; }
 }
 
 /* The strapline is the page's one chrome-gradient italic: Exo 2 800 italic
@@ -242,10 +311,12 @@
 }
 
 
-/* ---- Section headers: signage numbers + neon rule ---------------------------
+/* ---- Section headers: signage numbers + chrome titles + neon rule -----------
    The index number glows like the sign out front (Monoton); the title runs
-   Exo 2 800 italic caps in plain light — glow stays off the words you read.
-   The spacer becomes a magenta-to-cyan neon tube. */
+   Exo 2 800 italic caps clipped to the chrome-metal ramp — the strapline's
+   gradient promoted to a signature, the way every outrun poster sets its
+   big type in chrome. Glow stays off the words you read. The spacer is a
+   magenta-to-cyan neon tube. */
 
 [data-style="vapor"] .section-header {
   font-weight: 800;
@@ -253,19 +324,22 @@
   font-size: clamp(34px, 3.6vw, 46px);
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  color: var(--text);
+  background-image: linear-gradient(180deg, #ffffff, #9be7ff 48%, #ff8ad8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
-   match them so the titles stay light — the neon lives in the number and
-   the rule. */
+   match them so the chrome clip shows through. The signage number keeps its
+   own opaque cyan and paints over the clipped ramp. */
 [data-style="vapor"] #about-section-header,
 [data-style="vapor"] #jobs-header,
 [data-style="vapor"] #project-header,
 [data-style="vapor"] #blog-header,
 [data-style="vapor"] #contact-section-header,
 [data-style="vapor"] .blog-section-header {
-  color: var(--text);
+  color: transparent;
 }
 
 [data-style="vapor"] .sec-num {
@@ -531,7 +605,7 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
-  text-shadow: 0 0 7px var(--accent60), 0 0 28px var(--primary50);
+  text-shadow: 2px 0 0 var(--primary45), -2px 0 0 var(--accent25), 0 0 7px var(--accent60), 0 0 28px var(--primary50);
 }
 
 [data-style="vapor"] [id^="blog-sub-text"] {
@@ -721,20 +795,36 @@
 /* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------------- */
 
 @media screen and (max-width: 1100px) {
-  /* One star layer on the small sheet; the wash stays. */
+  /* One star layer on the small sheet; the scanlines and the wash stay. */
   [data-style="vapor"] body {
     background-image:
+      repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.14) 0 1px, transparent 1px 4px),
       radial-gradient(var(--text10) 1px, transparent 1.6px),
       linear-gradient(180deg, var(--secondary60) 0%, transparent 420px);
-    background-size: 90px 90px, auto;
-    background-position: 0 0, 0 0;
+    background-size: auto, 90px 90px, auto;
+    background-position: 0 0, 0 0, 0 0;
+  }
+
+  /* A smaller sun, tucked up by the sign. */
+  [data-style="vapor"] #typing-container::before {
+    top: 16px;
+    right: 6px;
+    width: 150px;
+    height: 150px;
+    opacity: 0.32;
   }
 
   /* Monoton is very wide: "FULL STACK ENGINEER." must clear a ~335px column
-     on a 375px screen, which caps the sign at 22px. */
+     on a 375px screen, which caps the sign at 22px. The chromatic fringe
+     halves with the type. */
   [data-style="vapor"] #typing-text {
     font-size: clamp(19px, 5.8vw, 22px);
     line-height: 1.4;
+    text-shadow: 1px 0 0 var(--primary45), -1px 0 0 var(--accent25), 0 0 6px var(--accent60), 0 0 20px var(--primary50);
+  }
+
+  [data-style="vapor"] #typing-text .typing-accent {
+    text-shadow: 1px 0 0 var(--accent45), -1px 0 0 var(--primary25), 0 0 6px var(--primary60), 0 0 20px var(--accent45);
   }
 
   [data-style="vapor"] #sub-text {
