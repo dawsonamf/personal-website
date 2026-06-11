@@ -1,12 +1,13 @@
 /* Wheatpaste: tags, ransom notes & xeroxed flyers. A concrete wall (layered
    radial ghosts + dot noise) with paper pasted over it: the jobs panel is a
-   gig flyer with a torn bottom edge, blog cards are xeroxed scraps, project
-   shots are die-cut stickers at slight rotations, section headers are
-   pasted paper-scrap headlines, the logo is a marker tag, and one red
-   HIRE ME stamp hides in the contact section. Anton shouts the headlines,
-   Special Elite hammers out the body, Permanent Marker tags the wall, and
-   Inter carries long-form article text (typewriter face for flyers, a clean
-   face for the one surface you actually read at length).
+   gig flyer with a torn bottom edge, blog cards are xeroxed scraps pasted
+   a hair crooked, project shots are die-cut stickers at slight rotations,
+   section headers are paper-scrap headlines taped up at the corners, and
+   the logo is a marker tag. Every paper surface carries copier roller
+   bands and corner toner grime — copies of copies. Anton shouts the
+   headlines, Special Elite hammers out the body, Permanent Marker tags the
+   wall, and Inter carries long-form article text (typewriter face for
+   flyers, a clean face for the one surface you actually read at length).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
    todo/STYLE_VERSIONS_SPEC.md. flags.still kills the scroll entrances, the
@@ -23,9 +24,8 @@
    keeps working; the only literal is the ink-toned hard shadow (#101113)
    under stickers and tags. Anton and the two marker faces load as single
    400 faces — every bolded heading pins to 400, and emphasis re-routes to
-   marker color instead of synthesized bold. The strings 'ONE NIGHT ONLY'
-   and 'HIRE ME' are specified by the style queue; no other content words
-   are added anywhere. */
+   marker color instead of synthesized bold. No content words are added
+   anywhere. */
 
 
 /* ---- Foundations: the wall, marker selection, hard cuts ------------------- */
@@ -208,11 +208,15 @@
 }
 
 /* The typed accent words become ransom scraps: paper chips with ink type.
+   The chip is a gradient band, not a background-color: Anton's content box
+   runs taller than the 1.12 line box, so a full-bleed chip would spill
+   ~8px past the last line and paper over the strapline below. The band
+   stops at 88% — Anton is all caps here, nothing descends into the trim.
    clone keeps a chip intact if the span ever wraps; no rotation here — the
    span re-lays out on every typed character. */
 [data-style="wheatpaste"] #typing-text .typing-accent,
 [data-style="wheatpaste"] #blog-typing-text .typing-accent {
-  background-color: var(--text);
+  background-image: linear-gradient(var(--text) 0 88%, transparent 88%);
   color: var(--bg);
   padding: 0 0.12em;
   -webkit-box-decoration-break: clone;
@@ -225,7 +229,9 @@
   width: 10px;
 }
 
-/* The strapline hammers out on the typewriter, pasted slightly crooked. */
+/* The strapline hammers out on the typewriter, pasted slightly crooked.
+   The top margin clears the headline's overhang — Anton's glyph box runs
+   past its own line box, see the accent-chip note above. */
 [data-style="wheatpaste"] #sub-text {
   display: inline-block;
   font-family: 'Special Elite', cursive;
@@ -233,6 +239,7 @@
   letter-spacing: 0.16em;
   text-transform: uppercase;
   color: var(--text60);
+  margin-top: 14px;
   transform: rotate(-1deg);
   transform-origin: left center;
 }
@@ -279,6 +286,7 @@
    red chip, and the spacer redrawn as a marker swipe with a drip. */
 
 [data-style="wheatpaste"] .section-header {
+  position: relative;
   background-color: var(--text);
   color: var(--bg);
   font-size: clamp(34px, 4.8vw, 56px);
@@ -287,6 +295,30 @@
   padding: 12px 22px 8px;
   margin: 10px 0 0 10px;
   transform: rotate(-1.2deg);
+}
+
+/* Two strips of half-clear packing tape hold each scrap to the wall —
+   slapped across the top corners at opposite angles. The --text35 ramp
+   reads as tape over both the paper and the concrete. */
+[data-style="wheatpaste"] .section-header::before,
+[data-style="wheatpaste"] .section-header::after {
+  content: '';
+  position: absolute;
+  top: -9px;
+  width: 72px;
+  height: 20px;
+  background-color: var(--text35);
+  pointer-events: none;
+}
+
+[data-style="wheatpaste"] .section-header::before {
+  left: -22px;
+  transform: rotate(-38deg);
+}
+
+[data-style="wheatpaste"] .section-header::after {
+  right: -20px;
+  transform: rotate(33deg);
 }
 
 /* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
@@ -346,6 +378,20 @@
   color: var(--bg);
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 94% 100%, 86% calc(100% - 14px), 78% 100%, 70% calc(100% - 12px), 60% 100%, 52% calc(100% - 15px), 42% 100%, 34% calc(100% - 12px), 24% 100%, 16% calc(100% - 14px), 8% 100%, 0 calc(100% - 11px));
   padding: 24px 26px 40px;
+}
+
+/* Every paper surface picks up the copy machine: faint roller bands down
+   the sheet and toner grime creeping in from a corner — the tell that a
+   flyer is a copy of a copy, not a card with a background-color. All on
+   the --bg (ink) ramp so the palette toy keeps working. */
+[data-style="wheatpaste"] .card-style,
+[data-style="wheatpaste"] .job-content,
+[data-style="wheatpaste"] .blog-card,
+[data-style="wheatpaste"] .blog-post-container,
+[data-style="wheatpaste"] .contact-view-left {
+  background-image:
+    radial-gradient(ellipse 130% 90% at 24% -30%, transparent 62%, var(--bg10)),
+    repeating-linear-gradient(180deg, transparent 0 23px, var(--bg5) 23px 25px);
 }
 
 /* "About Me" / "Skills" as flyer headlines with a fat red marker underline. */
@@ -451,19 +497,6 @@
 [data-style="wheatpaste"] .job-out-right {
   transition: none;
   transform: rotate(-0.8deg);
-}
-
-/* The flyer's top line ('ONE NIGHT ONLY' is specified by the style queue;
-   no other content words are added anywhere). */
-[data-style="wheatpaste"] .job-content::before {
-  content: '\2736  ONE NIGHT ONLY  \2736';
-  align-self: center;
-  font-family: 'Special Elite', cursive;
-  font-size: 11.5px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--bg60);
-  margin-bottom: 2px;
 }
 
 /* Headliner billing: centered Anton caps. */
@@ -605,6 +638,22 @@
 
 [data-style="wheatpaste"] .blog-card:hover {
   background-color: var(--text);
+}
+
+/* Scraps never paste perfectly level: a hair of rotation, alternating down
+   the row. The independent rotate property composes under VanillaTilt's
+   inline transform writes, so the peel-on-hover tilt still works — this is
+   not a base rotation on the transform the tilt owns. (nth-child counts
+   the listing's filtered-out wrappers too; the crook is cosmetic, so a
+   fixed alternation is fine.) */
+[data-style="wheatpaste"] #blog-scroll-track .blog-card:nth-child(odd),
+[data-style="wheatpaste"] .blog-listing-grid .blog-card-wrapper:nth-child(odd) .blog-card {
+  rotate: -0.9deg;
+}
+
+[data-style="wheatpaste"] #blog-scroll-track .blog-card:nth-child(even),
+[data-style="wheatpaste"] .blog-listing-grid .blog-card-wrapper:nth-child(even) .blog-card {
+  rotate: 0.8deg;
 }
 
 [data-style="wheatpaste"] .blog-card-title {
@@ -843,34 +892,14 @@
 }
 
 
-/* ---- Contact: the poster with the stamp ------------------------------------------------ */
+/* ---- Contact: the last poster on the wall ----------------------------------------------- */
 
 [data-style="wheatpaste"] .contact-view-left {
-  position: relative;
   background-color: var(--text);
   color: var(--bg);
   border-radius: 0;
   clip-path: polygon(0 0, 100% 0, 100% calc(100% - 16px), 94% 100%, 86% calc(100% - 14px), 78% 100%, 70% calc(100% - 12px), 60% 100%, 52% calc(100% - 15px), 42% 100%, 34% calc(100% - 12px), 24% 100%, 16% calc(100% - 14px), 8% 100%, 0 calc(100% - 11px));
   padding-bottom: 48px;
-}
-
-/* The red stamp ('HIRE ME' is specified by the style queue), pressed
-   crooked into the poster's corner. */
-[data-style="wheatpaste"] .contact-view-left::after {
-  content: 'HIRE ME';
-  position: absolute;
-  right: 26px;
-  bottom: 30px;
-  font-family: var(--font-heading);
-  font-size: 28px;
-  line-height: 1;
-  letter-spacing: 0.06em;
-  color: var(--primary);
-  border: 4px solid var(--primary);
-  padding: 8px 14px 6px;
-  transform: rotate(-12deg);
-  opacity: 0.8;
-  pointer-events: none;
 }
 
 /* Social glyphs print in ink on the poster; red on touch, hard cut. */
@@ -993,6 +1022,22 @@
     align-items: baseline;
   }
 
+  /* Tape shrinks with the scrap. */
+  [data-style="wheatpaste"] .section-header::before,
+  [data-style="wheatpaste"] .section-header::after {
+    width: 44px;
+    height: 13px;
+    top: -6px;
+  }
+
+  [data-style="wheatpaste"] .section-header::before {
+    left: -14px;
+  }
+
+  [data-style="wheatpaste"] .section-header::after {
+    right: -12px;
+  }
+
   [data-style="wheatpaste"] .section-header-spacer {
     height: 3px;
   }
@@ -1049,13 +1094,6 @@
     background-color: var(--text);
   }
 
-  [data-style="wheatpaste"] .contact-view-left::after {
-    font-size: 21px;
-    border-width: 3px;
-    right: 14px;
-    bottom: 22px;
-  }
-
   /* Jobs rail runs horizontal: the rule moves to the wrapper's bottom edge,
      and the marker stroke keeps the JS-written height pinned thicker. */
   [data-style="wheatpaste"] .menu-scroll-wrapper {
@@ -1068,11 +1106,6 @@
 
   [data-style="wheatpaste"] .job-content {
     padding: 18px 16px 38px;
-  }
-
-  [data-style="wheatpaste"] .job-content::before {
-    font-size: 10px;
-    letter-spacing: 0.22em;
   }
 
   /* Stickers: the hard shadows need clearance at the stock 16px gap, the

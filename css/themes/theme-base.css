@@ -49,6 +49,23 @@
   text-align: center;
 }
 
+/* Cursorless typing reveals (js/typing-engine.js wraps masthead glyphs in
+   .tw / .tw-out spans for skins with a registry `typing` mode): glyphs
+   land and leave instantly when the user asks for less motion. */
+@media (prefers-reduced-motion: reduce) {
+  [data-style] #typing-text .tw,
+  [data-style] #blog-typing-text .tw,
+  [data-style] #typing-text .tw-out,
+  [data-style] #blog-typing-text .tw-out {
+    animation: none !important;
+  }
+
+  [data-style] #typing-text .tw-out,
+  [data-style] #blog-typing-text .tw-out {
+    opacity: 0;
+  }
+}
+
 /* Still skins: no scroll entrances, no cursor follower, no dock lifts.
    Intro reveals are left alone (they pin final styles on animationend). */
 [data-still] [data-aos] {

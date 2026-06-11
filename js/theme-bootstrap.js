@@ -24,6 +24,9 @@
       label: 'Studio',
       polarity: 'light',
       flags: { tilt: false, still: true },
+      // Cursorless masthead: print doesn't have a caret — copy fades in a
+      // word at a time (js/typing-engine.js reads this via __styleTypingMode).
+      typing: 'word',
       colors: { text:'#1b1a17', bg:'#f4f2ec', primary:'#d44000', secondary:'#e9e6dd', accent:'#d44000' },
       // Random-palette profile (consumed by js/theme-cycler.js): quiet paper
       // and ink, with the saturation in primary/accent only.
@@ -117,6 +120,8 @@
       label: 'Broadsheet',
       polarity: 'light',
       flags: { tilt: false, still: true },
+      // The masthead sets like type on a press: word-at-a-time, no caret.
+      typing: 'word',
       colors: { text:'#1c1710', bg:'#f5efe2', primary:'#a31621', secondary:'#ece3cf', accent:'#a31621' },
       tokens: {
         '--font-body': "'Lora', serif",
@@ -182,6 +187,9 @@
       // a pencil point in the skin sheet).
       flags: { tilt: false },
       colors: { text:'#2b2b2b', bg:'#fdfbf4', primary:'#2f6fde', secondary:'#fff3a3', accent:'#e2483d' },
+      // Cursorless masthead: each letter draws itself in by hand and rubs
+      // out under an eraser (the skin animates the engine's glyph spans).
+      typing: 'letter',
       tokens: {
         '--font-body': "'Patrick Hand', cursive",
         '--font-heading': "'Patrick Hand', cursive",
@@ -206,6 +214,9 @@
       // No flags: tilt stays on and the motion pack stays — the one skin
       // that turns the dials up instead of down.
       colors: { text:'#f3eaff', bg:'#20094a', primary:'#ff2ec4', secondary:'#2c1160', accent:'#00e5ff' },
+      // Cursorless masthead: each glyph is a neon tube that flickers alight
+      // (the skin animates the engine's glyph spans).
+      typing: 'letter',
       tokens: {
         '--font-body': "'Exo 2', sans-serif",
         '--font-heading': "'Exo 2', sans-serif",
@@ -256,6 +267,14 @@
   window.__styleAllowsTilt = function () {
     var entry = REGISTRY[window.__ACTIVE_STYLE || 'default'];
     return !(entry && entry.flags && entry.flags.tilt === false);
+  };
+
+  // js/typing-engine.js asks this for the masthead reveal mode: 'cursor'
+  // (the classic caret, the default), 'letter', or 'word'. Styles opt in
+  // via a `typing` key on their registry entry.
+  window.__styleTypingMode = function () {
+    var entry = REGISTRY[window.__ACTIVE_STYLE || 'default'];
+    return (entry && entry.typing) || 'cursor';
   };
 
   var STYLE_KEY   = 'dawson-style';

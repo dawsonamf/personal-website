@@ -14,9 +14,16 @@ DOM stays in place, hidden not removed).
 
 - **Registry** in `js/theme-bootstrap.js`: one entry per style — id, label,
   polarity, colors (the five roles), tokens, fonts (Google Fonts URLs), css
-  (sheet path), optional `flags` and `random` palette profiles. The default
-  entry IS the site as-built: stamps nothing, loads nothing. Append new ids
-  to `ORDER`.
+  (sheet path), optional `flags`, `random` palette profiles, and `typing`.
+  The default entry IS the site as-built: stamps nothing, loads nothing.
+  Append new ids to `ORDER`. `typing` picks the masthead reveal mode
+  (`js/typing-engine.js` reads it via `window.__styleTypingMode()`):
+  `'cursor'` (default, the classic caret), `'letter'`, or `'word'`. The
+  cursorless modes wrap each typed glyph in `span.tw` (`+ .typing-accent`
+  after the second newline) and mark deleting glyphs `.tw-out` for ~300ms —
+  the skin sheet supplies the in/out animations (doodle draws/erases, vapor
+  flickers, studio/broadsheet fade by word); the reduced-motion guard lives
+  in `theme-base.css`.
 - **Attribute**: `data-style="<id>"` on `<html>`, absent for default.
   `data-theme` keeps its dark/light palette-toy meaning; the axes compose.
 - **Persistence**: session-only. sessionStorage carries the id across

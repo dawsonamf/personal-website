@@ -149,9 +149,28 @@
   letter-spacing: -0.03em;
 }
 
-[data-style="studio"] .cursor {
-  background-color: var(--text);
-  width: 6px;
+/* Cursorless masthead: the registry sets typing: 'word' — poster copy is
+   set, not typed, so there is no caret. Words fade onto the sheet whole
+   (the engine lands a word's glyph spans at once) and fade back off under
+   .tw-out. A plain opacity dissolve: nothing else in this skin moves. */
+[data-style="studio"] #typing-text .tw,
+[data-style="studio"] #blog-typing-text .tw {
+  animation: studio-set-in 0.4s ease-out backwards;
+}
+
+[data-style="studio"] #typing-text .tw-out,
+[data-style="studio"] #blog-typing-text .tw-out {
+  animation: studio-set-out 0.25s ease-in forwards;
+}
+
+@keyframes studio-set-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes studio-set-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
 }
 
 [data-style="studio"] #sub-text {
