@@ -1,0 +1,1064 @@
+/* Gallery: the white cube. MN·1 — "white cube · the art is the whitespace."
+   Pure white ground, Inter 300 display barely louder than the body, every
+   content block hung as a work: white mats, hairline frames, museum wall
+   labels (9–10px letterspaced caps) doing all the captioning. No accent
+   color at all — gray is the loudest voice in the room, and the only color
+   on the page belongs to the works themselves: the project plates, the blog
+   photographs, the portrait, and the map all keep their own color, framed
+   on white. The chrome retires the site's mono for Inter labels; only real
+   code keeps a mono face. Padding does the design: sections breathe like
+   rooms, didactics open each one under a hairline that runs the full wall.
+
+   Fully still: no entrances, no tilt, no lifts. The typing caret — thinned
+   to an ink hairline — is the one moving thing in the room and finally gets
+   the silence it deserves. Hover states are underlines or a one-step gray
+   change, period: never a color, never a lift, never a shadow.
+
+   Line/shadow policy: NO box-shadows anywhere in this sheet, and no
+   literal colors — every line, frame, and fill derives from the alpha
+   ramps (the tile's "hairlines at 8% black" is --text10; sub-rules sit at
+   --text5) or the role tokens, so the palette toy keeps working. The site
+   is content-box: every frame on a width-constrained image carries
+   box-sizing: border-box.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, the tilt
+   pins, and the mobile fixes come from css/themes/theme-base.css via
+   flags.still + flags.tilt. No @keyframes in this sheet: nothing here
+   animates beyond color/underline transitions, so prefers-reduced-motion
+   needs no extra guard (the caret blink is the engine's own inline
+   animation).
+
+   Inter loads 300/400/500 only — every place the site bolds heading text
+   is pinned to a loaded weight below, and emphasis everywhere is 500,
+   never bold (strong/b are pinned too, so nothing synthesizes). */
+
+
+/* ---- Foundations: ink on white, the quiet room --------------------------- */
+
+/* The whole room sets light: Inter 300 body at generous leading; the wall
+   labels below re-pin 400/500 where 9–10px type needs the weight. */
+[data-style="gallery"] #main-body {
+  font-weight: 300;
+}
+
+/* Emphasis is 500, never bold — a synthesized 700 would smear the light
+   face (Inter loads 300/400/500 only). */
+[data-style="gallery"] strong,
+[data-style="gallery"] b {
+  font-weight: 500;
+}
+
+/* Display is Inter 300 — barely louder than the body. */
+[data-style="gallery"] h1,
+[data-style="gallery"] h2,
+[data-style="gallery"] h3,
+[data-style="gallery"] h4 {
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+/* Selection: the one full-ink surface — text inverts, quietly. */
+[data-style="gallery"] ::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* The page scrollbar joins the room: a gray rule in a white track behind a
+   hairline. ([data-style] sits on <html>, so these select the root
+   scrollbar.) Gray, not ink — nothing in the chrome shouts. */
+[data-style="gallery"] {
+  scrollbar-color: var(--text25) var(--bg);
+  scrollbar-width: thin;
+}
+
+[data-style="gallery"]::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+
+[data-style="gallery"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text10);
+}
+
+[data-style="gallery"]::-webkit-scrollbar-thumb {
+  background: var(--text25);
+  border: 3px solid var(--bg);
+}
+
+[data-style="gallery"]::-webkit-scrollbar-thumb:hover {
+  background: var(--text45);
+}
+
+/* Focus stays visible: a 1px ink rule around the focused element. */
+[data-style="gallery"] :focus-visible {
+  outline: 1px solid var(--text);
+  outline-offset: 3px;
+}
+
+/* Links: ink under a resting gray rule; hover darkens the rule to ink —
+   the underline IS the hover state. The default ::before already draws the
+   line; pinned full-width so it reads as set type, not an animation. */
+[data-style="gallery"] .text-link {
+  color: var(--text);
+}
+
+[data-style="gallery"] .text-link::before {
+  width: 100%;
+  height: 1px;
+  opacity: 1;
+  background-color: var(--text25);
+  transition: background-color 0.25s ease-in-out;
+}
+
+[data-style="gallery"] .text-link:hover {
+  color: var(--text);
+}
+
+[data-style="gallery"] .text-link:hover::before {
+  background-color: var(--text);
+}
+
+/* The art is the whitespace: rooms between works, wider than any other
+   skin on the sheet. */
+[data-style="gallery"] .section-spacer {
+  height: 11em;
+}
+
+
+/* ---- Chrome: gallery signage, the cell logo, the colophon plaque ---------- */
+
+/* Static menu: no pill, no rules — signage floating in air. The floating
+   menu passes over content, so it gets an opaque white card in a hairline
+   frame; flat, no blur, no shadow. */
+[data-style="gallery"] .static-menu {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+[data-style="gallery"] .moving-menu {
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Departments as wall signage: 10px letterspaced caps in gray; hover is an
+   underline and a gray-step to ink. (The Theme trigger carries .menu-item,
+   so it follows.) */
+[data-style="gallery"] .menu-item {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text45);
+}
+
+[data-style="gallery"] .menu-item:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+
+/* No ticks between signs — air does the separating. */
+[data-style="gallery"] .menu-spacer {
+  display: none;
+}
+
+/* The D as a small framed mark. Hover is a gray-step on the frame: no
+   lift, no fill. */
+[data-style="gallery"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 18px;
+  color: var(--text);
+  border: 1px solid var(--text20);
+}
+
+[data-style="gallery"] .name-logo:hover {
+  transform: none;
+  background-color: transparent;
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* Footer: the colophon plaque — centered caps under a hairline, like the
+   last wall label on the way out. (Blog pages re-assert their centering
+   via theme-base.css; the rule and type carry over.) */
+[data-style="gallery"] .footer-container {
+  border-top: 1px solid var(--text10);
+  margin: 0 10px;
+  padding: 30px 0 16px;
+}
+
+[data-style="gallery"] .footer-spacer {
+  display: none;
+}
+
+[data-style="gallery"] .footer-text,
+[data-style="gallery"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 9.5px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--text40);
+}
+
+
+/* ---- Hero: the title wall -------------------------------------------------- */
+
+/* Exhibition title in Inter 300 at the tile's 0.01em — present through
+   scale and air, not weight. Width check for the ~795px desktop column:
+   "full stack engineer." ≈ 9.5em in Inter Light → ~570px at the 60px cap,
+   caret included. */
+[data-style="gallery"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  font-size: clamp(48px, 4.5vw, 60px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+/* The one moving thing in the room: the classic caret, thinned to an ink
+   hairline. (The engine drives the blink inline.) */
+[data-style="gallery"] .cursor {
+  background-color: var(--text);
+  width: 2px;
+}
+
+/* The typed emphasis stays ink — no accent color exists here — and steps
+   to 500, the house emphasis weight. */
+[data-style="gallery"] #typing-text .typing-accent {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* Strapline as the exhibition's medium line: a letterspaced caps label,
+   mono retired. (Higher specificity than the mobile ID rule, so this size
+   holds on the small sheet too.) */
+[data-style="gallery"] #sub-text {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text45);
+}
+
+/* Socials: gray glyphs that step to ink in place — no lift, no color. */
+[data-style="gallery"] .socials-item {
+  color: var(--text60);
+}
+
+[data-style="gallery"] .socials-item:hover i {
+  color: var(--text);
+  transform: none;
+}
+
+/* The sidebar's extension rule joins the hairline system. */
+[data-style="gallery"] .socials-menu-spacer {
+  border-color: var(--text10);
+}
+
+/* The portrait hangs as the first work: a white mat inside a hairline
+   frame, full color — the works carry the only color in the room. Stays
+   clickable (it is a .card tilt target, held flat by theme-base.css).
+   border-box + object-fit keep the print inside its 225×400 box. */
+[data-style="gallery"] #typing-image {
+  box-sizing: border-box;
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 10px;
+  object-fit: cover;
+}
+
+
+/* ---- Section headers: exhibition didactics ---------------------------------
+   Each section opens like a room: a hairline runs the full wall, then a
+   tiny catalog number in letterspaced gray, then the title in Inter 300 —
+   the didactic panel, not a headline. */
+
+[data-style="gallery"] .section-header-wrapper {
+  display: block;
+  border-top: 1px solid var(--text10);
+  padding-top: 20px;
+  margin: 0 10px 56px;
+}
+
+[data-style="gallery"] .section-header-spacer {
+  display: none;
+}
+
+[data-style="gallery"] .section-header {
+  margin: 0;
+  padding: 0;
+  font-weight: 300;
+  font-size: clamp(26px, 2.6vw, 32px);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID
+   specificity; match them so the titles stay ink whatever the toy does
+   to --accent. */
+[data-style="gallery"] #about-section-header,
+[data-style="gallery"] #jobs-header,
+[data-style="gallery"] #project-header,
+[data-style="gallery"] #blog-header,
+[data-style="gallery"] #contact-section-header,
+[data-style="gallery"] .blog-section-header {
+  color: var(--text);
+}
+
+/* "01." as a catalog number: its own wall-label line above the title. */
+[data-style="gallery"] .sec-num {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.35em;
+  color: var(--text40);
+  margin: 0 0 14px;
+  vertical-align: baseline;
+}
+
+
+/* ---- About / Skills: works on the wall --------------------------------------
+   The surface grammar for the whole skin: a white mat in a hairline frame
+   with generous padding — content hung, not carded. */
+
+[data-style="gallery"] .card-style {
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 36px 38px;
+}
+
+/* "About Me" / "Skills" as wall labels: small letterspaced caps in gray. */
+[data-style="gallery"] .card-title,
+[data-style="gallery"] .about-header,
+[data-style="gallery"] .skills-header {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text45);
+  margin-bottom: 26px;
+}
+
+/* Catalog index entries: quiet 500, ink. */
+[data-style="gallery"] .skills-section-header {
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+/* The body reads at a gallery pace: light face, open leading, capped
+   measure — the empty wall to the right is deliberate. */
+[data-style="gallery"] .about-text,
+[data-style="gallery"] .skills-text,
+[data-style="gallery"] .contact-text {
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.75;
+  max-width: 62ch;
+}
+
+[data-style="gallery"] .skills-text {
+  border-bottom: 1px solid var(--text5);
+  padding-bottom: 26px;
+}
+
+[data-style="gallery"] .skills-text:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+
+/* ---- Experience: the checklist on the rail ---------------------------------- */
+
+/* The 3px navy spine thins to a hairline. */
+[data-style="gallery"] .nav-container {
+  border-left: 1px solid var(--text10);
+}
+
+/* Catalog rows: line-height pinned in px because script.js measures the
+   selected item's height at load to size the highlight bar, and Inter is
+   a late webfont — a font-relative line box would leave the bar sized to
+   the fallback face. Rest is gray; hover and selected step to ink on the
+   white wall (the registry's --jobs-menu-* tokens keep the fills white /
+   one gray step). */
+[data-style="gallery"] .menu li {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  font-weight: 400;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+  color: var(--text45);
+  border-radius: 0;
+  padding: 13px 18px;
+}
+
+[data-style="gallery"] .menu li:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+
+[data-style="gallery"] .menu li.selected {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Checklist rules between rows (desktop only — the mobile rail runs
+   horizontal and the scroll wrapper carries its own rule). */
+@media (min-width: 1101px) {
+  [data-style="gallery"] .menu li {
+    border-bottom: 1px solid var(--text5);
+  }
+
+  [data-style="gallery"] .menu li:last-child {
+    border-bottom: none;
+  }
+}
+
+/* The highlight bar reduced to a thin ink rule on the hairline spine. It
+   snaps between rows — the caret is the only thing that moves in this
+   room. JS writes geometry, border-radius, and transition inline on every
+   move (hence the !importants): desktop left/width are constants (safe to
+   pin in this block); desktop top/height are measured — never touched. */
+[data-style="gallery"] .highlight {
+  background: var(--text);
+  box-shadow: none;
+  border-radius: 0 !important;
+  transition: none !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="gallery"] .highlight {
+    left: -1px !important;
+    width: 1px !important;
+  }
+}
+
+/* The dossier hangs like everything else: white mat, hairline frame. */
+[data-style="gallery"] .job-content {
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 32px 36px;
+}
+
+[data-style="gallery"] .job-title {
+  color: var(--text);
+  font-size: 21px;
+  font-weight: 300;
+  letter-spacing: 0.01em;
+}
+
+/* Datelines as the label's medium line: letterspaced caps, mono retired. */
+[data-style="gallery"] .job-dates {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text40);
+}
+
+/* Catalog dashes, not discs. */
+[data-style="gallery"] .job-bullets {
+  list-style-type: "–";
+  padding-left: 16px;
+  font-size: 15px;
+  line-height: 1.75;
+  max-width: 66ch;
+}
+
+[data-style="gallery"] .job-bullets li {
+  padding-left: 10px;
+}
+
+[data-style="gallery"] .job-bullets li::marker {
+  color: var(--text30);
+}
+
+/* Panel changes cut, silently — nothing in this room slides. script.js
+   drives the swap with timeouts (not animationend), so killing these
+   animations is safe: the old panel holds until JS hides it. */
+[data-style="gallery"] .job-in-right {
+  transform: none;
+  animation: none;
+}
+
+[data-style="gallery"] .job-out-right {
+  transform: none;
+  transition: none;
+}
+
+
+/* ---- Selected Works: works on a wall -----------------------------------------
+   Each plate gets a generous white mat inside a hairline frame, full
+   color — the art carries the only color in the room. The caption block
+   beneath/beside is a museum wall label: letterspaced caps title, a
+   lighter description, then the tech line as "medium / dimensions". */
+
+[data-style="gallery"] .fc-style-floating .fc-card-image {
+  box-sizing: border-box;
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 18px;
+}
+
+/* Caption hangs from the plate's top edge, like a label beside a frame. */
+[data-style="gallery"] .fc-style-floating .fc-card-body {
+  justify-content: flex-start;
+  padding-top: 6px;
+}
+
+/* Wall-label title: small caps at 500 (a loaded weight — the base sheet
+   bolds this). */
+[data-style="gallery"] .fc-card-title {
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+
+[data-style="gallery"] .fc-card-desc {
+  color: var(--text65);
+  font-size: 14.5px;
+  font-weight: 300;
+  line-height: 1.7;
+  max-width: 56ch;
+}
+
+/* The medium line: tech tags as one quiet caption row, chips dissolved
+   into middot-separated type (the shared .pill restyle below sets the
+   face; this only spaces the row). */
+[data-style="gallery"] .fc-card-tech {
+  gap: 6px 10px;
+  margin-bottom: 22px;
+}
+
+/* CTA: an underlined label — underline is the only hover grammar. The
+   resting rule is gray and steps to ink. (text-decoration won't draw on a
+   flex container's children, so the rule is a border.) */
+[data-style="gallery"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text);
+  border: none;
+  border-bottom: 1px solid var(--text25);
+  border-radius: 0;
+  padding: 0 0 5px;
+  transition: border-color 0.25s ease-in-out;
+}
+
+[data-style="gallery"] .fc-card-cta:hover {
+  background-color: transparent;
+  color: var(--text);
+  border-color: var(--text);
+  transform: none;
+}
+
+[data-style="gallery"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="gallery"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots: small gray marks, the active one ink. Centered under the wall,
+   no scale pop. */
+[data-style="gallery"] .fc-dot {
+  width: 6px;
+  height: 6px;
+  background-color: var(--text);
+  opacity: 0.15;
+}
+
+[data-style="gallery"] .fc-dot:hover {
+  opacity: 0.4;
+}
+
+[data-style="gallery"] .fc-dot.active {
+  background-color: var(--text);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Blog: small works, labeled --------------------------------------------- */
+
+/* Teasers hang on the same mat grammar; hover steps the wall one gray and
+   underlines the title — a label you can press. */
+[data-style="gallery"] .blog-card {
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 30px;
+}
+
+[data-style="gallery"] .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="gallery"] .blog-card:hover .blog-card-title {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+[data-style="gallery"] .blog-card-title {
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+/* The label's medium line: dateline in letterspaced caps, mono retired. */
+[data-style="gallery"] .blog-card-date {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text40);
+}
+
+[data-style="gallery"] .blog-card-excerpt {
+  color: var(--text65);
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="gallery"] .blog-listing-grid .blog-card {
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+}
+
+[data-style="gallery"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="gallery"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.45;
+}
+
+[data-style="gallery"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text40);
+}
+
+[data-style="gallery"] .blog-listing-grid .blog-card .blog-card-excerpt {
+  color: var(--text65);
+  font-weight: 300;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the loaded 300
+   (the caret rule above thins its cursor too). */
+[data-style="gallery"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 300;
+  font-size: clamp(44px, 4vw, 56px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+}
+
+[data-style="gallery"] [id^="blog-sub-text"] {
+  color: var(--text60);
+  font-weight: 300;
+  line-height: 1.75;
+}
+
+/* Filters: plain labels in a row; hover underlines, the active one is ink
+   under its rule. (Border kept transparent so nothing shifts on toggle.) */
+[data-style="gallery"] .filter-pill {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background-color: transparent;
+  border-color: transparent;
+  color: var(--text45);
+  padding: 6px 4px;
+}
+
+[data-style="gallery"] .filter-pill:hover {
+  color: var(--text);
+  border-color: transparent;
+  background-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+
+[data-style="gallery"] .filter-pill.active {
+  color: var(--text);
+  border-color: transparent;
+  background-color: transparent;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-thickness: 1px;
+}
+
+
+/* ---- Blog post page: the reading room ----------------------------------------- */
+
+[data-style="gallery"] .blog-post-title {
+  color: var(--text);
+  font-weight: 300;
+  font-size: clamp(30px, 3.6vw, 38px);
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+}
+
+[data-style="gallery"] .blog-post-content {
+  font-weight: 300;
+  line-height: 1.85;
+}
+
+/* Crossheads as didactics: a hairline opens each one, like entering the
+   next room of the essay. */
+[data-style="gallery"] .blog-post-content h2 {
+  color: var(--text);
+  font-size: 21px;
+  font-weight: 400;
+  border-top: 1px solid var(--text10);
+  padding-top: 18px;
+}
+
+[data-style="gallery"] .blog-post-content h3 {
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+/* Quotes: a hairline in the margin, gray voice. */
+[data-style="gallery"] .blog-post-content blockquote {
+  border-left: 1px solid var(--text25);
+  color: var(--text55);
+}
+
+[data-style="gallery"] .blog-post-content hr {
+  border-top: 1px solid var(--text10);
+}
+
+/* Tables rule as hairline schedules; the header band is the one gray step. */
+[data-style="gallery"] .blog-post-content th,
+[data-style="gallery"] .blog-post-content td {
+  border: 1px solid var(--text10);
+}
+
+[data-style="gallery"] .blog-post-content th {
+  background-color: var(--secondary);
+  font-weight: 500;
+}
+
+/* Post photographs hang in white mats inside hairline frames, full color —
+   the works keep the only color. border-box keeps the frame inside the
+   column (the site is content-box). */
+[data-style="gallery"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 14px;
+}
+
+/* Code keeps its real mono face (--font-mono untouched); the weight pin
+   stops the room's 300 from thinning it. Inline chips sit on the gray
+   step; blog-styles pins a literal 4px radius, zeroed here. */
+[data-style="gallery"] .blog-post-content code {
+  background-color: var(--secondary);
+  border-radius: 0;
+  font-weight: 400;
+}
+
+/* Fenced blocks: the shared dark ground lives in theme-base.css; this
+   sheet only frames the one dark surface with the house hairline. */
+[data-style="gallery"] .blog-post-content pre {
+  border: 1px solid var(--text10);
+}
+
+/* Diagrams sit on the gray step in a hairline frame (mermaid reads the
+   palette at render time via blog/post.html); node corners go square. */
+[data-style="gallery"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+}
+
+[data-style="gallery"] .blog-post-content .mermaid .node rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="gallery"] #metr-chart {
+  border: 1px solid var(--text10);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="gallery"] #pareto-chart,
+[data-style="gallery"] #ara-objectives-chart,
+[data-style="gallery"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the last room ----------------------------------------------------- */
+
+[data-style="gallery"] .contact-view-left {
+  background-color: var(--bg);
+  border: 1px solid var(--text10);
+  padding: 36px 38px;
+}
+
+/* The map hangs framed and in color, like the plates. border-box: the
+   wrapper is width-constrained (50%) and the site is content-box. (It is
+   a .card tilt target, held flat by theme-base.css.) */
+[data-style="gallery"] .contact-image-wrapper {
+  box-sizing: border-box;
+  border: 1px solid var(--text10);
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, tags, privacy): medium lines -------
+   Chips dissolve into caption type — the "oil on canvas, 2026" line of a
+   wall label — separated by middots wherever they sit in a row. */
+
+[data-style="gallery"] .pill {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  background-color: transparent;
+  color: var(--text45);
+  padding: 0;
+}
+
+[data-style="gallery"] .pill + .pill::before {
+  content: "·";
+  color: var(--text30);
+  margin-right: 10px;
+}
+
+/* Without chip fills the post-meta entries need the same row rhythm. */
+[data-style="gallery"] .blog-post-meta {
+  gap: 6px 10px;
+}
+
+/* The listing grid pins tag-chip size/padding at higher specificity than
+   the blanket .pill rule; match it so those tags join the caption line. */
+[data-style="gallery"] .blog-listing-grid .blog-card .blog-card-tags .pill {
+  font-size: 9.5px;
+  padding: 0;
+}
+
+
+/* ---- Privacy + 404: same room --------------------------------------------------- */
+
+[data-style="gallery"] .privacy-header {
+  color: var(--text);
+  font-weight: 300;
+  font-size: clamp(30px, 3.6vw, 38px);
+  letter-spacing: 0.01em;
+}
+
+/* The spacer reads --neutral-gray by default; join the hairline system. */
+[data-style="gallery"] .privacy-header-spacer {
+  background-color: var(--text10);
+  height: 1px;
+}
+
+[data-style="gallery"] .privacy-content {
+  font-weight: 300;
+  line-height: 1.85;
+}
+
+[data-style="gallery"] .privacy-content h2 {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 21px;
+  border-top: 1px solid var(--text10);
+  padding-top: 18px;
+}
+
+/* The 404 code is hardcoded SF Mono + accent in the page's own styles;
+   here it sets as a quiet catalog number in the light face. */
+[data-style="gallery"] .nf-code {
+  font-family: var(--font-body);
+  font-weight: 300;
+  color: var(--text);
+}
+
+
+/* ---- Cycler dock: a white card in a hairline frame -------------------------------- */
+
+[data-style="gallery"] .tc-dock {
+  background: var(--bg);
+  border: 1px solid var(--text15);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* The fallback FAB and the dock's controls square off with the room. */
+[data-style="gallery"] .tc-toggle {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+[data-style="gallery"] .tc-action,
+[data-style="gallery"] .tc-presets button,
+[data-style="gallery"] .tc-schemes button,
+[data-style="gallery"] .tc-role,
+[data-style="gallery"] .tc-sw {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ---------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* The room narrows but keeps its air. */
+  [data-style="gallery"] .section-spacer {
+    height: 7em;
+  }
+
+  /* Masthead scale on the small sheet: the mobile ID rule pins 34px bold;
+     the light face needs its weight re-pinned and "full stack engineer."
+     (≈ 9.5em) must clear a ~300px column on the narrowest screens. */
+  [data-style="gallery"] #typing-text {
+    font-weight: 300;
+    font-size: clamp(26px, 8vw, 31px);
+  }
+
+  [data-style="gallery"] #blog-typing-text {
+    font-size: clamp(26px, 8vw, 32px);
+  }
+
+  /* mobile-styles pins nowrap for the small inline headers; the didactic
+     block wraps (.sec-num is its own line, so wraps stay flush left). */
+  [data-style="gallery"] .section-header {
+    white-space: normal;
+    font-size: clamp(21px, 6vw, 26px);
+  }
+
+  [data-style="gallery"] .section-header-wrapper {
+    padding-top: 16px;
+    margin: 0 10px 40px;
+  }
+
+  [data-style="gallery"] .sec-num {
+    margin-bottom: 10px;
+  }
+
+  /* This skin hides the menu spacers, so the mobile quick links need their
+     own air or the mail glyph, Blog, and Resume run together. */
+  [data-style="gallery"] .static-menu-mobile .menu-list {
+    gap: 16px;
+  }
+
+  [data-style="gallery"] .static-menu-mobile .menu-item {
+    font-family: var(--font-body);
+    font-weight: 400;
+    font-size: 9.5px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text45);
+  }
+
+  [data-style="gallery"] .static-menu-mobile .socials-item {
+    color: var(--text50);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep
+     that, and make the tap state the gray-step frame instead. */
+  [data-style="gallery"] .name-logo:hover {
+    background-color: transparent;
+    color: var(--text);
+    border-color: var(--text20);
+  }
+
+  [data-style="gallery"] .name-logo:active {
+    background-color: transparent;
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  /* The mobile sheet re-cards the about/skills surfaces at --text10; keep
+     them hung on the mat grammar. */
+  [data-style="gallery"] .double-view-left,
+  [data-style="gallery"] .double-view-right {
+    background-color: var(--bg);
+    border: 1px solid var(--text10);
+    padding: 26px;
+  }
+
+  [data-style="gallery"] .card-style {
+    padding: 26px;
+  }
+
+  /* Jobs rail runs horizontal: the hairline moves to the wrapper's bottom
+     edge. The bar keeps its JS-written mobile geometry (left/width are
+     measured there; height is the inline 2px constant — untouched). */
+  [data-style="gallery"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text10);
+  }
+
+  [data-style="gallery"] .job-content {
+    padding: 24px;
+  }
+
+  /* Matted plates need a real gutter between works on the small wall. */
+  [data-style="gallery"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  /* The mobile card rule re-pins the --text10 fill; keep the white mat. */
+  [data-style="gallery"] .blog-card {
+    background-color: var(--bg);
+    border: 1px solid var(--text10);
+    padding: 24px;
+  }
+
+  [data-style="gallery"] .contact-view-left {
+    background-color: var(--bg);
+    border: 1px solid var(--text10);
+    padding: 26px;
+  }
+
+  /* The mobile footer joins the colophon plaque: hairline rule, centered
+     caps. */
+  [data-style="gallery"] .footer-container-mobile {
+    border-top: 1px solid var(--text10);
+    padding-top: 18px;
+  }
+
+  [data-style="gallery"] .footer-text-mobile {
+    text-align: center;
+  }
+}

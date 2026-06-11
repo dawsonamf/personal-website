@@ -361,8 +361,36 @@
       },
       css: '/css/themes/grid.css',
     },
+    'gallery': {
+      id: 'gallery',
+      label: 'Gallery',
+      polarity: 'light',
+      // White cube: tilt off, fully still — hung works do not move. No
+      // typing key: the classic caret stays, the one moving thing in the
+      // room (the sheet thins it to an ink hairline). No accent color at
+      // all — accent is decoration-grade gray, never set as text.
+      flags: { tilt: false, still: true },
+      colors: { text:'#1a1a1a', bg:'#ffffff', primary:'#1a1a1a', secondary:'#f7f7f7', accent:'#b9b9b9' },
+      tokens: {
+        // Inter only, 300/400/500 — display is 300, emphasis is 500,
+        // never bold. --font-mono stays the default: code keeps a real
+        // mono face; the sheet retires mono from the site chrome.
+        '--font-body': "'Inter', sans-serif",
+        '--font-heading': "'Inter', sans-serif",
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#9b9b9b',
+        // Jobs rail: rows rest on the white wall; hover is one gray step
+        // and the thin ink rule does the marking.
+        '--jobs-menu-navy-dark': '#ffffff',
+        '--jobs-menu-navy': '#f7f7f7',
+        '--jobs-menu-slate': '#6f6f6f',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap'],
+      css: '/css/themes/gallery.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;
