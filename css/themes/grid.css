@@ -8,6 +8,8 @@
    datelines, captions, pills) is retired to Helvetica; only real code keeps
    a mono face. Lowercase display type, tight tracking, hierarchy from
    placement. Fully still: no entrances, no tilt, no lifts, hard cuts.
+   One exception to the stillness: the default site's cursor follower
+   comes back, squared — a set square gliding over the grid.
 
    Red discipline: #e30613 appears ONLY as terminal punctuation and active
    state — the blinking caret (the masthead's one red mark), the square
@@ -80,6 +82,22 @@
 
 [data-style="grid"]::-webkit-scrollbar-thumb:hover {
   background: var(--primary);
+}
+
+/* The cursor follower returns, set square. theme-base.css hides it for
+   still skins ([data-still] #cursor-container, same 1-attr + 1-id
+   specificity — this sheet loads after, so the re-display wins); here it
+   comes back as the default site's dot-and-ring drawn on the grid's terms:
+   identical sizes, easing, and hover bounce, radius 0 — a set square
+   instead of a circle. No color rule needed: styles.css paints both marks
+   with var(--accent), which is ink in this palette. */
+[data-style="grid"] #cursor-container {
+  display: block;
+}
+
+[data-style="grid"] .cursor-follow,
+[data-style="grid"] .circle-follow {
+  border-radius: 0;
 }
 
 /* One family, two weights. The system stack always carries a real 700, so

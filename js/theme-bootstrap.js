@@ -335,12 +335,14 @@
     },
     'grid': {
       id: 'grid',
-      label: 'Grid',
+      label: 'Swiss Grid',
       polarity: 'light',
       // Müller-Brockmann doesn't move: tilt off, fully still. The visible
       // column grid is drawn by the skin sheet, not a flag. No typing key:
       // the classic caret stays — the sheet recolors it Swiss red, the
-      // masthead's one red mark.
+      // masthead's one red mark. The skin sheet also brings the cursor
+      // follower back (squared) by re-displaying #cursor-container over
+      // theme-base's data-still hide.
       flags: { tilt: false, still: true },
       colors: { text:'#111111', bg:'#ffffff', primary:'#e30613', secondary:'#f4f4f4', accent:'#111111' },
       tokens: {
