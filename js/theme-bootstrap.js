@@ -389,8 +389,37 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap'],
       css: '/css/themes/gallery.css',
     },
+    'wanted': {
+      id: 'wanted',
+      label: 'Wanted',
+      polarity: 'light',
+      // Territorial reward poster: tilt off, fully still — handbills nailed
+      // to a board do not move. Every hover is an ink-press hard cut.
+      flags: { tilt: false, still: true },
+      // Cursorless masthead: each glyph lands like a typebar strike — held
+      // off the page a beat, one over-inked frame, then it settles clean
+      // (the skin animates the engine's glyph spans; the Special Elite
+      // body makes the typewriter grammar literal).
+      typing: 'letter',
+      colors: { text:'#3a2a18', bg:'#f0e2c0', primary:'#8c3b22', secondary:'#f7eed6', accent:'#b08945' },
+      tokens: {
+        '--font-body': "'Special Elite', cursive",
+        '--font-heading': "'Rye', cursive",
+        // --font-mono stays the default: code keeps a real mono face.
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#8a7a5c',
+        // Selected jobs entry reads as the bright handbill panel; hover is
+        // a deeper sun-toasted parchment wash.
+        '--jobs-menu-navy-dark': '#f7eed6',
+        '--jobs-menu-navy': '#e4d2a6',
+        '--jobs-menu-slate': '#7a6644',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Rye&family=Smokum&family=Special+Elite&display=swap'],
+      css: '/css/themes/wanted.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

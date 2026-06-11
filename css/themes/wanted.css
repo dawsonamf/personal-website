@@ -1,0 +1,1155 @@
+/* Wanted: the territorial reward poster. The page itself is the notice —
+   sun-bleached parchment with a brass-warm fade at the top of the sheet, a
+   toasted vignette at the edges, and a faint laid-paper weave. Panels
+   (about/skills, the jobs rap sheet, the blog-post notice, the contact
+   reward line) are brighter handbills nailed over it, each framed by the
+   double-rule trick: a 2px ink border, then an inset box-shadow ring of
+   paper and a second ring of ink. The hero is the poster head set in Rye,
+   the strapline is the second-billing line in Smokum, jobs read as a
+   marshal's ledger (rust highlight bar, rubber-stamp dates, ruled rows),
+   carousel plates are matted reward handbills that hold a sepia plate tone
+   until hovered, blog cards are telegraph dispatches with dashed datelines,
+   pills are ticket stubs (dashed torn sides), and a brass star — clip-path,
+   engraved with a rivet and darkened tips — anchors the contact notice.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   mobile fixes come from css/themes/theme-base.css via flags.still +
+   flags.tilt. Hovers are hard cuts — ink presses, nothing glows or lifts.
+   Type system: Rye is top billing (masthead, section heads, post titles,
+   carousel titles), Smokum is second billing (panel titles, crossheads,
+   job titles, blog-card heads), Special Elite hammers out every body
+   surface including long-form articles — the telegram-office voice is the
+   point, so article text runs a notch larger (16.5px) for readability.
+   All three faces ship one 400 weight: every bolded surface pins to 400
+   and emphasis re-routes to rust ink instead of synthesized bold.
+   Line/shadow stance: every rule, ring, and fill derives from the role
+   tokens and alpha ramps so the palette toy keeps working; the only
+   literals are the ink-toned drop shadows rgba(58,42,24,…) under panels,
+   plates, and the dock. */
+
+
+/* ---- Foundations: parchment, rust ink, hard cuts -------------------------- */
+
+[data-style="wanted"] ::selection {
+  background: var(--primary);
+  color: var(--secondary);
+}
+
+/* The sheet: a brass-warm sun-fade at the head of the poster, a toasted
+   vignette at the edges, and two faint crossing line layers as the laid
+   weave of the paper. */
+[data-style="wanted"] body {
+  background-image:
+    radial-gradient(130% 100% at 50% 0%, var(--accent15), transparent 65%),
+    radial-gradient(160% 130% at 50% 45%, transparent 55%, var(--text10)),
+    repeating-linear-gradient(178deg, var(--text5) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(88deg, var(--accent5) 0 1px, transparent 1px 9px);
+}
+
+/* Rust-ink scrollbar on parchment. ([data-style] sits on <html>, so these
+   select the root scrollbar.) */
+[data-style="wanted"] {
+  scrollbar-color: var(--primary) var(--bg);
+}
+
+[data-style="wanted"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="wanted"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text20);
+}
+
+[data-style="wanted"]::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 2px solid var(--bg);
+}
+
+/* Rye and Smokum register as single 400 faces — never let a heading
+   synthesize bold (it smears the spurs). */
+[data-style="wanted"] h1,
+[data-style="wanted"] h2,
+[data-style="wanted"] h3,
+[data-style="wanted"] h4 {
+  font-weight: 400;
+}
+
+/* Special Elite has no bold either: emphasis prints in rust ink. */
+[data-style="wanted"] b,
+[data-style="wanted"] strong {
+  font-weight: 400;
+  color: var(--primary);
+}
+
+/* Links print in rust with a real underline; hover is an ink-press wash,
+   hard cut. The default's animated underline pseudo is suppressed. */
+[data-style="wanted"] .text-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+  transition: none;
+}
+
+[data-style="wanted"] .text-link::before {
+  display: none;
+}
+
+[data-style="wanted"] .text-link:hover {
+  background-color: var(--text10);
+}
+
+/* Poster rhythm: a little tighter than the default air. */
+[data-style="wanted"] .section-spacer {
+  height: 7em;
+}
+
+
+/* ---- Chrome: brass-badge logo, ruled menus, printer's imprint -------------- */
+
+/* The logo "D" is a small brass badge: round, ink-rimmed, with an engraved
+   inner ring. (Its intro fadein only animates opacity — safe to restyle.) */
+[data-style="wanted"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 19px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  color: var(--text);
+  border: 1.5px solid var(--text);
+  box-shadow: inset 0 0 0 2.5px var(--text30);
+  transition: none;
+}
+
+[data-style="wanted"] .name-logo:hover {
+  transform: none;
+  background-color: var(--text);
+  color: var(--accent);
+  transition: none;
+}
+
+/* Static menu: the masthead ear, framed by double rules top and bottom.
+   The header row is a stretch flexbox sized by the logo's margin box
+   (~67px), so the strip must size to its own 3.5em list or the rules land
+   ~11px too far apart. */
+[data-style="wanted"] .static-menu {
+  background-color: transparent;
+  border-top: 3px double var(--text60);
+  border-bottom: 3px double var(--text60);
+  box-shadow: none;
+  align-self: flex-start;
+}
+
+/* Floating menu: a parchment slip with its own double-rule frame (one inset
+   paper ring, one ink ring) and an ink-toned shadow. */
+[data-style="wanted"] .moving-menu {
+  background-color: var(--bg);
+  border: 1.5px solid var(--text);
+  box-shadow:
+    inset 0 0 0 3px var(--bg),
+    inset 0 0 0 4px var(--text40),
+    0 3px 14px rgba(58, 42, 24, 0.28);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Departments hammer out in typewriter caps; hover is an ink press. */
+[data-style="wanted"] .menu-item {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text65);
+  padding: 3px 7px;
+  transition: none;
+}
+
+[data-style="wanted"] .menu-item:hover {
+  color: var(--primary);
+  background-color: var(--text10);
+  transition: none;
+}
+
+[data-style="wanted"] .menu-spacer {
+  border-color: var(--text40);
+}
+
+/* Footer: the printer's imprint — fine print between the stock end rules. */
+[data-style="wanted"] .footer-spacer {
+  border-color: var(--text35);
+}
+
+[data-style="wanted"] .footer-text,
+[data-style="wanted"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+
+/* ---- Hero: the poster head ---------------------------------------------------- */
+
+/* Rye caps at notice scale. The longest typed line ("full stack engineer.")
+   must clear the ~795px column: 20 glyphs of wide circus-slab caps at the
+   52px cap run ≈ 680px. */
+[data-style="wanted"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(40px, 4.1vw, 52px);
+  line-height: 1.18;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The typed accent words print in rust, not brass — brass is too pale to
+   carry display type on parchment. */
+[data-style="wanted"] #typing-text .typing-accent,
+[data-style="wanted"] #blog-typing-text .typing-accent {
+  color: var(--primary);
+}
+
+/* Cursorless masthead: the registry sets typing 'letter' — each glyph lands
+   like a typebar strike: held off the page a beat, then one over-inked
+   frame (a heavier hit via text-shadow), then it settles clean. Deletes
+   hold and vanish in one cut. Reduced-motion users get instant glyphs via
+   theme-base.css. */
+[data-style="wanted"] #typing-text .tw,
+[data-style="wanted"] #blog-typing-text .tw {
+  animation: wanted-strike-in 0.12s linear backwards;
+}
+
+[data-style="wanted"] #typing-text .tw-out,
+[data-style="wanted"] #blog-typing-text .tw-out {
+  animation: wanted-strike-out 0.18s linear forwards;
+}
+
+@keyframes wanted-strike-in {
+  0%     { opacity: 0; }
+  49.9%  { opacity: 0; }
+  50%    { opacity: 1; text-shadow: 0.6px 0 0 currentColor, -0.6px 0 0 currentColor, 0 0.6px 0 currentColor; }
+  99.9%  { opacity: 1; text-shadow: 0.6px 0 0 currentColor, -0.6px 0 0 currentColor, 0 0.6px 0 currentColor; }
+  100%   { opacity: 1; text-shadow: none; }
+}
+
+@keyframes wanted-strike-out {
+  0%    { opacity: 1; }
+  99.9% { opacity: 1; }
+  100%  { opacity: 0; }
+}
+
+/* The strapline is the second-billing line — Smokum letterspaced caps in
+   rust, the "DEAD OR ALIVE" slot. (Its fadein only animates opacity.) */
+[data-style="wanted"] #sub-text {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+/* The photograph becomes the rotogravure plate on the notice: a paper
+   matte, 2px ink border, and the double-rule ring drawn in the matte
+   (inset shadows on an img only show over its padding, which is exactly
+   where the ring belongs). Sepia plate tone; hover restores color, hard
+   cut. */
+[data-style="wanted"] #typing-image {
+  padding: 8px;
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 4px var(--secondary),
+    inset 0 0 0 5.5px var(--text),
+    0 10px 22px rgba(58, 42, 24, 0.22);
+  filter: sepia(0.4) saturate(0.78) contrast(1.04);
+  transition: none;
+}
+
+[data-style="wanted"] #typing-image:hover {
+  filter: none;
+}
+
+/* Socials: bare ink glyphs; rust on touch, no lift — posters are still. */
+[data-style="wanted"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="wanted"] .socials-item i {
+  transition: none;
+}
+
+[data-style="wanted"] .socials-item:hover i {
+  color: var(--primary);
+  transform: none;
+}
+
+[data-style="wanted"] #socials-list .socials-menu-spacer,
+[data-style="wanted"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text30);
+}
+
+
+/* ---- Section headers: billing lines --------------------------------------------
+   Each section opens like a billing line on the notice: Rye caps in rust,
+   the index number as a brass-rimmed inspection tag (ink rim, brass band,
+   number punched in the middle), and the spacer redrawn as a double rule
+   running to the margin. */
+
+[data-style="wanted"] .section-header {
+  font-size: clamp(30px, 3.4vw, 42px);
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them so every billing line prints rust. */
+[data-style="wanted"] #about-section-header,
+[data-style="wanted"] #jobs-header,
+[data-style="wanted"] #project-header,
+[data-style="wanted"] #blog-header,
+[data-style="wanted"] #contact-section-header,
+[data-style="wanted"] .blog-section-header {
+  color: var(--primary);
+}
+
+[data-style="wanted"] .sec-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0;
+  color: var(--text);
+  border: 1.5px solid var(--text);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 3px var(--accent60);
+  margin-right: 14px;
+  vertical-align: middle;
+}
+
+/* The spacer prints as a double rule. */
+[data-style="wanted"] .section-header-spacer {
+  height: 5px;
+  background: none;
+  border-top: 1px solid var(--text45);
+  border-bottom: 1px solid var(--text45);
+}
+
+
+/* ---- About / Skills: the notice body --------------------------------------------
+   The handbill grammar every panel shares: brighter paper (--secondary), a
+   2px ink border, the double-rule frame via inset rings (one of paper, one
+   of ink), a brass sun-fade bleeding down from the head of the sheet, and
+   an ink-toned shadow. The columns' intro slide pins inline styles at
+   animationend — retimed nothing, removed nothing. */
+
+[data-style="wanted"] .card-style {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 4px var(--secondary),
+    inset 0 0 0 5.5px var(--text),
+    0 10px 24px rgba(58, 42, 24, 0.18);
+  background-image: radial-gradient(120% 90% at 50% 0%, var(--accent10), transparent 70%);
+  padding: 26px 28px;
+}
+
+/* "About Me" / "Skills" as centered second-billing lines over a short
+   double rule. */
+[data-style="wanted"] .card-title,
+[data-style="wanted"] .about-header,
+[data-style="wanted"] .skills-header {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 30px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--primary);
+  width: fit-content;
+  margin: 0 auto 18px;
+  padding: 0 8px 6px;
+  border-bottom: 3px double var(--text50);
+}
+
+/* Web / iOS / ML run as ledger sub-billing: typewriter caps over a brass
+   tally rule. */
+[data-style="wanted"] .skills-section-header {
+  width: fit-content;
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text);
+  border-bottom: 2px solid var(--accent);
+  padding-bottom: 3px;
+}
+
+/* Special Elite runs small — body sizes get a half-step bump. */
+[data-style="wanted"] .about-text,
+[data-style="wanted"] .skills-text,
+[data-style="wanted"] .contact-text {
+  font-size: 15.5px;
+  line-height: 1.75;
+}
+
+/* Perforated rule between skill entries. */
+[data-style="wanted"] .skills-text {
+  border-bottom: 1px dashed var(--text30);
+}
+
+[data-style="wanted"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the marshal's ledger --------------------------------------------- */
+
+[data-style="wanted"] .nav-container {
+  border-left: 2px solid var(--text30);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Special Elite arrives after that
+   measure — font-relative line boxes would leave the bar sized to the
+   fallback font. */
+[data-style="wanted"] .menu li {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 0;
+  transition: none;
+}
+
+/* The docket under review sits on the bright handbill panel, named in rust. */
+[data-style="wanted"] .menu li.selected {
+  background: var(--jobs-menu-navy-dark);
+  color: var(--primary);
+}
+
+/* The marker is a rust bar, snapped moves, no glow. JS writes the bar's
+   geometry, border-radius, and transition inline on every move, hence the
+   !importants; width is a JS constant only on desktop. */
+[data-style="wanted"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+  transition: none !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="wanted"] .highlight {
+    width: 4px !important;
+  }
+}
+
+/* The rap sheet: a handbill panel with faint ruled ledger rows under the
+   sun-fade. */
+[data-style="wanted"] .job-content {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 4px var(--secondary),
+    inset 0 0 0 5.5px var(--text),
+    0 10px 24px rgba(58, 42, 24, 0.18);
+  background-image:
+    radial-gradient(120% 90% at 50% 0%, var(--accent10), transparent 70%),
+    repeating-linear-gradient(180deg, transparent 0 27px, var(--text5) 27px 28px);
+  padding: 24px 30px 28px;
+}
+
+/* Offense headers in Smokum ink. */
+[data-style="wanted"] .job-title {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 27px;
+  line-height: 1.25;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+/* Dates land as a rubber stamp: rust frame, typewriter caps, set a hair
+   crooked (not a tilt target — safe to rotate). */
+[data-style="wanted"] .job-dates {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 1.5px solid var(--primary50);
+  padding: 3px 10px 2px;
+  width: fit-content;
+  transform: rotate(-1.4deg);
+  transform-origin: left center;
+  margin: 2px 0 4px;
+}
+
+[data-style="wanted"] .job-bullets {
+  list-style-type: square;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+[data-style="wanted"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* Docket changes are a quick page-turn in the ledger — fade, no slide.
+   script.js drives the swap with timeouts (not animationend), so retiming
+   these is safe. */
+[data-style="wanted"] .job-in-right {
+  transform: none;
+  animation-name: wanted-job-in;
+  animation-duration: 0.3s;
+}
+
+[data-style="wanted"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.22s ease-out;
+}
+
+@keyframes wanted-job-in {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: reward handbills -----------------------------------------------
+   Each plate is matted on handbill paper inside the double-rule frame, and
+   holds a sepia plate tone until hovered (hard cut back to color). */
+
+[data-style="wanted"] .fc-style-floating .fc-card-image {
+  padding: 10px;
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 5px var(--secondary),
+    inset 0 0 0 6.5px var(--text),
+    0 12px 26px rgba(58, 42, 24, 0.22);
+}
+
+[data-style="wanted"] .fc-style-floating .fc-card-image img {
+  filter: sepia(0.4) saturate(0.78) contrast(1.04);
+  transition: none;
+}
+
+[data-style="wanted"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Titles take top billing in Rye rust. */
+[data-style="wanted"] .fc-card-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 25px;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--primary);
+}
+
+[data-style="wanted"] .fc-card-desc {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text80);
+}
+
+/* CTA: the claim button — ink frame with a brass band inset, typewriter
+   caps; pressing it prints the label in paper on ink, hard cut.
+   (featured-carousel.css pins a literal 10px radius, zeroed here.) */
+[data-style="wanted"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text);
+  background-color: var(--accent20);
+  border: 2px solid var(--text);
+  border-radius: 0;
+  box-shadow: inset 0 0 0 3px var(--accent55);
+  padding: 11px 22px;
+  transition: none;
+}
+
+[data-style="wanted"] .fc-card-cta:hover {
+  background-color: var(--text);
+  color: var(--secondary);
+  transform: none;
+}
+
+[data-style="wanted"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="wanted"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots: punched holes in the tally strip; the current one is filled rust. */
+[data-style="wanted"] .fc-dot {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--text);
+  background-color: transparent;
+  opacity: 1;
+  transition: none;
+}
+
+[data-style="wanted"] .fc-dot:hover {
+  background-color: var(--text30);
+}
+
+[data-style="wanted"] .fc-dot.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  transform: none;
+}
+
+
+/* ---- Blog: telegraph dispatches ------------------------------------------------------
+   Cards print as dispatch slips: handbill paper in a single ink frame
+   (lighter than the double-ruled notices — these are wire copy, not
+   posters), a rust dateline over a dashed telegraph rule, Smokum heads.
+   Hover re-inks the frame and head, hard cut. */
+
+[data-style="wanted"] .blog-card {
+  background-color: var(--secondary);
+  border: 1.5px solid var(--text);
+  border-radius: 0;
+  box-shadow: 0 6px 16px rgba(58, 42, 24, 0.14);
+  transition: none;
+}
+
+[data-style="wanted"] .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary);
+}
+
+[data-style="wanted"] .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+[data-style="wanted"] .blog-card-title {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 21px;
+  line-height: 1.3;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+[data-style="wanted"] .blog-card-date {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border-bottom: 1px dashed var(--text30);
+  padding-bottom: 8px;
+}
+
+[data-style="wanted"] .blog-card-excerpt {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--text80);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="wanted"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+  border-radius: 0;
+}
+
+[data-style="wanted"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="wanted"] .blog-listing-grid .blog-card .blog-card-title {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 21px;
+  color: var(--text);
+}
+
+[data-style="wanted"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: var(--primary);
+}
+
+[data-style="wanted"] .blog-listing-grid .blog-card .blog-card-excerpt {
+  font-size: 14.5px;
+  color: var(--text80);
+}
+
+[data-style="wanted"] .blog-listing-grid .blog-card .blog-card-tags .pill {
+  border-color: var(--text40);
+  color: var(--text70);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the poster face
+   to its single 400. */
+[data-style="wanted"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(40px, 4.1vw, 52px);
+  line-height: 1.18;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="wanted"] [id^="blog-sub-text"] {
+  font-size: 15.5px;
+  line-height: 1.7;
+  color: var(--text80);
+}
+
+/* Filters: ticket stubs — solid rails, dashed torn ends; the active stub
+   is punched in rust. (Pills are never hidden by filtering.) */
+[data-style="wanted"] .filter-pill {
+  background-color: var(--secondary);
+  border: 1.5px solid var(--text50);
+  border-left-style: dashed;
+  border-right-style: dashed;
+  border-radius: 0;
+  color: var(--text70);
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  transition: none;
+}
+
+[data-style="wanted"] .filter-pill:hover {
+  color: var(--primary);
+  border-color: var(--primary);
+}
+
+[data-style="wanted"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary);
+}
+
+
+/* ---- Blog post page: the full notice ----------------------------------------------------
+   The article is one long handbill: double-rule frame, sun-faded head, the
+   title as the poster line, and the body hammered out on the typewriter at
+   reading size. */
+
+[data-style="wanted"] .blog-post-container {
+  box-sizing: border-box;
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 4px var(--secondary),
+    inset 0 0 0 5.5px var(--text),
+    0 12px 28px rgba(58, 42, 24, 0.18);
+  background-image: radial-gradient(120% 60% at 50% 0%, var(--accent10), transparent 70%);
+  padding: 44px 48px 56px;
+  margin: 24px auto 0;
+}
+
+[data-style="wanted"] .blog-post-header {
+  border-bottom: 3px double var(--text60);
+  padding-bottom: 18px;
+  margin-bottom: 34px;
+}
+
+[data-style="wanted"] .blog-post-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(30px, 4vw, 40px);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+/* Long-form stays on the typewriter — the telegram-office voice is the
+   skin — so it runs a half-step larger with open leading. */
+[data-style="wanted"] .blog-post-content {
+  font-size: 16.5px;
+  line-height: 1.85;
+  color: var(--text);
+}
+
+/* Crossheads: second billing over a double rule. */
+[data-style="wanted"] .blog-post-content h2 {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 27px;
+  letter-spacing: 0.03em;
+  color: var(--text);
+  border-bottom: 3px double var(--text40);
+  padding-bottom: 6px;
+}
+
+[data-style="wanted"] .blog-post-content h3 {
+  font-family: 'Smokum', cursive;
+  font-weight: 400;
+  font-size: 21px;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+/* Margin notes ride a rust double rule. */
+[data-style="wanted"] .blog-post-content blockquote {
+  border-left: 7px double var(--primary60);
+  color: var(--text70);
+}
+
+[data-style="wanted"] .blog-post-content hr {
+  border-top: 3px double var(--text50);
+}
+
+[data-style="wanted"] .blog-post-content th,
+[data-style="wanted"] .blog-post-content td {
+  border: 1px solid var(--text30);
+}
+
+[data-style="wanted"] .blog-post-content th {
+  background-color: var(--text10);
+  font-weight: 400;
+}
+
+/* Photographs print as rotogravure plates: ink frame, paper matte, sepia
+   tone until hovered. border-box keeps the frame inside blog-styles'
+   max-width: 100% and the 50% float widths (the site is content-box). */
+[data-style="wanted"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 2px solid var(--text);
+  padding: 6px;
+  background-color: var(--secondary);
+  filter: sepia(0.4) saturate(0.78) contrast(1.04);
+  transition: none;
+}
+
+[data-style="wanted"] .blog-post-content img.blog-image:hover {
+  filter: none;
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css — a dark
+   plate set into the notice, framed in ink. */
+[data-style="wanted"] .blog-post-content pre {
+  border: 2px solid var(--text);
+}
+
+/* Inline code: ink chips on the handbill (the higher-specificity pre rule
+   above unwinds this for fenced blocks). blog-styles pins a literal 4px
+   radius, zeroed here. */
+[data-style="wanted"] .blog-post-content code {
+  background-color: var(--text10);
+  color: var(--text);
+  border: 1px solid var(--text25);
+  border-radius: 0;
+}
+
+/* Diagrams sit on the parchment ground in an ink frame (mermaid reads the
+   palette at render time via blog/post.html); node corners square off. */
+[data-style="wanted"] .blog-post-content .mermaid {
+  background-color: var(--bg);
+  border: 2px solid var(--text);
+  border-radius: 0;
+}
+
+[data-style="wanted"] .blog-post-content .mermaid .node rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="wanted"] #metr-chart {
+  border: 2px solid var(--text);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="wanted"] #pareto-chart,
+[data-style="wanted"] #ara-objectives-chart,
+[data-style="wanted"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the reward line ---------------------------------------------------------
+   The grandest frame on the sheet: the double ink ring picks up a third,
+   brass ring, and a marshal's star — clip-path brass, engraved with a
+   center rivet and darkened tips — hangs over the reward text. The panel
+   is a flex column, so the star pseudo lands as a centered flex item above
+   the copy (a corner badge would overlap the text). */
+
+[data-style="wanted"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 4px var(--secondary),
+    inset 0 0 0 5.5px var(--text),
+    inset 0 0 0 7.5px var(--secondary),
+    inset 0 0 0 9px var(--accent60),
+    0 12px 26px rgba(58, 42, 24, 0.2);
+  background-image: radial-gradient(120% 100% at 50% 0%, var(--accent10), transparent 70%);
+  padding: 34px 36px;
+}
+
+[data-style="wanted"] .contact-view-left::before {
+  content: '';
+  width: 58px;
+  height: 58px;
+  align-self: center;
+  flex-shrink: 0;
+  margin-bottom: 16px;
+  background-color: var(--accent);
+  background-image:
+    radial-gradient(circle at 50% 46%, var(--text40) 0 4.5px, transparent 5.5px),
+    radial-gradient(circle at 50% 50%, transparent 54%, var(--text25) 55%);
+  clip-path: polygon(50% 2%, 61% 36%, 97% 36%, 68% 58%, 79% 94%, 50% 72%, 21% 94%, 32% 58%, 3% 36%, 39% 36%);
+  filter: drop-shadow(0 2px 0 rgba(58, 42, 24, 0.35));
+}
+
+/* Social glyphs print in ink on the notice; rust on touch, hard cut. */
+[data-style="wanted"] .contact-menu .socials-item,
+[data-style="wanted"] .contact-menu-mobile .socials-item {
+  color: var(--text);
+}
+
+[data-style="wanted"] .contact-menu .socials-item:hover i,
+[data-style="wanted"] .contact-menu-mobile .socials-item:hover i {
+  color: var(--primary);
+}
+
+/* The map plate: ink frame, sepia tone, color on hover (the img fills the
+   wrapper absolutely, so the frame is a single rule — no matte to ring). */
+[data-style="wanted"] .contact-image-wrapper {
+  border: 2px solid var(--text);
+  background-color: var(--secondary);
+  box-shadow: 0 12px 26px rgba(58, 42, 24, 0.2);
+}
+
+[data-style="wanted"] .contact-image {
+  filter: sepia(0.4) saturate(0.78) contrast(1.04);
+  transition: none;
+}
+
+[data-style="wanted"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): ticket stubs --------------------- */
+
+[data-style="wanted"] .pill {
+  background-color: transparent;
+  border: 1.5px solid var(--text45);
+  border-left-style: dashed;
+  border-right-style: dashed;
+  border-radius: 0;
+  color: var(--text70);
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 11px 3px;
+}
+
+/* The expand-visual heading (blog page carousel) bolds by default; pin to
+   the single 400. */
+[data-style="wanted"] .fc-expand-title {
+  font-weight: 400;
+}
+
+
+/* ---- Cycler dock: a parchment slip ------------------------------------------------------- */
+
+[data-style="wanted"] .tc-dock {
+  background: var(--bg);
+  border: 2px solid var(--text);
+  box-shadow:
+    inset 0 0 0 3px var(--bg),
+    inset 0 0 0 4px var(--text40),
+    0 12px 26px rgba(58, 42, 24, 0.3);
+  backdrop-filter: none;
+}
+
+/* The FAB (post/privacy pages) is a small brass seal. */
+[data-style="wanted"] .tc-toggle {
+  border-radius: 50%;
+  border: 2px solid var(--text);
+  background: var(--accent);
+  color: var(--text);
+  transition: none;
+}
+
+[data-style="wanted"] .tc-toggle:hover {
+  background: var(--text);
+  color: var(--accent);
+}
+
+[data-style="wanted"] .tc-action,
+[data-style="wanted"] .tc-presets button,
+[data-style="wanted"] .tc-schemes button,
+[data-style="wanted"] .tc-role,
+[data-style="wanted"] .tc-sw {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* The small sheet keeps the sun-fade and one weave layer. */
+  [data-style="wanted"] body {
+    background-image:
+      radial-gradient(140% 80% at 50% 0%, var(--accent15), transparent 65%),
+      repeating-linear-gradient(178deg, var(--text5) 0 1px, transparent 1px 7px);
+  }
+
+  /* Rye caps must clear a ~335px column with "FULL STACK ENGINEER." */
+  [data-style="wanted"] #typing-text {
+    font-size: clamp(20px, 6.4vw, 25px);
+  }
+
+  [data-style="wanted"] #sub-text {
+    font-size: 12px;
+    letter-spacing: 0.16em;
+  }
+
+  [data-style="wanted"] #blog-typing-text {
+    font-size: clamp(22px, 7vw, 27px);
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; billing
+     lines need to wrap, and the inspection tag shrinks with them. */
+  [data-style="wanted"] .section-header {
+    white-space: normal;
+    font-size: clamp(19px, 5.6vw, 25px);
+  }
+
+  [data-style="wanted"] .sec-num {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    box-shadow: inset 0 0 0 2.5px var(--accent60);
+    margin-right: 10px;
+  }
+
+  [data-style="wanted"] .section-header-spacer {
+    height: 4px;
+  }
+
+  [data-style="wanted"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="wanted"] .static-menu-mobile .menu-item {
+    font-family: var(--font-body);
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text70);
+  }
+
+  [data-style="wanted"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); the badge
+     keeps its brass at rest and inverts only on a real tap. */
+  [data-style="wanted"] .name-logo:hover {
+    background-color: var(--accent);
+    color: var(--text);
+  }
+
+  [data-style="wanted"] .name-logo:active {
+    background-color: var(--text);
+    color: var(--accent);
+  }
+
+  /* The mobile sheet re-cards these surfaces with the default tint; keep
+     them handbill paper, slimmer padding for the narrow column. */
+  [data-style="wanted"] .card-style {
+    padding: 22px 18px;
+  }
+
+  [data-style="wanted"] .double-view-left,
+  [data-style="wanted"] .double-view-right {
+    background-color: var(--secondary);
+    border-radius: 0;
+  }
+
+  [data-style="wanted"] .blog-card {
+    background-color: var(--secondary);
+    border-radius: 0;
+  }
+
+  /* Jobs rail runs horizontal: the rule moves to the wrapper's bottom edge,
+     and the rust marker keeps the JS-written height pinned thicker (height
+     is a JS constant only on mobile). */
+  [data-style="wanted"] .menu-scroll-wrapper {
+    border-bottom: 2px solid var(--text30);
+  }
+
+  [data-style="wanted"] .highlight {
+    height: 3px !important;
+  }
+
+  [data-style="wanted"] .job-content {
+    padding: 20px 16px 24px;
+  }
+
+  /* Matted plates: the frame must draw inside the box (the image is
+     width: 100% on mobile; content-box would overflow the card), and the
+     framed handbills need a real gutter between them. */
+  [data-style="wanted"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+    padding: 8px;
+    box-shadow:
+      inset 0 0 0 4px var(--secondary),
+      inset 0 0 0 5px var(--text),
+      0 8px 18px rgba(58, 42, 24, 0.2);
+  }
+
+  [data-style="wanted"] .featured-carousel-track {
+    gap: 28px;
+  }
+
+  [data-style="wanted"] .contact-view-left {
+    background-color: var(--secondary);
+    padding: 24px 20px;
+  }
+
+  [data-style="wanted"] .contact-view-left::before {
+    width: 46px;
+    height: 46px;
+    margin-bottom: 12px;
+  }
+
+  [data-style="wanted"] .blog-post-container {
+    padding: 28px 18px 40px;
+    margin-top: 18px;
+  }
+
+  [data-style="wanted"] .blog-post-title {
+    font-size: clamp(22px, 6.5vw, 28px);
+  }
+
+  [data-style="wanted"] .footer-text-mobile {
+    font-size: 11px;
+  }
+}
