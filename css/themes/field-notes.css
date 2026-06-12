@@ -8,7 +8,7 @@
    photograph here is taped down, and taped paper doesn't wiggle.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. The tilt pins come from css/themes/theme-base.css
+   docs/THEMES.md. The tilt pins come from css/themes/theme-base.css
    via flags.tilt; there is no still flag, so the motion pack stays. All
    pasted-in rotation still lives on wrappers and chips (#typing-right,
    .name-logo, date stamps, tape pseudos), never on .card/.blog-card —

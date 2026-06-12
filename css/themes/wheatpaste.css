@@ -10,7 +10,7 @@
    flyers, a clean face for the one surface you actually read at length).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. flags.still kills the scroll entrances, the
+   docs/THEMES.md. flags.still kills the scroll entrances, the
    cursor follower, and the dock lifts — nothing here animates smoothly, and
    every hover is a hard cut. Tilt stays ON: a hovered paste-up peels off
    the wall, which is the one motion this skin wants. All base rotation

@@ -27,7 +27,7 @@
    glyphs instantly under prefers-reduced-motion).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and
+   docs/THEMES.md. The code-block ground, tilt pins, and
    mobile fixes come from css/themes/theme-base.css via flags.tilt. No
    still flag: AOS fade-ups stay as the agit entrances, and the cursor
    follower stays — with the accent role set to ink, the dot-and-ring

@@ -11,7 +11,7 @@
    are the soft cobalt-ink shadows (rgba(34,51,92,…)) under raised porcelain.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and mobile
+   docs/THEMES.md. The code-block ground, tilt pins, and mobile
    fixes come from css/themes/theme-base.css via flags.tilt. No still flag:
    AOS entrances and the cursor follower stay (its accent dot reads as gilt). */
 
@@ -435,7 +435,7 @@
    swap with timeouts (not animationend), so retiming these is safe. */
 [data-style="chinoiserie"] .job-in-right {
   transform: none;
-  animation-name: chinoiserieJobFadeIn;
+  animation-name: chinoiserie-job-fade-in;
   animation-duration: 0.4s;
 }
 
@@ -445,7 +445,7 @@
   transition: opacity 0.3s ease-out;
 }
 
-@keyframes chinoiserieJobFadeIn {
+@keyframes chinoiserie-job-fade-in {
   from { opacity: 0; transform: none; }
   to   { opacity: 1; transform: none; }
 }

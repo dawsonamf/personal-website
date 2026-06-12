@@ -14,7 +14,7 @@
    and fill derives from the role tokens and their alpha ramps.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and
+   docs/THEMES.md. The code-block ground, tilt pins, and
    mobile fixes come from css/themes/theme-base.css via flags.tilt. No
    still flag: AOS entrances stay (motion limited to hard slide-ins) and
    the cursor follower stays — a blue circle and dot is already bauhaus. */

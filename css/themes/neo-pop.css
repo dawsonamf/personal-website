@@ -22,7 +22,7 @@
    prefers-reduced-motion).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and
+   docs/THEMES.md. The code-block ground, tilt pins, and
    mobile fixes come from css/themes/theme-base.css via flags.tilt. No
    still flag: AOS entrances stay as the action beats, and the cursor
    follower stays — the red dot-and-ring reads as a ben-day dot under the

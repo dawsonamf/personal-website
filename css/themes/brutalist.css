@@ -6,7 +6,7 @@
    compresses.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   docs/THEMES.md. Stillness, the code-block ground, and the
    mobile fixes come from css/themes/theme-base.css via flags.still + flags.tilt.
    Archivo Black registers as weight 400 only, so every place the site bolds
    heading-font text is pinned back to 400 below. Otherwise the browser

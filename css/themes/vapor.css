@@ -12,7 +12,7 @@
    lives in theme-base.css).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. No flags — no still, no tilt-off.
+   docs/THEMES.md. No flags — no still, no tilt-off.
    Line/shadow stance: every line, bloom, and glow derives from the alpha
    ramps (cyan --accent*, magenta --primary*), so the palette toy keeps
    working; the only literals are the chrome-metal text gradient and the

@@ -12,7 +12,7 @@
    reserves heavy rules for section openers only.)
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, the tilt
+   docs/THEMES.md. Stillness, the code-block ground, the tilt
    pins, and the mobile fixes come from css/themes/theme-base.css via
    flags.still + flags.tilt. */
 
@@ -371,7 +371,7 @@
    swap with timeouts (not animationend), so retiming these is safe. */
 [data-style="studio"] .job-in-right {
   transform: none;
-  animation-name: studioJobFadeIn;
+  animation-name: studio-job-fade-in;
 }
 
 [data-style="studio"] .job-out-right {
@@ -380,7 +380,7 @@
   transition: opacity 0.45s ease-out;
 }
 
-@keyframes studioJobFadeIn {
+@keyframes studio-job-fade-in {
   from { opacity: 0; transform: none; }
   to   { opacity: 1; transform: none; }
 }

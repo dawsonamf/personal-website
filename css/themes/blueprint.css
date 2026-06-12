@@ -7,7 +7,7 @@
    crop marks, tick-mark dots).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   docs/THEMES.md. Stillness, the code-block ground, and the
    mobile fixes come from css/themes/theme-base.css via flags.still + flags.tilt.
    Every line in this sheet derives from the alpha ramps (panel borders
    --text85, cell rules --text55, grid --text5/--text10, dimension lines
@@ -564,7 +564,7 @@
    drives the swap with timeouts (not animationend), so retiming is safe. */
 [data-style="blueprint"] .job-in-right {
   transform: none;
-  animation-name: blueprintJobFadeIn;
+  animation-name: blueprint-job-fade-in;
   animation-duration: 0.25s;
 }
 
@@ -574,7 +574,7 @@
   transition: opacity 0.2s ease-out;
 }
 
-@keyframes blueprintJobFadeIn {
+@keyframes blueprint-job-fade-in {
   from { opacity: 0; transform: none; }
   to   { opacity: 1; transform: none; }
 }

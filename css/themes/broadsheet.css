@@ -6,7 +6,7 @@
    vs de-carded, dense vs airy.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
+   docs/THEMES.md. Stillness, the code-block ground, and the
    mobile fixes come from css/themes/theme-base.css via flags.still + flags.tilt.
    The only literal colors here are ink-toned shadows. */
 
@@ -446,7 +446,7 @@
    these is safe. */
 [data-style="broadsheet"] .job-in-right {
   transform: none;
-  animation-name: broadsheetJobFadeIn;
+  animation-name: broadsheet-job-fade-in;
   animation-duration: 0.35s;
 }
 
@@ -456,7 +456,7 @@
   transition: opacity 0.3s ease-out;
 }
 
-@keyframes broadsheetJobFadeIn {
+@keyframes broadsheet-job-fade-in {
   from { opacity: 0; transform: none; }
   to   { opacity: 1; transform: none; }
 }

@@ -241,10 +241,6 @@
     });
   }
 
-  function applyTheme() {
-    root.setAttribute('data-theme', state.theme);
-  }
-
   function randomize() {
     let baseHue = null;
     for (let i=0; i<5; i++) {
@@ -303,7 +299,6 @@
     state.scheme = 'random';
     state.theme  = DEFAULT_THEME;
     try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
-    applyTheme();
     applyColors();
     renderSchemes();
   }
@@ -534,7 +529,6 @@
       restore();
     }
     injectDom();
-    applyTheme();
     applyColors();
     renderSchemes();
     renderPresets();

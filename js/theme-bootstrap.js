@@ -8,7 +8,7 @@
   window.__THEME_CYCLER_ENABLED = THEME_CYCLER_ENABLED;
 
   // ---- Style registry -----------------------------------------------------
-  // One entry per style version (architecture in todo/STYLE_VERSIONS_SPEC.md).
+  // One entry per style version (architecture in docs/THEMES.md).
   // The default entry stamps no attribute and loads no assets, so default
   // visitors get the site unchanged. Asset paths are root-absolute so they
   // resolve from subdirectory pages.
@@ -422,7 +422,7 @@
       id: 'constructivist',
       label: 'Constructivist',
       polarity: 'light',
-      // Merges test-styles tiles 06 (red wedge agitprop) + 06·B (Rodchenko's
+      // Merges theme-explorations tiles 06 (red wedge agitprop) + 06·B (Rodchenko's
       // 1924 advertising shout): one red, one black, unbleached paper.
       // Tilt off — posters lie flat — but no still flag: AOS fade-ups stay
       // as the agit entrances, and the cursor follower stays (accent is ink,
@@ -488,7 +488,7 @@
       id: 'neo-pop',
       label: 'Pop Art',
       polarity: 'light',
-      // Merges test-styles tiles 02 (neo-pop comic-brutalist) + PA·1
+      // Merges theme-explorations tiles 02 (neo-pop comic-brutalist) + PA·1
       // (Lichtenstein ben-day panel): thick ink keylines and hard offset
       // shadows with press-down physics from 02, dot screens, Bangers
       // onomatopoeia display, caption boxes, and starbursts from PA·1.

@@ -28,7 +28,7 @@
    for terminal punctuation").
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, the tilt
+   docs/THEMES.md. Stillness, the code-block ground, the tilt
    pins, and the mobile fixes come from css/themes/theme-base.css via
    flags.still + flags.tilt. No @keyframes in this sheet: nothing here
    animates beyond hover transitions, so prefers-reduced-motion needs no

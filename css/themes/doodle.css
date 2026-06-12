@@ -9,7 +9,7 @@
    hand and erase out, see the .tw rules in the hero section.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
-   todo/STYLE_VERSIONS_SPEC.md. The tilt pins come from css/themes/theme-base.css
+   docs/THEMES.md. The tilt pins come from css/themes/theme-base.css
    via flags.tilt; there is no still flag, so the motion pack stays.
    Line/shadow stance: every line and fill derives from the alpha ramps or the
    role colors; the only literals are ink-toned shadows (sticky notes, the

@@ -41,7 +41,7 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
   dropdown (trigger rendered by `js/nav-config.js`, dock anchored to it by
   `js/theme-cycler.js`; pages without nav menus fall back to a floating
   palette FAB) or `?style=<id>`; session-only, reload → default.
-  Architecture: `todo/STYLE_VERSIONS_SPEC.md`.
+  Architecture: `docs/THEMES.md`.
 - **Page-scoped CSS lives beside its page** (`blog/blog-styles.css`,
   `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css`); only shared,
   multi-page CSS goes in `css/`.
@@ -54,6 +54,6 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
 
 ## Planned work
 
-- Tracked in `todo/` — `todo/TODO.md` is the index. Specs live alongside it:
-  `todo/STYLE_VERSIONS_SPEC.md` (multi-theme switcher) and
-  `todo/CLEANUP_SPEC.md` (remaining polish: README, .editorconfig, etc.).
+- Tracked in `docs/` — `docs/BACKLOG.md` (polish backlog: README, .editorconfig,
+  etc.) and `docs/THEMES.md` (theme-system architecture, ship status, skin build
+  protocol; design tiles in `docs/theme-explorations.html`).
