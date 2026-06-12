@@ -41,7 +41,7 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
   dropdown (trigger rendered by `js/nav-config.js`, dock anchored to it by
   `js/theme-cycler.js`; pages without nav menus fall back to a floating
   palette FAB) or `?style=<id>`; session-only, reload → default.
-  Architecture: `docs/THEMES.md`.
+  Architecture: HTML comment at the top of `docs/theme-explorations.html`.
 - **Page-scoped CSS lives beside its page** (`blog/blog-styles.css`,
   `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css`); only shared,
   multi-page CSS goes in `css/`.
@@ -50,10 +50,11 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
   Prefer JPEG for photos/art without transparency; aim for under ~500 KB per image.
 - Blog posts are markdown in `blog/posts/` with frontmatter (`title`, `date`,
   optional `scripts`/`styles` arrays), rendered client-side by `blog/blog-post.js`,
-  and listed via `BLOG_POSTS` in `js/blog-data.js`. New posts also go in `sitemap.xml`.
+  and listed via `BLOG_POSTS` in `js/blog-data.js`. Per-post JS/CSS assets live in
+  `blog/posts/assets/`. New posts also go in `sitemap.xml`.
 
 ## Planned work
 
 - Tracked in `docs/` — `docs/TODO.md` (features, polish, and someday/maybe) and
-  `docs/THEMES.md` (theme-system architecture, ship status, skin build protocol;
-  design tiles in `docs/theme-explorations.html`).
+  `docs/theme-explorations.html` (theme-system architecture as an HTML comment at
+  the top, plus design tiles and per-skin notes).

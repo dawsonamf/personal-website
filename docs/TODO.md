@@ -21,4 +21,4 @@
 - [ ] Basic build step (esbuild or similar: minify, bundle, version assets). Only worth it if the site outgrows raw static.
 - [ ] User-selectable color scheme — not just light/dark but any curated combo from a constrained palette.
 - [ ] Reading list / "things that shaped me" page — books, papers, talks.
-- [ ] Astro migration — only if style-mode authoring hurts after 2–3 takeover modes ship; default is to stay no-build. Context in [THEMES.md](THEMES.md).
+- [ ] Astro migration — only if style-mode authoring hurts after 2–3 takeover modes ship; default is to stay no-build. Context in [theme-explorations.html](theme-explorations.html).
