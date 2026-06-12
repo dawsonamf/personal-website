@@ -1,0 +1,1116 @@
+/* Neo-Pop: comic-brutalist × the Lichtenstein panel — the merge of tiles
+   02 (neo-pop) and PA·1 (ben-day). One skin, two presses: from 02 the
+   thick ink keylines, the hard offset shadows, and the physical click —
+   every interactive surface presses into its own shadow; from PA·1 the
+   four-color print grammar — ben-day dot screens standing in for every
+   gradient, Bangers onomatopoeia display with hard ink offsets, yellow
+   caption boxes, and the 24-point starburst. Dots are a screen, not a
+   blend: they appear in discrete fields (the hero disc, the section-rule
+   bands, the contact disc) and never sit under body copy, which runs
+   Comic Neue 700-emphasis on clean white panels.
+
+   Line/shadow stance: every keyline and offset shadow is solid var(--text)
+   ink and every dot screen derives from the primary alpha ramp, so the
+   palette toy keeps working. The one literal is the caption yellow
+   #ffe94f (caption boxes, the sec-num plates, display text-shadows, the
+   selected-jobs token) — it is the fourth ink of the press and stays
+   yellow like white tape stays white.
+
+   Typing: the registry sets typing: 'letter' — each masthead glyph POWs
+   in over-scale with a comic bounce and shrinks off on delete (the .tw /
+   .tw-out animations below; theme-base.css lands glyphs instantly under
+   prefers-reduced-motion).
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and
+   mobile fixes come from css/themes/theme-base.css via flags.tilt. No
+   still flag: AOS entrances stay as the action beats, and the cursor
+   follower stays — the red dot-and-ring reads as a ben-day dot under the
+   printer's loupe.
+
+   Bangers ships a single 400 weight, so every place the site bolds
+   heading-font text is pinned back to 400 below (a synthesized Bangers
+   bold smears). Comic Neue 400/700 is body; IBM Plex Mono 400/600 labels. */
+
+
+/* ---- Foundations: four-color press on cream newsprint ---------------------- */
+
+/* Selection reads as the yellow highlighter pass. */
+[data-style="neo-pop"] ::selection {
+  background: #ffe94f;
+  color: var(--text);
+}
+
+/* Page scrollbar: ink thumb in a newsprint track. ([data-style] sits on
+   <html>, so these select the root scrollbar.) */
+[data-style="neo-pop"] {
+  scrollbar-color: var(--text) var(--bg);
+}
+
+[data-style="neo-pop"]::-webkit-scrollbar {
+  width: 14px;
+  height: 14px;
+}
+
+[data-style="neo-pop"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 2px solid var(--text);
+}
+
+[data-style="neo-pop"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 2px solid var(--bg);
+}
+
+/* Bangers registers one 400 weight, see header note. */
+[data-style="neo-pop"] h1,
+[data-style="neo-pop"] h2,
+[data-style="neo-pop"] h3,
+[data-style="neo-pop"] h4 {
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+/* Links: ben-day blue at weight marks every interactive; hover is a full
+   inverse block, the same grammar as the menu items. The default's
+   animated underline is retired — the block does the work. */
+[data-style="neo-pop"] .text-link {
+  color: var(--primary);
+  font-weight: 700;
+  transition: none;
+}
+
+[data-style="neo-pop"] .text-link::before {
+  display: none;
+}
+
+[data-style="neo-pop"] .text-link:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+}
+
+/* Square focus ring in the interactive blue. */
+[data-style="neo-pop"] :focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+
+/* Panel-gutter density: tighter than the default app air. */
+[data-style="neo-pop"] .section-spacer {
+  height: 7em;
+}
+
+
+/* ---- Chrome: panel-edge nav, badge logo, caption-strip footer --------------- */
+
+[data-style="neo-pop"] .moving-menu,
+[data-style="neo-pop"] .static-menu {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 5px 5px 0 var(--text);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list — invisible on the default pill, obvious on a hard frame. */
+[data-style="neo-pop"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="neo-pop"] .menu-item {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+  padding: 4px 6px;
+  transition: none;
+}
+
+[data-style="neo-pop"] .menu-item:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+  transition: none;
+}
+
+/* Item separators become ink ticks — panel gutters at menu scale. */
+[data-style="neo-pop"] .menu-spacer {
+  border-color: var(--text);
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+/* The logo is a yellow corner badge — the issue-number box on the cover.
+   Tap sells it red. No lift: stickers don't levitate. */
+[data-style="neo-pop"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  background-color: #ffe94f;
+  color: var(--text);
+  border: 2.5px solid var(--text);
+  box-shadow: 3px 3px 0 var(--text);
+  transition: none;
+}
+
+[data-style="neo-pop"] .name-logo:hover {
+  transform: none;
+  background-color: var(--accent);
+  color: var(--bg);
+  transition: none;
+}
+
+/* Footer: the closing caption box — "AND SO, OUR HERO…" */
+[data-style="neo-pop"] .footer-container {
+  background-color: #ffe94f;
+  border: 3px solid var(--text);
+  margin: 0 10px 10px;
+  padding: 10px 16px;
+}
+
+[data-style="neo-pop"] .footer-spacer {
+  display: none;
+}
+
+[data-style="neo-pop"] .footer-text,
+[data-style="neo-pop"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.03em;
+  color: var(--text);
+}
+
+
+/* ---- Hero: the splash page -------------------------------------------------- */
+
+/* Bangers condensed caps: ~0.45em per glyph keeps the longest typed line
+   ("FULL STACK ENGINEER.") near 560px at the 64px cap — well inside the
+   ~795px column. */
+[data-style="neo-pop"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(48px, 5vw, 64px);
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* The typed accent words print in overprint red with a hard ink offset —
+   the WHAAM! pass. */
+[data-style="neo-pop"] #typing-text .typing-accent,
+[data-style="neo-pop"] #blog-typing-text .typing-accent {
+  color: var(--accent);
+  text-shadow: 0.04em 0.04em 0 var(--text);
+}
+
+/* Cursorless masthead: the registry sets typing 'letter' — each glyph
+   POWs in from over-scale with a comic bounce; deletes shrink off the
+   panel. inline-block so the per-glyph transform has a box. */
+[data-style="neo-pop"] #typing-text .tw,
+[data-style="neo-pop"] #blog-typing-text .tw {
+  display: inline-block;
+  animation: neo-pop-pow-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+[data-style="neo-pop"] #typing-text .tw-out,
+[data-style="neo-pop"] #blog-typing-text .tw-out {
+  display: inline-block;
+  animation: neo-pop-pow-out 0.18s ease-in forwards;
+}
+
+@keyframes neo-pop-pow-in {
+  0%   { opacity: 0; transform: scale(2) rotate(-8deg); }
+  60%  { opacity: 1; transform: scale(0.94) rotate(2deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes neo-pop-pow-out {
+  to { opacity: 0; transform: scale(0.4) rotate(10deg); }
+}
+
+/* The composition's screen: a great ben-day dot disc bracing the masthead,
+   with a red starburst slammed over its lower edge (z-index -1 keeps both
+   under the type; the container's intro slide is untouched). */
+[data-style="neo-pop"] #typing-left {
+  position: relative;
+}
+
+[data-style="neo-pop"] #typing-left::before {
+  content: '';
+  position: absolute;
+  top: 90px;
+  right: -44px;
+  width: 320px;
+  height: 320px;
+  border-radius: 50%;
+  background-image: radial-gradient(var(--primary30) 2px, transparent 2.6px);
+  background-size: 13px 13px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+[data-style="neo-pop"] #typing-left::after {
+  content: '';
+  position: absolute;
+  top: 318px;
+  right: 244px;
+  width: 120px;
+  height: 120px;
+  background: var(--accent);
+  clip-path: polygon(50% 0%, 57.8% 21%, 75% 6.7%, 71.2% 28.8%, 93.3% 25%, 79% 42.2%, 100% 50%, 79% 57.8%, 93.3% 75%, 71.2% 71.2%, 75% 93.3%, 57.8% 79%, 50% 100%, 42.2% 79%, 25% 93.3%, 28.8% 71.2%, 6.7% 75%, 21% 57.8%, 0% 50%, 21% 42.2%, 6.7% 25%, 28.8% 28.8%, 25% 6.7%, 42.2% 21%);
+  filter: drop-shadow(4px 4px 0 var(--text));
+  transform: rotate(8deg);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* The strapline is the episode caption, pasted on slightly crooked.
+   (Its fadein only animates opacity, so the transform is safe.) */
+[data-style="neo-pop"] #sub-text {
+  display: inline-block;
+  background-color: #ffe94f;
+  border: 2.5px solid var(--text);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+}
+
+/* The portrait is a panel plate: ink keyline, hard shadow, a four-color
+   saturation punch. Presses via top/left because the tilt kill in
+   theme-base holds transform at none. */
+[data-style="neo-pop"] #typing-image {
+  position: relative;
+  box-sizing: border-box;
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  filter: saturate(1.18) contrast(1.05);
+  transition: none;
+}
+
+[data-style="neo-pop"] #typing-image:hover {
+  top: 3px;
+  left: 3px;
+  box-shadow: 5px 5px 0 var(--text);
+}
+
+/* Socials: ink glyphs that snap red — no lift. */
+[data-style="neo-pop"] #socials-list .socials-menu-spacer,
+[data-style="neo-pop"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text40);
+}
+
+[data-style="neo-pop"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="neo-pop"] .socials-item i {
+  transition: none;
+}
+
+[data-style="neo-pop"] .socials-item:hover i {
+  color: var(--accent);
+  transform: none;
+}
+
+
+/* ---- Section headers: episode titles over a dot band -------------------------
+   Each section opens with a Bangers shout offset by the yellow pass, its
+   number on a crooked caption plate, and the divider line halftoned into
+   a ben-day band running to the page edge. */
+
+[data-style="neo-pop"] .section-header-wrapper {
+  margin: 10px 10px 34px;
+}
+
+[data-style="neo-pop"] .section-header {
+  margin: 0;
+  padding: 4px 0;
+  font-size: clamp(40px, 4.8vw, 60px);
+  line-height: 1.05;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-shadow: 0.06em 0.06em 0 #ffe94f;
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID
+   specificity; match them to keep every title ink. */
+[data-style="neo-pop"] #about-section-header,
+[data-style="neo-pop"] #jobs-header,
+[data-style="neo-pop"] #project-header,
+[data-style="neo-pop"] #blog-header,
+[data-style="neo-pop"] #contact-section-header,
+[data-style="neo-pop"] .blog-section-header {
+  color: var(--text);
+}
+
+/* The issue-number plate: yellow caption box, stamped a few degrees off. */
+[data-style="neo-pop"] .sec-num {
+  display: inline-block;
+  background: #ffe94f;
+  border: 2.5px solid var(--text);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.3em;
+  letter-spacing: 0.08em;
+  padding: 0.3em 0.5em;
+  margin-right: 0.6em;
+  text-shadow: none;
+  transform: rotate(-3deg) translateY(-0.3em);
+  vertical-align: middle;
+}
+
+/* The divider is a dot screen — gradients are dots here. */
+[data-style="neo-pop"] .section-header-spacer {
+  height: 18px;
+  background-color: transparent;
+  background-image: radial-gradient(var(--primary45) 2.2px, transparent 2.8px);
+  background-size: 11px 11px;
+  transform: translateY(2px);
+}
+
+
+/* ---- About / Skills: clean white panels --------------------------------------- */
+
+[data-style="neo-pop"] .card-style {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  padding: 24px;
+}
+
+/* "About Me" / "Skills" become yellow caption tags, pasted on crooked. */
+[data-style="neo-pop"] .card-title,
+[data-style="neo-pop"] .about-header,
+[data-style="neo-pop"] .skills-header {
+  width: fit-content;
+  background-color: #ffe94f;
+  border: 2.5px solid var(--text);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  margin: 0 0 16px;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+}
+
+/* The three departments open behind single ben-day dots at display scale. */
+[data-style="neo-pop"] .skills-section-header {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 20px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+[data-style="neo-pop"] .skills-section-header::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--primary);
+  margin-right: 10px;
+}
+
+/* Comic Neue runs small; give body copy a little more body. */
+[data-style="neo-pop"] .about-text,
+[data-style="neo-pop"] .skills-text,
+[data-style="neo-pop"] .contact-text {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+[data-style="neo-pop"] .skills-text {
+  border-bottom: 1.5px solid var(--text20);
+}
+
+[data-style="neo-pop"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the episode guide ---------------------------------------------- */
+
+[data-style="neo-pop"] .nav-container {
+  border-left: 3px solid var(--text);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's
+   height at load to size the highlight bar, and Comic Neue arrives after
+   that measure. */
+[data-style="neo-pop"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 17px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text60);
+  border-radius: 0;
+  padding: 12px 15px;
+  transition: none;
+}
+
+[data-style="neo-pop"] .menu li:hover {
+  color: var(--text);
+}
+
+/* The selected entry is the yellow caption box (ground from the
+   --jobs-menu-navy-dark token); the inset ink keyline draws its border
+   without shifting layout, and the ink text overrides the default's
+   accent (red on yellow strains). */
+[data-style="neo-pop"] .menu li.selected {
+  color: var(--text);
+  box-shadow: inset 0 0 0 2.5px var(--text);
+}
+
+/* The marker bar goes overprint red. JS writes geometry and transition
+   inline on every move, hence the !importants; the slide stays — this
+   skin keeps its motion. */
+[data-style="neo-pop"] .highlight {
+  background: var(--accent);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="neo-pop"] .highlight {
+    width: 9px !important;
+  }
+}
+
+/* The dossier is a clean white panel — dots never sit under body copy. */
+[data-style="neo-pop"] .job-content {
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  padding: 24px;
+}
+
+[data-style="neo-pop"] .job-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="neo-pop"] .job-dates {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+[data-style="neo-pop"] .job-bullets {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Bullet points are ben-day dots. */
+[data-style="neo-pop"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+
+/* ---- Selected Works: comic covers ------------------------------------------------ */
+
+/* Each plate is a cover in an ink keyline with a starburst sticker slapped
+   on its corner (inside the frame — the plate clips its overflow). The
+   plate presses into its shadow on hover, top/left because the tilt kill
+   holds transform at none. Scoped to the image so hovering the title/CTA
+   side of the card doesn't move the plate. */
+[data-style="neo-pop"] .fc-style-floating .fc-card-image {
+  position: relative;
+  box-sizing: border-box;
+  border: 3px solid var(--text);
+  background-color: var(--secondary);
+  box-shadow: 10px 10px 0 var(--text);
+  transition: none;
+}
+
+[data-style="neo-pop"] .fc-style-floating .fc-card-image:hover {
+  top: 4px;
+  left: 4px;
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+[data-style="neo-pop"] .fc-style-floating .fc-card-image::after {
+  content: '';
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 58px;
+  height: 58px;
+  background: #ffe94f;
+  clip-path: polygon(50% 0%, 57.8% 21%, 75% 6.7%, 71.2% 28.8%, 93.3% 25%, 79% 42.2%, 100% 50%, 79% 57.8%, 93.3% 75%, 71.2% 71.2%, 75% 93.3%, 57.8% 79%, 50% 100%, 42.2% 79%, 25% 93.3%, 28.8% 71.2%, 6.7% 75%, 21% 57.8%, 0% 50%, 21% 42.2%, 6.7% 25%, 28.8% 28.8%, 25% 6.7%, 42.2% 21%);
+  filter: drop-shadow(2px 2px 0 var(--text));
+  transform: rotate(10deg);
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Four-color press punch so raw screenshots read as printed panels. */
+[data-style="neo-pop"] .fc-style-floating .fc-card-image img {
+  filter: saturate(1.18) contrast(1.05);
+}
+
+[data-style="neo-pop"] .fc-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.12;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+[data-style="neo-pop"] .fc-card-desc {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* CTA: the blue action button; hover physically presses it into its
+   shadow — the 02 bounce made literal. */
+[data-style="neo-pop"] .fc-card-cta {
+  background-color: var(--primary);
+  color: var(--bg);
+  border: 3px solid var(--text);
+  border-radius: 0;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 12px 20px;
+  box-shadow: 5px 5px 0 var(--text);
+  transition: none;
+}
+
+[data-style="neo-pop"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+  transform: translate(3px, 3px);
+  box-shadow: 2px 2px 0 var(--text);
+}
+
+[data-style="neo-pop"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="neo-pop"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Pagination as literal ben-day dots: ink-ringed, screened on hover,
+   solid blue on arrival. */
+[data-style="neo-pop"] .fc-dot {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2.5px solid var(--text);
+  background-color: transparent;
+  opacity: 1;
+  transition: none;
+}
+
+[data-style="neo-pop"] .fc-dot:hover {
+  background-color: var(--primary30);
+  opacity: 1;
+}
+
+[data-style="neo-pop"] .fc-dot.active {
+  background-color: var(--primary);
+  transform: none;
+}
+
+
+/* ---- Blog: the rack of issues ------------------------------------------------------ */
+
+/* Presses via top/left because the tilt kill holds transform at none. */
+[data-style="neo-pop"] .blog-card {
+  position: relative;
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+  padding: 22px;
+  transition: none;
+}
+
+[data-style="neo-pop"] .blog-card:hover {
+  background-color: var(--secondary);
+  top: 3px;
+  left: 3px;
+  box-shadow: 3px 3px 0 var(--text);
+}
+
+[data-style="neo-pop"] .blog-card-title {
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 19px;
+  line-height: 1.22;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+[data-style="neo-pop"] .blog-card:hover .blog-card-title {
+  color: var(--accent);
+}
+
+[data-style="neo-pop"] .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text50);
+}
+
+[data-style="neo-pop"] .blog-card-excerpt {
+  color: var(--text);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="neo-pop"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="neo-pop"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="neo-pop"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text50);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold the blanket heading
+   rule can't reach; pin the single 400. */
+[data-style="neo-pop"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(44px, 4.6vw, 58px);
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+[data-style="neo-pop"] [id^="blog-sub-text"] {
+  color: var(--text80);
+  line-height: 1.6;
+}
+
+/* The expand-visual heading (blog page carousel) bolds by default; pin to
+   the single 400. */
+[data-style="neo-pop"] .fc-expand-title {
+  font-weight: 400;
+  letter-spacing: 0.03em;
+}
+
+/* Filters: white chips; hover takes the yellow pass, the active one goes
+   action blue. */
+[data-style="neo-pop"] .filter-pill {
+  background-color: var(--secondary);
+  border: 2.5px solid var(--text);
+  border-radius: 0;
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: none;
+}
+
+[data-style="neo-pop"] .filter-pill:hover {
+  background-color: #ffe94f;
+  border-color: var(--text);
+  color: var(--text);
+}
+
+[data-style="neo-pop"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* Post page: a Bangers cover line with the yellow pass. */
+[data-style="neo-pop"] .blog-post-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: clamp(36px, 5vw, 48px);
+  line-height: 1.1;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-shadow: 0.06em 0.06em 0 #ffe94f;
+}
+
+[data-style="neo-pop"] .blog-post-content h2 {
+  color: var(--text);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--text);
+  padding-bottom: 6px;
+}
+
+[data-style="neo-pop"] .blog-post-content h3 {
+  color: var(--text);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* Blockquotes are speech bubbles: ink keyline, white fill, and a tail
+   drawn by the two stacked triangles (ink under panel-white). */
+[data-style="neo-pop"] .blog-post-content blockquote {
+  position: relative;
+  border: 2.5px solid var(--text);
+  border-radius: 16px;
+  background: var(--secondary);
+  color: var(--text);
+  margin: 1.5em 0 2.4em;
+  padding: 0.9em 1.3em;
+}
+
+[data-style="neo-pop"] .blog-post-content blockquote::after {
+  content: '';
+  position: absolute;
+  bottom: -21px;
+  left: 34px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: var(--text) transparent transparent transparent;
+  border-width: 21px 21px 0 0;
+}
+
+[data-style="neo-pop"] .blog-post-content blockquote::before {
+  content: '';
+  position: absolute;
+  bottom: -13px;
+  left: 38px;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-color: var(--secondary) transparent transparent transparent;
+  border-width: 14px 14px 0 0;
+  z-index: 1;
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="neo-pop"] .blog-post-content pre {
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+/* Inline code: yellow caption chips (the higher-specificity pre rule in
+   theme-base unwinds this for fenced blocks). Radius is a literal 4px in
+   blog-styles. */
+[data-style="neo-pop"] .blog-post-content code {
+  background-color: #ffe94f;
+  color: var(--text);
+  border-radius: 0;
+}
+
+[data-style="neo-pop"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 2.5px solid var(--text);
+}
+
+[data-style="neo-pop"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 2.5px solid var(--text);
+  box-shadow: 5px 5px 0 var(--text);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="neo-pop"] #metr-chart {
+  border: 3px solid var(--text);
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="neo-pop"] #pareto-chart,
+[data-style="neo-pop"] #ara-objectives-chart,
+[data-style="neo-pop"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the last panel --------------------------------------------------------- */
+
+/* The panel braces on its own dot screen — a ben-day disc rolling out of
+   the lower corner. isolation gives the panel a stacking context so the
+   negative-z pseudo stays above the panel ground but under the copy. */
+[data-style="neo-pop"] .contact-view-left {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+}
+
+[data-style="neo-pop"] .contact-view-left::before {
+  content: '';
+  position: absolute;
+  right: -60px;
+  bottom: -60px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background-image: radial-gradient(var(--primary25) 2px, transparent 2.6px);
+  background-size: 13px 13px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* The map is a panel plate too: keyline, shadow, press. */
+[data-style="neo-pop"] .contact-image-wrapper {
+  border: 3px solid var(--text);
+  box-shadow: 10px 10px 0 var(--text);
+  transition: none;
+}
+
+[data-style="neo-pop"] .contact-image-wrapper:hover {
+  top: 4px;
+  left: 4px;
+  box-shadow: 6px 6px 0 var(--text);
+}
+
+[data-style="neo-pop"] .contact-image {
+  filter: saturate(1.18) contrast(1.05);
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): keyline chips ------------------ */
+
+[data-style="neo-pop"] .pill {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 3px 9px;
+}
+
+
+/* ---- Privacy + 404 ---------------------------------------------------------------------- */
+
+[data-style="neo-pop"] .privacy-header {
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-shadow: 0.06em 0.06em 0 #ffe94f;
+}
+
+[data-style="neo-pop"] .privacy-header-spacer {
+  height: 14px;
+  background-color: transparent;
+  background-image: radial-gradient(var(--primary45) 2px, transparent 2.6px);
+  background-size: 11px 11px;
+  transform: none;
+}
+
+[data-style="neo-pop"] .privacy-content h2 {
+  color: var(--text);
+  font-weight: 400;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  border-bottom: 3px solid var(--text);
+  padding-bottom: 6px;
+}
+
+/* The 404 is the onomatopoeia: red figures, hard ink offset. */
+[data-style="neo-pop"] .nf-code {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--accent);
+  text-shadow: 0.05em 0.05em 0 var(--text);
+}
+
+[data-style="neo-pop"] .nf-text {
+  color: var(--text);
+}
+
+
+/* ---- Cycler dock: a white panel ----------------------------------------------------------- */
+
+[data-style="neo-pop"] .tc-dock {
+  background: var(--secondary);
+  border: 3px solid var(--text);
+  box-shadow: 8px 8px 0 var(--text);
+  backdrop-filter: none;
+}
+
+/* The FAB (post/privacy pages) is a yellow badge; tap inverts to ink. */
+[data-style="neo-pop"] .tc-toggle {
+  border-radius: 0;
+  border: 2.5px solid var(--text);
+  background: #ffe94f;
+  color: var(--text);
+  box-shadow: 3px 3px 0 var(--text);
+  transition: none;
+}
+
+[data-style="neo-pop"] .tc-toggle:hover {
+  transform: none;
+  background-color: var(--text);
+  color: #ffe94f;
+}
+
+[data-style="neo-pop"] .tc-action,
+[data-style="neo-pop"] .tc-presets button,
+[data-style="neo-pop"] .tc-schemes button,
+[data-style="neo-pop"] .tc-role,
+[data-style="neo-pop"] .tc-sw {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------------------ */
+
+@media screen and (max-width: 1100px) {
+  /* Bangers re-caps so the longest typed line ("FULL STACK ENGINEER.")
+     clears a ~335px column on a 375px screen. */
+  [data-style="neo-pop"] #typing-text {
+    font-size: 32px;
+    line-height: 1.1;
+  }
+
+  [data-style="neo-pop"] #blog-typing-text {
+    font-size: 34px;
+  }
+
+  [data-style="neo-pop"] #sub-text {
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    padding: 4px 8px;
+    transform: none;
+  }
+
+  /* The hero screen would crowd the 125px mobile hero. */
+  [data-style="neo-pop"] #typing-left::before,
+  [data-style="neo-pop"] #typing-left::after {
+    display: none;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the
+     Bangers display needs to wrap. */
+  [data-style="neo-pop"] .section-header {
+    white-space: normal;
+    font-size: clamp(26px, 7.5vw, 34px);
+  }
+
+  [data-style="neo-pop"] .section-header-spacer {
+    height: 12px;
+  }
+
+  [data-style="neo-pop"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="neo-pop"] .static-menu-mobile .menu-item {
+    font-family: var(--font-body);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  [data-style="neo-pop"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); hold the
+     yellow badge, and make the tap state the red sell. */
+  [data-style="neo-pop"] .name-logo:hover {
+    background-color: #ffe94f;
+    color: var(--text);
+  }
+
+  [data-style="neo-pop"] .name-logo:active {
+    background-color: var(--accent);
+    color: var(--bg);
+  }
+
+  /* The mobile sheet re-cards these surfaces on --text10; keep them
+     clean white panels. */
+  [data-style="neo-pop"] .double-view-left,
+  [data-style="neo-pop"] .double-view-right {
+    background-color: var(--secondary);
+    border: 3px solid var(--text);
+    box-shadow: 6px 6px 0 var(--text);
+  }
+
+  [data-style="neo-pop"] .menu-scroll-wrapper {
+    border-bottom: 3px solid var(--text);
+  }
+
+  [data-style="neo-pop"] .highlight {
+    height: 5px !important;
+  }
+
+  [data-style="neo-pop"] .blog-card {
+    background-color: var(--secondary);
+    border: 3px solid var(--text);
+    box-shadow: 5px 5px 0 var(--text);
+  }
+
+  [data-style="neo-pop"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* The plates' ink slabs need clearance: at the stock 16px gap the next
+     cover rides the 10px shadow. */
+  [data-style="neo-pop"] .featured-carousel-track {
+    gap: 32px;
+  }
+
+  [data-style="neo-pop"] .blog-post-title {
+    font-size: clamp(28px, 7vw, 34px);
+  }
+
+  [data-style="neo-pop"] .footer-container-mobile {
+    background-color: #ffe94f;
+    border: 2.5px solid var(--text);
+    padding: 8px 12px;
+    box-sizing: border-box;
+  }
+
+  [data-style="neo-pop"] .footer-text-mobile {
+    color: var(--text);
+    font-weight: 700;
+    font-size: 12px;
+  }
+}

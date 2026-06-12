@@ -480,8 +480,43 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Poiret+One&display=swap'],
       css: '/css/themes/miami-deco.css',
     },
+    'neo-pop': {
+      id: 'neo-pop',
+      label: 'Neo-Pop',
+      polarity: 'light',
+      // Merges test-styles tiles 02 (neo-pop comic-brutalist) + PA·1
+      // (Lichtenstein ben-day panel): thick ink keylines and hard offset
+      // shadows with press-down physics from 02, dot screens, Bangers
+      // onomatopoeia display, caption boxes, and starbursts from PA·1.
+      // Tilt off — comic panels lie flat — but no still flag: AOS
+      // entrances stay as the action beats, and the cursor follower stays
+      // (the red dot-and-ring reads as a ben-day dot under the loupe).
+      flags: { tilt: false },
+      // Cursorless masthead: each glyph POWs in over-scale with a comic
+      // bounce (the skin animates the engine's glyph spans).
+      typing: 'letter',
+      // Four-color press: ink on cream newsprint, white panels, ben-day
+      // blue interactives, overprint red for the shout. The yellow caption
+      // garnish (#ffe94f) lives only in the skin sheet's literal rules.
+      colors: { text:'#14130f', bg:'#fff7e6', primary:'#005bbb', secondary:'#ffffff', accent:'#e4002b' },
+      tokens: {
+        '--font-body': "'Comic Neue', cursive",
+        '--font-heading': "'Bangers', cursive",
+        '--font-mono': "'IBM Plex Mono', monospace",
+        '--border-radius': '0px',
+        '--radius-pill': '0px',
+        '--neutral-gray': '#8a8068',
+        // Selected jobs entry reads as the yellow caption box; hover is a
+        // deeper newsprint-cream wash.
+        '--jobs-menu-navy-dark': '#ffe94f',
+        '--jobs-menu-navy': '#f6e8c4',
+        '--jobs-menu-slate': '#7a715c',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap'],
+      css: '/css/themes/neo-pop.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted', 'constructivist', 'miami-deco'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted', 'constructivist', 'miami-deco', 'neo-pop'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;
