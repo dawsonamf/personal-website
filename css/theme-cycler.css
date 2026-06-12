@@ -34,6 +34,17 @@
   transition: transform 0.25s ease-in-out;
 }
 
+/* Skins that underline menu items on hover (gallery) set text-decoration on
+   the trigger button; it propagates through the inline-flex box into the
+   caret's glyph and paints in the caret's local frame — so the open-state
+   rotate(180deg) below flips that line segment on top of the chevron.
+   Decoration propagation skips atomic inline-level boxes, so blockifying
+   the glyph pseudo stops the line at the label text. Same font, same
+   baseline alignment: the glyph itself doesn't move in any skin. */
+.tc-nav-caret::before {
+  display: inline-block;
+}
+
 .tc-nav-item.tc-open .tc-nav-caret {
   transform: rotate(180deg);
 }

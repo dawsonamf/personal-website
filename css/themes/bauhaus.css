@@ -2,9 +2,10 @@
    3px ink frames, Jost everywhere (the Futura stand-in) — display set
    lowercase and letterspaced, labels at 600 over thick ink rules. Each
    section claims a shape-and-color pair as its marker (01 red circle,
-   02 yellow triangle, 03 blue square, then the pairs recycle), stamped on
-   the section headers as 16px border-left accents and recycled in list
-   bullets and the carousel dots. Red is the working color (links, CTAs,
+   02 yellow triangle, 03 blue square, then the pairs recycle), stamped
+   alone before the folio number — the pairs alternate down the page, so
+   no neighbouring headers share a shape — and recycled in list bullets
+   and the carousel dots. Red is the working color (links, CTAs,
    highlights), blue the accent, yellow the garnish.
 
    Line/shadow stance: no shadows anywhere — poster geometry lies flat.
@@ -213,9 +214,13 @@
 
 /* The portrait prints as a framed plate: grayscale at rest, color on
    hover. (Stays clickable; box-sizing keeps the 3px frame inside the
-   225px column.) */
+   225px column.) height: auto — the base 225×400 box is exactly the
+   450×800 photo's ratio, but the border-box frame steals from the content
+   box on both axes unevenly, which would squish the photo; auto lets the
+   content height follow the photo's true ratio instead. */
 [data-style="bauhaus"] #typing-image {
   box-sizing: border-box;
+  height: auto;
   border: 3px solid var(--text);
   filter: grayscale(1) contrast(1.06);
   transition: filter 0.25s ease-in-out;
@@ -227,24 +232,15 @@
 
 
 /* ---- Section headers: shape-and-color markers ------------------------------
-   Each opener carries its section's 16px border-left in the claimed color,
-   the shape itself drawn before the folio number, and the spacer thickened
-   into an ink slab running to the page edge. 01/04 = red circle,
-   02/05 = yellow triangle, 03 = blue square. */
+   Each opener is marked by its claimed shape alone, stamped before the
+   folio number — 01/04 = red circle, 02/05 = yellow triangle, 03 = blue
+   square — so the pairs alternate down the page and no two neighbouring
+   sections share a shape. The spacer thickens into a 4px ink slab running
+   from the title to the wrapper edge, flush with the footer rule's
+   gutter. */
 
 [data-style="bauhaus"] .section-header-wrapper {
-  border-left: 16px solid var(--primary);
-  padding-left: 24px;
   margin: 10px 10px 36px;
-}
-
-[data-style="bauhaus"] #jobs-header-wrapper,
-[data-style="bauhaus"] #contact-header-wrapper {
-  border-left-color: #f6c52e;
-}
-
-[data-style="bauhaus"] #project-header-wrapper {
-  border-left-color: var(--accent);
 }
 
 [data-style="bauhaus"] .section-header {
@@ -269,10 +265,20 @@
   color: var(--text);
 }
 
+/* Flex centers the slab on the h2 box, but every optical anchor on the
+   line — the lowercase x-band, the shape, the folio digits (the last two
+   hung from vertical-align: middle) — sits at baseline minus half the
+   x-height. With Jost at line-height 1.1 (ascent 1.07em, descent 0.375em,
+   x-height 0.46em) that optical line lands ~0.117em below box center:
+   ~5px at the 42-50px desktop display, so the slab drops 5px to sit
+   level. margin-right: 0 unwinds the default sheet's 10px so the slab
+   meets the wrapper edge and lines up with the footer rule. */
 [data-style="bauhaus"] .section-header-spacer {
   background-color: var(--text);
   height: 4px;
-  transform: none;
+  margin-left: 20px;
+  margin-right: 0;
+  transform: translateY(5px);
 }
 
 [data-style="bauhaus"] .sec-num {
@@ -294,27 +300,39 @@
   flex-shrink: 0;
 }
 
+/* The shapes are sized to weigh the same: a circle wants ~1.1x the
+   square's edge, a triangle ~1.2x of it tall. The blog listing re-counts
+   from 01, so its first header (inside #selected-works-header) takes the
+   circle — border: 0 shields it from the triangle borders the
+   .blog-section-header class rule below would otherwise leave on it (the
+   ID outranks the class for the properties both set). */
+
+/* 01/04: red circle. */
 [data-style="bauhaus"] #about-section-header .sec-num::before,
-[data-style="bauhaus"] #blog-header .sec-num::before {
-  width: 18px;
-  height: 18px;
+[data-style="bauhaus"] #blog-header .sec-num::before,
+[data-style="bauhaus"] #selected-works-header .sec-num::before {
+  width: 23px;
+  height: 23px;
+  border: 0;
   border-radius: 50%;
   background: var(--primary);
 }
 
+/* 02/05 (and the listing's 02, "all posts"): yellow triangle. */
 [data-style="bauhaus"] #jobs-header .sec-num::before,
-[data-style="bauhaus"] #contact-section-header .sec-num::before {
+[data-style="bauhaus"] #contact-section-header .sec-num::before,
+[data-style="bauhaus"] .blog-section-header .sec-num::before {
   width: 0;
   height: 0;
-  border-left: 11px solid transparent;
-  border-right: 11px solid transparent;
-  border-bottom: 19px solid #f6c52e;
+  border-left: 14px solid transparent;
+  border-right: 14px solid transparent;
+  border-bottom: 24.5px solid #f6c52e;
 }
 
-[data-style="bauhaus"] #project-header .sec-num::before,
-[data-style="bauhaus"] .blog-section-header .sec-num::before {
-  width: 17px;
-  height: 17px;
+/* 03: blue square — the reference weight. */
+[data-style="bauhaus"] #project-header .sec-num::before {
+  width: 21px;
+  height: 21px;
   background: var(--accent);
 }
 
@@ -510,6 +528,12 @@
 }
 
 /* CTA: the tile's "say hallo" button — an ink slab that snaps red. */
+/* Padding is metrics-corrected, not decorative: Jost's em box centers its
+   caps, so an all-lowercase label (x-band center 0.23 vs box center
+   0.3475 above baseline) sits ~1px low at 11.5px in the ink slab — the
+   vertical pair tips 13/15 to lift it onto the optical center. And
+   letter-spacing trails its 0.3em after the last glyph, so the right pad
+   gives that back to keep the label centered. */
 [data-style="bauhaus"] .fc-card-cta {
   font-family: var(--font-heading);
   font-weight: 600;
@@ -520,7 +544,7 @@
   color: var(--bg);
   border: none;
   border-radius: 0;
-  padding: 14px 22px;
+  padding: 13px calc(22px - 0.3em) 15px 22px;
   transition: none;
 }
 
@@ -811,20 +835,58 @@
   }
 
   /* mobile-styles.css pins nowrap for the small inline headers; the
-     letterspaced display needs to wrap. */
+     letterspaced display needs to wrap. The grid pins the shape-and-folio
+     marker as a fixed first column so a squeezed header can never drop its
+     title below the marker (the base sheet's 73% spacer squeezes short
+     headers hardest — inline, "about" lost its first line while
+     "where i've worked" kept it), and wrapped title lines stay flush after
+     the marker (the text run after .sec-num is one anonymous grid item). */
   [data-style="bauhaus"] .section-header {
     white-space: normal;
     font-size: clamp(22px, 6.4vw, 30px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
   }
 
   [data-style="bauhaus"] .section-header-wrapper {
-    border-left-width: 10px;
-    padding-left: 14px;
     margin: 0 10px 28px;
   }
 
+  /* Same optical drop as desktop, scaled to the 22-30px mobile display
+     (~0.117em of it ≈ 3px). mobile-styles.css already zeroes the right
+     margin at this width. */
   [data-style="bauhaus"] .section-header-spacer {
     height: 3px;
+    margin-left: 12px;
+    transform: translateY(3px);
+  }
+
+  /* The lone marks scale with the smaller display — and stay shorter than
+     the ~24px mobile line box at the clamp floor so they can't stretch
+     it. Triangle borders inherit their colors from the desktop rules. */
+  [data-style="bauhaus"] .sec-num {
+    gap: 10px;
+  }
+
+  [data-style="bauhaus"] #about-section-header .sec-num::before,
+  [data-style="bauhaus"] #blog-header .sec-num::before,
+  [data-style="bauhaus"] #selected-works-header .sec-num::before {
+    width: 18px;
+    height: 18px;
+  }
+
+  [data-style="bauhaus"] #jobs-header .sec-num::before,
+  [data-style="bauhaus"] #contact-section-header .sec-num::before,
+  [data-style="bauhaus"] .blog-section-header .sec-num::before {
+    border-left-width: 11.5px;
+    border-right-width: 11.5px;
+    border-bottom-width: 20px;
+  }
+
+  [data-style="bauhaus"] #project-header .sec-num::before {
+    width: 16px;
+    height: 16px;
   }
 
   [data-style="bauhaus"] .section-spacer {

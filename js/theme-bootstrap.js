@@ -209,7 +209,7 @@
     },
     'vapor': {
       id: 'vapor',
-      label: 'Vapor',
+      label: 'Vaporwave',
       polarity: 'dark',
       // No flags: tilt stays on and the motion pack stays — the one skin
       // that turns the dials up instead of down.
@@ -232,7 +232,7 @@
     },
     'wheatpaste': {
       id: 'wheatpaste',
-      label: 'Wheatpaste',
+      label: 'Street Poster',
       polarity: 'dark',
       // still kills the scroll entrances, the cursor follower, and the dock
       // lifts — nothing here animates smoothly. Tilt stays ON: a hovered
@@ -280,7 +280,7 @@
     },
     'chinoiserie': {
       id: 'chinoiserie',
-      label: 'Chinoiserie',
+      label: 'Porcelain',
       polarity: 'light',
       // Tilt off: porcelain doesn't wobble. No still flag — entrances and
       // the cursor follower stay (the follower's accent dot reads as gilt).
@@ -432,6 +432,10 @@
       // each one slamming in like a press pass (the skin animates the
       // engine's glyph spans).
       typing: 'word',
+      // ...and they leave the same way: dead slogans drop off the form a
+      // whole word per beat, not a char-by-char backspace
+      // (js/typing-engine.js reads this via __styleTypingDeleteMode).
+      typingDelete: 'word',
       // accent is ink, not red — red stays scarce: active states and the
       // words being sold only (06·B's discipline).
       colors: { text:'#1d1a16', bg:'#f1e7d0', primary:'#d22b1f', secondary:'#e9ddbd', accent:'#1d1a16' },
@@ -482,7 +486,7 @@
     },
     'neo-pop': {
       id: 'neo-pop',
-      label: 'Neo-Pop',
+      label: 'Pop Art',
       polarity: 'light',
       // Merges test-styles tiles 02 (neo-pop comic-brutalist) + PA·1
       // (Lichtenstein ben-day panel): thick ink keylines and hard offset
@@ -516,7 +520,7 @@
       css: '/css/themes/neo-pop.css',
     },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted', 'constructivist', 'miami-deco', 'neo-pop'];
+  var ORDER = ['default', 'brutalist', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'vapor', 'wanted', 'banknote', 'constructivist', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;
@@ -536,6 +540,16 @@
   window.__styleTypingMode = function () {
     var entry = REGISTRY[window.__ACTIVE_STYLE || 'default'];
     return (entry && entry.typing) || 'cursor';
+  };
+
+  // js/typing-engine.js asks this for how the masthead erases: 'char' (one
+  // glyph per tick, the default everywhere) or 'word' (a whole word's glyph
+  // spans exit on one beat). Styles opt in via a `typingDelete` key on
+  // their registry entry; only meaningful alongside a cursorless `typing`
+  // mode — cursor-mode text has no glyph spans to group.
+  window.__styleTypingDeleteMode = function () {
+    var entry = REGISTRY[window.__ACTIVE_STYLE || 'default'];
+    return (entry && entry.typingDelete) || 'char';
   };
 
   var STYLE_KEY   = 'dawson-style';

@@ -1,13 +1,14 @@
 /* Gallery: the white cube. MN·1 — "white cube · the art is the whitespace."
-   Pure white ground, Inter 300 display barely louder than the body, every
-   content block hung as a work: white mats, hairline frames, museum wall
-   labels (9–10px letterspaced caps) doing all the captioning. No accent
-   color at all — gray is the loudest voice in the room, and the only color
-   on the page belongs to the works themselves: the project plates, the blog
-   photographs, the portrait, and the map all keep their own color, framed
-   on white. The chrome retires the site's mono for Inter labels; only real
-   code keeps a mono face. Padding does the design: sections breathe like
-   rooms, didactics open each one under a hairline that runs the full wall.
+   Pure white ground, Inter 300 display barely louder than the body. Only
+   the works hang framed — white mats, hairline frames; prose sits straight
+   on the wall under museum labels (9–10px letterspaced caps), at most one
+   hairline per room doing the dividing. No accent color at all — gray is
+   the loudest voice in the room, and the only color on the page belongs to
+   the works themselves: the project plates, the blog photographs, the
+   portrait, and the map all keep their own color, framed on white. The
+   chrome retires the site's mono for Inter labels; only real code keeps a
+   mono face. Padding does the design: sections breathe like rooms,
+   didactics open each one under a hairline that runs the full wall.
 
    Fully still: no entrances, no tilt, no lifts. The typing caret — thinned
    to an ink hairline — is the one moving thing in the room and finally gets
@@ -164,6 +165,17 @@
   text-decoration-thickness: 1px;
 }
 
+/* Left inline, each li's line box rides the 16px Inter strut (lis inherit
+   body type), so the 10px caps hang off that taller baseline ~2.2px lower
+   than the Theme trigger — a flex button that centers on its own 10px line
+   box, strut-free. Blockifying the anchors drops the strut so every sign
+   centers exactly like the trigger (the mobile sheet's flex links already
+   work this way). */
+[data-style="gallery"] .moving-menu a.menu-item,
+[data-style="gallery"] .static-menu a.menu-item {
+  display: block;
+}
+
 /* No ticks between signs — air does the separating. */
 [data-style="gallery"] .menu-spacer {
   display: none;
@@ -316,27 +328,42 @@
   color: var(--text);
 }
 
-/* "01." as a catalog number: its own wall-label line above the title. */
+/* Catalog numbers retired: the truest white cube lets the didactics name
+   the rooms unnumbered (the about/skills hairline stays — one rule per
+   room is structure, the folio was ornament). The span stays in the
+   markup; every other skin keeps its numbering. */
 [data-style="gallery"] .sec-num {
-  display: block;
-  font-family: var(--font-body);
-  font-size: 10px;
-  font-weight: 500;
-  letter-spacing: 0.35em;
-  color: var(--text40);
-  margin: 0 0 14px;
-  vertical-align: baseline;
+  display: none;
 }
 
 
-/* ---- About / Skills: works on the wall --------------------------------------
-   The surface grammar for the whole skin: a white mat in a hairline frame
-   with generous padding — content hung, not carded. */
+/* ---- About / Skills: open wall, one rule -------------------------------------
+   No mats, no frames here: the two columns sit straight on the wall (the
+   base sheet cards them on --text10) and a single hairline between them
+   does all the dividing — vertical between the columns on this sheet,
+   horizontal when they stack on the small one. Frames belong to the works;
+   prose is never boxed. */
 
 [data-style="gallery"] .card-style {
-  background-color: var(--bg);
-  border: 1px solid var(--text10);
-  padding: 36px 38px;
+  background-color: transparent;
+  padding: 0;
+}
+
+/* The one divider, hung on the skills column's leading edge. The inner
+   margins collapse to zero so the 48px of air flanking the rule is
+   symmetric (base .card-style margins would otherwise add 20px to the
+   about side only); flex stretch runs the rule the section's full height. */
+@media (min-width: 1101px) {
+  [data-style="gallery"] .double-view-left {
+    margin-right: 0;
+    padding-right: 48px;
+  }
+
+  [data-style="gallery"] .double-view-right {
+    margin-left: 0;
+    border-left: 1px solid var(--text10);
+    padding-left: 48px;
+  }
 }
 
 /* "About Me" / "Skills" as wall labels: small letterspaced caps in gray. */
@@ -371,13 +398,15 @@
   max-width: 62ch;
 }
 
+/* Skill groups separate on whitespace alone — the base sheet rules a
+   --text20 line under each group; this room's line budget is already
+   spent on the divider. */
 [data-style="gallery"] .skills-text {
-  border-bottom: 1px solid var(--text5);
+  border-bottom: none;
   padding-bottom: 26px;
 }
 
 [data-style="gallery"] .skills-text:last-child {
-  border-bottom: none;
   padding-bottom: 0;
 }
 
@@ -447,11 +476,12 @@
   }
 }
 
-/* The dossier hangs like everything else: white mat, hairline frame. */
+/* The dossier sits open on the wall — no mat, no frame (the base sheet
+   cards it on --text10): the rail's hairline spine is the only line this
+   room needs. */
 [data-style="gallery"] .job-content {
-  background-color: var(--bg);
-  border: 1px solid var(--text10);
-  padding: 32px 36px;
+  background-color: transparent;
+  padding: 0;
 }
 
 [data-style="gallery"] .job-title {
@@ -830,10 +860,11 @@
 
 /* ---- Contact: the last room ----------------------------------------------------- */
 
+/* Wall text beside the framed work: the prose loses its mat (the base
+   sheet cards it on --text10) — in this room only the map is framed. */
 [data-style="gallery"] .contact-view-left {
-  background-color: var(--bg);
-  border: 1px solid var(--text10);
-  padding: 36px 38px;
+  background-color: transparent;
+  padding: 0;
 }
 
 /* The map hangs framed and in color, like the plates. border-box: the
@@ -961,7 +992,7 @@
   }
 
   /* mobile-styles pins nowrap for the small inline headers; the didactic
-     block wraps (.sec-num is its own line, so wraps stay flush left). */
+     block wraps (no folio line — the numbers are retired skin-wide). */
   [data-style="gallery"] .section-header {
     white-space: normal;
     font-size: clamp(21px, 6vw, 26px);
@@ -970,10 +1001,6 @@
   [data-style="gallery"] .section-header-wrapper {
     padding-top: 16px;
     margin: 0 10px 40px;
-  }
-
-  [data-style="gallery"] .sec-num {
-    margin-bottom: 10px;
   }
 
   /* This skin hides the menu spacers, so the mobile quick links need their
@@ -1009,17 +1036,15 @@
     border-color: var(--text);
   }
 
-  /* The mobile sheet re-cards the about/skills surfaces at --text10; keep
-     them hung on the mat grammar. */
-  [data-style="gallery"] .double-view-left,
+  /* Stacked columns: the one divider turns horizontal. (The mobile sheet
+     re-cards these surfaces at --text10, but the .card-style override
+     above wins on specificity — only the rule itself needs drawing here.)
+     Air math: the about column keeps its 10px bottom margin, so 30px on
+     top of it matches the 40px below the rule. */
   [data-style="gallery"] .double-view-right {
-    background-color: var(--bg);
-    border: 1px solid var(--text10);
-    padding: 26px;
-  }
-
-  [data-style="gallery"] .card-style {
-    padding: 26px;
+    margin-top: 30px;
+    border-top: 1px solid var(--text10);
+    padding-top: 40px;
   }
 
   /* Jobs rail runs horizontal: the hairline moves to the wrapper's bottom
@@ -1027,10 +1052,6 @@
      measured there; height is the inline 2px constant — untouched). */
   [data-style="gallery"] .menu-scroll-wrapper {
     border-bottom: 1px solid var(--text10);
-  }
-
-  [data-style="gallery"] .job-content {
-    padding: 24px;
   }
 
   /* Matted plates need a real gutter between works on the small wall. */
@@ -1043,12 +1064,6 @@
     background-color: var(--bg);
     border: 1px solid var(--text10);
     padding: 24px;
-  }
-
-  [data-style="gallery"] .contact-view-left {
-    background-color: var(--bg);
-    border: 1px solid var(--text10);
-    padding: 26px;
   }
 
   /* The mobile footer joins the colophon plaque: hairline rule, centered

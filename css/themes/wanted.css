@@ -8,9 +8,12 @@
    the strapline is the second-billing line in Smokum, jobs read as a
    marshal's ledger (rust highlight bar, rubber-stamp dates, ruled rows),
    carousel plates are matted reward handbills that hold a sepia plate tone
-   until hovered, blog cards are telegraph dispatches with dashed datelines,
-   pills are ticket stubs (dashed torn sides), and a brass star — clip-path,
-   engraved with a rivet and darkened tips — anchors the contact notice.
+   until hovered (the matte's rules re-ink rust with the color snap), blog
+   cards are telegraph dispatches with dashed datelines that take a full
+   ink stamp on hover (brass wash, rust double rule, hard offset shadow),
+   pills are ticket stubs (dashed torn sides), and a brass star — an exact
+   clip-path pentagram, engraved with a rivet and darkened tips — anchors
+   the contact notice.
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
    todo/STYLE_VERSIONS_SPEC.md. Stillness, the code-block ground, and the
@@ -320,12 +323,18 @@
   color: var(--primary);
 }
 
+/* Special Elite hangs its glyphs high in the em box (caps band [0, 0.69]
+   against asc 0.703 / desc 0.297 — ~0.142em of headroom imbalance), so
+   centered flex alone leaves the digits ~2px above the ring's center.
+   The ring keeps its 36px (4 + 32) while padding-top drops the digit line
+   half that, landing the numerals on the ring's optical center. */
 [data-style="wanted"] .sec-num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 36px;
-  height: 36px;
+  height: 32px;
+  padding-top: 4px;
   font-family: var(--font-body);
   font-weight: 400;
   font-size: 14px;
@@ -531,7 +540,9 @@
 
 /* ---- Selected Works: reward handbills -----------------------------------------------
    Each plate is matted on handbill paper inside the double-rule frame, and
-   holds a sepia plate tone until hovered (hard cut back to color). */
+   holds a sepia plate tone until hovered (hard cut back to color). The
+   matte re-inks with it: outer frame and inner ring cut to rust the
+   instant the sepia lifts, so the whole handbill reads "claimed". */
 
 [data-style="wanted"] .fc-style-floating .fc-card-image {
   padding: 10px;
@@ -550,6 +561,14 @@
 
 [data-style="wanted"] .fc-card:hover .fc-card-image img {
   filter: none;
+}
+
+[data-style="wanted"] .fc-style-floating .fc-card:hover .fc-card-image {
+  border-color: var(--primary);
+  box-shadow:
+    inset 0 0 0 5px var(--secondary),
+    inset 0 0 0 6.5px var(--primary),
+    0 12px 26px rgba(58, 42, 24, 0.22);
 }
 
 /* Titles take top billing in Rye rust. */
@@ -571,6 +590,12 @@
 /* CTA: the claim button — ink frame with a brass band inset, typewriter
    caps; pressing it prints the label in paper on ink, hard cut.
    (featured-carousel.css pins a literal 10px radius, zeroed here.) */
+/* Padding is metrics-corrected, not decorative: Special Elite rides
+   ~0.132em high in its em box (caps band center 0.335 vs box center
+   0.203) ≈ 1.7px at 13px, so the vertical pair tips 12.5/9.5 to land the
+   caps on center; and letter-spacing trails its 0.18em after the last
+   glyph, so the right pad gives that back to keep the label optically
+   centered between the rules. */
 [data-style="wanted"] .fc-card-cta {
   font-family: var(--font-body);
   font-size: 13px;
@@ -581,7 +606,7 @@
   border: 2px solid var(--text);
   border-radius: 0;
   box-shadow: inset 0 0 0 3px var(--accent55);
-  padding: 11px 22px;
+  padding: 12.5px calc(22px - 0.18em) 9.5px 22px;
   transition: none;
 }
 
@@ -624,7 +649,11 @@
    Cards print as dispatch slips: handbill paper in a single ink frame
    (lighter than the double-ruled notices — these are wire copy, not
    posters), a rust dateline over a dashed telegraph rule, Smokum heads.
-   Hover re-inks the frame and head, hard cut. */
+   Hover is the ink press, and it hits hard — one cut, no easing: the
+   paper toasts under a brass wash, the frame re-inks rust and picks up
+   the notices' second rule (paper gap + rust ring, the double-rule trick
+   in miniature), the soft rest shadow snaps to a hard offset stamp, and
+   the head and dateline rule print rust. */
 
 [data-style="wanted"] .blog-card {
   background-color: var(--secondary);
@@ -636,11 +665,20 @@
 
 [data-style="wanted"] .blog-card:hover {
   background-color: var(--secondary);
+  background-image: linear-gradient(var(--accent25), var(--accent25));
   border-color: var(--primary);
+  box-shadow:
+    inset 0 0 0 3px var(--secondary),
+    inset 0 0 0 4.5px var(--primary),
+    4px 4px 0 rgba(58, 42, 24, 0.3);
 }
 
 [data-style="wanted"] .blog-card:hover .blog-card-title {
   color: var(--primary);
+}
+
+[data-style="wanted"] .blog-card:hover .blog-card-date {
+  border-bottom-color: var(--primary50);
 }
 
 [data-style="wanted"] .blog-card-title {
@@ -668,14 +706,24 @@
   color: var(--text80);
 }
 
-/* Listing page: the grid's higher-specificity card rules need matching. */
+/* Listing page: the grid's higher-specificity card rules need matching —
+   including the full stamped hover (the grid pins its own 0.3s background
+   transition, zeroed here so the press stays a cut, and its title rule
+   outranks the shared hover, so the rust head is restated below it). */
 [data-style="wanted"] .blog-listing-grid .blog-card {
   background-color: var(--secondary);
   border-radius: 0;
+  transition: none;
 }
 
 [data-style="wanted"] .blog-listing-grid .blog-card:hover {
   background-color: var(--secondary);
+  background-image: linear-gradient(var(--accent25), var(--accent25));
+  border-color: var(--primary);
+  box-shadow:
+    inset 0 0 0 3px var(--secondary),
+    inset 0 0 0 4.5px var(--primary),
+    4px 4px 0 rgba(58, 42, 24, 0.3);
 }
 
 [data-style="wanted"] .blog-listing-grid .blog-card .blog-card-title {
@@ -683,6 +731,10 @@
   font-weight: 400;
   font-size: 21px;
   color: var(--text);
+}
+
+[data-style="wanted"] .blog-listing-grid .blog-card:hover .blog-card-title {
+  color: var(--primary);
 }
 
 [data-style="wanted"] .blog-listing-grid .blog-card .blog-card-date {
@@ -733,7 +785,10 @@
   font-size: 12.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 6px 16px;
+  /* 7.5/4.5, not 6/6: Special Elite rides ~0.132em high in its em box
+     (~1.65px at 12.5px), so the top pad takes the difference to center
+     the caps between the dashed rules. */
+  padding: 7.5px 16px 4.5px;
   transition: none;
 }
 
@@ -908,18 +963,46 @@
   padding: 34px 36px;
 }
 
+/* The badge is an exact {5/2} pentagram. Circumcenter at the box center
+   (the rivet is the pin — the eye reads it as the star's anchor), outer
+   radius R = 48% (top point stays at 50% 2%), inner radius
+   r = R·cos72°/cos36° = 18.33% — the true pentagram crossing ratio
+   (≈ 0.382), which is what keeps every edge a dead-straight line through
+   the figure. Vertices at θ = k·36° clockwise from 12 o'clock:
+   x = 50 + ρ·sinθ, y = 50 − ρ·cosθ. Sanity check baked into the numbers:
+   the two inner vertices flanking the top point sit exactly on the
+   y = 35.17% chord between the two arm tips.
+   The engravings are closest-side circles concentric with the star — on
+   the square badge that radius is exactly half the box, so the stops read
+   in the same center-distance units as the polygon: the rivet ends at 15%
+   (≈4.4px), the engraved ring at 76% darkens the outer third of all five
+   tips by the same amount (tips land at 96%). Stops in %, so the 46px
+   mobile badge scales with no overrides. The true star's bottom tips sit
+   ~3px higher in the box than the old stretched ones did, so the margin
+   gives those 3px back and the air under the star is unchanged. */
 [data-style="wanted"] .contact-view-left::before {
   content: '';
   width: 58px;
   height: 58px;
   align-self: center;
   flex-shrink: 0;
-  margin-bottom: 16px;
+  margin-bottom: 13px;
   background-color: var(--accent);
   background-image:
-    radial-gradient(circle at 50% 46%, var(--text40) 0 4.5px, transparent 5.5px),
-    radial-gradient(circle at 50% 50%, transparent 54%, var(--text25) 55%);
-  clip-path: polygon(50% 2%, 61% 36%, 97% 36%, 68% 58%, 79% 94%, 50% 72%, 21% 94%, 32% 58%, 3% 36%, 39% 36%);
+    radial-gradient(circle closest-side at 50% 50%, var(--text40) 0 15%, transparent 17%),
+    radial-gradient(circle closest-side at 50% 50%, transparent 76%, var(--text25) 77%);
+  clip-path: polygon(
+    50% 2%,
+    60.78% 35.17%,
+    95.65% 35.17%,
+    67.44% 55.67%,
+    78.21% 88.83%,
+    50% 68.33%,
+    21.79% 88.83%,
+    32.56% 55.67%,
+    4.35% 35.17%,
+    39.22% 35.17%
+  );
   filter: drop-shadow(0 2px 0 rgba(58, 42, 24, 0.35));
 }
 
@@ -965,7 +1048,10 @@
   font-size: 11.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  padding: 4px 11px 3px;
+  /* 5/2, not symmetric: Special Elite rides ~0.132em high in its em box
+     (~1.5px at 11.5px), so the box trims below and keeps above to sit
+     centered on the caps. */
+  padding: 5px 11px 2px;
 }
 
 /* The expand-visual heading (blog page carousel) bolds by default; pin to
@@ -1035,15 +1121,28 @@
   }
 
   /* mobile-styles.css pins nowrap for the small inline headers; billing
-     lines need to wrap, and the inspection tag shrinks with them. */
+     lines need to wrap, and the inspection tag shrinks with them. The grid
+     pins the tag as a fixed first column so a squeezed header can never
+     drop its billing below the tag (the base sheet's 73% spacer squeezes
+     short headers hardest — inline, "About" lost its first line while
+     "Where I've Worked" kept it), and wrapped billing lines stay flush
+     after it (the text run after .sec-num is one anonymous grid item). */
   [data-style="wanted"] .section-header {
     white-space: normal;
     font-size: clamp(19px, 5.6vw, 25px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
   }
 
+  /* Same Special Elite re-centering as the desktop tag, scaled: digits sit
+     ~0.142em high in their box (caps band [0, 0.69] against asc 0.703 /
+     desc 0.297) ≈ 1.7px at 12px, so the ring keeps 28px (3.5 + 24.5) while
+     the digit line drops half the padding. */
   [data-style="wanted"] .sec-num {
     width: 28px;
-    height: 28px;
+    height: 24.5px;
+    padding-top: 3.5px;
     font-size: 12px;
     box-shadow: inset 0 0 0 2.5px var(--accent60);
     margin-right: 10px;
@@ -1125,6 +1224,15 @@
       0 8px 18px rgba(58, 42, 24, 0.2);
   }
 
+  /* The desktop hover re-ink outranks the mobile matte (sticky hover on
+     tap), so restate it with the mobile ring offsets or the rings jump. */
+  [data-style="wanted"] .fc-style-floating .fc-card:hover .fc-card-image {
+    box-shadow:
+      inset 0 0 0 4px var(--secondary),
+      inset 0 0 0 5px var(--primary),
+      0 8px 18px rgba(58, 42, 24, 0.2);
+  }
+
   [data-style="wanted"] .featured-carousel-track {
     gap: 28px;
   }
@@ -1134,10 +1242,13 @@
     padding: 24px 20px;
   }
 
+  /* The 46px badge: gradients and clip-path are all %, so the geometry
+     scales itself; the margin gives back the ~2px the exact star's bottom
+     tips sit higher, same as on desktop. */
   [data-style="wanted"] .contact-view-left::before {
     width: 46px;
     height: 46px;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
   }
 
   [data-style="wanted"] .blog-post-container {

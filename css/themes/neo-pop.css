@@ -234,16 +234,22 @@
 
 /* The composition's screen: a great ben-day dot disc bracing the masthead,
    with a red starburst slammed over its lower edge (z-index -1 keeps both
-   under the type; the container's intro slide is untouched). */
-[data-style="neo-pop"] #typing-left {
+   under the type). Anchored to main — the page ground — NOT the hero
+   container: the container slides in (translateX) with the type, and a
+   backdrop shouldn't ride that slide. main's box coincides with the
+   container's layout box, so offsets transfer; the old #typing-left lefts
+   gain its 305px column offset (20px pad + 225px portrait + 60px pad).
+   :has(> #typing-container) scopes the screen to the home masthead so it
+   can't surface on blog/privacy pages. */
+[data-style="neo-pop"] main:has(> #typing-container) {
   position: relative;
 }
 
-[data-style="neo-pop"] #typing-left::before {
+[data-style="neo-pop"] main:has(> #typing-container)::before {
   content: '';
   position: absolute;
   top: 90px;
-  right: -44px;
+  left: 533px;
   width: 320px;
   height: 320px;
   border-radius: 50%;
@@ -253,11 +259,11 @@
   pointer-events: none;
 }
 
-[data-style="neo-pop"] #typing-left::after {
+[data-style="neo-pop"] main:has(> #typing-container)::after {
   content: '';
   position: absolute;
   top: 318px;
-  right: 244px;
+  left: 445px;
   width: 120px;
   height: 120px;
   background: var(--accent);
@@ -266,6 +272,20 @@
   transform: rotate(8deg);
   z-index: -1;
   pointer-events: none;
+}
+
+/* The screen arrives with the page chrome: js/script.js stamps
+   hero-extras-in on <html> when the first phrase lands and the rest of the
+   hero fades in — until then the glyphs POW onto a bare panel. */
+[data-style="neo-pop"] main:has(> #typing-container)::before,
+[data-style="neo-pop"] main:has(> #typing-container)::after {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+[data-style="neo-pop"].hero-extras-in main:has(> #typing-container)::before,
+[data-style="neo-pop"].hero-extras-in main:has(> #typing-container)::after {
+  opacity: 1;
 }
 
 /* The strapline is the episode caption, pasted on slightly crooked.
@@ -287,10 +307,15 @@
 
 /* The portrait is a panel plate: ink keyline, hard shadow, a four-color
    saturation punch. Presses via top/left because the tilt kill in
-   theme-base holds transform at none. */
+   theme-base holds transform at none. height: auto — the base 225×400 box
+   is exactly the 450×800 photo's ratio, but the border-box keyline steals
+   from the content box on both axes unevenly, which would squish the
+   photo; auto lets the content height follow the photo's true ratio
+   inside the 225px column instead. */
 [data-style="neo-pop"] #typing-image {
   position: relative;
   box-sizing: border-box;
+  height: auto;
   border: 3px solid var(--text);
   box-shadow: 8px 8px 0 var(--text);
   filter: saturate(1.18) contrast(1.05);
@@ -371,13 +396,38 @@
   vertical-align: middle;
 }
 
-/* The divider is a dot screen — gradients are dots here. */
+/* The divider is a dot screen — gradients are dots here. The height is a
+   multiple of the 11px tile so both dot rows print whole: at the old 18px
+   the second row (centers at y 5.5 and 16.5, dot ink to ±2.8px) sliced
+   flat at the clip and dragged the band's visual ink ~1.4px below its box
+   center; at 22px the ink center IS the box center.
+
+   The margin-left is the lead-in: the title's side padding is zeroed
+   above, and the default sheet's margin-left: auto resolves to 0 once
+   flex-grow has soaked the row's free space, so the first dots sat flush
+   against the last glyph — inside its yellow shadow pass (0.06em ≈ 3.6px
+   at the 60px ceiling). 20px holds the same clearance in all five index
+   sections and both blog-page headers. margin-right: 0 unwinds the
+   default sheet's 10px so the band really does run to the page edge, as
+   the panel-grid comment above promises (mobile already gets 0 from the
+   base sheet).
+
+   Seating: flex centers the band on the h2 box. At the 60px clamp ceiling
+   the box is 4 + 1.05 × 60 + 4 = 71px → band center 35.5px. Bangers (UPM
+   1000: ascent 883, descent 181, cap 721) puts the baseline at
+   4 + (1.05 − 1.064)/2 × 60 + 53.0 = 56.6px and the cap-band center at
+   56.6 − 43.3/2 = 34.9px — flex alone is only ~0.6px low (the yellow pass
+   pulls the title's optical mass down-right anyway), so the default
+   sheet's translateY(5px) is unwound rather than retuned. No title
+   rotation on this skin to correct for. */
 [data-style="neo-pop"] .section-header-spacer {
-  height: 18px;
+  height: 22px;
   background-color: transparent;
   background-image: radial-gradient(var(--primary45) 2.2px, transparent 2.8px);
   background-size: 11px 11px;
-  transform: translateY(2px);
+  margin-left: 20px;
+  margin-right: 0;
+  transform: none;
 }
 
 
@@ -535,11 +585,11 @@
 
 /* ---- Selected Works: comic covers ------------------------------------------------ */
 
-/* Each plate is a cover in an ink keyline with a starburst sticker slapped
-   on its corner (inside the frame — the plate clips its overflow). The
-   plate presses into its shadow on hover, top/left because the tilt kill
-   holds transform at none. Scoped to the image so hovering the title/CTA
-   side of the card doesn't move the plate. */
+/* Each plate is a cover in an ink keyline — the keyline and hard shadow do
+   the work; the artwork carries no sticker. The plate presses into its
+   shadow on hover, top/left because the tilt kill holds transform at none.
+   Scoped to the image so hovering the title/CTA side of the card doesn't
+   move the plate. */
 [data-style="neo-pop"] .fc-style-floating .fc-card-image {
   position: relative;
   box-sizing: border-box;
@@ -553,21 +603,6 @@
   top: 4px;
   left: 4px;
   box-shadow: 6px 6px 0 var(--text);
-}
-
-[data-style="neo-pop"] .fc-style-floating .fc-card-image::after {
-  content: '';
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 58px;
-  height: 58px;
-  background: #ffe94f;
-  clip-path: polygon(50% 0%, 57.8% 21%, 75% 6.7%, 71.2% 28.8%, 93.3% 25%, 79% 42.2%, 100% 50%, 79% 57.8%, 93.3% 75%, 71.2% 71.2%, 75% 93.3%, 57.8% 79%, 50% 100%, 42.2% 79%, 25% 93.3%, 28.8% 71.2%, 6.7% 75%, 21% 57.8%, 0% 50%, 21% 42.2%, 6.7% 25%, 28.8% 28.8%, 25% 6.7%, 42.2% 21%);
-  filter: drop-shadow(2px 2px 0 var(--text));
-  transform: rotate(10deg);
-  z-index: 2;
-  pointer-events: none;
 }
 
 /* Four-color press punch so raw screenshots read as printed panels. */
@@ -1019,20 +1054,39 @@
   }
 
   /* The hero screen would crowd the 125px mobile hero. */
-  [data-style="neo-pop"] #typing-left::before,
-  [data-style="neo-pop"] #typing-left::after {
+  [data-style="neo-pop"] main:has(> #typing-container)::before,
+  [data-style="neo-pop"] main:has(> #typing-container)::after {
     display: none;
   }
 
   /* mobile-styles.css pins nowrap for the small inline headers; the
-     Bangers display needs to wrap. */
+     Bangers display needs to wrap. The grid pins the yellow plate as a
+     fixed first column so a squeezed header can never drop its title below
+     the plate, and wrapped title lines stay flush after it (the text run
+     after .sec-num is one anonymous grid item). */
   [data-style="neo-pop"] .section-header {
     white-space: normal;
     font-size: clamp(26px, 7.5vw, 34px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
   }
 
+  /* One whole dot row (11px = one tile, so the ink centers itself). The
+     default mobile sheet pins the spacer to width: 73% — its flex basis —
+     so any title longer than the leftover ~27% got shrunk into wrapping
+     against it and the text-to-dots gap varied section to section (short
+     titles got the dots flush at 0). flex-basis 0 hands the band only
+     what's left after the title takes its full line, the margin keeps the
+     same 12px clearance everywhere, and the min-width floor (~3 dot
+     columns) keeps a stub of band alive if a long title fills the row.
+     Cap-band math as on desktop, scaled to the 26–34px display: flex sits
+     ~0.3px low — no nudge (transform: none carries down from above). */
   [data-style="neo-pop"] .section-header-spacer {
-    height: 12px;
+    height: 11px;
+    flex: 1 1 0px;
+    min-width: 32px;
+    margin-left: 12px;
   }
 
   [data-style="neo-pop"] .section-spacer {

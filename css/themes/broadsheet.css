@@ -509,7 +509,9 @@
   color: var(--primary);
   border: 1px solid var(--primary);
   border-radius: 0; /* featured-carousel.css pins a literal 10px, not the token */
-  padding: 10px 18px;
+  /* Letter-spacing trails its 0.16em after the last glyph, so the right
+     pad gives that back to keep the label optically centered in the box. */
+  padding: 10px calc(18px - 0.16em) 10px 18px;
 }
 
 [data-style="broadsheet"] .fc-card-cta:hover {

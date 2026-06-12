@@ -734,7 +734,10 @@
   font-size: 12px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 6px 14px;
+  /* 7.5/4.5, not 6/6: Special Elite rides ~0.132em high in its em box
+     (caps band center 0.335 vs box center 0.203 — ~1.6px at 12px), so the
+     top pad takes the difference to center the caps on the ink scrap. */
+  padding: 7.5px 14px 4.5px;
   transition: none;
 }
 
@@ -942,7 +945,10 @@
   font-size: 11px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
-  padding: 4px 10px;
+  /* 5.5/2.5, not 4/4: Special Elite rides ~0.132em high in its em box
+     (~1.5px at 11px), so the box trims below and keeps above to sit
+     centered on the stencil caps. */
+  padding: 5.5px 10px 2.5px;
 }
 
 

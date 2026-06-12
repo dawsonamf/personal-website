@@ -44,6 +44,15 @@
  * nodes (a lone space inside an inline-block span collapses to nothing);
  * newlines stay <br>. The accent span contract holds: glyphs typed after
  * the second newline also carry .typing-accent.
+ *
+ * Deletion normally backspaces one glyph per tick in every mode. A style
+ * can additionally set typingDelete: 'word' in the registry (read here via
+ * window.__styleTypingDeleteMode) to erase the way 'word' mode types: the
+ * trailing word's glyph spans take .tw-out on the same frame and drain
+ * together — separators fold into the same beat — so the line breaks up a
+ * whole word at a time, in reverse order. Delete counts keep their per-char
+ * meaning: a count that dries up mid-word takes only that many trailing
+ * glyphs. Cursor mode ignores the key (bare text has no spans to group).
  */
 function startTypingSequence(config) {
   const element = document.getElementById(config.elementId);
@@ -54,9 +63,36 @@ function startTypingSequence(config) {
   const sequences   = config.sequences || [];
   if (sequences.length === 0) return;
 
+  // Live style switches replay the masthead via window.__restartTypingSequence
+  // (bottom of this file): each call cancels the previous run's pending
+  // timers through this token and clears the prior render, so the DOM
+  // rebuilds in the incoming style's grammar (caret vs glyph spans).
+  if (startTypingSequence._activeRun) startTypingSequence._activeRun.cancelled = true;
+  const run = { cancelled: false };
+  startTypingSequence._activeRun = run;
+  startTypingSequence._lastConfig = config;
+  element.innerHTML = '';
+
+  // Every timer that drives the sequence routes through here so a cancelled
+  // run stops dead. drainOut keeps raw timeouts: its removals must finish
+  // even after cancellation (they self-guard on parentNode).
+  function later(fn, ms) {
+    setTimeout(function () { if (!run.cancelled) fn(); }, ms);
+  }
+
   const mode = config.mode ||
     (typeof window.__styleTypingMode === 'function' ? window.__styleTypingMode() : 'cursor');
   const usesCursor = mode !== 'letter' && mode !== 'word';
+
+  // How delete steps erase: 'char' (one glyph per tick, the default
+  // everywhere) or 'word' (a whole word's glyph spans exit on one beat).
+  // Captured once, like `mode`, so a live style switch mid-sequence lets
+  // the current phrase finish in the grammar it started with. Word
+  // deletion only exists in the cursorless modes — cursor-mode text is
+  // bare text nodes with nothing to group.
+  const deleteMode = config.deleteMode ||
+    (typeof window.__styleTypingDeleteMode === 'function' ? window.__styleTypingDeleteMode() : 'char');
+  const wordDelete = !usesCursor && deleteMode === 'word';
 
   // How long a deleted node stays in the DOM for its exit animation.
   const ERASE_MS = 300;
@@ -139,7 +175,7 @@ function startTypingSequence(config) {
 
     if (step.action === 'pause') {
       setCursorBlink(true);
-      setTimeout(function () {
+      later(function () {
         runStep(index + 1);
       }, step.duration || 800);
       return;
@@ -165,15 +201,15 @@ function startTypingSequence(config) {
           tokenIdx++;
           if (token === '\n') {
             insertBreak();
-            setTimeout(typeToken, typingDelay);
+            later(typeToken, typingDelay);
           } else if (token === ' ') {
             element.insertBefore(document.createTextNode(' '), cursor);
-            setTimeout(typeToken, typingDelay);
+            later(typeToken, typingDelay);
           } else {
             for (let i = 0; i < token.length; i++) {
               element.insertBefore(makeGlyph(token.charAt(i)), cursor);
             }
-            setTimeout(typeToken, typingDelay * token.length);
+            later(typeToken, typingDelay * token.length);
           }
         }
 
@@ -208,7 +244,7 @@ function startTypingSequence(config) {
             element.insertBefore(document.createTextNode(ch), cursor);
           }
           charIdx++;
-          setTimeout(typeChar, typingDelay);
+          later(typeChar, typingDelay);
         } else {
           runStep(index + 1);
         }
@@ -226,9 +262,88 @@ function startTypingSequence(config) {
       // (and holding layout) when the count runs dry; wait out the drain so
       // the next type step doesn't land after ghosts and shift left.
       function finishDelete() {
-        setTimeout(function () {
+        later(function () {
           runStep(index + 1);
         }, usesCursor ? 0 : ERASE_MS);
+      }
+
+      if (wordDelete) {
+        // Words stamp out the way they stamped in: every glyph span of the
+        // trailing word gets .tw-out on the same frame (one shared exit
+        // animation, so the word moves as a unit) and drains together. The
+        // separator run before it — the space or <br> that joined it to the
+        // rest of the line — drains silently on the same beat. The wait
+        // after each word is budgeted like the type side's
+        // `typingDelay * token.length` (deleteDelay per character
+        // consumed), so a delete step takes about the same overall time as
+        // the per-char path, just grouped into slams.
+        function deleteWord() {
+          if (remaining <= 0) {
+            finishDelete();
+            return;
+          }
+
+          const nodes = getContentNodes();
+          if (nodes.length === 0) {
+            finishDelete();
+            return;
+          }
+
+          let consumed = 0;
+
+          // Trailing separators first (after the previous word fell, the
+          // line ends in the whitespace that preceded it).
+          while (remaining > 0 && nodes.length > 0) {
+            const last = nodes[nodes.length - 1];
+            if (last.nodeType === Node.TEXT_NODE && /^\s*$/.test(last.textContent)) {
+              drainOut(last);
+            } else if (last.nodeName === 'BR') {
+              drainOut(last);
+              newlineCount = Math.max(0, newlineCount - 1);
+            } else {
+              break;
+            }
+            nodes.pop();
+            remaining--;
+            consumed++;
+          }
+
+          // The word itself: the contiguous run of trailing glyph spans,
+          // capped at the step's remaining count so per-char delete counts
+          // keep their meaning (a count ending mid-word takes only that
+          // word's trailing glyphs).
+          while (remaining > 0 && nodes.length > 0) {
+            const last = nodes[nodes.length - 1];
+            if (last.nodeType === Node.ELEMENT_NODE && last.classList && last.classList.contains('tw')) {
+              last.classList.add('tw-out');
+              drainOut(last);
+              nodes.pop();
+              remaining--;
+              consumed++;
+            } else {
+              break;
+            }
+          }
+
+          // Anything else trailing (defensive — word-mode content is only
+          // glyph spans, spaces, and <br>s): take one char the per-char way
+          // so the loop can't stall.
+          if (consumed === 0 && remaining > 0 && nodes.length > 0) {
+            const last = nodes[nodes.length - 1];
+            if (last.nodeType === Node.TEXT_NODE && last.textContent.length > 1) {
+              last.textContent = last.textContent.slice(0, -1);
+            } else {
+              drainOut(last);
+            }
+            remaining--;
+            consumed = 1;
+          }
+
+          later(deleteWord, deleteDelay * Math.max(consumed, 1));
+        }
+
+        deleteWord();
+        return;
       }
 
       function deleteChar() {
@@ -256,7 +371,7 @@ function startTypingSequence(config) {
             drainOut(last);
           }
           remaining--;
-          setTimeout(deleteChar, deleteDelay);
+          later(deleteChar, deleteDelay);
         } else if (last.nodeName === 'BR') {
           if (usesCursor) {
             element.removeChild(last);
@@ -265,7 +380,7 @@ function startTypingSequence(config) {
           }
           newlineCount = Math.max(0, newlineCount - 1);
           remaining--;
-          setTimeout(deleteChar, deleteDelay);
+          later(deleteChar, deleteDelay);
         } else if (last.nodeType === Node.ELEMENT_NODE && last.classList && last.classList.contains('tw')) {
           // Cursorless glyphs erase in place: the exit class runs the skin's
           // animation while the drain holds layout, then the node leaves
@@ -273,7 +388,7 @@ function startTypingSequence(config) {
           last.classList.add('tw-out');
           drainOut(last);
           remaining--;
-          setTimeout(deleteChar, deleteDelay);
+          later(deleteChar, deleteDelay);
         } else if (last.nodeType === Node.ELEMENT_NODE && last.classList && last.classList.contains('typing-accent')) {
           const txt = last.textContent;
           if (txt.length > 1) {
@@ -282,11 +397,11 @@ function startTypingSequence(config) {
             element.removeChild(last);
           }
           remaining--;
-          setTimeout(deleteChar, deleteDelay);
+          later(deleteChar, deleteDelay);
         } else {
           element.removeChild(last);
           remaining--;
-          setTimeout(deleteChar, deleteDelay);
+          later(deleteChar, deleteDelay);
         }
       }
 
@@ -306,3 +421,13 @@ function startTypingSequence(config) {
 
   runStep(0);
 }
+
+// Replay the most recently started sequence from scratch. js/theme-cycler.js
+// calls this on every live style switch so the masthead re-renders in the
+// incoming style's typing grammar (caret vs glyph spans, fresh spacing)
+// instead of carrying the old mode's DOM. The reveal callbacks inside the
+// sequence are idempotent (js/script.js guards them), so only the type
+// itself re-runs.
+window.__restartTypingSequence = function () {
+  if (startTypingSequence._lastConfig) startTypingSequence(startTypingSequence._lastConfig);
+};

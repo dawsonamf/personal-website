@@ -8,7 +8,21 @@
 
   // persistAfterAnimation comes from js/anim-utils.js (shared with the blog pages).
 
+  // The hero chrome enters exactly once per page load. Live theme switches
+  // replay the typing sequence (js/theme-cycler.js → __restartTypingSequence),
+  // which re-fires the sequence's callbacks — the chrome must not re-animate.
+  let heroChromeIn = false;
+
   function startAnimations() {
+    if (heroChromeIn) return;
+    heroChromeIn = true;
+
+    // Style skins gate their masthead underprints (the discs/suns behind
+    // the typed headline) on this class so they fade in with this wave
+    // instead of existing before the first line has typed — see
+    // "hero-extras-in" in css/themes/*.css.
+    document.documentElement.classList.add('hero-extras-in');
+
     const staticMenu = document.querySelector('.static-menu');
     const nameLogo = document.querySelector('.name-logo');
     const typingContainer = document.querySelector('#typing-container');
@@ -77,7 +91,13 @@
   }
 
 
+  // Same once-per-load guard as the chrome above, for the same reason.
+  let subTextIn = false;
+
   function fadeInSubText() {
+    if (subTextIn) return;
+    subTextIn = true;
+
     const subText = document.querySelector('#sub-text');
     if (subText) {
       subText.style.animation = "fadein 0.8s ease-out";

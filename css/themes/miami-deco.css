@@ -376,6 +376,17 @@
   color: var(--jobs-menu-slate);
 }
 
+/* The long agency names set wider than the 225px rail in tracked caps and
+   bled past it toward the dossier (.nav-container pins white-space:
+   nowrap). Let them wrap on the wide sheet — the flamingo tube measures
+   each row, so a two-line entry just runs taller. Mobile keeps nowrap:
+   the rail is a horizontal scroller there. */
+@media (min-width: 1101px) {
+  [data-style="miami-deco"] .menu li {
+    white-space: normal;
+  }
+}
+
 [data-style="miami-deco"] .menu li:hover {
   background: var(--accent10);
 }
@@ -456,7 +467,13 @@
 }
 
 /* CTA: the flamingo pill — every interactive surface in this skin is
-   flamingo; hover dips it seafoam (the default lift stays). */
+   flamingo; hover dips it seafoam (the default lift stays). Padding is
+   metrics-corrected, not decorative: Josefin's caps nearly fill its short
+   ascent (caps 0.728 against asc 0.750 / desc 0.250), so a centered line
+   box leaves them ~0.114em high ≈ 1.4px at 12px — the vertical pair tips
+   11.5/8.5 to land the caps on the pill's center. And letter-spacing
+   trails its 0.16em after the last glyph, so the right pad gives that
+   back to keep the label optically centered. */
 [data-style="miami-deco"] .fc-card-cta {
   font-family: var(--font-body);
   font-weight: 600;
@@ -467,7 +484,7 @@
   border: 1px solid var(--primary);
   border-radius: 999px;
   color: var(--secondary);
-  padding: 10px 22px;
+  padding: 11.5px calc(22px - 0.16em) 8.5px 22px;
 }
 
 [data-style="miami-deco"] .fc-card-cta:hover {
@@ -598,6 +615,11 @@
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  /* 7.5/4.5, not the base 6/6: Josefin's caps ride ~0.114em high in a
+     centered line box (~1.4px at 12px); the top pad takes the
+     difference. (The tag .pill keeps base padding — its mixed-case
+     strings center on Josefin's low box middle as-is.) */
+  padding: 7.5px 16px 4.5px;
 }
 
 [data-style="miami-deco"] .filter-pill:hover {

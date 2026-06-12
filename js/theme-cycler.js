@@ -263,76 +263,15 @@
 
   // ---- Style versions (preset strip) --------------------------------------
 
-  function clearStyleAssets() {
-    document.querySelectorAll('link[data-style-asset]').forEach(l => l.remove());
-  }
-  function addStyleAsset(href) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = href;
-    link.setAttribute('data-style-asset', '1');
-    document.head.appendChild(link);
-  }
-
-  // Styles with flags.tilt === false get their vanilla-tilt instances
-  // destroyed on a live switch (page scripts already skip init at load via
-  // window.__styleAllowsTilt). Switching back to a tilting style re-enables
-  // on the next page load, which is fine for a session toy.
-  const TILT_TARGETS = '.card, .blog-card, .fc-card-image, .blog-image';
-  function applyBehaviorFlags(entry) {
-    if (entry && entry.flags && entry.flags.tilt === false) {
-      document.querySelectorAll(TILT_TARGETS).forEach(el => {
-        if (el.vanillaTilt) {
-          el.vanillaTilt.destroy();
-          // destroy() exits through reset(), which writes a flat inline
-          // transform and leaves it there. Inline style would override a
-          // skin's :hover press, so clear it.
-          el.style.transform = '';
-          el.style.transition = '';
-          el.style.willChange = '';
-        }
-      });
-    }
-  }
-
-  // Activate a style version live: stamp the attributes, swap assets and
-  // tokens, and reset the palette toy to the style's own palette. Palette
-  // overrides don't survive a style switch.
+  // Activate a style version: land on the home page with the documented
+  // ?style= seed and let theme-bootstrap.js apply it pre-paint. A full
+  // navigation means tilt, the cursor follower, and the masthead type all
+  // boot natively in the new style — no live patching of page features.
   function switchStyle(id) {
-    const entry = REGISTRY[id];
-    if (!entry || id === state.style) return;
-    const prev = REGISTRY[state.style];
-    state.style = id;
-    window.__ACTIVE_STYLE = id;
-    applyBehaviorFlags(entry);
-
-    try {
-      if (id === 'default') sessionStorage.removeItem(STYLE_KEY);
-      else sessionStorage.setItem(STYLE_KEY, id);
-      sessionStorage.removeItem(STORAGE_KEY);
-    } catch {}
-
-    if (id === 'default') root.removeAttribute('data-style');
-    else root.setAttribute('data-style', id);
-    if (entry.flags && entry.flags.still) root.setAttribute('data-still', '');
-    else root.removeAttribute('data-still');
-    if (entry.flags && entry.flags.tilt === false) root.setAttribute('data-no-tilt', '');
-    else root.removeAttribute('data-no-tilt');
-
-    clearStyleAssets();
-    (entry.fonts || []).forEach(addStyleAsset);
-    if (id !== 'default') addStyleAsset('/css/themes/theme-base.css');
-    if (entry.css) addStyleAsset(entry.css);
-
-    if (prev && prev.tokens) Object.keys(prev.tokens).forEach(k => root.style.removeProperty(k));
-    if (entry.tokens) Object.keys(entry.tokens).forEach(k => root.style.setProperty(k, entry.tokens[k]));
-
-    state.theme  = entry.polarity || 'dark';
-    state.locks  = [false,false,false,false,false];
-    state.colors = entryColors(entry);
-    applyTheme();
-    applyColors();
-    renderPresets();
+    if (!REGISTRY[id] || id === state.style) return;
+    // Palette-toy overrides don't survive a style switch.
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
+    window.location.href = '/?style=' + encodeURIComponent(id);
   }
 
   function renderPresets() {

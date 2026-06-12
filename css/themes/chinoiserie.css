@@ -211,9 +211,14 @@
 }
 
 /* The portrait becomes a cameo: an oval well in a white matte with a cobalt
-   rim and a dashed inner ring (outline follows the curve). Stays clickable. */
+   rim and a dashed inner ring (outline follows the curve). Stays clickable.
+   height: auto — the base 225×400 box is exactly the 450×800 photo's
+   ratio, but the border-box matte steals from the content box on both
+   axes unevenly, which would squish the portrait; auto lets the content
+   height follow the photo's true ratio inside the 225px column instead. */
 [data-style="chinoiserie"] #typing-image {
   box-sizing: border-box;
+  height: auto;
   padding: 9px;
   background-color: var(--secondary);
   border: 1px solid var(--primary);
@@ -491,7 +496,9 @@
   font-size: 16.5px;
 }
 
-/* CTA: a porcelain button — cobalt rim pill that fills cobalt on hover. */
+/* CTA: a porcelain button — cobalt rim pill that fills cobalt on hover.
+   Letter-spacing trails its 0.18em after the last glyph, so the right pad
+   gives that back to keep the label optically centered in the rim. */
 [data-style="chinoiserie"] .fc-card-cta {
   font-family: var(--font-body);
   font-weight: 600;
@@ -501,7 +508,7 @@
   color: var(--primary);
   border: 1px solid var(--primary50);
   border-radius: 999px;
-  padding: 10px 20px;
+  padding: 10px calc(20px - 0.18em) 10px 20px;
   background-color: var(--secondary);
 }
 
@@ -751,7 +758,12 @@
   font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.06em;
-  padding: 4px 13px;
+  /* 3/5, not 4/4: Garamond reserves a tall ascent for accents (asc 1.007
+     against caps 0.65), so these mixed-case tags sit ~1px below the rim
+     chip's center in a symmetric box; the bottom pad takes the
+     difference. (The uppercase CTA/filter labels sit higher in the same
+     em box — caps-only Δ is ~0.35px — and keep symmetric pads.) */
+  padding: 3px 13px 5px;
 }
 
 

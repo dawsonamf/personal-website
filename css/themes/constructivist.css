@@ -19,10 +19,12 @@
    alpha ramps (no literal colors in this sheet), so the palette toy keeps
    working. Hovers are hard cuts: ink overprints red, red marks arrival.
 
-   Typing: the registry sets typing: 'word' — slogans stamp onto the sheet
-   a word at a time, no caret. The .tw / .tw-out animations below slam each
-   word in from above-scale and drop dead ones off the press
-   (theme-base.css lands glyphs instantly under prefers-reduced-motion).
+   Typing: the registry sets typing: 'word' AND typingDelete: 'word' —
+   slogans stamp onto the sheet a word at a time, no caret, and dead ones
+   drop off the press the same way, a whole word per beat (never the
+   char-by-char backspace). The .tw / .tw-out animations below slam each
+   word in from above-scale and slam it back off (theme-base.css lands
+   glyphs instantly under prefers-reduced-motion).
 
    Scoped Layer-2 skin. Scoping rules and JS contracts: see
    todo/STYLE_VERSIONS_SPEC.md. The code-block ground, tilt pins, and
@@ -253,17 +255,23 @@
 }
 
 /* The composition's brace: a faint great ring and a solid ink disc behind
-   the masthead (z-index -1 keeps them under the type; the container's
-   intro slide is untouched). */
-[data-style="constructivist"] #typing-left {
+   the masthead (z-index -1 keeps them under the type). Anchored to main —
+   the page ground — NOT the hero container: the container slides in
+   (translateX) with the type, and a backdrop shouldn't ride that slide.
+   main's box coincides with the container's layout box, so offsets
+   transfer; the old #typing-left lefts gain its 305px column offset (20px
+   pad + 225px portrait + 60px pad), and the em tops resolve identically
+   (both inherit the body size). :has(> #typing-container) scopes the brace
+   to the home masthead so it can't surface on blog/privacy pages. */
+[data-style="constructivist"] main:has(> #typing-container) {
   position: relative;
 }
 
-[data-style="constructivist"] #typing-left::before {
+[data-style="constructivist"] main:has(> #typing-container)::before {
   content: '';
   position: absolute;
   top: 1.4em;
-  right: -56px;
+  left: 601px;
   width: 300px;
   height: 300px;
   border-radius: 50%;
@@ -272,17 +280,31 @@
   pointer-events: none;
 }
 
-[data-style="constructivist"] #typing-left::after {
+[data-style="constructivist"] main:has(> #typing-container)::after {
   content: '';
   position: absolute;
   top: 2.1em;
-  right: 218px;
+  left: 573px;
   width: 54px;
   height: 54px;
   border-radius: 50%;
   background: var(--text);
   z-index: -1;
   pointer-events: none;
+}
+
+/* The brace arrives with the page chrome: js/script.js stamps
+   hero-extras-in on <html> when the first slogan lands and the rest of the
+   hero fades in — until then the slogans stamp onto a bare sheet. */
+[data-style="constructivist"] main:has(> #typing-container)::before,
+[data-style="constructivist"] main:has(> #typing-container)::after {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+[data-style="constructivist"].hero-extras-in main:has(> #typing-container)::before,
+[data-style="constructivist"].hero-extras-in main:has(> #typing-container)::after {
+  opacity: 1;
 }
 
 /* The strapline is the red banner, pasted on at the poster angle. */
@@ -302,9 +324,14 @@
 
 /* The portrait prints in red ink — Rodchenko shot his subjects and inked
    them into the poster — and develops to color on hover. (A tilt target:
-   theme-base pins its transforms, so filter is the whole hover.) */
+   theme-base pins its transforms, so filter is the whole hover.)
+   height: auto — the base 225×400 box is exactly the 450×800 photo's
+   ratio, but border-box borders steal from the content box on both axes
+   unevenly, which would squish the photo; auto lets the content height
+   follow the photo's true ratio inside the 225px column instead. */
 [data-style="constructivist"] #typing-image {
   box-sizing: border-box;
+  height: auto;
   border: 2px solid var(--text);
   filter: grayscale(1) sepia(0.4) hue-rotate(-28deg) saturate(1.7) contrast(1.05);
   transition: filter 0.25s ease-in-out;
@@ -382,12 +409,32 @@
 }
 
 /* The wedge: the divider line thickens into the red wedge and drives to a
-   point at the page edge. */
+   point at the page edge (margin-right: 0 unwinds the default sheet's 10px
+   so the tip meets the wrapper edge, in line with the footer rule). The
+   margin-left is the lead-in: the default sheet's margin-left: auto
+   resolves to 0 once flex-grow has soaked up the free space, and the
+   title's side padding is zeroed above, so without it the wedge sat flush
+   against the last glyph.
+
+   The translateY seats the wedge on the title's cap band (Anton is
+   all-caps display type — center on cap height, not x-height). The math,
+   at the 58px clamp ceiling: the h2 box is 4px + 1.04 x 58 + 4px = 68.3px,
+   so flex centers the 16px wedge at 34.2px. Anton's metrics (UPM 2048:
+   hhea ascent 2079, descent 547, cap 1462 → 1.015 / 0.267 / 0.714em) put
+   the baseline at 4 + half-leading (1.04 − 1.282)/2 x 58 + 58.9 = 55.9px
+   and the cap-band center at 55.9 − 41.4/2 = 35.2px — so flex centering
+   alone is only ~1px high. What read "low" was the -1.2° title rotation
+   about left-bottom lifting the meeting end of the type by
+   width x sin(1.2°) ~ 4–12px across the five titles (~7px mid), plus the
+   flat-bottom taper carrying the wedge's ink ~2px below its box center:
+   (35.2 − 7) − (34.2 + 2) ~ −8px. */
 [data-style="constructivist"] .section-header-spacer {
   background-color: var(--primary);
   height: 16px;
   clip-path: polygon(0 0, 0 100%, 100% 100%);
-  transform: none;
+  margin-left: 20px;
+  margin-right: 0;
+  transform: translateY(-8px);
 }
 
 
@@ -491,6 +538,17 @@
   transition: none;
 }
 
+/* The long agency names set wider than the 225px rail in shouted caps and
+   bled past it into the dossier (.nav-container pins white-space: nowrap).
+   Let them wrap on the wide sheet — the redline measures each row, so a
+   two-line entry just runs taller. Mobile keeps nowrap: the rail is a
+   horizontal scroller there. */
+@media (min-width: 1101px) {
+  [data-style="constructivist"] .menu li {
+    white-space: normal;
+  }
+}
+
 [data-style="constructivist"] .menu li::before {
   counter-increment: plan;
   content: counter(plan, decimal-leading-zero);
@@ -583,26 +641,13 @@
 
 /* ---- Selected Works: poster plates -------------------------------------------- */
 
-/* Each plate is a poster in a hard frame with a red wedge cutting its
-   top-left corner. */
+/* Each plate is a poster in a hard frame — the frame alone does the work;
+   the impression carries no corner marks. */
 [data-style="constructivist"] .fc-style-floating .fc-card-image {
   position: relative;
   box-sizing: border-box;
   border: 2px solid var(--text);
   background-color: var(--secondary);
-}
-
-[data-style="constructivist"] .fc-style-floating .fc-card-image::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 42px;
-  height: 42px;
-  background: var(--primary);
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-  z-index: 2;
-  pointer-events: none;
 }
 
 [data-style="constructivist"] .fc-style-floating .fc-card-image img {
@@ -992,21 +1037,44 @@
   }
 
   /* The hero brace would crowd the 125px mobile hero. */
-  [data-style="constructivist"] #typing-left::before,
-  [data-style="constructivist"] #typing-left::after {
+  [data-style="constructivist"] main:has(> #typing-container)::before,
+  [data-style="constructivist"] main:has(> #typing-container)::after {
     display: none;
   }
 
   /* mobile-styles.css pins nowrap for the small inline headers; the
-     shouted display needs to wrap. */
+     shouted display needs to wrap. The grid pins the red plate as a fixed
+     first column so a squeezed header can never drop its title below the
+     plate, and wrapped title lines stay flush after it (the text run after
+     .sec-num is one anonymous grid item). */
   [data-style="constructivist"] .section-header {
     white-space: normal;
     font-size: clamp(24px, 7vw, 32px);
     transform: none;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
   }
 
+  /* A constant lead-in on the small sheet. The default mobile sheet pins
+     the spacer to width: 73% (its flex basis); whenever a title's
+     single-line width plus that basis overflowed the row, flex shrank the
+     h2 below its own line, the title wrapped (white-space: normal above),
+     and the wedge then abutted the h2's assigned box — not its glyphs — so
+     the text-to-wedge gap varied section to section (and short titles got
+     the wedge flush at 0). flex-basis 0 hands the wedge only what's left
+     after the title takes its full line (every title fits one line from
+     320px up), margin-left makes the clearance the same 12px in all five
+     sections, and the min-width floor keeps a stub of wedge alive if one
+     ever doesn't fit. No title rotation down here, so the cap-band
+     correction is just the taper's optical drop (~1px at the ~26px
+     display). */
   [data-style="constructivist"] .section-header-spacer {
     height: 10px;
+    flex: 1 1 0px;
+    min-width: 32px;
+    margin-left: 12px;
+    transform: translateY(-1px);
   }
 
   [data-style="constructivist"] .section-spacer {

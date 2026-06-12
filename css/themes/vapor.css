@@ -192,9 +192,17 @@
 /* The signature move: a slatted outrun sun sinking behind the sign. One
    disc, cyan falling into magenta, with the horizon slats cut by a mask
    (the gaps widen toward the bottom, the way the sun melts into the grid).
-   The container's intro transform makes it a stacking context, so z-index
-   -1 keeps the sun behind the type but above the page. */
-[data-style="vapor"] #typing-container::before {
+   Anchored to main — the page ground — NOT the hero container: the
+   container slides in (translateX) with the type, and a backdrop shouldn't
+   ride that slide. main's box coincides with the container's layout box,
+   so the offsets transfer unchanged. :has(> #typing-container) scopes the
+   sun to the home masthead; z-index -1 keeps it behind the type but above
+   the page. */
+[data-style="vapor"] main:has(> #typing-container) {
+  position: relative;
+}
+
+[data-style="vapor"] main:has(> #typing-container)::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -216,9 +224,17 @@
     #000 68% 76%, transparent 76% 81%,
     #000 81% 87%, transparent 87% 93%,
     #000 93% 97%, transparent 97%);
-  opacity: 0.42;
+  opacity: 0;
   filter: blur(0.6px) drop-shadow(0 0 36px var(--primary40));
   pointer-events: none;
+  transition: opacity 0.8s ease-out;
+}
+
+/* The sun rises with the page chrome: js/script.js stamps hero-extras-in
+   on <html> when the first phrase lands and the rest of the hero fades
+   in — until then the sign flickers over empty night. */
+[data-style="vapor"].hero-extras-in main:has(> #typing-container)::before {
+  opacity: 0.42;
 }
 
 /* Monoton, glow-shadowed, all caps — the typed masthead IS the sign. The
@@ -512,6 +528,12 @@
 /* CTA: a neon tube button (featured-carousel.css pins a literal 10px radius,
    not the pill token, so the chrome pill is re-applied here). The default
    hover fill + lift stays — motion skin. */
+/* Padding is metrics-corrected, not decorative: Exo 2 reserves a tall
+   ascent (asc 0.999 against caps 0.69 / desc 0.201), so the caps sit
+   ~0.054em low ≈ 0.7px at 13px — the vertical pair tips 9.5/10.5 to lift
+   them onto the pill's center. And letter-spacing trails its 0.18em after
+   the last glyph, so the right pad gives that back to keep the label
+   optically centered. */
 [data-style="vapor"] .fc-card-cta {
   font-weight: 600;
   font-size: 13px;
@@ -520,7 +542,7 @@
   color: var(--accent);
   border: 1px solid var(--accent);
   border-radius: var(--radius-pill);
-  padding: 10px 22px;
+  padding: 9.5px calc(22px - 0.18em) 10.5px 22px;
   box-shadow: 0 0 12px var(--accent25), inset 0 0 10px var(--accent10);
 }
 
@@ -805,13 +827,11 @@
     background-position: 0 0, 0 0, 0 0;
   }
 
-  /* A smaller sun, tucked up by the sign. */
-  [data-style="vapor"] #typing-container::before {
-    top: 16px;
-    right: 6px;
-    width: 150px;
-    height: 150px;
-    opacity: 0.32;
+  /* No sun on the small sign: the mobile hero is placed by a transform on
+     #typing-container, which the page-ground anchor can't track. The other
+     skins' masthead backdrops sit out the small screen too. */
+  [data-style="vapor"] main:has(> #typing-container)::before {
+    display: none;
   }
 
   /* Monoton is very wide: "FULL STACK ENGINEER." must clear a ~335px column
