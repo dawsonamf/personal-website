@@ -1,60 +1,66 @@
 # dawsonamf.com
 
-Static personal site, deployed via GitHub Pages (CNAME → www.dawsonamf.com). No build
-step, no package.json — plain HTML/CSS/JS; push to main = deploy.
+Static personal site — plain HTML/CSS/JS, no build step, no package manager.
+Deployed via GitHub Pages (CNAME → `www.dawsonamf.com`); push to `main` = deploy.
+
+## Run locally
+
+```bash
+python3 -m http.server 8765
+```
+
+## Project structure
+
+```
+index.html              # Home page
+404.html                # Custom 404 (absolute paths — served at any missing URL)
+css/
+  styles.css            # Site-wide styles (~960 lines, well-sectioned)
+  mobile-styles.css     # ≤1100px overrides
+  featured-carousel.css # Carousel component
+  theme-cycler.css      # Theme switcher UI
+  themes/               # Per-skin CSS + shared theme-base.css
+js/
+  theme-bootstrap.js    # Theme registry (synchronous, pre-paint)
+  theme-cycler.js       # Theme switcher logic
+  nav-config.js         # Nav links + social links (config-driven)
+  blog-data.js          # Blog post + project registry
+  script.js             # Home page logic
+  featured-carousel.js  # Carousel component
+  typing-engine.js      # Masthead typing animation
+  anim-utils.js         # Shared animation helpers
+  cursor-follow.js      # Cursor follower effect
+blog/
+  posts/                # Markdown blog posts
+  posts/assets/         # Per-post JS/CSS
+  blog-post.js          # Client-side markdown renderer
+lexchat/                # LexChat — search & chat with the Lex Fridman podcast
+12years/                # Anniversary page (standalone, self-contained)
+privacy/                # Privacy policy
+resources/              # Images, PDFs, media
+docs/                      # AI-managed knowledge base + spikes
+  TODO.md                  # Planned work
+  theme-explorations.html  # Theme architecture docs + design tiles
+```
+
+## Key conventions
+
+- **No build step by design.** Every page hand-repeats its boilerplate.
+- **Mobile breakpoint: 1100px** — synced across `css/*.css`, `js/script.js`, and `js/featured-carousel.js`.
+- **CDN deps are version-pinned.** Never use `@latest`. Curl new URLs to confirm 200 before committing.
+- **Nav/social links are config-driven** — edit `js/nav-config.js`, not the HTML.
+- **Page-scoped CSS lives beside its page** (e.g. `blog/blog-styles.css`); shared CSS goes in `css/`.
+- **Images** at ~2x display size, ≤500 KB, JPEG for photos. Stored in `resources/`.
+- **Theme system**: 17 skins, registry in `js/theme-bootstrap.js`, skin sheets scoped under `[data-style="<id>"]`. Full architecture in the HTML comment at the top of `docs/theme-explorations.html`.
 
 ## New page checklist
 
-Every page repeats this boilerplate by hand (there is deliberately no build step):
-
-1. `<head>`, in this order: meta charset/viewport → title + description (plus
-   canonical/OG tags on indexable pages) → favicon links (`resources/favicon-32.png`,
-   `resources/apple-touch-icon.png`) → third-party CSS (Font Awesome, boxicons, AOS,
-   Calendly, as needed) → site CSS (`css/styles.css`, `css/mobile-styles.css`, then any
-   page/feature CSS) → `css/theme-cycler.css` last → then
-   `<script src="js/theme-bootstrap.js"></script>` **synchronously, not deferred** —
-   it must run before first paint so the `--text50`/`--bg50`-style alpha variables exist.
+1. `<head>` order: meta charset/viewport → title + description + OG tags → favicon links → third-party CSS → site CSS (`styles.css`, `mobile-styles.css`, page CSS) → `theme-cycler.css` → `<script src="js/theme-bootstrap.js"></script>` **synchronous, not deferred**.
 2. End of `<body>`: `<script defer src="js/theme-cycler.js"></script>`.
-3. Adjust paths with `../` for pages in subdirectories. `404.html` is the exception:
-   it uses absolute (`/css/...`) paths because GitHub Pages serves it at any missing URL.
+3. Subdirectory pages: prefix paths with `../`. Exception: `404.html` uses absolute (`/css/...`) paths.
 
-## Conventions
+## Blog posts
 
-- **Mobile breakpoint is 1100px site-wide** — media queries in `css/*.css`,
-  `MOBILE_BREAKPOINT` in `js/script.js`, and innerWidth checks in
-  `js/featured-carousel.js` must stay in sync.
-- **CDN dependencies are version-pinned** (marked, mermaid, highlight.js, AOS,
-  vanilla-tilt, jQuery, and per-post scripts in markdown frontmatter). When bumping,
-  pin an exact version — never use unversioned `@latest` URLs — and **curl the exact
-  URL to confirm it returns 200**: packages move files between majors (e.g. marked
-  ≥ v18 ships `lib/marked.umd.min.js`; the old root `marked.min.js` is gone).
-- **Nav and social links are config-driven**: `js/nav-config.js` holds `NAV_LINKS`
-  and `SOCIAL_LINKS` and renders them into the menus and socials containers.
-  Edit links there, not in the HTML.
-- **Shared animation helpers** live in `js/anim-utils.js` (loaded as a plain,
-  non-defer script so end-of-body scripts can use it).
-- **Style versions (theme switcher)**: the registry lives in `js/theme-bootstrap.js`
-  (synchronous, pre-paint); per-style skins in `css/themes/<id>.css` with every
-  rule scoped under `[data-style="<id>"]` (root-absolute asset paths), plus
-  `css/themes/theme-base.css` (shared pins, auto-loaded with any skin) keyed off
-  `data-style`/`data-still`/`data-no-tilt`. Activate via the nav's Theme
-  dropdown (trigger rendered by `js/nav-config.js`, dock anchored to it by
-  `js/theme-cycler.js`; pages without nav menus fall back to a floating
-  palette FAB) or `?style=<id>`; session-only, reload → default.
-  Architecture: HTML comment at the top of `docs/theme-explorations.html`.
-- **Page-scoped CSS lives beside its page** (`blog/blog-styles.css`,
-  `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css`); only shared,
-  multi-page CSS goes in `css/`.
-- **Images in `resources/`**: commit at roughly 2× display size — ≤1200px wide for
-  carousel images (displayed 510×340), ≤1500px for blog post images (750px column).
-  Prefer JPEG for photos/art without transparency; aim for under ~500 KB per image.
-- Blog posts are markdown in `blog/posts/` with frontmatter (`title`, `date`,
-  optional `scripts`/`styles` arrays), rendered client-side by `blog/blog-post.js`,
-  and listed via `BLOG_POSTS` in `js/blog-data.js`. Per-post JS/CSS assets live in
-  `blog/posts/assets/`. New posts also go in `sitemap.xml`.
-
-## Planned work
-
-- Tracked in `docs/` — `docs/TODO.md` (features, polish, and someday/maybe) and
-  `docs/theme-explorations.html` (theme-system architecture as an HTML comment at
-  the top, plus design tiles and per-skin notes).
+Markdown files in `blog/posts/` with frontmatter (`title`, `date`, optional `scripts`/`styles` arrays).
+Rendered client-side by `blog/blog-post.js`, listed via `BLOG_POSTS` in `js/blog-data.js`.
+Per-post JS/CSS assets go in `blog/posts/assets/`. New posts also need a `sitemap.xml` entry.
