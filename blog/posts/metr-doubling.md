@@ -1,8 +1,8 @@
 ---
 title: How Fast Are Agents Improving?
 date: February 2026
-scripts: [https://cdn.plot.ly/plotly-2.27.0.min.js, https://cdn.jsdelivr.net/npm/js-yaml@4.2.0/dist/js-yaml.min.js, posts/metr-chart.js]
-styles: [posts/metr-chart.css]
+scripts: [https://cdn.plot.ly/plotly-2.27.0.min.js, https://cdn.jsdelivr.net/npm/js-yaml@4.2.0/dist/js-yaml.min.js, posts/assets/metr-chart.js]
+styles: [posts/assets/metr-chart.css]
 ---
 
 There's a question that keeps coming up in every AI safety discussion, every VC pitch, and probably every policy brief: how fast are AI systems getting better? With every software engineer you know spewing their personal anecdotes about how AI has transformed their workflow, and every executive showcasing their custom dashboards and asking you questions about CORS restrictions, an objective signal is desperately needed. We need a way of quantifying exactly how fast AI systems are improving.

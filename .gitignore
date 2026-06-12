@@ -10,9 +10,7 @@
 .idea/
 .claude/
 
-# Scratch / temp files. Root todo.md is private scratch, never committed
-# (tracked docs live in docs/).
+# Scratch / temp files
 scrap.txt
 resources/scrap.txt
 resources/temp.ipynb
-/todo.md

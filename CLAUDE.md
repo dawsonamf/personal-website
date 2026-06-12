@@ -54,6 +54,6 @@ Every page repeats this boilerplate by hand (there is deliberately no build step
 
 ## Planned work
 
-- Tracked in `docs/` — `docs/BACKLOG.md` (polish backlog: README, .editorconfig,
-  etc.) and `docs/THEMES.md` (theme-system architecture, ship status, skin build
-  protocol; design tiles in `docs/theme-explorations.html`).
+- Tracked in `docs/` — `docs/TODO.md` (features, polish, and someday/maybe) and
+  `docs/THEMES.md` (theme-system architecture, ship status, skin build protocol;
+  design tiles in `docs/theme-explorations.html`).

@@ -1,8 +1,8 @@
 ---
 title: Fine-Tuning Gemma 4 MoE with Heretic-ARA
 date: April 2026
-scripts: [https://cdn.plot.ly/plotly-2.27.0.min.js, posts/heretic-ara-charts.js]
-styles: [posts/heretic-ara-charts.css]
+scripts: [https://cdn.plot.ly/plotly-2.27.0.min.js, posts/assets/heretic-ara-charts.js]
+styles: [posts/assets/heretic-ara-charts.css]
 ---
 
 Today's language models are heavily censored. They're trained to refuse requests seen as harmful. While this is certainly important for preventing widespread misuse, it can make the model less useful in certain situations, and it sure takes some fun conversations off the table. How hard is it, then, to get around this? 
