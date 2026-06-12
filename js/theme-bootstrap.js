@@ -450,8 +450,38 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;700&display=swap'],
       css: '/css/themes/constructivist.css',
     },
+    'miami-deco': {
+      id: 'miami-deco',
+      label: 'Miami Deco',
+      polarity: 'light',
+      // No flags: the friendliest deco keeps the tilt sway, the AOS
+      // entrances, and the cursor follower (the accent ring reads as a
+      // porthole roaming the sand).
+      // Cursorless masthead: each glyph is a neon tube on the hotel sign
+      // flickering alight (the skin animates the engine's glyph spans).
+      typing: 'letter',
+      // Ocean Drive 1939: deep-teal ink on sand, white hotel facades,
+      // flamingo interactives, seafoam labels and rims. The sunset-gold
+      // garnish (#f0b46a) lives only in the skin sheet's tri-color rules.
+      colors: { text:'#1f3a44', bg:'#faf3e7', primary:'#e9688c', secondary:'#ffffff', accent:'#2fa8a0' },
+      tokens: {
+        '--font-body': "'Josefin Sans', sans-serif",
+        '--font-heading': "'Poiret One', cursive",
+        // --font-mono stays the default: code keeps a real mono face.
+        '--border-radius': '18px',
+        '--radius-pill': '999px',
+        '--neutral-gray': '#7d8f96',
+        // Selected jobs entry reads as the white facade panel; hover is a
+        // deeper sand wash.
+        '--jobs-menu-navy-dark': '#ffffff',
+        '--jobs-menu-navy': '#f1e5cd',
+        '--jobs-menu-slate': '#5d7681',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Poiret+One&display=swap'],
+      css: '/css/themes/miami-deco.css',
+    },
   };
-  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted', 'constructivist'];
+  var ORDER = ['default', 'studio', 'brutalist', 'broadsheet', 'field-notes', 'blueprint', 'doodle', 'vapor', 'wheatpaste', 'bauhaus', 'chinoiserie', 'banknote', 'grid', 'gallery', 'wanted', 'constructivist', 'miami-deco'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

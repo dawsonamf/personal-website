@@ -1,0 +1,868 @@
+/* Miami Deco: Ocean Drive 1939, deco on vacation. The South Beach hotel
+   district — Manhattan's stepped geometry repainted in seafoam, flamingo,
+   and sand. Sand ground, white hotel-facade panels with seafoam rims,
+   tri-color rules (flamingo / sunset gold / seafoam) as the section divider
+   motif, porthole circles for the logo and carousel dots, and a rounded
+   marquee crown on the portrait. Poiret One carries display (thin geometric
+   hotel signage, single 400 weight — every bolded heading spot is pinned
+   back to 400 below or it smears); Josefin Sans carries body, with
+   letterspaced teal caps as the label grammar. Flamingo marks every
+   interactive surface. The friendliest deco: tilt stays on, entrances stay,
+   the masthead's neon letters flicker alight.
+
+   Line/shadow stance: pinks ride --primary, teals ride --accent, and every
+   hairline derives from their alpha ramps so the palette toy keeps working.
+   The only literals are the sunset-gold garnish #f0b46a (the middle stripe
+   of the tri-color rule, decoration only, never text) and the soft
+   teal-ink shadows (rgba(31,58,68,…)) under raised surfaces.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   todo/STYLE_VERSIONS_SPEC.md. The code-block ground and the mobile fixes
+   come from css/themes/theme-base.css. No flags: tilt and the motion pack
+   stay on — palms move in the breeze. */
+
+
+/* ---- Foundations: teal ink on sand ---------------------------------------- */
+
+[data-style="miami-deco"] ::selection {
+  background: var(--primary);
+  color: var(--secondary);
+}
+
+/* Seafoam scrollbar on the sand. ([data-style] sits on <html>, so these
+   select the root scrollbar.) */
+[data-style="miami-deco"] {
+  scrollbar-color: var(--accent) var(--bg);
+}
+
+[data-style="miami-deco"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="miami-deco"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--accent25);
+}
+
+[data-style="miami-deco"]::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  border-radius: 999px;
+}
+
+/* Poiret One registers at 400 only; synthesized bold smears the loops. */
+[data-style="miami-deco"] h1,
+[data-style="miami-deco"] h2,
+[data-style="miami-deco"] h3,
+[data-style="miami-deco"] h4 {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* Links: flamingo at weight. The default animated underline draws in
+   --accent, so the hover thread comes up seafoam for free. */
+[data-style="miami-deco"] .text-link {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+[data-style="miami-deco"] .section-spacer {
+  height: 8em;
+}
+
+
+/* ---- Chrome: hotel-lobby nav, porthole logo, beachfront colophon ----------- */
+
+[data-style="miami-deco"] .moving-menu,
+[data-style="miami-deco"] .static-menu {
+  background-color: var(--secondary85);
+  border: 1.5px solid var(--accent45);
+  box-shadow: 0 8px 24px rgba(31, 58, 68, 0.10);
+  min-width: 560px;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list — invisible on the default pill, obvious once framed. */
+[data-style="miami-deco"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="miami-deco"] .menu-item {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+[data-style="miami-deco"] .menu-item:hover {
+  color: var(--primary);
+}
+
+[data-style="miami-deco"] .menu-spacer {
+  border-color: var(--accent35);
+}
+
+/* The logo is a porthole: white well, seafoam rim, an inner ring painted
+   with inset shadows so it follows the curve. The default hover lift stays
+   (motion is on); only the fill swaps. */
+[data-style="miami-deco"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: var(--accent);
+  border: 2px solid var(--accent);
+  box-shadow: inset 0 0 0 3px var(--secondary), inset 0 0 0 4.5px var(--accent45);
+}
+
+[data-style="miami-deco"] .name-logo:hover {
+  background-color: var(--accent);
+  color: var(--secondary);
+  box-shadow: inset 0 0 0 3px var(--accent), inset 0 0 0 4.5px var(--secondary70);
+}
+
+/* Colophon: teal caps under a small centered tri-color rule. */
+[data-style="miami-deco"] .footer-container {
+  margin: 0 10px 10px;
+  padding-top: 16px;
+  background:
+    linear-gradient(90deg, var(--primary) 0 33.4%, #f0b46a 33.4% 66.7%, var(--accent) 66.7% 100%)
+    top center / 140px 5px no-repeat;
+}
+
+[data-style="miami-deco"] .footer-spacer {
+  display: none;
+}
+
+[data-style="miami-deco"] .footer-text,
+[data-style="miami-deco"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+
+/* ---- Hero: marquee masthead + crowned portrait ------------------------------ */
+
+/* Poiret One at masthead scale. The longest typed line ("full stack
+   engineer.") must clear the ~795px column at the cap: 20 thin glyphs at
+   66px with the slight tracking run ≈ 750px. */
+[data-style="miami-deco"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(54px, 4.8vw, 66px);
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+}
+
+/* Cursorless masthead: the registry sets typing: 'letter' — each glyph is
+   a neon tube on the hotel sign that flickers alight (a flamingo halo that
+   settles clean), and dims back off under .tw-out. The reduced-motion
+   guard lives in theme-base.css. */
+[data-style="miami-deco"] #typing-text .tw,
+[data-style="miami-deco"] #blog-typing-text .tw {
+  animation: miami-deco-neon-in 0.45s ease-out backwards;
+}
+
+[data-style="miami-deco"] #typing-text .tw-out,
+[data-style="miami-deco"] #blog-typing-text .tw-out {
+  animation: miami-deco-neon-out 0.28s ease-in forwards;
+}
+
+@keyframes miami-deco-neon-in {
+  0%   { opacity: 0; text-shadow: none; }
+  35%  { opacity: 1; text-shadow: 0 0 14px var(--primary60), 0 0 28px var(--primary30); }
+  100% { opacity: 1; text-shadow: none; }
+}
+
+@keyframes miami-deco-neon-out {
+  from { opacity: 1; text-shadow: none; }
+  to   { opacity: 0; text-shadow: 0 0 12px var(--primary40); }
+}
+
+/* The typed accent words glow flamingo, the sign's lit script. */
+[data-style="miami-deco"] #typing-text .typing-accent {
+  color: var(--primary);
+}
+
+/* The strapline is the label grammar: letterspaced teal caps. */
+[data-style="miami-deco"] #sub-text {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Socials: teal-ink glyphs that turn flamingo (the gentle default lift
+   stays — motion is on). */
+[data-style="miami-deco"] #socials-list .socials-menu-spacer,
+[data-style="miami-deco"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--accent35);
+}
+
+[data-style="miami-deco"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="miami-deco"] .socials-item:hover i {
+  color: var(--primary);
+}
+
+/* The portrait wears the marquee crown: a white matte with a seafoam rim,
+   fully round on top, stepped tight at the base — the hotel sign. Stays a
+   tilt target, so no base transform here; box-sizing keeps the matte
+   inside the fixed 225px column. */
+[data-style="miami-deco"] #typing-image {
+  box-sizing: border-box;
+  padding: 8px;
+  background-color: var(--secondary);
+  border: 2px solid var(--accent);
+  border-radius: 120px 120px 16px 16px;
+  box-shadow: 0 14px 32px rgba(31, 58, 68, 0.14);
+  object-fit: cover;
+}
+
+
+/* ---- Section headers: signage + tri-color rule ------------------------------
+   Teal-caps kicker above, the title set like hotel signage (thin Poiret
+   caps, generous tracking), and the spacer line becomes the tri-color
+   rule — flamingo / sunset gold / seafoam — the skin's divider motif. */
+
+[data-style="miami-deco"] .section-header-wrapper {
+  margin: 10px 10px 44px;
+}
+
+[data-style="miami-deco"] .section-header {
+  margin: 0;
+  padding: 0;
+  font-weight: 400;
+  font-size: clamp(36px, 4.2vw, 52px);
+  line-height: 1.1;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every title deep teal ink. */
+[data-style="miami-deco"] #about-section-header,
+[data-style="miami-deco"] #jobs-header,
+[data-style="miami-deco"] #project-header,
+[data-style="miami-deco"] #blog-header,
+[data-style="miami-deco"] #contact-section-header,
+[data-style="miami-deco"] .blog-section-header {
+  color: var(--text);
+}
+
+/* The block kicker above the title pulls the wrapper's centering high, so
+   the rule drops ~10px to sit level with the title, and takes a real gap
+   from the words (this skin zeroes the h2's side padding, which supplied
+   the default site's gap). */
+[data-style="miami-deco"] .section-header-spacer {
+  height: 5px;
+  margin-left: 22px;
+  border-radius: 999px;
+  background-color: transparent;
+  background-image: linear-gradient(90deg, var(--primary) 0 33.4%, #f0b46a 33.4% 66.7%, var(--accent) 66.7% 100%);
+  transform: translateY(10px);
+}
+
+/* The folio number joins the teal-caps label grammar. */
+[data-style="miami-deco"] .sec-num {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+
+
+/* ---- Hotel panels: about / skills, jobs dossier, contact ---------------------
+   The shared surface grammar: a white facade with a seafoam rim, a soft
+   teal-ink shadow, and the tri-color rule running across the top edge (a
+   ::before strip pulled to the panel edges — padding is normalized here
+   and re-pinned in the mobile block). */
+
+[data-style="miami-deco"] .card-style,
+[data-style="miami-deco"] .job-content,
+[data-style="miami-deco"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 1.5px solid var(--accent40);
+  padding: 26px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(31, 58, 68, 0.08);
+}
+
+[data-style="miami-deco"] .card-style::before,
+[data-style="miami-deco"] .job-content::before,
+[data-style="miami-deco"] .contact-view-left::before {
+  content: '';
+  display: block;
+  flex-shrink: 0;
+  /* .job-content.showing aligns its column flex-start, which would crush
+     this empty strip to zero width; stretch pins it full-bleed. */
+  align-self: stretch;
+  height: 7px;
+  margin: -26px -26px 20px;
+  background-image: linear-gradient(90deg, var(--primary) 0 33.4%, #f0b46a 33.4% 66.7%, var(--accent) 66.7% 100%);
+}
+
+/* "About Me" / "Skills" become the teal-caps thread. */
+[data-style="miami-deco"] .card-title,
+[data-style="miami-deco"] .about-header,
+[data-style="miami-deco"] .skills-header {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 16px;
+}
+
+/* Skill departments read as small flamingo signage. */
+[data-style="miami-deco"] .skills-section-header {
+  font-family: var(--font-heading);
+  color: var(--primary);
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-style="miami-deco"] .about-text,
+[data-style="miami-deco"] .skills-text,
+[data-style="miami-deco"] .contact-text {
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+[data-style="miami-deco"] .skills-text {
+  border-bottom: 1px solid var(--accent25);
+}
+
+[data-style="miami-deco"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: guest register + dossier ------------------------------------ */
+
+[data-style="miami-deco"] .nav-container {
+  border-left: 2px solid var(--accent35);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's
+   height at load to size the highlight bar, and Josefin arrives after
+   that measure. */
+[data-style="miami-deco"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 17px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--jobs-menu-slate);
+}
+
+[data-style="miami-deco"] .menu li:hover {
+  background: var(--accent10);
+}
+
+[data-style="miami-deco"] .menu li.selected {
+  background: var(--secondary);
+  color: var(--primary);
+}
+
+/* The marker is a neon flamingo tube: pill-radiused, soft glow. JS writes
+   geometry, radius, and transition inline on every move, hence the
+   !important. */
+[data-style="miami-deco"] .highlight {
+  background: var(--primary);
+  box-shadow: 0 0 10px var(--primary45);
+  border-radius: 999px !important;
+}
+
+[data-style="miami-deco"] .job-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: 0.05em;
+}
+
+/* Dates join the teal-caps thread. */
+[data-style="miami-deco"] .job-dates {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Deco starbursts as list markers. */
+[data-style="miami-deco"] .job-bullets {
+  list-style-type: "✦  ";
+  font-size: 15.5px;
+  line-height: 1.65;
+}
+
+[data-style="miami-deco"] .job-bullets li::marker {
+  color: var(--accent60);
+  font-size: 0.85em;
+}
+
+
+/* ---- Selected Works: postcard plates ------------------------------------------ */
+
+/* Each plate is a postcard: white matte, seafoam rim, soft teal shadow.
+   Tilt stays on, so the card keeps its gentle sway; box-sizing keeps the
+   matte inside the 510px plate. */
+[data-style="miami-deco"] .fc-style-floating .fc-card-image {
+  box-sizing: border-box;
+  padding: 9px;
+  background-color: var(--secondary);
+  border: 1.5px solid var(--accent45);
+  border-radius: 22px;
+  box-shadow: 0 14px 32px rgba(31, 58, 68, 0.12);
+}
+
+[data-style="miami-deco"] .fc-style-floating .fc-card-image img {
+  border-radius: 14px;
+}
+
+[data-style="miami-deco"] .fc-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 27px;
+  letter-spacing: 0.06em;
+}
+
+[data-style="miami-deco"] .fc-card-desc {
+  color: var(--text);
+  font-size: 15.5px;
+}
+
+/* CTA: the flamingo pill — every interactive surface in this skin is
+   flamingo; hover dips it seafoam (the default lift stays). */
+[data-style="miami-deco"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  color: var(--secondary);
+  padding: 10px 22px;
+}
+
+[data-style="miami-deco"] .fc-card-cta:hover {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--secondary);
+}
+
+/* Dots as portholes: seafoam rings, the active one filled flamingo. */
+[data-style="miami-deco"] .fc-dot {
+  width: 10px;
+  height: 10px;
+  border: 1.5px solid var(--accent);
+  background-color: transparent;
+  opacity: 0.55;
+}
+
+[data-style="miami-deco"] .fc-dot:hover {
+  opacity: 1;
+}
+
+[data-style="miami-deco"] .fc-dot.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  opacity: 1;
+}
+
+
+/* ---- Blog: lobby postcards ------------------------------------------------------ */
+
+/* Teasers are white postcards with a seafoam rim; hover warms the rim
+   flamingo and deepens the shadow (no transform — cards are tilt targets
+   and the tilt owns it). */
+[data-style="miami-deco"] .blog-card {
+  background-color: var(--secondary);
+  border: 1.5px solid var(--accent35);
+  box-shadow: 0 8px 22px rgba(31, 58, 68, 0.07);
+  transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+[data-style="miami-deco"] .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary60);
+  box-shadow: 0 14px 30px rgba(31, 58, 68, 0.13);
+}
+
+[data-style="miami-deco"] .blog-card-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  color: var(--text);
+  font-size: 19px;
+  transition: color 0.25s ease-in-out;
+}
+
+[data-style="miami-deco"] .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+[data-style="miami-deco"] .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+[data-style="miami-deco"] .blog-card-excerpt {
+  color: var(--text);
+  font-size: 15px;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="miami-deco"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="miami-deco"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="miami-deco"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+}
+
+[data-style="miami-deco"] .blog-listing-grid .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+[data-style="miami-deco"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin Poiret 400. */
+[data-style="miami-deco"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(48px, 4.5vw, 62px);
+  line-height: 1.15;
+  letter-spacing: 0.06em;
+}
+
+[data-style="miami-deco"] [id^="blog-sub-text"] {
+  color: var(--text80);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* The listing carousel heading rides the heading token; pin its weight. */
+[data-style="miami-deco"] .fc-expand-title {
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--text);
+}
+
+/* Filters: white chips with teal caps, flamingo-filled when active. */
+[data-style="miami-deco"] .filter-pill {
+  background-color: var(--secondary);
+  border: 1px solid var(--accent40);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-style="miami-deco"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="miami-deco"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary);
+}
+
+/* Post page: signage title under the teal meta thread. */
+[data-style="miami-deco"] .blog-post-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: clamp(34px, 4.4vw, 44px);
+  line-height: 1.22;
+  letter-spacing: 0.06em;
+}
+
+[data-style="miami-deco"] .blog-post-content {
+  font-size: 17px;
+  line-height: 1.75;
+}
+
+/* Crossheads set like small signage over a seafoam hairline. */
+[data-style="miami-deco"] .blog-post-content h2 {
+  color: var(--text);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--accent35);
+  padding-bottom: 6px;
+}
+
+[data-style="miami-deco"] .blog-post-content h3 {
+  color: var(--text);
+  letter-spacing: 0.08em;
+}
+
+[data-style="miami-deco"] .blog-post-content blockquote {
+  border-left: 3px solid var(--primary);
+  background-color: var(--primary5);
+  color: var(--text80);
+}
+
+/* Section breaks print as small centered tri-color rules. */
+[data-style="miami-deco"] .blog-post-content hr {
+  border: none;
+  height: 5px;
+  width: 140px;
+  margin: 2.2em auto;
+  border-radius: 999px;
+  background-image: linear-gradient(90deg, var(--primary) 0 33.4%, #f0b46a 33.4% 66.7%, var(--accent) 66.7% 100%);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="miami-deco"] .blog-post-content pre {
+  border: 1.5px solid var(--accent30);
+}
+
+/* Inline code: a pale seafoam wash (the higher-specificity pre rule in
+   theme-base.css unwinds this for fenced blocks). */
+[data-style="miami-deco"] .blog-post-content code {
+  background-color: var(--accent10);
+  color: var(--text);
+}
+
+[data-style="miami-deco"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1.5px solid var(--accent30);
+}
+
+[data-style="miami-deco"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 1.5px solid var(--accent35);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="miami-deco"] #metr-chart {
+  border: 1.5px solid var(--accent30);
+}
+
+
+/* ---- Contact: the front desk ----------------------------------------------------- */
+
+/* The map checks in behind a seafoam rim, sun-bleached until hovered.
+   It's a tilt target, so no base transform — the tilt owns the motion. */
+[data-style="miami-deco"] .contact-image-wrapper {
+  border: 2px solid var(--accent);
+  box-shadow: 0 14px 32px rgba(31, 58, 68, 0.12);
+}
+
+[data-style="miami-deco"] .contact-image {
+  filter: saturate(0.8);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="miami-deco"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): cabana chips --------------- */
+
+[data-style="miami-deco"] .pill {
+  background-color: var(--secondary);
+  border: 1px solid var(--accent35);
+  color: var(--accent);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 4px 13px;
+}
+
+
+/* ---- Cycler dock: the concierge desk ----------------------------------------------- */
+
+[data-style="miami-deco"] .tc-dock {
+  background: var(--secondary);
+  border: 1.5px solid var(--accent45);
+  box-shadow: 0 14px 36px rgba(31, 58, 68, 0.14);
+  backdrop-filter: none;
+}
+
+[data-style="miami-deco"] .tc-toggle {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+[data-style="miami-deco"] .tc-toggle:hover {
+  background-color: var(--accent);
+  color: var(--secondary);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Masthead scale on the small sheet (the mobile ID rule pins 34px): the
+     longest typed line must clear a ~335px column on a 375px screen. */
+  [data-style="miami-deco"] #typing-text {
+    font-size: clamp(27px, 8vw, 33px);
+    letter-spacing: 0.04em;
+  }
+
+  [data-style="miami-deco"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+  }
+
+  [data-style="miami-deco"] #blog-typing-text {
+    font-size: clamp(30px, 8.5vw, 36px);
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; signage
+     tracking needs room to wrap. (.sec-num is its own block line, so
+     wrapped lines stay flush left.) */
+  [data-style="miami-deco"] .section-header {
+    white-space: normal;
+    font-size: clamp(24px, 7vw, 30px);
+    letter-spacing: 0.1em;
+  }
+
+  [data-style="miami-deco"] .sec-num {
+    font-size: 10.5px;
+    margin-bottom: 6px;
+  }
+
+  [data-style="miami-deco"] .section-header-spacer {
+    height: 4px;
+    margin-left: 14px;
+    transform: translateY(7px);
+  }
+
+  [data-style="miami-deco"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="miami-deco"] .static-menu-mobile .menu-item {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text70);
+  }
+
+  [data-style="miami-deco"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep the
+     porthole at rest and make the tap state the seafoam fill. */
+  [data-style="miami-deco"] .name-logo:hover {
+    background-color: var(--secondary);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 3px var(--secondary), inset 0 0 0 4.5px var(--accent45);
+  }
+
+  [data-style="miami-deco"] .name-logo:active {
+    background-color: var(--accent);
+    color: var(--secondary);
+  }
+
+  /* The mobile sheet re-cards these surfaces on --text10; keep them white
+     facades, and re-pin the tri-color strip to the 20px mobile padding. */
+  [data-style="miami-deco"] .double-view-left,
+  [data-style="miami-deco"] .double-view-right {
+    background-color: var(--secondary);
+    border: 1.5px solid var(--accent40);
+  }
+
+  [data-style="miami-deco"] .card-style,
+  [data-style="miami-deco"] .job-content,
+  [data-style="miami-deco"] .contact-view-left {
+    padding: 20px;
+  }
+
+  [data-style="miami-deco"] .card-style::before,
+  [data-style="miami-deco"] .job-content::before,
+  [data-style="miami-deco"] .contact-view-left::before {
+    margin: -20px -20px 16px;
+  }
+
+  [data-style="miami-deco"] .menu-scroll-wrapper {
+    border-bottom: 2px solid var(--accent35);
+  }
+
+  [data-style="miami-deco"] .highlight {
+    height: 3px !important;
+  }
+
+  [data-style="miami-deco"] .blog-card {
+    background-color: var(--secondary);
+    border: 1.5px solid var(--accent35);
+  }
+
+  /* Matted postcards need a real gutter between cards on the small sheet. */
+  [data-style="miami-deco"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="miami-deco"] .fc-style-floating .fc-card-image {
+    padding: 7px;
+  }
+
+  [data-style="miami-deco"] .blog-post-title {
+    font-size: clamp(26px, 7.5vw, 32px);
+  }
+
+  [data-style="miami-deco"] .blog-post-content {
+    font-size: 16px;
+  }
+
+  [data-style="miami-deco"] .footer-container-mobile {
+    padding-top: 14px;
+    background:
+      linear-gradient(90deg, var(--primary) 0 33.4%, #f0b46a 33.4% 66.7%, var(--accent) 66.7% 100%)
+      top center / 120px 4px no-repeat;
+  }
+
+  [data-style="miami-deco"] .footer-text-mobile {
+    color: var(--text60);
+  }
+}
