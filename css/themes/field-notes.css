@@ -1,0 +1,1044 @@
+/* Field Notes: expedition journal. Kraft ground with faint topo contours,
+   paper journal pages held down by tape strips, rubber-stamp chips in rust
+   ink, dotted leaders and map-route links in ranger green, Zilla Slab
+   signage, Spectral body, IBM Plex Mono specimen labels. The warm, textured
+   light skin (studio is cool and minimal, broadsheet ink and dense), and
+   the one that keeps the site's motion: AOS entrances and the cursor dot
+   (a pencil tip) stay on. Tilt is off (flags.tilt: false) — every
+   photograph here is taped down, and taped paper doesn't wiggle.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. The tilt pins come from css/themes/theme-base.css
+   via flags.tilt; there is no still flag, so the motion pack stays. All
+   pasted-in rotation still lives on wrappers and chips (#typing-right,
+   .name-logo, date stamps, tape pseudos), never on .card/.blog-card —
+   theme-base.css holds those flat. Literal colors here: the tape's translucent
+   white (tape is white under any palette) and ink-toned shadows. Zilla Slab
+   loads 500/600 only, so bolded heading-font text is pinned to 600 below. */
+
+
+/* ---- Foundations: kraft ground, contours, pencil-and-stamp grammar ------- */
+
+[data-style="field-notes"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* Topo contours drift in the kraft: two faint repeating ring fields anchored
+   near opposite corners of the page (preview .s-field .tin). Alpha stays at
+   the 10% ramp step (spec cap is ~.14; the next step up is 15). Attachment
+   is the default scroll, fixed would repaint the whole field on scroll. */
+[data-style="field-notes"] body {
+  background-image:
+    repeating-radial-gradient(ellipse 480px 300px at 90% 8%, transparent 0 26px, var(--primary10) 26px 27px),
+    repeating-radial-gradient(ellipse 420px 260px at 4% 96%, transparent 0 32px, var(--primary10) 32px 33px);
+}
+
+/* Kraft/rust scrollbar. ([data-style] sits on <html>, so these select the
+   root scrollbar.) */
+[data-style="field-notes"] {
+  scrollbar-color: var(--accent) var(--bg);
+}
+
+[data-style="field-notes"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="field-notes"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text15);
+}
+
+[data-style="field-notes"]::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border: 3px solid var(--bg);
+  border-radius: 6px;
+}
+
+/* Zilla Slab has no 700, pin every heading to the loaded 600 so nothing
+   smears into synthesized bold. */
+[data-style="field-notes"] h1,
+[data-style="field-notes"] h2,
+[data-style="field-notes"] h3,
+[data-style="field-notes"] h4 {
+  font-weight: 600;
+}
+
+/* Links are map routes: ranger green with a dotted underline; hover inks
+   them rust and solid. The default's animated underline pseudo is suppressed
+   outright, not restyled. */
+[data-style="field-notes"] .text-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+
+[data-style="field-notes"] .text-link::before {
+  display: none;
+}
+
+[data-style="field-notes"] .text-link:hover {
+  color: var(--accent);
+  text-decoration-style: solid;
+}
+
+
+/* ---- Tape strips (shared) -------------------------------------------------
+   One declaration block for every tape pseudo in the skin; each element
+   below only positions and rotates its own strip. Tape is translucent white
+   under any palette (it's tape), with a faint ink edge. All hosts are
+   non-tilt elements or fixed chrome, so the strips never fight an inline
+   transform; .blog-card and .fc-card pseudos ride their card's tilt, which
+   is physically correct (the tape is on the card). */
+
+[data-style="field-notes"] #typing-right::before,
+[data-style="field-notes"] #typing-right::after,
+[data-style="field-notes"] .moving-menu::after,
+[data-style="field-notes"] .double-view-left::after,
+[data-style="field-notes"] .double-view-right::after,
+[data-style="field-notes"] .fc-card::before,
+[data-style="field-notes"] .fc-card::after,
+[data-style="field-notes"] .blog-card::after,
+[data-style="field-notes"] .blog-post-container::before,
+[data-style="field-notes"] .contact-view-left::after,
+[data-style="field-notes"] .contact-image-wrapper::before,
+[data-style="field-notes"] .contact-image-wrapper::after,
+[data-style="field-notes"] .tc-dock::before {
+  content: '';
+  position: absolute;
+  width: 74px;
+  height: 22px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--text10);
+  box-shadow: 0 1px 3px rgba(51, 41, 26, 0.10);
+  pointer-events: none;
+  z-index: 2;
+}
+
+
+/* ---- Chrome: stamp logo, mono menus, paper-slip nav ----------------------- */
+
+/* The logo "D" as a rust rubber-stamp chip, pressed a little crooked.
+   (.name-logo is not a tilt target, so a base rotation is safe; its intro
+   fadein only animates opacity.) */
+[data-style="field-notes"] .name-logo {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  transform: rotate(-3deg);
+}
+
+[data-style="field-notes"] .name-logo:hover {
+  transform: rotate(-3deg) translateY(-2px);
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+/* Departments in mono caps; ink at rest, rust on hover. */
+[data-style="field-notes"] .menu-item {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="field-notes"] .menu-item:hover {
+  color: var(--accent);
+}
+
+[data-style="field-notes"] .menu-spacer {
+  border-color: var(--text30);
+}
+
+/* Static menu: a paper slip. The header row is a stretch flexbox sized by
+   the logo's margin box (~67px), so the slip must size to its own 3.5em
+   list or the frame lands ~11px too tall. */
+[data-style="field-notes"] .static-menu {
+  background-color: var(--secondary);
+  border: 1px solid var(--text20);
+  box-shadow: 0 3px 10px rgba(51, 41, 26, 0.10);
+  align-self: flex-start;
+}
+
+/* Floating menu: a paper slip taped to the top of the viewport. */
+[data-style="field-notes"] .moving-menu {
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 4px 14px rgba(51, 41, 26, 0.16);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+[data-style="field-notes"] .moving-menu::after {
+  width: 56px;
+  height: 16px;
+  top: -8px;
+  left: 30px;
+  transform: rotate(-3deg);
+}
+
+/* Footer: the trail register, a dotted leader above mono caps, signed off
+   with a pencil tick. */
+[data-style="field-notes"] .footer-container {
+  border-top: 2px dotted var(--text35);
+  margin: 0 10px;
+  padding: 18px 0 12px;
+}
+
+[data-style="field-notes"] .footer-spacer {
+  display: none;
+}
+
+[data-style="field-notes"] .footer-text,
+[data-style="field-notes"] .footer-text-mobile {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+/* ---- Hero: signage masthead + specimen label + taped photograph ----------- */
+
+/* Zilla Slab 600 at signage scale. The longest typed line ("full stack
+   engineer.") must clear the ~795px column at the cap: 20 glyphs at 70px
+   run ≈ 700px. */
+[data-style="field-notes"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(52px, 4.6vw, 70px);
+  line-height: 1.15;
+}
+
+/* Graphite typing cursor, the line is being pencilled in. (The typed accent
+   words already follow --accent → rust.) */
+[data-style="field-notes"] .cursor {
+  background-color: var(--text);
+}
+
+/* The strapline becomes a mono caps specimen label. */
+[data-style="field-notes"] #sub-text {
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text70);
+}
+
+/* The selfie becomes a photograph taped into the journal: paper matte +
+   hairline, sepia until hovered, two tape strips on the WRAPPER (the image
+   is a .card target held flat by theme-base.css, so the wrapper carries the
+   crooked paste-in rotation and the tape). Stays clickable, it is still
+   the cycler unlock. */
+[data-style="field-notes"] #typing-right {
+  position: relative;
+  transform: rotate(-1.2deg);
+}
+
+[data-style="field-notes"] #typing-image {
+  padding: 8px;
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  filter: sepia(0.15) saturate(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="field-notes"] #typing-image:hover {
+  filter: none;
+}
+
+/* Photo box: 20px wrapper padding-left, then 225px image + 16px matte + 2px
+   border (content-box). Top edge sits at the wrapper's 60px padding-top. */
+[data-style="field-notes"] #typing-right::before {
+  top: 47px;
+  left: 2px;
+  transform: rotate(-32deg);
+}
+
+[data-style="field-notes"] #typing-right::after {
+  top: 47px;
+  right: 44px;
+  transform: rotate(28deg);
+}
+
+/* Socials: bare ink glyphs, no chips — the journal margin stays quiet. The
+   default hover (rust via --accent, with the small lift; this skin keeps
+   its motion) already speaks this skin's language. */
+
+[data-style="field-notes"] #socials-list .socials-menu-spacer,
+[data-style="field-notes"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text25);
+}
+
+
+/* ---- Section headers: trailhead signs -------------------------------------
+   Zilla Slab 600 in ink, mono rust waypoint number, and the spacer line
+   becomes a dotted leader running to the page edge. */
+
+[data-style="field-notes"] .section-header {
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every sign ink (the rust lives in the waypoint number
+   and the stamps). */
+[data-style="field-notes"] #about-section-header,
+[data-style="field-notes"] #jobs-header,
+[data-style="field-notes"] #project-header,
+[data-style="field-notes"] #blog-header,
+[data-style="field-notes"] #contact-section-header,
+[data-style="field-notes"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="field-notes"] .sec-num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+[data-style="field-notes"] .section-header-spacer {
+  background-color: transparent;
+  height: 0;
+  border-bottom: 2px dotted var(--text35);
+}
+
+
+/* ---- About / Skills: journal pages -----------------------------------------
+   Paper cards with a hairline edge and one tape strip each (alternate
+   corners). The cards' intro slide pins an inline translateX at animationend,
+   so the cards themselves never rotate, only their tape does. */
+
+[data-style="field-notes"] .card-style {
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 6px 18px rgba(51, 41, 26, 0.14);
+}
+
+[data-style="field-notes"] .double-view-left,
+[data-style="field-notes"] .double-view-right {
+  position: relative;
+}
+
+[data-style="field-notes"] .double-view-left::after {
+  top: -9px;
+  left: 22px;
+  transform: rotate(-3deg);
+}
+
+[data-style="field-notes"] .double-view-right::after {
+  top: -9px;
+  right: 22px;
+  transform: rotate(2.5deg);
+}
+
+/* "About Me" / "Skills" become mono caps labels over a dotted rule. */
+[data-style="field-notes"] .card-title,
+[data-style="field-notes"] .about-header,
+[data-style="field-notes"] .skills-header {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border-bottom: 2px dotted var(--text30);
+  padding-bottom: 8px;
+  margin: 0 0 16px;
+}
+
+/* Web / iOS / ML run as ranger-green slab signposts. */
+[data-style="field-notes"] .skills-section-header {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+[data-style="field-notes"] .about-text,
+[data-style="field-notes"] .skills-text {
+  font-size: 15.5px;
+  line-height: 1.7;
+}
+
+[data-style="field-notes"] .skills-text {
+  border-bottom: 2px dotted var(--text25);
+}
+
+[data-style="field-notes"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the passport spread ---------------------------------------- */
+
+/* Index rail: a dotted route line instead of the navy spine. */
+[data-style="field-notes"] .nav-container {
+  border-left: 2px dotted var(--text30);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight, and Plex Mono arrives after that measure,
+   font-relative line boxes would leave the stamp sized to the fallback font.
+   Hover/selected colors stay token-driven (the registry's kraft-tint navy
+   ramp + rust accent already read as aged paper and stamp ink). */
+[data-style="field-notes"] .menu li {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* The highlight becomes a port-of-entry stamp: a rust rectangle pressed over
+   the selected entry. JS writes the bar's geometry inline on every move
+   (including border-radius, hence the !important); width is inline only on
+   desktop and height only on mobile, so each block below overrides only the
+   dimensions its own breakpoint owns. */
+[data-style="field-notes"] .highlight {
+  box-shadow: none;
+  border-radius: var(--radius-pill) !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="field-notes"] .highlight {
+    left: 0 !important;
+    width: 100% !important;
+    box-sizing: border-box;
+    background: var(--accent10);
+    border: 1.5px solid var(--accent);
+  }
+}
+
+/* The dossier panel becomes a passport page: paper, hairline, soft lift. */
+[data-style="field-notes"] .job-content {
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 6px 18px rgba(51, 41, 26, 0.14);
+  padding: 24px 28px;
+}
+
+[data-style="field-notes"] .job-title {
+  color: var(--text);
+  font-size: 25px;
+  line-height: 1.25;
+}
+
+/* Date lines as rust date stamps: dashed frame, slight crook, multiplied
+   into the paper like real stamp ink. (.job-content is not a tilt target,
+   so rotating this child is safe.) */
+[data-style="field-notes"] .job-dates {
+  width: fit-content;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 4px 10px;
+  transform: rotate(-2deg);
+  transform-origin: left center;
+  mix-blend-mode: multiply;
+  margin: 2px 0 8px;
+}
+
+[data-style="field-notes"] .job-bullets {
+  line-height: 1.65;
+}
+
+[data-style="field-notes"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* The swap animation stays the default slide, this is the motion-positive
+   light skin; nothing here is stilled. */
+
+
+/* ---- Selected Works: specimen cards ------------------------------------------ */
+
+/* Specimen numbering for the captions (studio nav-counter precedent, the
+   track renders .fc-card elements only, so a card-level counter is safe). */
+[data-style="field-notes"] .featured-carousel-track {
+  counter-reset: fieldNotesFig;
+}
+
+[data-style="field-notes"] .fc-card {
+  position: relative;
+  counter-increment: fieldNotesFig;
+}
+
+/* Plates become photographs in a paper matte; sepia until the card is
+   hovered. The matte lives on .fc-card-image (held flat by theme-base.css), the
+   tape on .fc-card. */
+[data-style="field-notes"] .fc-style-floating .fc-card-image {
+  padding: 8px;
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 6px 18px rgba(51, 41, 26, 0.16);
+}
+
+[data-style="field-notes"] .fc-style-floating .fc-card-image img {
+  filter: sepia(0.15) saturate(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="field-notes"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Tape over the photo's top corners. Outer photo box is 528×358 (510×340 +
+   16px matte + 2px border) and vertically centered, so its top edge sits at
+   calc(50% - 179px). The left strip stops at -8px, the track's 8px side
+   padding is all the overhang the scroll clip allows on the first card. */
+[data-style="field-notes"] .fc-card::before {
+  top: calc(50% - 190px);
+  left: -8px;
+  transform: rotate(-32deg);
+}
+
+[data-style="field-notes"] .fc-card::after {
+  top: calc(50% - 190px);
+  left: 472px;
+  transform: rotate(28deg);
+}
+
+/* Captions: mono rust "№ n" over a Zilla Slab title in ink. */
+[data-style="field-notes"] .fc-card-title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 23px;
+}
+
+[data-style="field-notes"] .fc-card-title::before {
+  content: "№ " counter(fieldNotesFig);
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+/* CTA: a rust stamped button, mono caps in a 1.5px rust frame; hover fills
+   with stamp ink, press is a 1px physical drop (top, not transform, stamps
+   press straight down). featured-carousel.css pins a literal 10px radius,
+   not the token, so the chip radius is re-applied here. */
+[data-style="field-notes"] .fc-card-cta {
+  position: relative;
+  top: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 10px 18px;
+}
+
+[data-style="field-notes"] .fc-card-cta:hover {
+  background-color: var(--accent);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="field-notes"] .fc-card-cta:active {
+  top: 1px;
+}
+
+/* Dots: ink pebbles, the active one rust (the default's scale pop stays,
+   motion skin). */
+[data-style="field-notes"] .fc-dot {
+  background-color: var(--text);
+  opacity: 0.25;
+}
+
+[data-style="field-notes"] .fc-dot:hover {
+  opacity: 0.55;
+}
+
+[data-style="field-notes"] .fc-dot.active {
+  background-color: var(--accent);
+  opacity: 1;
+}
+
+
+/* ---- Blog: journal entries ----------------------------------------------------
+   Paper-slip cards with tape and rust date stamps. The cards never
+   base-rotate (theme-base.css holds them flat), their tape and stamps do. */
+
+[data-style="field-notes"] .blog-card {
+  position: relative;
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 5px 14px rgba(51, 41, 26, 0.13);
+}
+
+[data-style="field-notes"] .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--text40);
+}
+
+[data-style="field-notes"] .blog-card::after {
+  top: -9px;
+  left: 18px;
+  transform: rotate(-2.5deg);
+}
+
+/* Alternate the tape corner along the shelf and down the listing grid. */
+[data-style="field-notes"] .blog-scroll-track .blog-card:nth-child(even)::after,
+[data-style="field-notes"] .blog-listing-grid .blog-card-wrapper:nth-child(even) .blog-card::after {
+  left: auto;
+  right: 18px;
+  transform: rotate(2deg);
+}
+
+[data-style="field-notes"] .blog-card-title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 19px;
+}
+
+[data-style="field-notes"] .blog-card-date {
+  width: fit-content;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1.5px dashed var(--accent);
+  border-radius: var(--radius-pill);
+  padding: 3px 9px;
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+  mix-blend-mode: multiply;
+  margin: 0 0 12px;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="field-notes"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+}
+
+[data-style="field-notes"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--text40);
+}
+
+[data-style="field-notes"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+  font-weight: 600;
+}
+
+[data-style="field-notes"] .blog-listing-grid .blog-card .blog-card-date {
+  font-size: 10px;
+  color: var(--accent);
+  margin: 0 0 12px;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the signage face
+   and the loaded weight. */
+[data-style="field-notes"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: clamp(52px, 4.6vw, 70px);
+  line-height: 1.15;
+}
+
+[data-style="field-notes"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.7;
+}
+
+/* Filters: mono caps chips; the active one is a rust stamp. */
+[data-style="field-notes"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--text30);
+  color: var(--text70);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+[data-style="field-notes"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="field-notes"] .filter-pill.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--bg);
+}
+
+
+/* ---- Blog post page: a paper sheet floating on kraft --------------------------- */
+
+/* border-box keeps the sheet's outer edge at the 750px column, so it lines
+   up with the nav and the footer rule; the nav sheds its side padding so
+   the D stamp sits flush with the sheet's left edge. */
+[data-style="field-notes"] .blog-post-container {
+  position: relative;
+  box-sizing: border-box;
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 28px rgba(51, 41, 26, 0.15);
+  padding: 44px 48px;
+  margin: 24px auto 0;
+}
+
+[data-style="field-notes"] .blog-nav {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* One strip of tape holds the sheet to the page. */
+[data-style="field-notes"] .blog-post-container::before {
+  top: -11px;
+  left: 50%;
+  margin-left: -37px;
+  transform: rotate(-2deg);
+}
+
+[data-style="field-notes"] .blog-post-title {
+  color: var(--text);
+  font-weight: 600;
+  font-size: clamp(34px, 4.5vw, 42px);
+  line-height: 1.2;
+}
+
+/* Crossheads: ink signposts over dotted leaders. */
+[data-style="field-notes"] .blog-post-content h2 {
+  color: var(--text);
+  border-bottom: 2px dotted var(--text30);
+  padding-bottom: 6px;
+}
+
+[data-style="field-notes"] .blog-post-content h3 {
+  color: var(--text);
+}
+
+/* Margin notes: rust rule, Spectral italic (loaded at 400). */
+[data-style="field-notes"] .blog-post-content blockquote {
+  border-left: 3px solid var(--accent);
+  font-style: italic;
+  color: var(--text70);
+}
+
+/* Section breaks as dotted leaders. */
+[data-style="field-notes"] .blog-post-content hr {
+  border-top: 2px dotted var(--text35);
+}
+
+/* Post photographs paste in with a kraft matte and the sepia treatment
+   (.blog-image is held flat by theme-base.css; filter and padding only, never
+   rotation). border-box keeps the matte inside blog-styles' max-width:
+   100%, the site is content-box, so padding would otherwise overhang the
+   column by 18px. */
+[data-style="field-notes"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  padding: 8px;
+  background-color: var(--bg);
+  border: 1px solid var(--text20);
+  filter: sepia(0.15) saturate(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="field-notes"] .blog-post-content img.blog-image:hover {
+  filter: none;
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="field-notes"] .blog-post-content pre {
+  border: 1px solid var(--text25);
+}
+
+/* Inline code: mono chips on kraft (the higher-specificity pre rule above
+   unwinds this for fenced blocks). blog-styles' literal 4px radius already
+   equals this skin's chip radius. */
+[data-style="field-notes"] .blog-post-content code {
+  background-color: var(--bg);
+  border: 1px solid var(--text15);
+  color: var(--text);
+}
+
+/* Diagrams sit on a kraft panel pasted into the sheet (mermaid reads the
+   palette at render time via blog/post.html, paper nodes on kraft). */
+[data-style="field-notes"] .blog-post-content .mermaid {
+  background-color: var(--bg);
+  border: 1px solid var(--text20);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="field-notes"] #metr-chart {
+  border: 1px solid var(--text20);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="field-notes"] #pareto-chart,
+[data-style="field-notes"] #ara-objectives-chart,
+[data-style="field-notes"] #kl-explainer-chart {
+  border-radius: var(--border-radius);
+}
+
+
+/* ---- Contact: the last journal page --------------------------------------------- */
+
+[data-style="field-notes"] .contact-view-left {
+  position: relative;
+  background-color: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 6px 18px rgba(51, 41, 26, 0.14);
+}
+
+[data-style="field-notes"] .contact-view-left::after {
+  top: -9px;
+  right: 26px;
+  transform: rotate(2.5deg);
+}
+
+[data-style="field-notes"] .contact-text {
+  line-height: 1.7;
+}
+
+/* The map is the route sketch: hairline frame, sepia until hovered, and
+   taped in at the top corners like the hero photograph. overflow opens so
+   the strips can lap the edge (the image rounds its own corners, so
+   nothing needs the clip). theme-base.css holds the wrapper's transform flat,
+   which also keeps the tape from riding an AOS slide. */
+[data-style="field-notes"] .contact-image-wrapper {
+  border: 1px solid var(--text25);
+  overflow: visible;
+}
+
+[data-style="field-notes"] .contact-image-wrapper::before {
+  top: -13px;
+  left: -18px;
+  transform: rotate(-32deg);
+}
+
+[data-style="field-notes"] .contact-image-wrapper::after {
+  top: -13px;
+  right: -18px;
+  transform: rotate(28deg);
+}
+
+[data-style="field-notes"] .contact-image {
+  filter: sepia(0.15) saturate(0.95);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="field-notes"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): specimen labels ------------ */
+
+[data-style="field-notes"] .pill {
+  background-color: transparent;
+  border: 1px solid var(--text25);
+  color: var(--text70);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+}
+
+
+/* ---- Cycler dock: a taped paper slip ------------------------------------------------ */
+
+[data-style="field-notes"] .tc-dock {
+  background: var(--secondary);
+  border: 1px solid var(--text25);
+  box-shadow: 0 12px 32px rgba(51, 41, 26, 0.18);
+  backdrop-filter: none;
+}
+
+[data-style="field-notes"] .tc-dock::before {
+  width: 56px;
+  height: 16px;
+  top: -8px;
+  left: 50%;
+  margin-left: -28px;
+  transform: rotate(2deg);
+}
+
+/* Chips, not pills, on the dock buttons. (The FAB keeps its hover lift,
+   this skin keeps its motion.) */
+[data-style="field-notes"] .tc-action,
+[data-style="field-notes"] .tc-presets button,
+[data-style="field-notes"] .tc-schemes button {
+  border-radius: var(--radius-pill);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------------ */
+
+@media screen and (max-width: 1100px) {
+  /* One contour field only, the small sheet keeps repaint cheap. */
+  [data-style="field-notes"] body {
+    background-image:
+      repeating-radial-gradient(ellipse 420px 260px at 90% 6%, transparent 0 26px, var(--primary10) 26px 27px);
+  }
+
+  /* Tape scales down with the page. */
+  [data-style="field-notes"] .double-view-left::after,
+  [data-style="field-notes"] .double-view-right::after,
+  [data-style="field-notes"] .fc-card::before,
+  [data-style="field-notes"] .fc-card::after,
+  [data-style="field-notes"] .blog-card::after,
+  [data-style="field-notes"] .blog-post-container::before,
+  [data-style="field-notes"] .contact-view-left::after {
+    width: 54px;
+    height: 16px;
+  }
+
+  /* The hero photo is hidden on mobile, its wrapper sheds the paste-in
+     rotation and the now-orphaned tape strips. */
+  [data-style="field-notes"] #typing-right {
+    transform: none;
+  }
+
+  [data-style="field-notes"] #typing-right::before,
+  [data-style="field-notes"] #typing-right::after {
+    display: none;
+  }
+
+  /* Signage scale on the small sheet (the mobile ID rule pins 34px; Zilla
+     at 34px would graze a ~335px column with "full stack engineer."). */
+  [data-style="field-notes"] #typing-text {
+    font-size: clamp(28px, 8vw, 32px);
+  }
+
+  [data-style="field-notes"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.12em;
+  }
+
+  [data-style="field-notes"] #blog-typing-text {
+    font-size: clamp(28px, 8vw, 34px);
+  }
+
+  /* Rotations halve on the small sheet. */
+  [data-style="field-notes"] .name-logo {
+    transform: rotate(-1.5deg);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that
+     at the halved crook, and make the tap state the stamp fill. */
+  [data-style="field-notes"] .name-logo:hover {
+    transform: rotate(-1.5deg);
+    background-color: transparent;
+    color: var(--accent);
+  }
+
+  [data-style="field-notes"] .name-logo:active {
+    background-color: var(--accent);
+    color: var(--bg);
+  }
+
+  [data-style="field-notes"] .job-dates {
+    transform: rotate(-1deg);
+  }
+
+  [data-style="field-notes"] .blog-card-date {
+    transform: rotate(-0.75deg);
+  }
+
+  [data-style="field-notes"] .static-menu-mobile .menu-item {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 10.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  [data-style="field-notes"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* The mobile sheet re-cards these surfaces; keep them paper. */
+  [data-style="field-notes"] .double-view-left,
+  [data-style="field-notes"] .double-view-right {
+    background-color: var(--secondary);
+    border: 1px solid var(--text25);
+  }
+
+  [data-style="field-notes"] .blog-card {
+    background-color: var(--secondary);
+  }
+
+  [data-style="field-notes"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* Jobs rail runs horizontal: the route line moves to the wrapper's bottom edge. */
+  [data-style="field-notes"] .menu-scroll-wrapper {
+    border-bottom: 2px dotted var(--text30);
+  }
+
+  /* The stamp flattens to a rust underline; height is JS-inline only on
+     mobile, so this thickness override must stay in this media block. */
+  [data-style="field-notes"] .highlight {
+    height: 3px !important;
+    background: var(--accent);
+    border: none;
+  }
+
+  [data-style="field-notes"] .job-content {
+    padding: 20px;
+  }
+
+  /* Carousel cards stack image-first on mobile: tape moves to the card's
+     own top corners and the matte slims. The track's top padding is only
+     4px, so the strips lap over the edge rather than past it (the scroll
+     clip would shear anything higher). border-box here only, the image is
+     width: 100% on mobile and the matte would overflow the card; desktop
+     stays content-box because the 528×358 tape math depends on it. */
+  [data-style="field-notes"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+    padding: 6px;
+  }
+
+  [data-style="field-notes"] .fc-card::before {
+    top: -4px;
+    left: -6px;
+  }
+
+  [data-style="field-notes"] .fc-card::after {
+    top: -4px;
+    left: auto;
+    right: -6px;
+  }
+
+  [data-style="field-notes"] .blog-post-container {
+    padding: 28px 18px;
+    margin-top: 18px;
+  }
+
+  [data-style="field-notes"] .blog-post-title {
+    font-size: clamp(26px, 7.5vw, 30px);
+  }
+
+  [data-style="field-notes"] .footer-container-mobile {
+    border-top: 2px dotted var(--text35);
+    padding-top: 12px;
+  }
+}

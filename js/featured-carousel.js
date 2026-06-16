@@ -124,7 +124,9 @@
     // Match the static --text10 backdrop (text at 10% over bg) as the scroll-start color.
     const startColor = mixColor(bg, text, 0.10);
     const endColor = bg;
-    const baseRadius = parseFloat(getCssVar('--border-radius')) || 20;
+    // 0px is a valid radius under square-cornered skins, so no || fallback.
+    const parsedRadius = parseFloat(getCssVar('--border-radius'));
+    const baseRadius = Number.isNaN(parsedRadius) ? 20 : parsedRadius;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     let ticking = false;
@@ -176,6 +178,8 @@
 
   function initCarouselTilt() {
     if (FEATURED_STYLE === 'unified') return;
+    // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+    if (window.__styleAllowsTilt && !window.__styleAllowsTilt()) return;
     const images = document.querySelectorAll('.fc-card-image');
     if (!images.length) return;
     VanillaTilt.init(Array.from(images), {
@@ -251,7 +255,7 @@
     if (!track || !dotsContainer || featuredProjects.length === 0) return;
 
     dotsContainer.innerHTML = featuredProjects.map(function (_, i) {
-      return '<button class="fc-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '"></button>';
+      return '<button class="fc-dot' + (i === 0 ? ' active' : '') + '" data-index="' + i + '" aria-label="Go to slide ' + (i + 1) + '"></button>';
     }).join('');
 
     function setActiveDot(idx) {

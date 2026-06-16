@@ -36,7 +36,7 @@ const FEATURED_PROJECTS = [
     id: "toolbelt",
     title: "Toolbelt",
     description: "Fundamentally, a coding agent is just a chatbot with access to a filesystem. There's no reason that access must be restricted to a CLI agent running locally on a machine. In theory, any chatbot could become a coding agent if given the right access.<br><br>Toolbelt is an MCP server that does exactly that. It runs on your machine (or a cloud VM/dev box) and exposes a configurable set of tools (bash, read_file, write_file, glob, grep, web_search, etc) over the internet through a secure Cloudflare tunnel. Add Toolbelt to any MCP compatible chatbot (like the ChatGPT app on your iPhone or a local model in LM Studio) and it will become an agent capable of taking actions on your machine. This makes the chat interface the minor component of the agentic system; you can swap it out anytime without having to modify your tools or environment.",
-    image: "../resources/Purple_Toolbelt_Image.png",
+    image: "../resources/Purple_Toolbelt_Image.jpg",
     tech: ["Python", "FastMCP", "Cloudflare", "OAuth 2.0"],
     accentColor: "#61ffda",
     url: "https://github.com/dawsonamf/toolbelt",

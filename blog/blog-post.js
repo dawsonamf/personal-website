@@ -163,9 +163,7 @@
       }
 
       pills.push('<span id="read-time"></span>');
-      metaEl.innerHTML = pills.map(p =>
-        p.startsWith('<') ? `<span class="pill">${p}</span>` : `<span class="pill">${p}</span>`
-      ).join('');
+      metaEl.innerHTML = pills.map(p => `<span class="pill">${p}</span>`).join('');
 
       loadPostStyles(Array.isArray(meta.styles) ? meta.styles : meta.styles ? [meta.styles] : []);
 
@@ -180,15 +178,18 @@
       const readTimeEl = document.getElementById('read-time');
       if (readTimeEl) readTimeEl.textContent = minutes + ' min read';
 
-      VanillaTilt.init(contentEl.querySelectorAll('.blog-image'), {
-        max: 8,
-        speed: 6000,
-        perspective: 1200,
-        scale: 1,
-        glare: true,
-        "max-glare": 0.15,
-        gyroscope: true
-      });
+      // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+      if (!window.__styleAllowsTilt || window.__styleAllowsTilt()) {
+        VanillaTilt.init(contentEl.querySelectorAll('.blog-image'), {
+          max: 8,
+          speed: 6000,
+          perspective: 1200,
+          scale: 1,
+          glare: true,
+          "max-glare": 0.15,
+          gyroscope: true
+        });
+      }
 
       const scriptsList = Array.isArray(meta.scripts) ? meta.scripts : meta.scripts ? [meta.scripts] : [];
       return loadPostScripts(scriptsList);

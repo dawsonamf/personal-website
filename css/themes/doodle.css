@@ -1,0 +1,1016 @@
+/* Doodle: engineering notebook margins. Grid-paper ground, wobbly hand-drawn
+   boxes (the uneven border-radius trick — every box wobbles differently),
+   pen-blue wavy marker underlines, a red pen for circles and margin notes,
+   yellow highlighter swipes, sticky notes, and a pencil-point cursor.
+   Patrick Hand carries display and body; Caveat handles annotations (dates,
+   labels, margin notes). Motion stays on (AOS entrances, the cursor dot,
+   hover lifts) — tilt is off, sketches lie flat on the page. The typed
+   masthead is cursorless (registry typing: 'letter'): glyphs draw in by
+   hand and erase out, see the .tw rules in the hero section.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. The tilt pins come from css/themes/theme-base.css
+   via flags.tilt; there is no still flag, so the motion pack stays.
+   Line/shadow stance: every line and fill derives from the alpha ramps or the
+   role colors; the only literals are ink-toned shadows (sticky notes, the
+   dock) and the translucent ink shade on the sticky-note dog-ear folds.
+   Patrick Hand loads as a single 400 face, so every place the site bolds
+   heading-or-body text is pinned back to 400 below; emphasis re-routes to
+   the yellow highlighter (b/strong) instead of synthesized bold. Caveat
+   loads 600 only. The sketchy corners come from the registry tokens
+   (--border-radius / --radius-pill carry the uneven-radius trick), so every
+   token-driven surface wobbles for free; the explicit radii below only add
+   variety so adjacent boxes don't share the same wobble. */
+
+
+/* ---- Foundations: grid paper, pencil cursor, highlighter selection ------- */
+
+/* Sweep angle for the hand-drawn hover circle on social links. @property
+   can't be scoped, but the name is skin-prefixed and the sheet only loads
+   while doodle is active; registration makes the percentage transitionable. */
+@property --doodle-ring {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 0%;
+}
+
+[data-style="doodle"] ::selection {
+  background: var(--secondary);
+  color: var(--text);
+}
+
+/* The grid: pen-blue graph ruling at the 10% ramp (preview .s-doodle .tin).
+   Attachment stays the default scroll; fixed would repaint the full field
+   on every scroll tick. */
+[data-style="doodle"] body {
+  background-image:
+    linear-gradient(var(--primary10) 1px, transparent 1px),
+    linear-gradient(90deg, var(--primary10) 1px, transparent 1px);
+  background-size: 26px 26px;
+}
+
+/* Pencil scrollbar: graphite thumb on paper. ([data-style] sits on <html>,
+   so these select the root scrollbar.) */
+[data-style="doodle"] {
+  scrollbar-color: var(--text40) var(--bg);
+}
+
+[data-style="doodle"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="doodle"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text15);
+}
+
+[data-style="doodle"]::-webkit-scrollbar-thumb {
+  background: var(--text40);
+  border: 3px solid var(--bg);
+  border-radius: 8px;
+}
+
+[data-style="doodle"]::-webkit-scrollbar-thumb:hover {
+  background: var(--text60);
+}
+
+/* Patrick Hand is a single 400-weight face, see header note. */
+[data-style="doodle"] h1,
+[data-style="doodle"] h2,
+[data-style="doodle"] h3,
+[data-style="doodle"] h4 {
+  font-weight: 400;
+}
+
+/* Emphasis is a highlighter swipe, not synthesized bold: the band starts
+   mid-x-height and stops above the baseline, like a real marker pass. */
+[data-style="doodle"] b,
+[data-style="doodle"] strong {
+  font-weight: 400;
+  background-image: linear-gradient(transparent 55%, var(--secondary) 55%, var(--secondary) 95%, transparent 95%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* Links are pen ink with a wavy marker underline; hover switches pens. */
+[data-style="doodle"] .text-link {
+  color: var(--primary);
+  text-decoration: underline wavy var(--primary40) 2px;
+  text-underline-offset: 4px;
+}
+
+[data-style="doodle"] .text-link::before {
+  display: none;
+}
+
+[data-style="doodle"] .text-link:hover {
+  color: var(--accent);
+  text-decoration-color: var(--accent60);
+}
+
+/* The cursor follower becomes a pencil: graphite point in a hand-drawn loop
+   (the loop's wobble is the same uneven-radius trick as the boxes). */
+[data-style="doodle"] .cursor-follow {
+  background-color: var(--text);
+}
+
+[data-style="doodle"] .circle-follow {
+  border: 1.5px solid var(--text50);
+  border-radius: 47% 53% 44% 56% / 52% 46% 54% 48%;
+}
+
+
+/* ---- Chrome: circled logo, sketched menus, signed-off footer -------------- */
+
+/* The logo "D" circled in red pen, pressed a little crooked. (.name-logo is
+   not a tilt target, so a base rotation is safe; its intro fadein only
+   animates opacity.) */
+[data-style="doodle"] .name-logo {
+  font-family: var(--font-heading);
+  color: var(--accent);
+  border: 2.5px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+  transform: rotate(-4deg);
+}
+
+[data-style="doodle"] .name-logo:hover {
+  transform: rotate(-4deg) translateY(-2px);
+  background-color: var(--accent);
+  color: var(--bg);
+}
+
+[data-style="doodle"] .menu-item {
+  font-size: 15.5px;
+  color: var(--text70);
+}
+
+[data-style="doodle"] .menu-item:hover {
+  color: var(--accent);
+}
+
+/* Item separators read as pen ticks. */
+[data-style="doodle"] .menu-spacer {
+  border-color: var(--text30);
+}
+
+/* Static menu: a sketched box. The header row is a stretch flexbox sized by
+   the logo's margin box (~67px), so the box must size to its own 3.5em list
+   or the frame lands ~11px too tall. */
+[data-style="doodle"] .static-menu {
+  background-color: transparent;
+  border: 2px solid var(--text);
+  box-shadow: none;
+  align-self: flex-start;
+}
+
+/* Floating menu: the same drawn box on a solid paper slip (it floats over
+   content, so it keeps a ground; no glass on a notebook page). */
+[data-style="doodle"] .moving-menu {
+  background-color: var(--bg);
+  border: 2px solid var(--text);
+  border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+  box-shadow: 2px 4px 10px rgba(43, 43, 43, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Footer: signed off in Caveat above nothing fancier than the page itself. */
+[data-style="doodle"] .footer-spacer {
+  border-color: var(--text30);
+}
+
+[data-style="doodle"] .footer-text,
+[data-style="doodle"] .footer-text-mobile {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--text60);
+}
+
+
+/* ---- Hero: pencilled masthead on a highlighter swipe ---------------------- */
+
+/* Patrick Hand is narrow: the longest typed line ("full stack engineer.")
+   runs ≈ 660px at the 72px cap, inside the ~795px column budget. */
+[data-style="doodle"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(56px, 5vw, 72px);
+  line-height: 1.12;
+}
+
+/* Cursorless masthead: the registry sets typing: 'letter', so the engine
+   wraps each typed glyph in span.tw — letters draw themselves in like
+   handwriting (a left-to-right wipe settling out of a pencil wobble), and
+   on delete each glyph gets .tw-out and rubs away like an eraser pass
+   before the line is re-drawn. inline-block so the per-glyph transform and
+   clip have a box; the vertical clip insets run negative so ascenders and
+   descenders never crop. */
+[data-style="doodle"] #typing-text .tw,
+[data-style="doodle"] #blog-typing-text .tw {
+  display: inline-block;
+  animation: doodle-draw-in 0.28s ease-out backwards;
+}
+
+[data-style="doodle"] #typing-text .tw-out,
+[data-style="doodle"] #blog-typing-text .tw-out {
+  animation: doodle-erase 0.3s ease-in forwards;
+}
+
+@keyframes doodle-draw-in {
+  0%   { opacity: 0; clip-path: inset(-15% 100% -15% 0); transform: rotate(-4deg) translateY(0.04em); filter: blur(1.5px); }
+  55%  { opacity: 1; filter: blur(0.5px); }
+  100% { opacity: 1; clip-path: inset(-15% -10% -15% 0); transform: none; filter: none; }
+}
+
+@keyframes doodle-erase {
+  0%   { opacity: 1; transform: none; filter: none; }
+  35%  { opacity: 0.55; transform: translateY(-0.03em) rotate(2.5deg); filter: blur(1px); }
+  70%  { opacity: 0.25; transform: translateY(0.03em) rotate(-2.5deg); filter: blur(2px); }
+  100% { opacity: 0; transform: none; filter: blur(3px); }
+}
+
+/* The typed accent words sit on a yellow highlighter swipe in ink, the
+   notebook's way of making a word important. clone keeps the swipe intact
+   if the span ever wraps. In letter mode every glyph is its own span, so
+   the side padding is dropped — per-glyph padding would open gaps in the
+   swipe. */
+[data-style="doodle"] #typing-text .typing-accent,
+[data-style="doodle"] #blog-typing-text .typing-accent {
+  color: var(--text);
+  background-image: linear-gradient(transparent 58%, var(--secondary) 58%, var(--secondary) 96%, transparent 96%);
+  padding: 0;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+/* The strapline becomes a Caveat margin note. */
+[data-style="doodle"] #sub-text {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 17px;
+  letter-spacing: 1px;
+  color: var(--text70);
+}
+
+/* The selfie gets a hand-drawn frame (wobbly corners ride the radius token)
+   and a crooked paste-in on the WRAPPER — the image is a .card tilt target
+   held flat by theme-base.css. Stays clickable, it is still the cycler
+   unlock. */
+[data-style="doodle"] #typing-right {
+  transform: rotate(1.2deg);
+}
+
+[data-style="doodle"] #typing-image {
+  border: 2px solid var(--text);
+}
+
+/* Social links: hovering doesn't recolor the glyph — it circles it in red
+   pen. The ring is the pseudo's hand-drawn border revealed by a conic
+   mask whose sweep is a registered custom property, so it draws itself
+   around the icon on hover and un-draws when the pen lifts. Browsers
+   without @property still get the full circle on hover, just without the
+   sweep. */
+[data-style="doodle"] .socials-item {
+  position: relative;
+}
+
+[data-style="doodle"] .socials-item::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 2.5px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+  -webkit-mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  transition: --doodle-ring 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+[data-style="doodle"] .socials-item:hover::after {
+  --doodle-ring: 100%;
+}
+
+/* The glyph holds its ink and stays put — the circle is the hover signal. */
+[data-style="doodle"] .socials-item:hover i {
+  color: var(--text);
+  transform: none;
+}
+
+/* The same red-pen circle, generalized — but only to small STANDALONE
+   links with air around them: the desktop nav words (the Theme trigger
+   included) and the blog strip's "See all posts". Links inside running
+   text never get it (a ring overlaps the neighboring lines); those keep
+   the wavy pen underline above. Negative insets wrap the ring around the
+   word's text box. */
+[data-style="doodle"] .moving-menu .menu-item,
+[data-style="doodle"] .static-menu .menu-item,
+[data-style="doodle"] .blog-see-all .text-link {
+  position: relative;
+}
+
+[data-style="doodle"] .moving-menu .menu-item::after,
+[data-style="doodle"] .static-menu .menu-item::after,
+[data-style="doodle"] .blog-see-all .text-link::after {
+  content: '';
+  position: absolute;
+  inset: -5px -9px;
+  border: 2px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+  -webkit-mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  mask-image: conic-gradient(from -40deg, #000 var(--doodle-ring), transparent 0);
+  transition: --doodle-ring 0.4s ease-in-out;
+  pointer-events: none;
+}
+
+[data-style="doodle"] .moving-menu .menu-item:hover::after,
+[data-style="doodle"] .static-menu .menu-item:hover::after,
+[data-style="doodle"] .blog-see-all .text-link:hover::after {
+  --doodle-ring: 100%;
+}
+
+/* Circled words hold their ink too — and the see-all link lifts its
+   underline while ringed (pen moves from under the word to around it). */
+[data-style="doodle"] .moving-menu .menu-item:hover,
+[data-style="doodle"] .static-menu .menu-item:hover {
+  color: var(--text);
+}
+
+[data-style="doodle"] .blog-see-all .text-link:hover {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+[data-style="doodle"] #socials-list .socials-menu-spacer,
+[data-style="doodle"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text30);
+}
+
+
+/* ---- Section headers: hand-circled numbers + hand-ruled lines -------------
+   The index number gets circled in red pen (the uneven-blob radius), the
+   title stays ink, and the spacer is a ruled-by-hand line that isn't quite
+   straight. */
+
+[data-style="doodle"] .section-header {
+  font-size: 42px;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep the titles ink — the red lives in the circled number. */
+[data-style="doodle"] #about-section-header,
+[data-style="doodle"] #jobs-header,
+[data-style="doodle"] #project-header,
+[data-style="doodle"] #blog-header,
+[data-style="doodle"] #contact-section-header,
+[data-style="doodle"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="doodle"] .sec-num {
+  display: inline-block;
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 0.62em;
+  letter-spacing: 0;
+  color: var(--accent);
+  border: 2.5px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+  padding: 1px 12px 3px;
+  transform: rotate(-4deg);
+  margin-right: 14px;
+  vertical-align: 0.12em;
+}
+
+[data-style="doodle"] .section-header-spacer {
+  background-color: var(--text30);
+  height: 2px;
+  transform: translateY(5px) rotate(-0.4deg);
+}
+
+
+/* ---- About / Skills: sketched boxes ----------------------------------------
+   The surface grammar for the whole skin: transparent panels in a 2px ink
+   line drawn freehand — the fill is the page, the box is the design. The
+   left and right cards get different wobbles so the spread reads drawn,
+   not stamped. The cards' intro slide pins an inline translateX at
+   animationend, so the boxes themselves never rotate. */
+
+[data-style="doodle"] .card-style {
+  background-color: transparent;
+  border: 2px solid var(--text);
+  padding: 24px 26px;
+}
+
+[data-style="doodle"] .double-view-left {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+[data-style="doodle"] .double-view-right {
+  border-radius: 15px 225px 15px 255px / 255px 15px 225px 15px;
+}
+
+/* "About Me" / "Skills" in ink over a wavy marker underline. */
+[data-style="doodle"] .card-title,
+[data-style="doodle"] .about-header,
+[data-style="doodle"] .skills-header {
+  width: fit-content;
+  font-weight: 400;
+  font-size: 27px;
+  color: var(--text);
+  text-decoration: underline wavy var(--primary) 2.5px;
+  text-underline-offset: 6px;
+  margin-bottom: 18px;
+}
+
+/* Web / iOS / ML go up in pen blue. */
+[data-style="doodle"] .skills-section-header {
+  color: var(--primary);
+  font-size: 23px;
+}
+
+[data-style="doodle"] .about-text,
+[data-style="doodle"] .skills-text,
+[data-style="doodle"] .contact-text {
+  font-size: 17px;
+  line-height: 1.55;
+}
+
+/* Pencil rules between skill entries. */
+[data-style="doodle"] .skills-text {
+  border-bottom: 1px dashed var(--text30);
+}
+
+[data-style="doodle"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the margin rail + a sketched dossier ---------------------- */
+
+/* Index rail: a hand-ruled pencil line instead of the navy spine. */
+[data-style="doodle"] .nav-container {
+  border-left: 2px solid var(--text25);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Patrick Hand arrives after that
+   measure — font-relative line boxes would leave the bar sized to the
+   fallback font. Hover/selected fills stay token-driven (the registry maps
+   the selected ground to the sticky-note yellow). */
+[data-style="doodle"] .menu li {
+  font-size: 16px;
+  line-height: 19px;
+}
+
+/* Highlighted line in the notes: ink on the yellow swipe. */
+[data-style="doodle"] .menu li.selected {
+  color: var(--text);
+}
+
+/* The bar becomes a red pen stroke, no glow. JS writes the bar's geometry,
+   border-radius, and transition inline on every move, hence the !important;
+   width is a JS constant only on desktop, so the thickness override lives in
+   the desktop block. */
+[data-style="doodle"] .highlight {
+  background: var(--accent);
+  box-shadow: none;
+  border-radius: 3px !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="doodle"] .highlight {
+    left: -4px !important;
+    width: 4px !important;
+  }
+}
+
+/* The dossier is another sketched box (its own wobble). */
+[data-style="doodle"] .job-content {
+  background-color: transparent;
+  border: 2px solid var(--text);
+  border-radius: 225px 15px 255px 20px / 20px 255px 15px 225px;
+  padding: 24px 30px;
+}
+
+[data-style="doodle"] .job-title {
+  color: var(--text);
+  font-size: 26px;
+}
+
+/* Dates as a red Caveat margin note, written a little uphill. (.job-content
+   is not a tilt target, so rotating this child is safe.) */
+[data-style="doodle"] .job-dates {
+  width: fit-content;
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--accent);
+  transform: rotate(-1.2deg);
+  transform-origin: left center;
+}
+
+/* Bullets become little drawn arrows pointing at each line. */
+[data-style="doodle"] .job-bullets {
+  list-style-type: "→  ";
+  line-height: 1.55;
+}
+
+[data-style="doodle"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* One sticky note marks the current job (the note text is specified by the
+   style queue; no other content words are added anywhere). It rides #job-1
+   only, so it disappears with that panel — the other jobs aren't "here".
+   clip-path cuts the dog-ear, the gradient shades the fold, and the shadow
+   uses drop-shadow because box-shadow would be clipped off with the corner. */
+[data-style="doodle"] #job-1 {
+  position: relative;
+}
+
+[data-style="doodle"] #job-1::after {
+  content: 'currently here \2713';
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 17px;
+  line-height: 1.25;
+  color: var(--text);
+  background-image: linear-gradient(315deg, rgba(43, 43, 43, 0.16) 0 10px, var(--secondary) 10px);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 13px), calc(100% - 13px) 100%, 0 100%);
+  filter: drop-shadow(2px 4px 5px rgba(43, 43, 43, 0.18));
+  padding: 8px 14px 16px 12px;
+  transform: rotate(2.4deg);
+  pointer-events: none;
+}
+
+/* The note overlaps the title's line box on the small sheet; give the first
+   flyer's title room to wrap under it. */
+@media (max-width: 1100px) {
+  [data-style="doodle"] #job-1 .job-title {
+    padding-right: 86px;
+  }
+
+  [data-style="doodle"] #job-1::after {
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+    padding: 6px 10px 13px 9px;
+  }
+}
+
+/* The swap animation stays the default slide — this is a motion-positive
+   skin; nothing here is stilled. */
+
+
+/* ---- Selected Works: sketch-framed plates ----------------------------------- */
+
+/* Plates sit in hand-drawn frames; the wobbly crop comes from the radius
+   token on .fc-card-image (overflow hidden trims the screenshot to the
+   sketch line). */
+[data-style="doodle"] .fc-style-floating .fc-card-image {
+  border: 2px solid var(--text);
+  background-color: transparent;
+}
+
+/* Captions: the title sits on its own highlighter swipe, hero grammar. */
+[data-style="doodle"] .fc-card-title {
+  width: fit-content;
+  color: var(--text);
+  font-weight: 400;
+  font-size: 26px;
+  background-image: linear-gradient(transparent 55%, var(--secondary) 55%, var(--secondary) 95%, transparent 95%);
+  padding: 0 6px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
+[data-style="doodle"] .fc-card-desc {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* CTA: a hand-drawn button in pen blue (featured-carousel.css pins a literal
+   10px radius, not the token, so the wobble is re-applied here). The default
+   hover lift stays — motion skin. */
+[data-style="doodle"] .fc-card-cta {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  padding: 8px 18px;
+}
+
+[data-style="doodle"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  color: var(--bg);
+}
+
+/* Dots: pencil points, the active one inked blue (the scale pop stays). */
+[data-style="doodle"] .fc-dot {
+  background-color: var(--text);
+  opacity: 0.25;
+}
+
+[data-style="doodle"] .fc-dot:hover {
+  opacity: 0.55;
+}
+
+[data-style="doodle"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+}
+
+
+/* ---- Blog: sticky notes -------------------------------------------------------
+   Cards become yellow sticky notes with a dog-eared corner: the fold is cut
+   with clip-path and shaded by the gradient's first stop, and the shadow is
+   a drop-shadow so it follows the cut corner. No base rotation — the cards
+   are tilt targets held flat by theme-base.css. */
+
+[data-style="doodle"] .blog-card {
+  background-color: var(--secondary);
+  background-image: linear-gradient(315deg, rgba(43, 43, 43, 0.14) 0 14px, transparent 14px);
+  border-radius: 2px;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+  filter: drop-shadow(2px 5px 7px rgba(43, 43, 43, 0.16));
+  transition: filter 0.25s ease-in-out, translate 0.25s ease-in-out, rotate 0.25s ease-in-out;
+}
+
+/* Hover: the sticky note peels up off the page — it lifts, cocks a little,
+   and its shadow deepens. translate/rotate are the independent transform
+   properties, so they ride over theme-base's transform: none tilt pin. */
+[data-style="doodle"] .blog-card:hover {
+  background-color: var(--secondary);
+  translate: 0 -6px;
+  rotate: -1.5deg;
+  filter: drop-shadow(5px 12px 14px rgba(43, 43, 43, 0.3));
+}
+
+[data-style="doodle"] .blog-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 21px;
+}
+
+[data-style="doodle"] .blog-card-date {
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+[data-style="doodle"] .blog-card-excerpt {
+  color: var(--text80);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="doodle"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+  border-radius: 2px;
+}
+
+[data-style="doodle"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="doodle"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+  font-weight: 400;
+}
+
+[data-style="doodle"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: 'Caveat', cursive;
+  font-size: 15px;
+  color: var(--accent);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the hand face
+   and the loaded 400. */
+[data-style="doodle"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(56px, 5vw, 70px);
+  line-height: 1.12;
+}
+
+[data-style="doodle"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+/* Filters: hand-drawn chips in Caveat; the active one gets the highlighter. */
+[data-style="doodle"] .filter-pill {
+  background-color: transparent;
+  border: 1.5px solid var(--text40);
+  color: var(--text70);
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 4px 14px;
+}
+
+[data-style="doodle"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="doodle"] .filter-pill.active {
+  background-color: var(--secondary);
+  border-color: var(--text);
+  color: var(--text);
+}
+
+
+/* ---- Blog post page: a notebook page ------------------------------------------ */
+
+/* The article sits inside its own sketched box on the grid paper; border-box
+   keeps the outer line at the 750px column so it lines up with the nav and
+   footer, and the nav sheds its side padding so the circled D sits flush
+   with the box's left edge. */
+[data-style="doodle"] .blog-post-container {
+  box-sizing: border-box;
+  border: 2px solid var(--text);
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  padding: 44px 48px;
+  margin: 24px auto 0;
+}
+
+[data-style="doodle"] .blog-nav {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[data-style="doodle"] .blog-post-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: clamp(34px, 4.5vw, 42px);
+  line-height: 1.2;
+}
+
+[data-style="doodle"] .blog-post-content {
+  font-size: 18px;
+  line-height: 1.7;
+}
+
+/* Crossheads: ink over wavy marker underlines. */
+[data-style="doodle"] .blog-post-content h2 {
+  width: fit-content;
+  color: var(--text);
+  text-decoration: underline wavy var(--primary) 2.5px;
+  text-underline-offset: 7px;
+}
+
+[data-style="doodle"] .blog-post-content h3 {
+  color: var(--text);
+}
+
+/* Margin notes: red rule, Caveat hand. */
+[data-style="doodle"] .blog-post-content blockquote {
+  border-left: 3px solid var(--accent);
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 1.15em;
+  color: var(--text70);
+}
+
+/* Section breaks are pencil-dashed. */
+[data-style="doodle"] .blog-post-content hr {
+  border-top: 2px dashed var(--text30);
+}
+
+/* Tables as hand-ruled grids. */
+[data-style="doodle"] .blog-post-content th,
+[data-style="doodle"] .blog-post-content td {
+  border: 1.5px solid var(--text30);
+}
+
+/* blog-styles bolds th to 600, which Patrick Hand doesn't load — pin 400. */
+[data-style="doodle"] .blog-post-content th {
+  background-color: var(--secondary);
+  font-weight: 400;
+}
+
+/* Post photographs get the hand-drawn frame; border-box keeps the frame
+   inside blog-styles' max-width: 100% (the site is content-box, so the
+   border would otherwise overhang the column). */
+[data-style="doodle"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 2px solid var(--text);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. Code keeps
+   the real mono face — sketches stop at the terminal. */
+[data-style="doodle"] .blog-post-content pre {
+  border: 2px solid var(--text);
+}
+
+/* Inline code: pencil-shade chips (the higher-specificity pre rule above
+   unwinds this for fenced blocks). */
+[data-style="doodle"] .blog-post-content code {
+  background-color: var(--text10);
+  border: 1px solid var(--text20);
+}
+
+/* Diagrams sit on a faint pencil panel (mermaid reads the palette at render
+   time via blog/post.html). */
+[data-style="doodle"] .blog-post-content .mermaid {
+  background-color: var(--text5);
+  border: 2px solid var(--text);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="doodle"] #metr-chart {
+  border: 2px solid var(--text);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS; hand
+   them the wobble. */
+[data-style="doodle"] #pareto-chart,
+[data-style="doodle"] #ara-objectives-chart,
+[data-style="doodle"] #kl-explainer-chart {
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+}
+
+
+/* ---- Contact: the last sketch on the page ------------------------------------- */
+
+[data-style="doodle"] .contact-view-left {
+  background-color: transparent;
+  border: 2px solid var(--text);
+  border-radius: 15px 255px 20px 225px / 225px 20px 255px 15px;
+}
+
+/* The map gets the drawn frame (the wrapper is a .card tilt target held
+   flat; frame only, never rotation). */
+[data-style="doodle"] .contact-image-wrapper {
+  border: 2px solid var(--text);
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): hand-written chips ------ */
+
+[data-style="doodle"] .pill {
+  background-color: transparent;
+  border: 1.5px solid var(--text40);
+  color: var(--text70);
+  font-family: 'Caveat', cursive;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 2px 12px;
+}
+
+
+/* ---- Cycler dock: a sketched toolbox -------------------------------------------- */
+
+[data-style="doodle"] .tc-dock {
+  background: var(--bg);
+  border: 2px solid var(--text);
+  box-shadow: 2px 5px 12px rgba(43, 43, 43, 0.14);
+  backdrop-filter: none;
+}
+
+/* The FAB becomes a red-circled blob, logo grammar. (Its hover lift stays —
+   motion skin.) */
+[data-style="doodle"] .tc-toggle {
+  border: 2px solid var(--accent);
+  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) -------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Coarser ruling on the small sheet. */
+  [data-style="doodle"] body {
+    background-size: 22px 22px;
+  }
+
+  /* Hand lettering on the small sheet (the mobile ID rule pins 34px; Patrick
+     Hand at 34px clears a ~335px column, but the air is nicer a step down). */
+  [data-style="doodle"] #typing-text {
+    font-size: clamp(28px, 8.5vw, 33px);
+  }
+
+  [data-style="doodle"] #sub-text {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+
+  [data-style="doodle"] #blog-typing-text {
+    font-size: clamp(28px, 8.5vw, 34px);
+  }
+
+  /* The hero photo is hidden on mobile; its wrapper sheds the paste-in crook. */
+  [data-style="doodle"] #typing-right {
+    transform: none;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the titles
+     need to wrap. The grid keeps a wrapped title's second line aligned with
+     the first word instead of the circled number (the text run after
+     .sec-num is one anonymous grid item). */
+  [data-style="doodle"] .section-header {
+    white-space: normal;
+    font-size: clamp(26px, 8vw, 32px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  [data-style="doodle"] .sec-num {
+    padding: 0 9px 2px;
+    margin-right: 10px;
+  }
+
+  /* Rotations halve on the small sheet. */
+  [data-style="doodle"] .name-logo {
+    transform: rotate(-2deg);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that
+     at the halved crook, and make the tap state the red fill. */
+  [data-style="doodle"] .name-logo:hover {
+    transform: rotate(-2deg);
+    background-color: transparent;
+    color: var(--accent);
+  }
+
+  [data-style="doodle"] .name-logo:active {
+    background-color: var(--accent);
+    color: var(--bg);
+  }
+
+  [data-style="doodle"] .static-menu-mobile .menu-item {
+    font-size: 15px;
+    color: var(--text70);
+  }
+
+  [data-style="doodle"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* The mobile sheet re-cards these surfaces with a tint fill; keep them
+     drawn boxes on the page. */
+  [data-style="doodle"] .double-view-left,
+  [data-style="doodle"] .double-view-right {
+    background-color: transparent;
+    border: 2px solid var(--text);
+  }
+
+  [data-style="doodle"] .contact-view-left {
+    background-color: transparent;
+  }
+
+  /* Sticky notes keep their yellow under the mobile re-card. */
+  [data-style="doodle"] .blog-card {
+    background-color: var(--secondary);
+  }
+
+  /* Jobs rail runs horizontal: the pencil rule moves to the wrapper's
+     bottom edge, and the red stroke keeps the JS-written 2px height (the
+     mobile thickness is inline-only, so the override lives here). */
+  [data-style="doodle"] .menu-scroll-wrapper {
+    border-bottom: 2px solid var(--text25);
+  }
+
+  [data-style="doodle"] .highlight {
+    height: 3px !important;
+  }
+
+  [data-style="doodle"] .job-content {
+    padding: 20px;
+  }
+
+  /* Framed plates need a real gutter between cards on the small sheet, and
+     the image is width: 100% on mobile, so the frame must draw inside the
+     box (content-box would overflow the card). */
+  [data-style="doodle"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="doodle"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+  }
+
+  [data-style="doodle"] .blog-post-container {
+    padding: 28px 18px;
+    margin-top: 18px;
+  }
+
+  [data-style="doodle"] .blog-post-title {
+    font-size: clamp(26px, 7.5vw, 30px);
+  }
+
+  [data-style="doodle"] .footer-text-mobile {
+    font-size: 16px;
+  }
+}

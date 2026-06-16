@@ -4,12 +4,22 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dawson Metzger-Fleetwood</title>
+  <meta name="description" content="Dawson Metzger-Fleetwood is a software engineer working across web, iOS and visionOS, and ML/RL. Projects, blog, experience, and ways to get in touch.">
+  <link rel="canonical" href="https://www.dawsonamf.com/">
+  <link rel="icon" type="image/png" sizes="32x32" href="resources/favicon-32.png">
+  <link rel="apple-touch-icon" href="resources/apple-touch-icon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Dawson Metzger-Fleetwood">
+  <meta property="og:description" content="Software engineer working across web, iOS and visionOS, and ML/RL.">
+  <meta property="og:url" content="https://www.dawsonamf.com/">
+  <meta property="og:image" content="https://www.dawsonamf.com/resources/og-avatar.jpg">
+  <meta name="twitter:card" content="summary">
 
   <!-- Styles -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
-  <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
   <link rel="stylesheet" href="css/styles.css">
   <link rel="stylesheet" href="css/mobile-styles.css">
   <link rel="stylesheet" href="css/featured-carousel.css">
@@ -23,9 +33,10 @@
   <script src="https://unpkg.com/aos@2.3.1/dist/aos.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
   <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
-  <script src="js/blog-data.js"></script>
-  <script src="js/featured-carousel.js"></script>
-  <script src="js/typing-engine.js"></script>
+  <script src="js/blog-data.js" defer></script>
+  <script src="js/featured-carousel.js" defer></script>
+  <script src="js/typing-engine.js" defer></script>
+  <script src="js/anim-utils.js"></script>
   <script src="js/nav-config.js" defer></script>
   <script src="js/script.js" defer></script>
   <script src="js/cursor-follow.js" defer></script>
@@ -61,25 +72,14 @@
     <!-- the image, typing text, sub text, and social links -->
     <div id="typing-container">
       <div id="typing-right">
-        <img id="typing-image" class="card" src="resources/profile_photo.png" alt="Dawson.jpeg">
+        <img id="typing-image" class="card" src="resources/profile_photo.jpg" alt="Dawson Metzger-Fleetwood">
       </div>
       <div id="typing-left">
         <h1 id="typing-text"></h1>
         <p id="sub-text">Web&nbsp;|&nbsp;iOS and visionOS&nbsp;|&nbsp;ML and RL</p>
       </div>
       <div id="socials-list">
-        <span class="socials-menu-spacer"></span>
-        <br>
-        <a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a>
-        <a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a>
-        <a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a>
-        <a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a>
-        <a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a>
-
-        <br>
-        <span class="socials-menu-spacer"></span>
-
+        <!-- social links rendered by js/nav-config.js -->
       </div>
     </div>
     <div class="section-spacer"></div>
@@ -109,14 +109,15 @@
 
       <div class="double-view-right card-style">
         <h3 class="card-title skills-header">Skills</h3>
-        <h2 class="skills-section-header">Web</h2>
+        <h4 class="skills-section-header">Web</h4>
         <p class="skills-text">
           I have professional experience engineering full-stack web applications and interactive websites. I’ve built modern backends with Node and Bun, as well as specialized sites with PHP and custom WordPress plugins. I've led full-scale, from-scratch overhauls of enterprise websites, built production grade frontends with React as well as vanilla HTML, CSS, and JavaScript, architected CI/CD pipelines with GitHub Actions and Docker, deployed secure multi-tenant serverless applications on AWS (Lambda, DynamoDB, Cognito), managed business critical production deployments, and built integrated web experiences featuring real-time data processing with WebSockets and libraries like Three.js.
-        <h2 class="skills-section-header">iOS and visionOS</h2>
+        </p>
+        <h4 class="skills-section-header">iOS and visionOS</h4>
         <p class="skills-text">
           I’ve worked extensively on iOS and visionOS projects, including advanced AR/VR development using RealityKit. I have experience with RealityKit’s entity-component-system architecture, coordinating SharePlay in 3D spaces, debugging complex and highly customized view hierarchies, package management in Xcode, concurrency in Swift 6, and building ultra high performance, heapless programs. I’m comfortable across Apple's full development stack, from optimizing performance with Instruments, managing scenes in Reality Composer Pro, deploying CI/CD pipelines with Xcode Cloud and TestFlight, and training/using ML models with Create and Core ML.
         </p>
-        <h2 class="skills-section-header">ML and RL</h2>
+        <h4 class="skills-section-header">ML and RL</h4>
         <p class="skills-text">
           Professionally, I've applied machine learning to both enterprise and government systems. I designed and built a real time computer vision pipeline that trains models capable of recognizing and tracking the orientation of 3D objects using LIDAR. I’ve also fine-tuned and deployed foundation models to improve performance on domain-specific tasks.
           <br><br>
@@ -155,7 +156,7 @@
     <!-- Right side job details -->
     <div id="jobs-content-wrapper">
       <div class="job-content showing" id="job-1">
-        <h3 class="job-title">Software Engineer @ <a href="https://www.aboutobjects.com/" target="_blank" class="text-link">About Objects</a></h3>
+        <h3 class="job-title">Software Engineer @ <a href="https://www.aboutobjects.com/" target="_blank" rel="noopener noreferrer" class="text-link">About Objects</a></h3>
         <div class="job-dates">July 2023 – Present</div>
         <ul class="job-bullets">
           <li>Worked extensively on a multi-platform (iPad, iPhone, and Vision Pro) event management platform for government clients, featuring real-time resource tracking and 3D visualizations with RealityKit. Featured in Apple’s enterprise showcase.</li>
@@ -168,7 +169,7 @@
         </ul>
       </div>
       <div class="job-content hidden" id="job-2">
-        <h3 class="job-title">Guest Lecturer @ <a href="https://cogsci.jhu.edu/" target="_blank" class="text-link">Johns Hopkins University</a></h3>
+        <h3 class="job-title">Guest Lecturer @ <a href="https://cogsci.jhu.edu/" target="_blank" rel="noopener noreferrer" class="text-link">Johns Hopkins University</a></h3>
         <div class="job-dates">Spring 2024 – Present</div>
         <ul class="job-bullets">
           <li>Led the development of employee facing applications designed to integrate internal systems and improve preparation efficiency, including creating a custom MCP server, CLI tool, and skill pack for agents.</li>
@@ -185,11 +186,11 @@
           <li>Led the automation and integration of client payment, payroll, and scheduling software to streamline operations.</li>
           <li>Responsible for coordinating scheduling with school officials and other interpreters and transliterators, as well as preparing and leading language and policy training sessions. Assisted with recruiting, onboarding, and sales.</li>
           <li>Developed methodology to screen employees, clients, and contracts, as well as match clients with service providers.</li>
-          <li>In the early days, served direcly as a cued language transliterator when needed, directly providing interpretation/transliteration services to consumers.</li>
+          <li>In the early days, served directly as a cued language transliterator when needed, directly providing interpretation/transliteration services to consumers.</li>
         </ul>
       </div>
       <div class="job-content hidden" id="job-4">
-        <h3 class="job-title">Fellow @ <a href="https://startupshell.org/" target="_blank" class="text-link">Startup Shell</a></h3>
+        <h3 class="job-title">Fellow @ <a href="https://startupshell.org/" target="_blank" rel="noopener noreferrer" class="text-link">Startup Shell</a></h3>
         <div class="job-dates">September 2022 – Present</div>
         <ul class="job-bullets">
           <li>Startup Shell is UMD’s student-run startup incubator, founding home of ventures collectively worth over $1 billion.</li>
@@ -263,38 +264,19 @@
         data-aos-once="true">
         <p class="contact-text">My inbox is always open. If you're interested in working together, 
           have a question, or just want to say hi, feel free 
-          to reach out! Send me an email at <a href="mailto:dawsonamf@icloud.com" target="_blank" class="text-link">dawsonamf@icloud.com</a>, 
+          to reach out! Send me an email at <a href="mailto:dawsonamf@icloud.com" target="_blank" rel="noopener noreferrer" class="text-link">dawsonamf@icloud.com</a>, 
             or connect with me by selecting an option below. You can also 
-              <a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'}); return false;" class="text-link">
+              <a href="#" class="text-link calendly-link">
                 schedule a call</a>.
         </p>
         <div class="quick-links">
-          <!-- this menu is only visible on a computer -->
+          <!-- this menu is only visible on a computer; social links rendered by js/nav-config.js -->
           <nav class="contact-menu" aria-label="Social links">
-            <ul class="menu-list">
-              <li><a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a></li>
-              <li><span class="socials-menu-spacer2"></span></li>
-              <li><a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
-              <li><span class="socials-menu-spacer2"></span></li>
-              <li><a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a></li>
-              <li><span class="socials-menu-spacer2"></span></li>
-              <li><a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a></li>
-              <li><span class="socials-menu-spacer2"></span></li>
-              <li><a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a></li>
-              <li><span class="socials-menu-spacer2"></span></li>
-              <li><a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a></li>
-            </ul>
+            <ul class="menu-list"></ul>
           </nav>
-          <!-- this menu is only visible on mobile -->
+          <!-- this menu is only visible on mobile; social links rendered by js/nav-config.js -->
           <nav class="contact-menu-mobile" aria-label="Social links">
-            <ul class="menu-list">
-                <li><a href="https://www.linkedin.com/in/dawsonamf7/" target="_blank" class="socials-item"><i class="fab fa-linkedin"></i></a></li>
-                <li><a href="https://twitter.com/dawsonamf7" class="socials-item" target="_blank"><i class="fa-brands fa-x-twitter"></i></a></li>
-                <li><a href="https://www.facebook.com/messages/t/dawson.metzgerfleetwood" target="_blank" class="socials-item"><i class="fab fa-facebook-messenger"></i></a></li>
-                <li><a href="mailto:dawsonamf@icloud.com" target="_blank" class="socials-item"><i class="bx bx-envelope"></i></a></li>
-                <li><a href="https://www.dawsonamf.com/resources/contact.vcf" target="_blank" class="socials-item"><i class="fas fa-user-circle"></i></a></li>
-                <li><a href="#" onclick="Calendly.initPopupWidget({url: 'https://calendly.com/dawsonamf/30min?background_color=1d1d1d&text_color=e6f1ff&primary_color=61ffda'});return false;" class="socials-item"><i class="far fa-calendar-alt"></i></a></li>
-            </ul>
+            <ul class="menu-list"></ul>
           </nav>
         </div>
       </div>

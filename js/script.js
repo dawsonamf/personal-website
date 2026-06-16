@@ -6,16 +6,23 @@
   const ANIMATION_DURATION = 500;
   const DELAY_ADJUSTMENT = 3;
 
-  function persistAfterAnimation(el, finalStyles) {
-    el.addEventListener('animationend', function handler(e) {
-      if (e.target !== el) return;
-      el.removeEventListener('animationend', handler);
-      el.style.animation = 'none';
-      Object.assign(el.style, finalStyles);
-    });
-  }
+  // persistAfterAnimation comes from js/anim-utils.js (shared with the blog pages).
+
+  // The hero chrome enters exactly once per page load. Live theme switches
+  // replay the typing sequence (js/theme-cycler.js → __restartTypingSequence),
+  // which re-fires the sequence's callbacks — the chrome must not re-animate.
+  let heroChromeIn = false;
 
   function startAnimations() {
+    if (heroChromeIn) return;
+    heroChromeIn = true;
+
+    // Style skins gate their masthead underprints (the discs/suns behind
+    // the typed headline) on this class so they fade in with this wave
+    // instead of existing before the first line has typed — see
+    // "hero-extras-in" in css/themes/*.css.
+    document.documentElement.classList.add('hero-extras-in');
+
     const staticMenu = document.querySelector('.static-menu');
     const nameLogo = document.querySelector('.name-logo');
     const typingContainer = document.querySelector('#typing-container');
@@ -84,7 +91,13 @@
   }
 
 
+  // Same once-per-load guard as the chrome above, for the same reason.
+  let subTextIn = false;
+
   function fadeInSubText() {
+    if (subTextIn) return;
+    subTextIn = true;
+
     const subText = document.querySelector('#sub-text');
     if (subText) {
       subText.style.animation = "fadein 0.8s ease-out";
@@ -100,16 +113,6 @@
       typingDelay: TYPING_DELAY,
       deleteDelay: 40,
       sequences: [
-        [
-          { action: 'type', text: "Hi,\nI'm Dawson,\nfrontend" },
-          { action: 'pause', duration: 200 },
-          { action: 'delete', count: 8 },
-          { action: 'type', text: "backend" },
-          { action: 'pause', duration: 200 },
-          { action: 'delete', count: 7 },
-          { action: 'type', text: "software engineer." },
-          { action: 'callback', fn: startAnimations },
-        ],
         [
           { action: 'type', text: "Hi,\nI'm Dawson,\nweb developer." },
           { action: 'callback', fn: startAnimations },
@@ -145,6 +148,20 @@
           { action: 'delete', count: 8 },
           { action: 'type', text: "software engineer." },
         ],
+        [
+          { action: 'type', text: "Hi,\nI'm Dawson,\nbuilder." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 8 },
+          { action: 'type', text: "software engineer." },
+        ],
+        [
+          { action: 'type', text: "Hey,\nI'm Dawson,\nbuilder." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 8 },
+          { action: 'type', text: "software engineer." },
+        ],
         // [
         //   { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
         //   { action: 'callback', fn: startAnimations },
@@ -169,7 +186,9 @@
 
   $(document).ready(function() {
     $('.menu-item').on('click', function(event) {
-      if ($(this).is(".resume-link") || $(this).is(".blog-page-link")) {
+      // tc-nav-trigger is the theme dropdown's button (js/theme-cycler.js),
+      // not an anchor — it has no hash to scroll to.
+      if ($(this).is(".resume-link") || $(this).is(".blog-page-link") || $(this).is(".tc-nav-trigger")) {
         return;
       }
       event.preventDefault();
@@ -206,6 +225,8 @@
 
 
   $(document).ready(function() {
+    // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+    if (window.__styleAllowsTilt && !window.__styleAllowsTilt()) return;
     const cards = $('.card').get();
     VanillaTilt.init(cards, {
       max: 10,
@@ -258,6 +279,22 @@
     window.addEventListener("load", () => {
       if (jobsSelectedItem) moveHighlight(jobsSelectedItem, true);
     });
+    // Re-seat the bar when the items change size without a resize or click:
+    // a live style switch restyles the list, and a late webfont can rewrap a
+    // label. The initial observe delivery is skipped so the bar still first
+    // paints on window load.
+    if (window.ResizeObserver) {
+      let menuObserverPrimed = false;
+      const menuObserver = new ResizeObserver(() => {
+        if (!menuObserverPrimed) {
+          menuObserverPrimed = true;
+          return;
+        }
+        if (jobsSelectedItem) moveHighlight(jobsSelectedItem, false);
+      });
+      menuObserver.observe(jobsMenuList);
+      jobsMenuList.querySelectorAll("li").forEach((li) => menuObserver.observe(li));
+    }
     const scrollWrapper = document.querySelector('.menu-scroll-wrapper');
     if (scrollWrapper) {
       scrollWrapper.addEventListener("scroll", () => {
@@ -328,14 +365,17 @@
       </a>
     `).join('');
 
-    VanillaTilt.init(track.querySelectorAll('.blog-card'), {
-      max: 8,
-      speed: 400,
-      perspective: 1200,
-      scale: 1.02,
-      glare: false,
-      gyroscope: false
-    });
+    // Style versions can switch tilt off (flags.tilt in js/theme-bootstrap.js).
+    if (!window.__styleAllowsTilt || window.__styleAllowsTilt()) {
+      VanillaTilt.init(track.querySelectorAll('.blog-card'), {
+        max: 8,
+        speed: 400,
+        perspective: 1200,
+        scale: 1.02,
+        glare: false,
+        gyroscope: false
+      });
+    }
   }
 
   function setupBlogScrollFade() {

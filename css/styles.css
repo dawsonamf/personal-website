@@ -1,3 +1,7 @@
+/* NOTE: the mobile layout breakpoint is 1100px site-wide. Keep the media
+   queries here and in mobile-styles.css in sync with the JS checks
+   (MOBILE_BREAKPOINT in js/script.js, innerWidth checks in js/featured-carousel.js). */
+
 :root {
   --text:      #e6f1ff;
   --bg:        #1d1d1d;
@@ -5,15 +9,59 @@
   --secondary: #2c2c2c;
   --accent:    #61ffda;
 
+  /* Typography tokens. Style versions override these via the registry in
+     js/theme-bootstrap.js; the defaults match the site as-built. */
+  --font-body:    sans-serif;
+  --font-heading: var(--font-body);
+  --font-mono:    'SF Mono', monospace;
+
   --border-radius: 20px;
+  --radius-pill: 20px;
   --socials-menu-spacer-height: 45px;
 
   --sec-num-color: var(--accent);
 
-  --myGray1: #a2a2a3;
-  --myDarkNavy: #192232;
-  --myMidNavy: #253347;
-  --myMidSlate: #7B8A9A;
+  /* Static neutrals + the jobs-menu navy palette. These are the at-rest
+     values; once the palette toy diverges from the active style's base
+     colors, js/theme-cycler.js derives scheme-coherent replacements. */
+  --neutral-gray: #a2a2a3;
+  --jobs-menu-navy-dark: #192232;
+  --jobs-menu-navy: #253347;
+  --jobs-menu-slate: #7B8A9A;
+
+  /* Alpha ramps, declared statically so the design system exists without JS
+     and lives in one greppable place. js/theme-bootstrap.js regenerates the
+     same values inline pre-paint (inline wins), so with JS on these are
+     overridden by identical values. Keep both in sync. */
+  --text5:  hsla(214,100%,95%,5%);  --text10: hsla(214,100%,95%,10%); --text15: hsla(214,100%,95%,15%); --text20: hsla(214,100%,95%,20%);
+  --text25: hsla(214,100%,95%,25%); --text30: hsla(214,100%,95%,30%); --text35: hsla(214,100%,95%,35%); --text40: hsla(214,100%,95%,40%);
+  --text45: hsla(214,100%,95%,45%); --text50: hsla(214,100%,95%,50%); --text55: hsla(214,100%,95%,55%); --text60: hsla(214,100%,95%,60%);
+  --text65: hsla(214,100%,95%,65%); --text70: hsla(214,100%,95%,70%); --text75: hsla(214,100%,95%,75%); --text80: hsla(214,100%,95%,80%);
+  --text85: hsla(214,100%,95%,85%); --text90: hsla(214,100%,95%,90%); --text95: hsla(214,100%,95%,95%);
+
+  --bg5:  hsla(0,0%,11%,5%);  --bg10: hsla(0,0%,11%,10%); --bg15: hsla(0,0%,11%,15%); --bg20: hsla(0,0%,11%,20%);
+  --bg25: hsla(0,0%,11%,25%); --bg30: hsla(0,0%,11%,30%); --bg35: hsla(0,0%,11%,35%); --bg40: hsla(0,0%,11%,40%);
+  --bg45: hsla(0,0%,11%,45%); --bg50: hsla(0,0%,11%,50%); --bg55: hsla(0,0%,11%,55%); --bg60: hsla(0,0%,11%,60%);
+  --bg65: hsla(0,0%,11%,65%); --bg70: hsla(0,0%,11%,70%); --bg75: hsla(0,0%,11%,75%); --bg80: hsla(0,0%,11%,80%);
+  --bg85: hsla(0,0%,11%,85%); --bg90: hsla(0,0%,11%,90%); --bg95: hsla(0,0%,11%,95%);
+
+  --primary5:  hsla(166,100%,69%,5%);  --primary10: hsla(166,100%,69%,10%); --primary15: hsla(166,100%,69%,15%); --primary20: hsla(166,100%,69%,20%);
+  --primary25: hsla(166,100%,69%,25%); --primary30: hsla(166,100%,69%,30%); --primary35: hsla(166,100%,69%,35%); --primary40: hsla(166,100%,69%,40%);
+  --primary45: hsla(166,100%,69%,45%); --primary50: hsla(166,100%,69%,50%); --primary55: hsla(166,100%,69%,55%); --primary60: hsla(166,100%,69%,60%);
+  --primary65: hsla(166,100%,69%,65%); --primary70: hsla(166,100%,69%,70%); --primary75: hsla(166,100%,69%,75%); --primary80: hsla(166,100%,69%,80%);
+  --primary85: hsla(166,100%,69%,85%); --primary90: hsla(166,100%,69%,90%); --primary95: hsla(166,100%,69%,95%);
+
+  --secondary5:  hsla(0,0%,17%,5%);  --secondary10: hsla(0,0%,17%,10%); --secondary15: hsla(0,0%,17%,15%); --secondary20: hsla(0,0%,17%,20%);
+  --secondary25: hsla(0,0%,17%,25%); --secondary30: hsla(0,0%,17%,30%); --secondary35: hsla(0,0%,17%,35%); --secondary40: hsla(0,0%,17%,40%);
+  --secondary45: hsla(0,0%,17%,45%); --secondary50: hsla(0,0%,17%,50%); --secondary55: hsla(0,0%,17%,55%); --secondary60: hsla(0,0%,17%,60%);
+  --secondary65: hsla(0,0%,17%,65%); --secondary70: hsla(0,0%,17%,70%); --secondary75: hsla(0,0%,17%,75%); --secondary80: hsla(0,0%,17%,80%);
+  --secondary85: hsla(0,0%,17%,85%); --secondary90: hsla(0,0%,17%,90%); --secondary95: hsla(0,0%,17%,95%);
+
+  --accent5:  hsla(166,100%,69%,5%);  --accent10: hsla(166,100%,69%,10%); --accent15: hsla(166,100%,69%,15%); --accent20: hsla(166,100%,69%,20%);
+  --accent25: hsla(166,100%,69%,25%); --accent30: hsla(166,100%,69%,30%); --accent35: hsla(166,100%,69%,35%); --accent40: hsla(166,100%,69%,40%);
+  --accent45: hsla(166,100%,69%,45%); --accent50: hsla(166,100%,69%,50%); --accent55: hsla(166,100%,69%,55%); --accent60: hsla(166,100%,69%,60%);
+  --accent65: hsla(166,100%,69%,65%); --accent70: hsla(166,100%,69%,70%); --accent75: hsla(166,100%,69%,75%); --accent80: hsla(166,100%,69%,80%);
+  --accent85: hsla(166,100%,69%,85%); --accent90: hsla(166,100%,69%,90%); --accent95: hsla(166,100%,69%,95%);
 }
 
 
@@ -25,7 +73,7 @@ body {
 }
 
 #main-body {
-  font-family: sans-serif;
+  font-family: var(--font-body);
   color: var(--text);
   padding: 20px;
   max-width: 1200px;
@@ -34,6 +82,12 @@ body {
   position: relative;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+
+/* Headings route through the heading token (defaults to the body font) so
+   style versions can swap display type without touching layout rules. */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
 }
 
 
@@ -94,10 +148,16 @@ body {
 
 /* Header and menus */
 
+/* Both desktop menus size to their content (skins swap in wider type, and
+   the Theme item made the old fixed 500px a squeeze): at least the classic
+   500px pill, growing leftward as needed — the right edge stays anchored —
+   and capped to the viewport/row so items can't run off screen. */
 .static-menu {
   background-color: var(--bg50);
   border-radius: var(--border-radius);
-  width: 500px;
+  width: auto;
+  min-width: 500px;
+  max-width: calc(100% - 90px);
   z-index: 1;
   margin-right: 10px;
   margin-left: auto;
@@ -109,7 +169,9 @@ body {
 .moving-menu {
   background-color: var(--bg50);
   border-radius: var(--border-radius);
-  width: 500px;
+  width: auto;
+  min-width: 500px;
+  max-width: calc(100vw - 40px);
   margin-right: 27px;
   margin-left: auto;
   position: fixed;
@@ -121,6 +183,15 @@ body {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
   top: -70px;
   transition: top 0.3s ease-in-out;
+}
+
+/* Minimum air between entries once the pill is content-sized (space-evenly
+   still distributes any slack when min-width wins). Scoped to the desktop
+   menus so the mobile quick-links row keeps its own spacing. */
+.moving-menu .menu-list,
+.static-menu .menu-list {
+  gap: 12px;
+  padding: 0 18px;
 }
 
 @media screen and (max-width: 1250px) {
@@ -192,6 +263,11 @@ body {
   background-color: var(--accent);
   color: var(--bg);
   transition: 0.3s ease-in-out;
+}
+
+/* Pages without the intro animation (blog post, privacy, 404) show the logo statically. */
+.name-logo-visible {
+  opacity: 1;
 }
 
 .header-menu-container {
@@ -270,7 +346,7 @@ body {
   font-size: 14px;
   position: relative;
   opacity: 0;
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
 }
 
 @keyframes fadein {
@@ -381,6 +457,9 @@ body {
 .skills-section-header {
   color: var(--accent);
   font-size: 23px;
+  /* These are h4s for document-outline reasons; pin the margins they had
+     as default-styled h2s so the markup change stays pixel-identical. */
+  margin: 0.83em 0;
 }
 
 .skills-text {
@@ -465,11 +544,11 @@ body {
   white-space: nowrap;
   z-index: 1;
   align-self: flex-start;
-  border-left: 3px solid var(--myMidNavy);
+  border-left: 3px solid var(--jobs-menu-navy);
 }
 
 .menu-scroll-wrapper {
-  overflow-x: auto;
+  overflow-x: hidden;
   scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
@@ -487,9 +566,9 @@ body {
 .menu li {
   margin: 0;
   cursor: pointer;
-  color: var(--myMidSlate);
-  padding: 12px 16px;
-  font-size: 16px;
+  color: var(--jobs-menu-slate);
+  padding: 12px 12px;
+  font-size: 13px;
   transition: background-color 0.2s, color 0.2s;
 }
 @media (min-width: 1101px) {
@@ -505,10 +584,10 @@ body {
   }
 }
 .menu li:hover {
-  background: var(--myMidNavy);
+  background: var(--jobs-menu-navy);
 }
 .menu li.selected {
-  background: var(--myDarkNavy);
+  background: var(--jobs-menu-navy-dark);
   color: var(--accent);
 }
 
@@ -527,7 +606,8 @@ body {
     overflow-x: hidden;
   }
   .menu-scroll-wrapper {
-    border-bottom: 2px solid var(--myMidNavy);
+    overflow-x: auto;
+    border-bottom: 2px solid var(--jobs-menu-navy);
   }
   .menu {
     display: inline-flex;
@@ -572,6 +652,8 @@ body {
 }
 .job-content.showing {
   display: flex;
+  align-items: flex-start;
+  height: 100%;
   z-index: 1;
 }
 
@@ -594,7 +676,7 @@ body {
   margin-bottom: 5px;
 }
 .job-dates {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 15px;
   color: var(--text50);
 }
@@ -613,22 +695,13 @@ body {
 
 #project-header { color: var(--accent); }
 
-.hidden {
-  display: none;
-}
-
-.showing {
-  display: flex;
-  align-items: flex-start;
-  width: 100%;
-  height: 100%;
-}
+/* Pills, shared by the carousel tech tags, blog cards, post meta, and privacy meta. */
 
 .pill {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 5px 14px;
   background-color: var(--text10);
   white-space: nowrap;
@@ -638,15 +711,12 @@ body {
 
 /* Contact section */
 
-.contact-view-left, .contact-view-right {
+.contact-view-left {
   padding: 28px;
   margin: 10px;
   margin-bottom: 0px;
   background-color: var(--text10);
   border-radius: var(--border-radius);
-}
-
-.contact-view-left {
   width: 50%;
   float: left;
   display: flex;
@@ -666,15 +736,6 @@ body {
 .contact-view-left .contact-menu {
   margin-top: 0;
   margin-bottom: 0;
-}
-
-.contact-view-right {
-  width: 50%;
-  float: right;
-}
-
-.contact-header {
-  color: var(--accent);
 }
 
 .contact-text {
@@ -718,33 +779,8 @@ body {
   gap: 0;
 }
 
-.email-link, .linkedin-link {
-  text-decoration: none;
-  color: var(--accent);
-  transition: color 0.3s ease-in-out;
-}
 
-.email-link:hover, .linkedin-link:hover {
-  color: var(--accent);
-  transition: color 0.3s ease-in-out;
-}
-
-
-/* References */
-
-.references-header {
-  color: var(--accent);
-  font-size: 40px;
-  text-align: center;
-  margin-top: 60px;
-  margin-bottom: 20px;
-}
-
-.references-text {
-  line-height: 1.5;
-  color: var(--text);
-  margin: 10px;
-}
+/* Text links */
 
 .text-link {
   text-decoration: none;
@@ -794,30 +830,6 @@ body {
   border-style: solid;
   border-color: var(--text20);
   width: 80px;
-}
-
-
-/* Button links */
-
-.button-link {
-  text-decoration: none;
-  padding: 7px;
-  color: var(--accent);
-  border-radius: 10px;
-  width: fit-content;
-  border: 1px solid var(--accent);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translate(0, 0);
-  transition: 0.3s ease-in-out;
-}
-
-.button-link:hover {
-  transform: translateY(-3.5px);
-  background-color: var(--accent);
-  color: var(--bg);
-  transition: 0.3s ease-in-out;
 }
 
 
@@ -890,7 +902,7 @@ body {
 }
 
 .blog-card-date {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
   margin: 0 0 14px 0;

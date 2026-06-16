@@ -1,0 +1,1424 @@
+/* Banknote: engraved currency. A true intaglio duotone — treasury-green ink
+   printed on green-tinted security paper — with a second ink, overprint red
+   (--accent), doing everything gold used to do: serial numbers, section
+   stamps, SPECIMEN marks, the highlight bar, meta pills. There is no gold
+   anywhere; the old foil gilt read as chinoiserie's gilt thread. Libre
+   Caslon Text carries body (the legal-copy voice of a certificate), Cinzel
+   at 900 carries engraved display caps, IBM Plex Mono is the numbering
+   plate, and Caveat signs the footer like the Treasurer's signature.
+
+   The security grammar, all CSS: a guilloché microline band fixed across the
+   viewport top (the note's border), a woven security strip — dashed red
+   thread between green hairline rails — printed down the sheet's left
+   margin, scrolling with the page like every other printed rule,
+   cross-hatched paper ground under an engine-turned sweep of giant
+   concentric hairline arcs, lathe-band frames on every panel (a hatched
+   border ribbon between two hairlines — built from layered backgrounds
+   clipped to padding-box/border-box, not inset double rules) with engraved
+   corner rings fading off the bond panels' corners, moiré rosette
+   underprints behind both mastheads, ledger-ruled job dossiers indexed in
+   mono, carousel plates struck as engraver's proofs in clean lathe-band
+   frames (the impression carries no overprint marks), and one embossed
+   ink-engraved seal notarizing the contact deed (rings + spokes moiré with
+   a blank text channel, pressed into the paper — no foil gradient). Fully
+   still: no entrances, no tilt, no lifts.
+
+   Line/shadow stance: every rule, band, ring, and rosette derives from the
+   five roles and their alpha ramps so the palette toy keeps working. The
+   only literals are (a) ink-toned shadows rgba(20, 28, 20, …) under raised
+   paper, and (b) the white relief highlights rgba(255, 255, 255, …) that
+   make the contact seal read as pressed (embossing is light, not ink).
+
+   Typing: the registry sets typing: 'word' — engraved print sets a word at
+   a time, no caret. The .tw / .tw-out animations press each word onto the
+   paper as one intaglio pass (theme-base.css already lands glyphs instantly
+   under prefers-reduced-motion).
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. Stillness, the code-block ground, the tilt
+   pins, and the mobile fixes come from css/themes/theme-base.css via
+   flags.still + flags.tilt. */
+
+
+/* ---- Foundations: green ink, red overprint, security paper ----------------- */
+
+[data-style="banknote"] ::selection {
+  background: var(--accent);
+  color: var(--secondary);
+}
+
+/* Thin treasury-green scrollbar. ([data-style] sits on <html>, so these
+   select the root scrollbar.) */
+[data-style="banknote"] {
+  scrollbar-color: var(--primary) var(--bg);
+  scrollbar-width: thin;
+}
+
+[data-style="banknote"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-style="banknote"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--primary20);
+}
+
+[data-style="banknote"]::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 2px solid var(--bg);
+}
+
+/* Security paper: a fine engraved cross-hatch — two near-vertical line sets
+   weaving a faint diamond moiré — under an engine-turned ground, giant
+   concentric hairline arcs swept from a lathe center above the sheet's head
+   (the background propagates to the canvas, so the arcs anchor to the
+   document and scroll with it). Panels print on solid brighter bond, so the
+   texture shows in the margins, never under dense copy.
+
+   body is also the sheet the margin strip prints on: position: relative
+   lays body::after out against the full document height, so the strip
+   scrolls with the print instead of hanging in the viewport. z-index pins
+   back to auto because styles.css carries a latent z-index: 3 on body —
+   inert while static, but it would mint a stacking context once body is
+   positioned; auto keeps the paint order exactly as the default skin's. */
+[data-style="banknote"] body {
+  position: relative;
+  z-index: auto;
+  background-image:
+    repeating-radial-gradient(circle at 50% -340px, var(--primary5) 0 1px, transparent 1px 9px),
+    repeating-linear-gradient(105deg, var(--text5) 0 1px, transparent 1px 7px),
+    repeating-linear-gradient(75deg, var(--text5) 0 1px, transparent 1px 7px);
+}
+
+/* The note's border: a guilloché microline band fixed across the very top
+   of the viewport, a red fiber threaded through it. Sits above content but
+   below the cursor layer; the sticky menu rides at top: 20px, clear of it. */
+[data-style="banknote"] body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 12px;
+  z-index: 1500;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image:
+    linear-gradient(var(--accent55), var(--accent55)),
+    repeating-linear-gradient(90deg, var(--primary50) 0 1px, transparent 1px 4px);
+  background-size: 100% 1px, 100% 100%;
+  background-position: 0 6px, 0 0;
+  background-repeat: no-repeat, repeat;
+  border-bottom: 1px solid var(--primary60);
+}
+
+/* The security thread: a woven strip printed down the sheet's left margin —
+   a dashed red filament running a 2px channel between two green hairline
+   rails. Absolutely positioned over the full document (body is relative
+   above), so it scrolls with the print; z-index −1 sinks it under content
+   but over the paper. Geometry: #main-body's border box is 1240px centered
+   (1200px max-width + 40px padding, content-box), so its left edge sits at
+   50% − 620px; the strip spans 50% − 648px … 50% − 640px, a clear 20px of
+   gutter air outside the box (40px to the text column). Only viewports
+   ≥ 1330px have that much margin — narrower sheets go without rather than
+   crowd the column. */
+@media (min-width: 1330px) {
+  [data-style="banknote"] body::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(50% - 648px);
+    width: 8px;
+    z-index: -1;
+    pointer-events: none;
+    background-image:
+      repeating-linear-gradient(180deg, var(--accent45) 0 16px, transparent 16px 26px),
+      linear-gradient(90deg, var(--primary40) 0 1px, transparent 1px 7px, var(--primary40) 7px 8px);
+    background-size: 2px 100%, 100% 100%;
+    background-position: 3px 0, 0 0;
+    background-repeat: no-repeat;
+  }
+}
+
+/* Corner pieces for the bond panels: five concentric hairline rings fading
+   off each padding-box corner, the engraved corner ornaments from a note's
+   frame. The stop list is cut once here and struck four times per panel
+   (one quarter ring set shows per corner); the layers clip to the padding
+   box so the rings never smear into the lathe band. */
+[data-style="banknote"] {
+  --banknote-corner-rings:
+    transparent 0 9px,
+    var(--primary25) 9px 10px,  transparent 10px 17px,
+    var(--primary20) 17px 18px, transparent 18px 25px,
+    var(--primary15) 25px 26px, transparent 26px 33px,
+    var(--primary10) 33px 34px, transparent 34px 41px,
+    var(--primary5)  41px 42px, transparent 42px;
+}
+
+/* Cinzel is loaded at 700 + 900 only; every heading pins to a loaded weight
+   or synthesized bold smears the engraving. Lowercase input renders as
+   engraved capitals, so letterspacing does the small-caps work. */
+[data-style="banknote"] h1,
+[data-style="banknote"] h2,
+[data-style="banknote"] h3,
+[data-style="banknote"] h4 {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* Links print in the engraving green; the default animated underline pseudo
+   draws in --accent, so the hover thread comes up overprint-red for free. */
+[data-style="banknote"] .text-link {
+  color: var(--primary);
+}
+
+[data-style="banknote"] .text-link:hover {
+  color: var(--primary);
+}
+
+[data-style="banknote"] .section-spacer {
+  height: 7em;
+}
+
+
+/* ---- Chrome: ruled paper strips, ink-block logo, signed colophon ------------ */
+
+/* Both desktop menus print as paper strips with microprint rule stacks at
+   the top and bottom edges (three hairlines each, the banknote ledger-head
+   recipe), not framed cards. No frosted glass on paper. */
+[data-style="banknote"] .moving-menu,
+[data-style="banknote"] .static-menu {
+  background-color: var(--secondary);
+  background-image:
+    repeating-linear-gradient(180deg, var(--primary35) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(180deg, var(--primary35) 0 1px, transparent 1px 3px);
+  background-size: 100% 7px, 100% 7px;
+  background-position: left top, left bottom;
+  background-repeat: no-repeat;
+  border: 1px solid var(--primary55);
+  box-shadow: 0 6px 16px rgba(20, 28, 20, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list — invisible on the default pill, obvious once the rules print. */
+[data-style="banknote"] .static-menu {
+  align-self: flex-start;
+}
+
+/* Departments set on the numbering plate: letterspaced mono caps; the
+   default hover already inks them --accent, i.e. overprint red. */
+[data-style="banknote"] .menu-item {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text65);
+}
+
+/* Left inline, each li's line box rides the 16px Caslon strut (lis inherit
+   body type), so the 10.5px caps hang off that taller baseline ~1.7px lower
+   than the Theme trigger — a flex button that centers on its own mono line
+   box, strut-free. Blockifying the anchors drops the strut so every
+   department centers exactly like the trigger (the mobile sheet's flex
+   links already work this way). */
+[data-style="banknote"] .moving-menu a.menu-item,
+[data-style="banknote"] .static-menu a.menu-item {
+  display: block;
+}
+
+[data-style="banknote"] .menu-spacer {
+  border-color: var(--primary30);
+}
+
+/* The logo "D" is the corner denomination block: a solid ink square with
+   the glyph reversed out in paper, an engraved inner ring scored into the
+   ink. Print is still: no lift; hover swaps to the red plate. */
+[data-style="banknote"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  background-color: var(--primary);
+  color: var(--secondary);
+  border: 1px solid var(--primary);
+  box-shadow: inset 0 0 0 2.5px var(--secondary40);
+}
+
+[data-style="banknote"] .name-logo:hover {
+  transform: none;
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--secondary);
+  box-shadow: inset 0 0 0 2.5px var(--secondary40);
+}
+
+/* Footer: the execution block. A double end rule closes the document and
+   the colophon signs it in Caveat — the Treasurer's signature, so every
+   page signs off. (Blog pages re-center the box via theme-base.css.) */
+[data-style="banknote"] .footer-container {
+  border-top: 3px double var(--primary50);
+  margin: 0 10px;
+  padding: 14px 0 10px;
+}
+
+[data-style="banknote"] .footer-spacer {
+  display: none;
+}
+
+[data-style="banknote"] .footer-text,
+[data-style="banknote"] .footer-text-mobile {
+  font-family: 'Caveat', cursive;
+  font-size: 21px;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  transform: rotate(-1.2deg);
+}
+
+
+/* ---- Hero: engrossed masthead over twin rosette underprints ----------------- */
+
+/* Cinzel 900 at masthead scale. The longest typed line ("full stack
+   engineer.") must clear the ~795px column at the cap: 20 glyphs of
+   engraved small caps at 50px with 0.05em tracking run ≈ 740px. */
+[data-style="banknote"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(40px, 3.6vw, 50px);
+  line-height: 1.28;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+/* Cursorless masthead: the registry sets typing: 'word' — engraved copy is
+   pressed, not typed, so there is no caret. Each word takes ink from the
+   plate (a faint blur settling sharp, one intaglio pass) and lifts back off
+   under .tw-out. */
+[data-style="banknote"] #typing-text .tw,
+[data-style="banknote"] #blog-typing-text .tw {
+  animation: banknote-press-in 0.42s ease-out backwards;
+}
+
+[data-style="banknote"] #typing-text .tw-out,
+[data-style="banknote"] #blog-typing-text .tw-out {
+  animation: banknote-press-out 0.26s ease-in forwards;
+}
+
+@keyframes banknote-press-in {
+  from { opacity: 0; filter: blur(1.5px); }
+  to   { opacity: 1; filter: none; }
+}
+
+@keyframes banknote-press-out {
+  from { opacity: 1; filter: none; }
+  to   { opacity: 0; filter: blur(1.5px); }
+}
+
+/* The typed role (glyphs after the second newline) prints as the red
+   overprint line — the second ink, where gold used to be. */
+[data-style="banknote"] #typing-text .typing-accent {
+  color: var(--accent);
+}
+
+/* The strapline is the serial line: red numbering-plate mono. */
+[data-style="banknote"] #sub-text {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Twin guilloché underprints behind the engrossed lines, like the two seals
+   flanking a portrait on a note: a green rosette left, a red one right —
+   conic spokes crossed with radial rings make the moiré, faded at the rim
+   by a mask. Negative z-index keeps them under the type. Anchored to main —
+   the page ground — NOT the hero container: the container slides in
+   (translateX) with the type, and an underprint shouldn't ride that slide.
+   main's box coincides with the container's layout box, so offsets
+   transfer; the old #typing-left lefts gain its 305px column offset (20px
+   pad + 225px portrait + 60px pad). :has(> #typing-container) scopes the
+   pair to the home masthead (the blog rosette keeps its own anchor). */
+[data-style="banknote"] main:has(> #typing-container) {
+  position: relative;
+}
+
+[data-style="banknote"] main:has(> #typing-container)::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 64px;
+  left: 281px;
+  width: 380px;
+  height: 380px;
+  border-radius: 50%;
+  background-image:
+    repeating-conic-gradient(var(--primary20) 0deg 1deg, transparent 1deg 5deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--primary15) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 38%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 38%, transparent 70%);
+  pointer-events: none;
+}
+
+[data-style="banknote"] main:has(> #typing-container)::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 170px;
+  left: 635px;
+  width: 290px;
+  height: 290px;
+  border-radius: 50%;
+  background-image:
+    repeating-conic-gradient(from 10deg, var(--accent15) 0deg 1.5deg, transparent 1.5deg 6deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--accent10) 0 1px, transparent 1px 6px);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 35%, transparent 68%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 35%, transparent 68%);
+  pointer-events: none;
+}
+
+/* The underprints surface with the page chrome: js/script.js stamps
+   hero-extras-in on <html> when the first phrase lands and the rest of the
+   hero fades in — until then the press sets type on blank bond. (The blog
+   masthead's rosette isn't gated: that page runs no hero sequence.) */
+[data-style="banknote"] main:has(> #typing-container)::before,
+[data-style="banknote"] main:has(> #typing-container)::after {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+[data-style="banknote"].hero-extras-in main:has(> #typing-container)::before,
+[data-style="banknote"].hero-extras-in main:has(> #typing-container)::after {
+  opacity: 1;
+}
+
+/* Socials: engraved ink glyphs, red overprint on hover, no lift — still. */
+[data-style="banknote"] #socials-list .socials-menu-spacer,
+[data-style="banknote"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--primary30);
+}
+
+[data-style="banknote"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="banknote"] .socials-item:hover i {
+  color: var(--accent);
+  transform: none;
+}
+
+/* The portrait is the engraved vignette: struck in green ink like every
+   plate on the note (full color returns on hover), matted inside a lathe
+   band — a hatched border ribbon between two hairlines, the skin's frame
+   grammar. box-sizing keeps the frame inside the 225px column, and
+   height: auto keeps the vignette true — the base 225×400 box is exactly
+   the 450×800 photo's ratio, but the 13px border-box band steals from the
+   content box on both axes unevenly, which would squish the photo; auto
+   lets the content height follow the photo's true ratio instead. */
+[data-style="banknote"] #typing-image {
+  box-sizing: border-box;
+  height: auto;
+  border: 8px solid transparent;
+  padding: 5px;
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary35) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow:
+    inset 0 0 0 1px var(--primary50),
+    0 0 0 1px var(--primary60),
+    0 14px 28px rgba(20, 28, 20, 0.14);
+  filter: grayscale(1) sepia(0.42) hue-rotate(82deg) saturate(0.45) contrast(1.06);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="banknote"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: red serial stamp, engraved title, border band ---------
+   Each section opens like a denomination line: a red hand-stamped serial
+   chip inline before the Cinzel 900 title, the spacer redrawn as a banknote
+   border band — vertical micro-ruling between two double rules. */
+
+[data-style="banknote"] .section-header-wrapper {
+  margin: 10px 10px 44px;
+}
+
+[data-style="banknote"] .section-header {
+  margin: 0;
+  padding: 0 0 4px;
+  font-weight: 900;
+  font-size: clamp(32px, 3.4vw, 42px);
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every title in the engraving ink. */
+[data-style="banknote"] #about-section-header,
+[data-style="banknote"] #jobs-header,
+[data-style="banknote"] #project-header,
+[data-style="banknote"] #blog-header,
+[data-style="banknote"] #contact-section-header,
+[data-style="banknote"] .blog-section-header {
+  color: var(--primary);
+}
+
+/* The folio number is the serial stamp: a bordered red mono chip pressed
+   slightly crooked, № prefix via CSS content (meta text only — body copy
+   never changes). */
+[data-style="banknote"] .sec-num {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  background-color: var(--accent5);
+  border: 1px solid var(--accent45);
+  padding: 3px 7px 2px 11px;
+  margin-right: 18px;
+  transform: rotate(-2deg);
+}
+
+[data-style="banknote"] .sec-num::before {
+  content: '№ ';
+}
+
+/* The border band: vertical micro-ruling between two double rules, the
+   engraved frame strip from the edge of a note. */
+[data-style="banknote"] .section-header-spacer {
+  height: 14px;
+  margin-left: 18px;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(90deg, var(--primary40) 0 1px, transparent 1px 4px);
+  border-top: 3px double var(--primary50);
+  border-bottom: 3px double var(--primary50);
+  transform: translateY(2px);
+}
+
+
+/* ---- Bond panels: about / skills, the prospectus -----------------------------
+   The shared surface grammar: a lathe band — a 9px hatched border ribbon
+   painted in the border box, panel fill clipped to the padding box, inner
+   and outer hairlines from inset/spread shadows, and the four corner ring
+   sets (--banknote-corner-rings) printed over the fill. One layered
+   element, no stacked rule rings for the frame. */
+
+[data-style="banknote"] .card-style {
+  background-color: var(--secondary);
+  background-image:
+    radial-gradient(circle at left top, var(--banknote-corner-rings)),
+    radial-gradient(circle at right top, var(--banknote-corner-rings)),
+    radial-gradient(circle at left bottom, var(--banknote-corner-rings)),
+    radial-gradient(circle at right bottom, var(--banknote-corner-rings)),
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary30) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  border: 9px solid transparent;
+  padding: 24px 26px;
+  box-shadow:
+    inset 0 0 0 1px var(--primary45),
+    0 0 0 1px var(--primary55),
+    0 12px 26px rgba(20, 28, 20, 0.09);
+}
+
+/* "About Me" / "Skills" print as red overprint labels — letterspaced
+   numbering-plate caps over a ledger hairline. (These are h3s riding the
+   heading token; mono 600 is a loaded weight.) */
+[data-style="banknote"] .card-title,
+[data-style="banknote"] .about-header,
+[data-style="banknote"] .skills-header {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border-bottom: 1px solid var(--text20);
+  padding-bottom: 10px;
+  margin: 0 0 18px;
+}
+
+[data-style="banknote"] .skills-section-header {
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+}
+
+/* Caslon runs compact: body sizes come up a step, leading opens. */
+[data-style="banknote"] .about-text,
+[data-style="banknote"] .skills-text,
+[data-style="banknote"] .contact-text {
+  font-size: 16.5px;
+  line-height: 1.7;
+}
+
+[data-style="banknote"] .skills-text {
+  border-bottom: 1px solid var(--text15);
+}
+
+[data-style="banknote"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the ledger ---------------------------------------------------
+   The rail is the ledger index — mono entries under a red rule marker — and
+   the dossier prints as ruled ledger rows inside a lathe-band frame. */
+
+[data-style="banknote"] .nav-container {
+  border-left: 1px solid var(--primary35);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's
+   height at load to size the highlight bar, and the webfonts arrive after
+   that measure. */
+[data-style="banknote"] .menu li {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 19px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--jobs-menu-slate);
+  border-radius: 0;
+}
+
+[data-style="banknote"] .menu li:hover {
+  background: var(--primary5);
+}
+
+[data-style="banknote"] .menu li.selected {
+  background: var(--secondary);
+  color: var(--accent);
+}
+
+/* The register marker is the red ledger rule. JS writes the bar's geometry
+   inline on every move (desktop top/height and mobile left/width are
+   measured — never overridden), hence the !importants on the rest. */
+[data-style="banknote"] .highlight {
+  background: var(--accent);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="banknote"] .highlight {
+    width: 3px !important;
+  }
+}
+
+/* The dossier prints on the panel grammar, corner rings included. */
+[data-style="banknote"] .job-content {
+  background-color: var(--secondary);
+  background-image:
+    radial-gradient(circle at left top, var(--banknote-corner-rings)),
+    radial-gradient(circle at right top, var(--banknote-corner-rings)),
+    radial-gradient(circle at left bottom, var(--banknote-corner-rings)),
+    radial-gradient(circle at right bottom, var(--banknote-corner-rings)),
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary30) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  border: 9px solid transparent;
+  padding: 22px 26px;
+  box-shadow:
+    inset 0 0 0 1px var(--primary45),
+    0 0 0 1px var(--primary55),
+    0 12px 26px rgba(20, 28, 20, 0.09);
+}
+
+/* Titles engross in ink so the green company links read as links. */
+[data-style="banknote"] .job-title {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.4;
+  letter-spacing: 0.04em;
+}
+
+/* Dates run as the red serial line. */
+[data-style="banknote"] .job-dates {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Ledger rows: each entry sits on its own ruled line, clause-marked. */
+[data-style="banknote"] .job-bullets {
+  list-style-type: "§  ";
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+[data-style="banknote"] .job-bullets li::marker {
+  color: var(--accent50);
+  font-size: 0.85em;
+}
+
+[data-style="banknote"] .job-bullets li {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--text15);
+}
+
+[data-style="banknote"] .job-bullets li:last-child {
+  border-bottom: none;
+}
+
+/* Panel changes press like a fresh impression, no slide. script.js drives
+   the swap with timeouts (not animationend), so retiming these is safe. */
+[data-style="banknote"] .job-in-right {
+  transform: none;
+  animation-name: banknote-job-fade-in;
+  animation-duration: 0.4s;
+}
+
+[data-style="banknote"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@keyframes banknote-job-fade-in {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: engraver's proofs -------------------------------------- */
+
+/* Each plate is an engraver's proof: green-ink impression in a lathe-band
+   frame, the impression itself unmarked. box-sizing keeps the frame
+   inside the 510px plate. */
+[data-style="banknote"] .fc-style-floating .fc-card-image {
+  position: relative;
+  box-sizing: border-box;
+  border: 10px solid transparent;
+  padding: 5px;
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary35) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow:
+    inset 0 0 0 1px var(--primary50),
+    0 0 0 1px var(--primary60),
+    0 14px 28px rgba(20, 28, 20, 0.14);
+}
+
+/* Plates print as green-ink engravings; hovering the card restores color. */
+[data-style="banknote"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(1) sepia(0.42) hue-rotate(82deg) saturate(0.45) contrast(1.06);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="banknote"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+[data-style="banknote"] .fc-card-title {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 21px;
+  letter-spacing: 0.04em;
+}
+
+/* Captions in Caslon italic — the legal copy under the certificate. */
+[data-style="banknote"] .fc-card-desc {
+  font-style: italic;
+  color: var(--text80);
+  font-size: 16px;
+}
+
+/* CTA: the redeemable coupon, cut-line dashed. Hover fills with engraving
+   ink; the press is a top nudge, never a transform. */
+[data-style="banknote"] .fc-card-cta {
+  position: relative;
+  top: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--primary);
+  background-color: var(--secondary);
+  border: 1px dashed var(--primary60);
+  border-radius: 0; /* featured-carousel.css pins a literal 10px, not the token */
+  /* Letter-spacing trails its 0.22em after the last glyph, so the right
+     pad gives that back to keep the label optically centered between the
+     dashed rules. */
+  padding: 10px calc(18px - 0.22em) 10px 18px;
+}
+
+[data-style="banknote"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary);
+  transform: none;
+}
+
+[data-style="banknote"] .fc-card-cta:active {
+  top: 1px;
+}
+
+/* Dots as diamond punch marks; the active one struck in red. */
+[data-style="banknote"] .fc-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 0;
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  opacity: 0.45;
+  transform: rotate(45deg);
+}
+
+[data-style="banknote"] .fc-dot:hover {
+  opacity: 0.85;
+}
+
+[data-style="banknote"] .fc-dot.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  opacity: 1;
+  transform: rotate(45deg);
+}
+
+/* The listing carousel heading rides the heading token; pin its weight. */
+[data-style="banknote"] .fc-expand-title {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+
+/* ---- Blog: bearer bonds -----------------------------------------------------------
+   Teasers print as small bearer bonds: a thin lathe-band frame, the red
+   serial (date) above the engraved title. Hovering inks the hairlines
+   deeper instead of changing fill. */
+
+[data-style="banknote"] .blog-card {
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary30) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  border: 6px solid transparent;
+  box-shadow:
+    inset 0 0 0 1px var(--primary40),
+    0 0 0 1px var(--primary45),
+    0 8px 18px rgba(20, 28, 20, 0.07);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Hovering stamps the certificate in red overprint — the inspector's mark:
+   the lathe ribbon and both hairlines re-ink in the second color, a faint
+   red wash crosses the bond, and the engraved title prints red beside its
+   serial. Unmissable next to the at-rest green. */
+[data-style="banknote"] .blog-card:hover {
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(var(--accent10), var(--accent10)),
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--accent40) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, border-box;
+  box-shadow:
+    inset 0 0 0 1px var(--accent60),
+    0 0 0 1px var(--accent65),
+    0 8px 18px rgba(20, 28, 20, 0.1);
+}
+
+[data-style="banknote"] .blog-card:hover .blog-card-title {
+  color: var(--accent);
+}
+
+/* Cards are anchors and now carry a permanent frame; keep keyboard focus
+   legible past it. */
+[data-style="banknote"] .blog-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* Serial above the title, as printed (the card is a flex column). */
+[data-style="banknote"] .blog-card > .blog-card-date {
+  order: -1;
+  margin: 0 0 10px;
+}
+
+[data-style="banknote"] .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Cinzel sets titles in engraved caps; small size, generous leading. */
+[data-style="banknote"] .blog-card-title {
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: var(--primary);
+}
+
+[data-style="banknote"] .blog-card-excerpt {
+  color: var(--text);
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching —
+   including the full overprint hover, restated at grid specificity so the
+   stamp lands there too. */
+[data-style="banknote"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="banknote"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(var(--accent10), var(--accent10)),
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--accent40) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, border-box;
+  box-shadow:
+    inset 0 0 0 1px var(--accent60),
+    0 0 0 1px var(--accent65),
+    0 8px 18px rgba(20, 28, 20, 0.1);
+}
+
+[data-style="banknote"] .blog-listing-grid .blog-card:hover .blog-card-title {
+  color: var(--accent);
+}
+
+[data-style="banknote"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+[data-style="banknote"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 10px;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the masthead
+   face at the loaded 900, and give it the green rosette underprint. */
+[data-style="banknote"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(40px, 3.6vw, 50px);
+  line-height: 1.28;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+[data-style="banknote"] #blog-typing-left {
+  position: relative;
+}
+
+[data-style="banknote"] #blog-typing-left::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 10px;
+  left: -16px;
+  width: 340px;
+  height: 340px;
+  border-radius: 50%;
+  background-image:
+    repeating-conic-gradient(var(--primary20) 0deg 1deg, transparent 1deg 5deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--primary15) 0 1px, transparent 1px 7px);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 38%, transparent 70%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 38%, transparent 70%);
+  pointer-events: none;
+}
+
+[data-style="banknote"] [id^="blog-sub-text"] {
+  color: var(--text80);
+  font-size: 16.5px;
+  line-height: 1.7;
+}
+
+/* Filters: red overprint chips; the active one strikes solid. */
+[data-style="banknote"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--accent45);
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+[data-style="banknote"] .filter-pill:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+[data-style="banknote"] .filter-pill.active {
+  background-color: var(--accent);
+  border-color: var(--accent);
+  color: var(--secondary);
+}
+
+
+/* ---- Blog post page: the registered article ----------------------------------- */
+
+/* The head closes on a double rule, like the certificate's title block. */
+[data-style="banknote"] .blog-post-header {
+  border-bottom: 3px double var(--primary50);
+  padding-bottom: 18px;
+  margin-bottom: 36px;
+}
+
+[data-style="banknote"] .blog-post-title {
+  color: var(--primary);
+  font-weight: 900;
+  font-size: clamp(26px, 3.8vw, 36px);
+  line-height: 1.32;
+  letter-spacing: 0.04em;
+}
+
+/* The date is always the first meta pill (blog-post.js pushes it first):
+   it prints as the serial; the live read-time span joins it in red. */
+[data-style="banknote"] .blog-post-meta .pill:first-child {
+  color: var(--accent);
+  border-color: var(--accent55);
+  font-weight: 600;
+}
+
+[data-style="banknote"] #read-time {
+  color: var(--accent);
+}
+
+[data-style="banknote"] .blog-post-content {
+  font-size: 17.5px;
+  line-height: 1.85;
+}
+
+/* Crossheads engrave in green; h2 clause heads close on a double rule. */
+[data-style="banknote"] .blog-post-content h2 {
+  color: var(--primary);
+  border-bottom: 3px double var(--primary40);
+  padding-bottom: 6px;
+}
+
+[data-style="banknote"] .blog-post-content h3 {
+  color: var(--primary);
+}
+
+/* Blockquotes are the legal copy: Caslon italic behind a red double rule. */
+[data-style="banknote"] .blog-post-content blockquote {
+  border-left: 3px double var(--accent55);
+  font-style: italic;
+  color: var(--text80);
+}
+
+/* Section breaks print as border bands, matching the section openers. */
+[data-style="banknote"] .blog-post-content hr {
+  border: none;
+  height: 11px;
+  background-image: repeating-linear-gradient(90deg, var(--primary35) 0 1px, transparent 1px 4px);
+  border-top: 3px double var(--primary45);
+  border-bottom: 3px double var(--primary45);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="banknote"] .blog-post-content pre {
+  border: 1px solid var(--primary30);
+}
+
+/* Inline code: a pale green wash (the higher-specificity pre rule unwinds
+   this for fenced blocks). Radius is a literal 4px in blog-styles. */
+[data-style="banknote"] .blog-post-content code {
+  background-color: var(--primary10);
+  color: var(--text);
+  border-radius: 0;
+}
+
+/* Diagrams print on bright bond, ruled. (Mermaid reads the palette at
+   render time via blog/post.html.) */
+[data-style="banknote"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary35);
+}
+
+/* Figures sit in thin lathe-band mattes. box-sizing keeps the frame inside
+   the column (and inside the 50% float boxes). */
+[data-style="banknote"] .blog-post-content img.blog-image,
+[data-style="banknote"] .blog-post-content img.blog-image-float-right,
+[data-style="banknote"] .blog-post-content img.blog-image-float-left {
+  box-sizing: border-box;
+  border: 6px solid transparent;
+  padding: 4px;
+  background-color: var(--secondary);
+  background-image:
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary30) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, border-box;
+  background-clip: padding-box, border-box;
+  box-shadow:
+    inset 0 0 0 1px var(--primary40),
+    0 0 0 1px var(--primary50);
+}
+
+/* Ledger tables: ruled heads on the green wash. */
+[data-style="banknote"] .blog-post-content th {
+  background-color: var(--primary10);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="banknote"] #metr-chart {
+  border: 1px solid var(--primary35);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="banknote"] #pareto-chart,
+[data-style="banknote"] #ara-objectives-chart,
+[data-style="banknote"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the deed, sealed --------------------------------------------------- */
+
+/* The deed carries the full panel grammar — lathe band plus corner rings. */
+[data-style="banknote"] .contact-view-left {
+  box-sizing: border-box;
+  background-color: var(--secondary);
+  background-image:
+    radial-gradient(circle at left top, var(--banknote-corner-rings)),
+    radial-gradient(circle at right top, var(--banknote-corner-rings)),
+    radial-gradient(circle at left bottom, var(--banknote-corner-rings)),
+    radial-gradient(circle at right bottom, var(--banknote-corner-rings)),
+    linear-gradient(var(--secondary), var(--secondary)),
+    repeating-linear-gradient(90deg, var(--primary30) 0 1px, transparent 1px 4px);
+  background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
+  border: 9px solid transparent;
+  box-shadow:
+    inset 0 0 0 1px var(--primary45),
+    0 0 0 1px var(--primary55),
+    0 12px 26px rgba(20, 28, 20, 0.09);
+}
+
+/* The seal — the one notarial mark this site gets, pressed slightly crooked
+   into the deed's lower corner. Pure ink-and-relief engraving, no foil:
+   lathe spokes crossed with rings make the moiré, a blank paper channel and
+   rim are cut from hard radial stops (the seal's empty text band), and the
+   inset/drop shadow pair embosses it into the paper. A flex item, so it
+   never overlaps the copy. The white rgba()s are the relief highlights —
+   embossing is light, not ink — and the dark rgba()s the policy ink shadow. */
+[data-style="banknote"] .contact-view-left::after {
+  content: '';
+  align-self: flex-end;
+  flex-shrink: 0;
+  width: 118px;
+  height: 118px;
+  margin: 22px 8px 2px 0;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  background-image:
+    radial-gradient(circle closest-side, transparent 0 95%, var(--primary60) 95% 100%),
+    radial-gradient(circle closest-side, transparent 0 58%, var(--primary55) 58% 59.5%, var(--secondary) 59.5% 72%, var(--primary55) 72% 73.5%, transparent 73.5% 100%),
+    radial-gradient(circle closest-side, var(--primary10) 0 26%, transparent 27% 100%),
+    repeating-conic-gradient(from 4deg, var(--primary40) 0deg 1.5deg, transparent 1.5deg 5deg),
+    repeating-radial-gradient(circle at 50% 50%, var(--primary35) 0 1px, transparent 1px 4.5px);
+  box-shadow:
+    inset 0 2px 3px rgba(20, 28, 20, 0.20),
+    inset 0 -1px 1px rgba(255, 255, 255, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 6px rgba(20, 28, 20, 0.16);
+  transform: rotate(-7deg);
+}
+
+/* The map prints as a green-ink engraving inside a hairline rule with an
+   inner paper rule riding an overlay (the img is absolutely positioned
+   inside); color on hover. Desktop only: theme-base.css hides the wrapper
+   on mobile. */
+[data-style="banknote"] .contact-image-wrapper {
+  border: 1px solid var(--primary60);
+  box-shadow:
+    0 0 0 1px var(--primary40),
+    0 14px 28px rgba(20, 28, 20, 0.12);
+}
+
+[data-style="banknote"] .contact-image-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid var(--secondary70);
+  pointer-events: none;
+}
+
+[data-style="banknote"] .contact-image {
+  filter: grayscale(1) sepia(0.42) hue-rotate(82deg) saturate(0.45) contrast(1.06);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="banknote"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): red overprints ---------- */
+
+[data-style="banknote"] .pill {
+  background-color: transparent;
+  border: 1px solid var(--accent40);
+  color: var(--accent);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 11px;
+}
+
+
+/* ---- Privacy + 404: filed under the same letterhead ------------------------------ */
+
+[data-style="banknote"] .privacy-header {
+  color: var(--primary);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+[data-style="banknote"] .privacy-header-spacer {
+  height: 14px;
+  background-color: transparent;
+  background-image: repeating-linear-gradient(90deg, var(--primary40) 0 1px, transparent 1px 4px);
+  border-top: 3px double var(--primary50);
+  border-bottom: 3px double var(--primary50);
+}
+
+[data-style="banknote"] .privacy-content h2,
+[data-style="banknote"] .privacy-content h3 {
+  color: var(--primary);
+}
+
+/* The 404 is, of course, a missing serial. */
+[data-style="banknote"] .nf-code {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+
+[data-style="banknote"] .nf-code::before {
+  content: '№ ';
+}
+
+[data-style="banknote"] .nf-text {
+  font-size: 17.5px;
+}
+
+
+/* ---- Cycler dock: the specimen book ----------------------------------------------- */
+
+[data-style="banknote"] .tc-dock {
+  background-color: var(--secondary);
+  background-image:
+    repeating-linear-gradient(180deg, var(--primary35) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(180deg, var(--primary35) 0 1px, transparent 1px 3px);
+  background-size: 100% 7px, 100% 7px;
+  background-position: left top, left bottom;
+  background-repeat: no-repeat;
+  border: 1px solid var(--primary55);
+  box-shadow: 0 14px 36px rgba(20, 28, 20, 0.18);
+  backdrop-filter: none;
+}
+
+/* The FAB on nav-less pages: a square ink chop (theme-base.css already
+   stills its hover lift). */
+[data-style="banknote"] .tc-toggle {
+  border-radius: 0;
+}
+
+[data-style="banknote"] .tc-action,
+[data-style="banknote"] .tc-presets button,
+[data-style="banknote"] .tc-schemes button {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ---------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Masthead scale on the small sheet: the mobile ID rule pins 34px, and
+     Cinzel 900's engraved caps run wide — the longest typed line must clear
+     a 319px sheet, so the cap sits lower than the default. */
+  [data-style="banknote"] #typing-text {
+    font-size: clamp(20px, 6vw, 28px);
+  }
+
+  [data-style="banknote"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.16em;
+  }
+
+  [data-style="banknote"] #blog-typing-text {
+    font-size: clamp(23px, 7vw, 30px);
+  }
+
+  /* The 125px mobile hero box has no room for underprints. */
+  [data-style="banknote"] main:has(> #typing-container)::before,
+  [data-style="banknote"] main:has(> #typing-container)::after,
+  [data-style="banknote"] #blog-typing-left::before {
+    display: none;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; engraved
+     caps need to wrap. The grid pins the serial stamp as a fixed first
+     column so a squeezed header can never drop its title below the stamp
+     (the base sheet's 73% spacer squeezes short headers hardest — inline,
+     "About" lost its first line while "Where I've Worked" kept it), and
+     wrapped title lines stay flush after the stamp (the text run after
+     .sec-num is one anonymous grid item). */
+  [data-style="banknote"] .section-header {
+    white-space: normal;
+    font-size: clamp(20px, 5.6vw, 25px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  [data-style="banknote"] .sec-num {
+    font-size: 10px;
+    padding: 2px 5px 1px 8px;
+    margin-right: 10px;
+  }
+
+  [data-style="banknote"] .section-header-spacer {
+    height: 10px;
+    margin-left: 12px;
+    transform: translateY(2px);
+  }
+
+  [data-style="banknote"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="banknote"] .static-menu-mobile .menu-item {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  [data-style="banknote"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep the
+     ink block at rest and make the tap state the red plate. */
+  [data-style="banknote"] .name-logo:hover {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--secondary);
+    box-shadow: inset 0 0 0 2.5px var(--secondary40);
+  }
+
+  [data-style="banknote"] .name-logo:active {
+    background-color: var(--accent);
+    border-color: var(--accent);
+    color: var(--secondary);
+  }
+
+  /* The mobile sheet re-cards these surfaces on --text10 at lower
+     specificity; keep them bond explicitly, and pull the padding to the
+     20px mobile step (the lathe band adds its 9px outside that). */
+  [data-style="banknote"] .double-view-left,
+  [data-style="banknote"] .double-view-right {
+    background-color: var(--secondary);
+  }
+
+  [data-style="banknote"] .card-style,
+  [data-style="banknote"] .job-content,
+  [data-style="banknote"] .contact-view-left {
+    padding: 18px;
+  }
+
+  [data-style="banknote"] .card-title {
+    font-size: 11.5px;
+  }
+
+  /* Jobs rail runs horizontal: the separator moves to the wrapper rule and
+     the red marker thickens (height is JS-inline only on mobile, so the
+     override stays in this media block; left/width stay measured). */
+  [data-style="banknote"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--primary35);
+  }
+
+  [data-style="banknote"] .highlight {
+    height: 3px !important;
+  }
+
+  /* Framed plates need a real gutter between cards on the small sheet. */
+  [data-style="banknote"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="banknote"] .fc-style-floating .fc-card-image {
+    border-width: 8px;
+    padding: 4px;
+  }
+
+  [data-style="banknote"] .blog-card {
+    background-color: var(--secondary);
+  }
+
+  [data-style="banknote"] .blog-post-title {
+    font-size: clamp(21px, 6.2vw, 27px);
+  }
+
+  [data-style="banknote"] .blog-post-content {
+    font-size: 16.5px;
+  }
+
+  /* The deed's seal shrinks with the sheet. */
+  [data-style="banknote"] .contact-view-left::after {
+    width: 88px;
+    height: 88px;
+    margin: 18px 4px 2px 0;
+  }
+
+  [data-style="banknote"] .footer-container-mobile {
+    border-top: 3px double var(--primary50);
+    padding-top: 12px;
+    margin-top: 10px;
+  }
+
+  [data-style="banknote"] .footer-text-mobile {
+    font-size: 19px;
+    transform: rotate(-1deg);
+  }
+}

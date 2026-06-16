@@ -1,0 +1,726 @@
+/* Studio: Swiss editorial print. A printed portfolio issue: paper ground,
+   ink display type (Space Grotesk), burnt-orange folio marks, mono
+   micro-labels, and quiet paper panels — solid blocks of deeper paper in
+   the Swiss color-block manner — carrying the site's card structure. One
+   strong rule opens each section; everything else is type, panel, and air.
+   Fully still: no entrances, no tilt, no lifts.
+
+   (v2: the first cut de-carded every surface, which left the site's
+   two-column/card skeleton showing through as disconnected fragments, and
+   ran display type to 132px with 2px rules repeating on every blog teaser.
+   This cut re-grounds each surface on a panel, caps the display scale, and
+   reserves heavy rules for section openers only.)
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. Stillness, the code-block ground, the tilt
+   pins, and the mobile fixes come from css/themes/theme-base.css via
+   flags.still + flags.tilt. */
+
+
+/* ---- Foundations: ink on paper, stillness ------------------------------- */
+
+[data-style="studio"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+[data-style="studio"] h1,
+[data-style="studio"] h2,
+[data-style="studio"] h3,
+[data-style="studio"] h4 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+/* Links carry a printed underline at rest; color stays the press orange. */
+[data-style="studio"] .text-link::before {
+  width: 100%;
+  height: 1px;
+  opacity: 0.45;
+}
+
+/* Print spreads: more air than the app layout, less than a empty gallery. */
+[data-style="studio"] .section-spacer {
+  height: 10em;
+}
+
+
+/* ---- Chrome: masthead nav, logo, footer colophon ------------------------ */
+
+/* Wider floor than the default 500px pill — the index numbers below need
+   room (the base menus are content-sized, so this only sets the minimum). */
+[data-style="studio"] .moving-menu,
+[data-style="studio"] .static-menu {
+  background-color: var(--bg80);
+  border: 1px solid var(--text15);
+  box-shadow: none;
+  min-width: 580px;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list, invisible on the default pill, obvious once a skin frames it.
+   Size it to content like the floating menu. */
+[data-style="studio"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="studio"] .menu-item {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+[data-style="studio"] .menu-item:hover {
+  color: var(--text);
+}
+
+/* Index-numbered nav: 01 ABOUT, 02 EXPERIENCE, … The hidden spacer <li>s
+   would still bump a counter incremented on list items, so the increment
+   lives on the link elements themselves. */
+[data-style="studio"] .moving-menu .menu-list,
+[data-style="studio"] .static-menu .menu-list {
+  counter-reset: studio-nav;
+}
+
+[data-style="studio"] .moving-menu .menu-item,
+[data-style="studio"] .static-menu .menu-item {
+  counter-increment: studio-nav;
+}
+
+[data-style="studio"] .moving-menu .menu-item::before,
+[data-style="studio"] .static-menu .menu-item::before {
+  content: counter(studio-nav, decimal-leading-zero);
+  color: var(--primary);
+  margin-right: 10px;
+}
+
+[data-style="studio"] .menu-spacer {
+  display: none;
+}
+
+[data-style="studio"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text);
+  border-color: var(--text);
+}
+
+/* Print is still: the fill swap stays, the default hover lift goes. */
+[data-style="studio"] .name-logo:hover {
+  transform: none;
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+/* Colophon: flush left under a hairline on the home page, like everything
+   else on the grid. (Blog pages re-center it via theme-base.css.) */
+[data-style="studio"] .footer-container {
+  justify-content: flex-start;
+  border-top: 1px solid var(--text20);
+  margin: 0 10px;
+  padding: 18px 0 10px;
+}
+
+[data-style="studio"] .footer-spacer {
+  display: none;
+}
+
+[data-style="studio"] .footer-text,
+[data-style="studio"] .footer-text-mobile {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text40);
+  text-align: left;
+}
+
+/* ---- Hero: poster masthead ---------------------------------------------- */
+
+/* Sentence case is the Swiss poster idiom. The longest typed line,
+   "full stack engineer.", must fit the ~795px column at the size cap. */
+[data-style="studio"] #typing-text {
+  font-family: var(--font-heading);
+  font-size: clamp(60px, 5vw, 72px);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+/* Cursorless masthead: the registry sets typing: 'word' — poster copy is
+   set, not typed, so there is no caret. Words fade onto the sheet whole
+   (the engine lands a word's glyph spans at once) and fade back off under
+   .tw-out. A plain opacity dissolve: nothing else in this skin moves. */
+[data-style="studio"] #typing-text .tw,
+[data-style="studio"] #blog-typing-text .tw {
+  animation: studio-set-in 0.4s ease-out backwards;
+}
+
+[data-style="studio"] #typing-text .tw-out,
+[data-style="studio"] #blog-typing-text .tw-out {
+  animation: studio-set-out 0.25s ease-in forwards;
+}
+
+@keyframes studio-set-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes studio-set-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+[data-style="studio"] #sub-text {
+  color: var(--text70);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+/* Socials: small ink glyphs that turn orange in place — no lift, print is
+   still. */
+[data-style="studio"] .socials-item:hover i {
+  transform: none;
+}
+
+/* The selfie becomes a framed press photo (stays clickable, it is still the
+   cycler unlock). */
+[data-style="studio"] #typing-image {
+  border: 1px solid var(--text);
+  filter: grayscale(1) contrast(1.04);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="studio"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: editorial folios ----------------------------------
+   One strong rule above, orange folio number, then the title in ink at a
+   display scale that opens the section without shouting over it. The heavy
+   rule is reserved for these openers — nothing else on the page repeats
+   it. */
+
+[data-style="studio"] .section-header-wrapper {
+  display: block;
+  border-top: 2px solid var(--text);
+  padding-top: 14px;
+  margin: 0 10px 48px;
+}
+
+[data-style="studio"] .section-header-spacer {
+  display: none;
+}
+
+[data-style="studio"] .section-header {
+  margin: 0;
+  padding: 0;
+  font-size: clamp(40px, 4.8vw, 64px);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep the titles ink. */
+[data-style="studio"] #about-section-header,
+[data-style="studio"] #jobs-header,
+[data-style="studio"] #project-header,
+[data-style="studio"] #blog-header,
+[data-style="studio"] #contact-section-header,
+[data-style="studio"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="studio"] .sec-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  color: var(--primary);
+  margin: 0 0 10px;
+}
+
+
+/* ---- About / Skills: paper panels ---------------------------------------- */
+
+/* The Swiss color-block: a solid panel of deeper paper, square, unframed.
+   This is the surface grammar for the whole skin (about, skills, jobs,
+   blog teasers, contact). */
+[data-style="studio"] .card-style {
+  background-color: var(--secondary);
+  padding: 28px;
+}
+
+/* "About Me" / "Skills" become mono department labels. */
+[data-style="studio"] .card-title,
+[data-style="studio"] .about-header,
+[data-style="studio"] .skills-header {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text50);
+  margin-bottom: 18px;
+}
+
+[data-style="studio"] .skills-section-header {
+  color: var(--text);
+  font-size: 19px;
+}
+
+/* Print body: smaller size, looser leading, capped measure. The rag of empty
+   panel to the right of the skills text is deliberate. */
+[data-style="studio"] .about-text,
+[data-style="studio"] .skills-text,
+[data-style="studio"] .contact-text {
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+
+[data-style="studio"] .skills-text {
+  border-bottom: 1px solid var(--text15);
+}
+
+[data-style="studio"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: index list + dossier panel ------------------------------ */
+
+[data-style="studio"] .nav-container {
+  border-left: 1px solid var(--text20);
+}
+
+/* Mono caps at the old 0.16em tracking ran "JOHNS HOPKINS UNIVERSITY" past
+   the 225px rail and the scroll wrapper clipped it — ease the tracking and
+   widen the rail (desktop only; mobile lays the rail out horizontally). */
+[data-style="studio"] .menu li {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text50);
+  border-radius: 0;
+}
+
+@media (min-width: 1101px) {
+  [data-style="studio"] .menu {
+    width: 248px;
+  }
+}
+
+[data-style="studio"] .menu li:hover {
+  background: var(--text5);
+}
+
+[data-style="studio"] .menu li.selected {
+  background: var(--secondary);
+  color: var(--text);
+}
+
+/* Flat ink-orange index bar, no glow. JS sets the bar's geometry inline on
+   every move (including border-radius), hence the !important. */
+[data-style="studio"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+/* The dossier sits on the same panel grammar as about/skills. */
+[data-style="studio"] .job-content {
+  background-color: var(--secondary);
+  padding: 26px 30px;
+}
+
+[data-style="studio"] .job-title {
+  color: var(--text);
+  font-size: 25px;
+  letter-spacing: -0.02em;
+}
+
+[data-style="studio"] .job-dates {
+  color: var(--text40);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-style="studio"] .job-bullets {
+  list-style-type: square;
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+
+[data-style="studio"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* Panel changes turn the page instead of sliding off it. script.js drives the
+   swap with timeouts (not animationend), so retiming these is safe. */
+[data-style="studio"] .job-in-right {
+  transform: none;
+  animation-name: studio-job-fade-in;
+}
+
+[data-style="studio"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+}
+
+@keyframes studio-job-fade-in {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: catalog plates -------------------------------------- */
+
+[data-style="studio"] .fc-style-floating .fc-card-image {
+  border: 1px solid var(--text);
+  background-color: var(--secondary);
+}
+
+/* Plates print in halftone gray; hovering the card restores the color. */
+[data-style="studio"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="studio"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Caption block hangs from the plate's top edge, no vertical centering. */
+[data-style="studio"] .fc-style-floating .fc-card-body {
+  justify-content: flex-start;
+  padding-top: 2px;
+}
+
+[data-style="studio"] .fc-card-title {
+  color: var(--text);
+  font-size: 26px;
+  letter-spacing: -0.02em;
+}
+
+[data-style="studio"] .fc-card-desc {
+  color: var(--text80);
+}
+
+/* Tech tags: a slash-separated mono caption line instead of chips. */
+[data-style="studio"] .fc-card-tech {
+  gap: 8px 12px;
+}
+
+[data-style="studio"] .fc-card-tech .pill {
+  padding: 0;
+  letter-spacing: 0.04em;
+}
+
+[data-style="studio"] .fc-card-tech .pill + .pill::before {
+  content: "/";
+  color: var(--text30);
+  margin-right: 10px;
+}
+
+[data-style="studio"] .fc-card-cta {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  border: 1px solid var(--text);
+  border-radius: 0;
+  padding: 10px 18px;
+}
+
+[data-style="studio"] .fc-card-cta:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="studio"] .featured-carousel-dots {
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+[data-style="studio"] .fc-dot {
+  border-radius: 0;
+  background-color: var(--text);
+  opacity: 0.18;
+}
+
+[data-style="studio"] .fc-dot:hover {
+  opacity: 0.45;
+}
+
+[data-style="studio"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Blog: front-page teaser panels --------------------------------------
+   Teasers sit on the panel grammar, not on repeated heavy rules — the 2px
+   stroke belongs to section openers alone. Hover deepens the paper one
+   step (the registry's --jobs-menu-navy is that step). */
+
+[data-style="studio"] .blog-card {
+  background-color: var(--secondary);
+  padding: 24px 26px;
+}
+
+[data-style="studio"] .blog-card:hover {
+  background-color: var(--jobs-menu-navy);
+}
+
+[data-style="studio"] .blog-card-title {
+  font-size: 21px;
+  letter-spacing: -0.01em;
+  transition: color 0.25s ease-in-out;
+}
+
+[data-style="studio"] .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+/* Dateline above the headline, as printed. */
+[data-style="studio"] .blog-card > .blog-card-date {
+  order: -1;
+  margin: 0 0 10px;
+}
+
+[data-style="studio"] .blog-card-date {
+  color: var(--text40);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="studio"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="studio"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--jobs-menu-navy);
+}
+
+[data-style="studio"] .blog-listing-grid .blog-card .blog-card-date {
+  color: var(--text40);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the masthead
+   face and the loaded 700. */
+[data-style="studio"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(56px, 4.8vw, 70px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+[data-style="studio"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.65;
+}
+
+/* Listing-page filters: outlined, ink-filled when active. */
+[data-style="studio"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--text25);
+  color: var(--text60);
+}
+
+[data-style="studio"] .filter-pill:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+[data-style="studio"] .filter-pill.active {
+  background-color: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="studio"] .blog-post-content pre {
+  border: 1px solid var(--text20);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="studio"] #metr-chart {
+  border: 1px solid var(--text20);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="studio"] #pareto-chart,
+[data-style="studio"] #ara-objectives-chart,
+[data-style="studio"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact -------------------------------------------------------------- */
+
+[data-style="studio"] .contact-view-left {
+  background-color: var(--secondary);
+}
+
+/* Social row sits flush left under the contact text. */
+[data-style="studio"] .contact-menu {
+  margin-left: 0;
+}
+
+[data-style="studio"] .contact-menu .menu-list {
+  justify-content: flex-start;
+}
+
+[data-style="studio"] .contact-menu .socials-item {
+  width: auto;
+  margin-right: 26px;
+  justify-content: flex-start;
+}
+
+[data-style="studio"] .contact-image-wrapper {
+  border: 1px solid var(--text);
+}
+
+[data-style="studio"] .contact-image {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="studio"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills elsewhere (post meta, privacy): plain mono captions ----------- */
+
+[data-style="studio"] .pill {
+  background-color: transparent;
+  padding: 0;
+  color: var(--text60);
+}
+
+/* Without chips the post-meta entries (date, tags, read time) ran
+   together; slash separators give them the same caption rhythm as the
+   carousel tech lines. */
+[data-style="studio"] .blog-post-meta {
+  gap: 8px 12px;
+}
+
+[data-style="studio"] .blog-post-meta .pill + .pill::before {
+  content: "/";
+  color: var(--text30);
+  margin-right: 10px;
+}
+
+
+/* ---- Cycler dock: frosted-light ------------------------------------------ */
+
+[data-style="studio"] .tc-dock {
+  border: 1px solid var(--text15);
+  box-shadow: 0 14px 40px rgba(30, 26, 18, 0.12);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------ */
+
+@media screen and (max-width: 1100px) {
+  /* Masthead scale on the small sheet: the mobile ID rule pins 34px, and
+     unscaled display type overflows the 125px hero box into the about
+     section. */
+  [data-style="studio"] #typing-text {
+    font-size: clamp(28px, 8vw, 32px);
+  }
+
+  [data-style="studio"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.2em;
+  }
+
+  [data-style="studio"] #blog-typing-text {
+    font-size: clamp(28px, 8vw, 34px);
+  }
+
+  /* This skin hides the menu spacers, so the mobile quick links need their
+     own air or the mail glyph, Blog, and Resume run together. */
+  [data-style="studio"] .static-menu-mobile .menu-list {
+    gap: 16px;
+  }
+
+  [data-style="studio"] .static-menu-mobile .menu-item {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text60);
+  }
+
+  [data-style="studio"] .static-menu-mobile .socials-item {
+    color: var(--text60);
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the display
+     scale needs to wrap. (.sec-num is its own block line, so wrapped lines
+     stay flush left.) */
+  [data-style="studio"] .section-header {
+    white-space: normal;
+    font-size: clamp(32px, 9.5vw, 42px);
+  }
+
+  [data-style="studio"] .section-header-wrapper {
+    padding-top: 12px;
+    margin-bottom: 36px;
+  }
+
+  [data-style="studio"] .section-spacer {
+    height: 7em;
+  }
+
+  /* Framed plates need a real gutter between cards on the small sheet. */
+  [data-style="studio"] .featured-carousel-track {
+    gap: 28px;
+  }
+
+  [data-style="studio"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text20);
+  }
+
+  [data-style="studio"] .job-content {
+    padding: 20px;
+  }
+
+  [data-style="studio"] .blog-card {
+    padding: 20px;
+  }
+
+  [data-style="studio"] .footer-container-mobile {
+    border-top: 1px solid var(--text20);
+    padding-top: 16px;
+  }
+
+  [data-style="studio"] .footer-text-mobile {
+    margin: 0;
+    text-align: left;
+  }
+}

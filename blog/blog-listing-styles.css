@@ -3,10 +3,6 @@
   max-width: 1200px;
 }
 
-.name-logo-visible {
-  opacity: 1;
-}
-
 
 /* Nav bar */
 
@@ -25,10 +21,14 @@
 
 /* Hero / typing header */
 
+/* The top padding opens air between the header row and the typed hero,
+   approaching the home page's spacing (its h1 carries 2.25em of its 70px
+   type). Applies under every style version; the mobile block below
+   re-declares padding, so this is desktop-only. */
 #blog-typing-container {
   display: flex;
   position: relative;
-  padding: 0 20px;
+  padding: 70px 20px 0;
   margin-bottom: 20px;
 }
 
@@ -82,10 +82,10 @@
 }
 
 .filter-pill {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
-  border-radius: 20px;
+  border-radius: var(--radius-pill);
   padding: 6px 16px;
   background-color: var(--text10);
   border: 1px solid transparent;
@@ -150,7 +150,7 @@
 }
 
 .blog-listing-grid .blog-card .blog-card-date {
-  font-family: 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   color: var(--text50);
   margin: 0 0 14px 0;
@@ -196,7 +196,7 @@
 }
 
 
-/* Section headings — reuse home page .section-header-wrapper / .section-header */
+/* Section headings: reuse the home page .section-header-wrapper / .section-header */
 
 .blog-section-header {
   color: var(--accent);

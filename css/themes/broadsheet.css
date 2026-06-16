@@ -1,0 +1,972 @@
+/* Broadsheet: Victorian newspaper. Newsprint ground, Playfair Display
+   headlines (700/900), Lora body justified and hyphenated, hairline column
+   rules, double-rule dividers, letterspaced small-caps datelines, drop
+   caps, oxblood (--primary) as the only ink besides black. Not a sibling of
+   Studio: centered where Studio is flush-left, serif vs sans, ruled boxes
+   vs de-carded, dense vs airy.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. Stillness, the code-block ground, and the
+   mobile fixes come from css/themes/theme-base.css via flags.still + flags.tilt.
+   The only literal colors here are ink-toned shadows. */
+
+
+/* ---- Foundations: ink on newsprint, print stillness ---------------------- */
+
+[data-style="broadsheet"] ::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* Thin ink-on-paper scrollbar. ([data-style] sits on <html>, so these select
+   the root scrollbar.) */
+[data-style="broadsheet"] {
+  scrollbar-color: var(--text) var(--bg);
+  scrollbar-width: thin;
+}
+
+[data-style="broadsheet"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-style="broadsheet"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text20);
+}
+
+[data-style="broadsheet"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 2px solid var(--bg);
+}
+
+/* Links sitewide: oxblood with a real printed underline. The default's
+   animated underline pseudo is suppressed outright, not restyled. */
+[data-style="broadsheet"] .text-link {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2.5px;
+}
+
+[data-style="broadsheet"] .text-link::before {
+  display: none;
+}
+
+[data-style="broadsheet"] .text-link:hover {
+  color: var(--text);
+}
+
+/* Dense print rhythm, tighter than the default app air, nothing like
+   Studio's 14em spreads. */
+[data-style="broadsheet"] .section-spacer {
+  height: 6em;
+}
+
+
+/* ---- Chrome: ruled nav strip, drop-cap logo, colophon footer ------------- */
+
+/* Floating menu: a paper card with a 1px ink frame. */
+[data-style="broadsheet"] .moving-menu {
+  background-color: var(--bg);
+  border: 1px solid var(--text);
+  box-shadow: 0 2px 10px rgba(28, 23, 16, 0.12);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Static menu: a masthead "ear" strip framed by hairline top+bottom rules.
+   The header row is a stretch flexbox sized by the logo's margin box
+   (~67px), so the strip must size to its own 3.5em list or the rules land
+   ~11px too far apart. */
+[data-style="broadsheet"] .static-menu {
+  background-color: transparent;
+  border-top: 1px solid var(--text);
+  border-bottom: 1px solid var(--text);
+  box-shadow: none;
+  align-self: flex-start;
+}
+
+/* Departments in letterspaced small caps; ink at rest, oxblood on hover. */
+[data-style="broadsheet"] .menu-item {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="broadsheet"] .menu-item:hover {
+  color: var(--primary);
+}
+
+[data-style="broadsheet"] .menu-spacer {
+  border-color: var(--text40);
+}
+
+/* The logo "D" as a drop-cap chip: Playfair 900 ink in a square hairline box
+   (radius is 0 via the token). */
+[data-style="broadsheet"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  color: var(--text);
+  border: 1px solid var(--text);
+}
+
+[data-style="broadsheet"] .name-logo:hover {
+  transform: none;
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+/* Footer: a colophon, centered small caps above a 4px double end rule. */
+[data-style="broadsheet"] .footer-container {
+  margin: 0 10px;
+  padding: 18px 0 14px;
+  border-bottom: 4px double var(--text);
+}
+
+[data-style="broadsheet"] .footer-spacer {
+  display: none;
+}
+
+[data-style="broadsheet"] .footer-text,
+[data-style="broadsheet"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text70);
+  text-align: center;
+}
+
+/* ---- Hero: masthead + dateline + engraved portrait ------------------------ */
+
+/* Playfair 900 at masthead scale. The longest typed line ("full stack
+   engineer.") must clear the ~795px column at the cap: 20 glyphs at 62px
+   run ≈ 640px. */
+[data-style="broadsheet"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(48px, 4.4vw, 62px);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+}
+
+/* Typed accent words print in oxblood via the --accent token. (Playfair's
+   italic is only loaded at 500, never italicize the 900 masthead.)
+
+   Cursorless masthead: the registry sets typing: 'word' — a headline comes
+   off the press a word at a time, no caret. Each word develops onto the
+   page (a soft ink blur settling sharp) and dissolves off under .tw-out. */
+[data-style="broadsheet"] #typing-text .tw,
+[data-style="broadsheet"] #blog-typing-text .tw {
+  animation: broadsheet-press-in 0.45s ease-out backwards;
+}
+
+[data-style="broadsheet"] #typing-text .tw-out,
+[data-style="broadsheet"] #blog-typing-text .tw-out {
+  animation: broadsheet-press-out 0.25s ease-in forwards;
+}
+
+@keyframes broadsheet-press-in {
+  from { opacity: 0; filter: blur(2.5px); }
+  to   { opacity: 1; filter: none; }
+}
+
+@keyframes broadsheet-press-out {
+  from { opacity: 1; filter: none; }
+  to   { opacity: 0; filter: blur(2.5px); }
+}
+
+/* The strapline becomes a dateline: small letterspaced caps in quiet ink. */
+[data-style="broadsheet"] #sub-text {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text80);
+}
+
+/* Socials: small ink glyphs, oxblood on hover, no lift, print is still. */
+[data-style="broadsheet"] #socials-list .socials-menu-spacer {
+  border-color: var(--text30);
+}
+
+[data-style="broadsheet"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="broadsheet"] .socials-item i {
+  font-size: 20px;
+}
+
+[data-style="broadsheet"] .socials-item:hover i {
+  color: var(--primary);
+  transform: none;
+}
+
+/* The selfie becomes an engraved portrait plate: grayscale-sepia, a paper
+   matte (padding shows the background through the img box) and a 1px ink
+   frame. Color is restored on hover; it stays clickable, it is still the
+   cycler unlock. */
+[data-style="broadsheet"] #typing-image {
+  padding: 8px;
+  background-color: var(--bg);
+  border: 1px solid var(--text);
+  filter: grayscale(1) sepia(0.28) contrast(1.06);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="broadsheet"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: centered department heads ---------------------------
+   The full-width double rule marks the section break, the oxblood kicker
+   stacks over a centered Playfair 700 caps title, and a short centered end
+   rule closes the deck. (A second full-width rule under the title boxed it
+   in — department heads close with a dinkus, not another column rule.) The
+   single spacer line is replaced by these rules. */
+
+[data-style="broadsheet"] .section-header-wrapper {
+  display: block;
+  text-align: center;
+  border-top: 4px double var(--text);
+  margin: 0 10px 44px;
+  padding: 16px 12px 0;
+}
+
+[data-style="broadsheet"] .section-header-wrapper::after {
+  content: '';
+  display: block;
+  width: 72px;
+  border-top: 1px solid var(--text);
+  margin: 14px auto 0;
+}
+
+[data-style="broadsheet"] .section-header-spacer {
+  display: none;
+}
+
+[data-style="broadsheet"] .section-header {
+  margin: 0;
+  padding: 0;
+  font-size: clamp(32px, 3.6vw, 44px);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text);
+  white-space: normal;
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every department head ink. */
+[data-style="broadsheet"] #about-section-header,
+[data-style="broadsheet"] #jobs-header,
+[data-style="broadsheet"] #project-header,
+[data-style="broadsheet"] #blog-header,
+[data-style="broadsheet"] #contact-section-header,
+[data-style="broadsheet"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="broadsheet"] .sec-num {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--primary);
+  margin: 0 0 8px;
+}
+
+
+/* ---- About / Skills: leader column + ruled departments -------------------- */
+
+[data-style="broadsheet"] .card-style {
+  background-color: transparent;
+}
+
+/* Hairline column rule between the About column and the Skills page. */
+[data-style="broadsheet"] .double-view-right {
+  border-left: 1px solid var(--text15);
+}
+
+/* "About Me" / "Skills" as centered small caps over a thin rule, the
+   classified-box heading grammar. */
+[data-style="broadsheet"] .card-title,
+[data-style="broadsheet"] .about-header,
+[data-style="broadsheet"] .skills-header {
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text);
+  border-bottom: 1px solid var(--text);
+  padding-bottom: 8px;
+  margin: 0 0 16px;
+}
+
+/* The about column sets as one justified, hyphenated column with a Playfair
+   drop cap. (It's only 31% of the spread — splitting it in two doubled the
+   text into strips too narrow to read.) */
+[data-style="broadsheet"] .about-text {
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+[data-style="broadsheet"] .about-text::first-letter {
+  float: left;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 0.82;
+  padding: 6px 8px 0 0;
+}
+
+/* Skills departments read as small-caps run-ins over justified body. */
+[data-style="broadsheet"] .skills-section-header {
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin: 1.6em 0 0.7em;
+}
+
+[data-style="broadsheet"] .skills-text {
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  border-bottom: 1px solid var(--text15);
+}
+
+[data-style="broadsheet"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the classifieds ------------------------------------------- */
+
+/* Index rail: a hairline instead of the 3px navy spine; the oxblood marker
+   bar draws on top of it. */
+[data-style="broadsheet"] .nav-container {
+  border-left: 1px solid var(--text25);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Lora arrives after that measure,
+   font-relative line boxes would leave the bar sized to the fallback font. */
+[data-style="broadsheet"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  line-height: 15px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+  border-radius: 0;
+  border-bottom: 1px solid var(--text15);
+}
+
+[data-style="broadsheet"] .menu li:last-child {
+  border-bottom: none;
+}
+
+[data-style="broadsheet"] .menu li:hover {
+  background: var(--text5);
+}
+
+[data-style="broadsheet"] .menu li.selected {
+  background: var(--jobs-menu-navy-dark);
+  color: var(--primary);
+}
+
+/* Flat oxblood marker, no glow. JS writes the bar's geometry inline on
+   every move (including border-radius), hence the !important. */
+[data-style="broadsheet"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+/* The dossier panel becomes a classified box: 1px ink frame, no fill. */
+[data-style="broadsheet"] .job-content {
+  background-color: transparent;
+  border: 1px solid var(--text);
+  padding: 22px 26px;
+}
+
+[data-style="broadsheet"] .job-title {
+  color: var(--text);
+  font-size: 25px;
+  line-height: 1.25;
+}
+
+[data-style="broadsheet"] .job-dates {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+/* Column-item dashes for markers; justified, hyphenated body. */
+[data-style="broadsheet"] .job-bullets {
+  list-style-type: "—  ";
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+[data-style="broadsheet"] .job-bullets li::marker {
+  color: var(--text40);
+}
+
+/* Panel changes are a quick page-turn crossfade, print stance, no slide.
+   script.js drives the swap with timeouts (not animationend), so retiming
+   these is safe. */
+[data-style="broadsheet"] .job-in-right {
+  transform: none;
+  animation-name: broadsheet-job-fade-in;
+  animation-duration: 0.35s;
+}
+
+[data-style="broadsheet"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@keyframes broadsheet-job-fade-in {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: engraved figures -------------------------------------- */
+
+/* Plates print as engravings: paper matte inside a 1px ink frame. */
+[data-style="broadsheet"] .fc-style-floating .fc-card-image {
+  padding: 8px;
+  border: 1px solid var(--text);
+  background-color: var(--bg);
+}
+
+[data-style="broadsheet"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(1) sepia(0.28) contrast(1.06);
+  transition: filter 0.35s ease-in-out;
+}
+
+/* Hovering the figure restores the color. */
+[data-style="broadsheet"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+[data-style="broadsheet"] .fc-card-title {
+  color: var(--text);
+  font-size: 24px;
+  letter-spacing: 0.01em;
+}
+
+/* Captions in Lora italic under the Playfair titles. */
+[data-style="broadsheet"] .fc-card-desc {
+  font-style: italic;
+  color: var(--text80);
+}
+
+[data-style="broadsheet"] .fc-card-tech {
+  gap: 6px 8px;
+}
+
+/* CTA: a classified box set in oxblood — colored at rest so it reads as a
+   button (oxblood is this skin's link marker; an ink frame looked like just
+   another rule); hover fills it and prints the label in paper. */
+[data-style="broadsheet"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: 0; /* featured-carousel.css pins a literal 10px, not the token */
+  /* Letter-spacing trails its 0.16em after the last glyph, so the right
+     pad gives that back to keep the label optically centered in the box. */
+  padding: 10px calc(18px - 0.16em) 10px 18px;
+}
+
+[data-style="broadsheet"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg);
+  transform: none;
+}
+
+/* Dots as printer's bullets: ink at rest, the active one oxblood, no scale
+   pop. (They stay centered, Studio flushed its dots left.) */
+[data-style="broadsheet"] .fc-dot {
+  background-color: var(--text);
+  opacity: 0.25;
+}
+
+[data-style="broadsheet"] .fc-dot:hover {
+  opacity: 0.5;
+}
+
+[data-style="broadsheet"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Blog: ruled teaser columns --------------------------------------------
+   No boxes: the home strip sets teasers as flush newspaper columns divided
+   by hairline rules; the listing page rules each entry like a ledger. */
+
+[data-style="broadsheet"] .blog-scroll-track {
+  gap: 0;
+}
+
+[data-style="broadsheet"] .blog-card {
+  background-color: transparent;
+  padding: 18px 26px 24px;
+  border-left: 1px solid var(--text15);
+}
+
+[data-style="broadsheet"] .blog-scroll-track .blog-card:first-child {
+  border-left: none;
+}
+
+[data-style="broadsheet"] .blog-card:hover {
+  background-color: transparent;
+}
+
+/* Dateline above the headline, as printed (the card is a flex column). */
+[data-style="broadsheet"] .blog-card > .blog-card-date {
+  order: -1;
+}
+
+[data-style="broadsheet"] .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--text60);
+  margin: 0 0 10px;
+}
+
+[data-style="broadsheet"] .blog-card-title {
+  color: var(--text);
+  font-size: 20px;
+  line-height: 1.3;
+  text-align: center;
+}
+
+[data-style="broadsheet"] .blog-card:hover .blog-card-title {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+[data-style="broadsheet"] .blog-card-excerpt {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="broadsheet"] .blog-listing-grid .blog-card {
+  background-color: transparent;
+  border-left: none;
+  border-top: 1px solid var(--text30);
+  padding: 18px 10px 0;
+}
+
+[data-style="broadsheet"] .blog-listing-grid .blog-card:hover {
+  background-color: transparent;
+}
+
+[data-style="broadsheet"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--text60);
+  margin: 0 0 10px;
+}
+
+[data-style="broadsheet"] .blog-card-tags {
+  justify-content: center;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the masthead
+   face and weight. */
+[data-style="broadsheet"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 900;
+  font-size: clamp(48px, 4.4vw, 62px);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+}
+
+[data-style="broadsheet"] [id^="blog-sub-text"] {
+  font-size: 15px;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+/* Filters: small-caps chips in hairline frames; the active one is set
+   in oxblood. */
+[data-style="broadsheet"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--text30);
+  color: var(--text70);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-style="broadsheet"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="broadsheet"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg);
+}
+
+
+/* ---- Blog post page: the leader article ------------------------------------ */
+
+[data-style="broadsheet"] .blog-post-header {
+  border-bottom: 4px double var(--text);
+  padding-bottom: 20px;
+  margin-bottom: 36px;
+}
+
+[data-style="broadsheet"] .blog-post-title {
+  color: var(--text);
+  font-weight: 900;
+  font-size: clamp(34px, 4.6vw, 46px);
+  line-height: 1.15;
+  letter-spacing: 0.01em;
+  text-align: center;
+}
+
+[data-style="broadsheet"] .blog-post-meta {
+  justify-content: center;
+}
+
+/* Justified, hyphenated Lora body with a drop cap on the opening paragraph. */
+[data-style="broadsheet"] .blog-post-content {
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+  line-height: 1.75;
+}
+
+[data-style="broadsheet"] .blog-post-content > p:first-of-type::first-letter {
+  float: left;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 52px;
+  line-height: 0.82;
+  padding: 6px 8px 0 0;
+}
+
+/* Crossheads: centered ink subheads, as set between column rules. */
+[data-style="broadsheet"] .blog-post-content h2 {
+  color: var(--text);
+  text-align: center;
+  letter-spacing: 0.01em;
+}
+
+/* Blockquotes as pull quotes: Playfair italic (loaded at 500), centered
+   between hairline rules. */
+[data-style="broadsheet"] .blog-post-content blockquote {
+  border-left: none;
+  border-top: 1px solid var(--text);
+  border-bottom: 1px solid var(--text);
+  margin: 2.2em auto;
+  padding: 1.1em 1.6em;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-weight: 500;
+  font-size: 19px;
+  line-height: 1.55;
+  color: var(--text80);
+}
+
+[data-style="broadsheet"] .blog-post-content blockquote p {
+  margin-bottom: 0.4em;
+}
+
+/* Section breaks print as double rules. */
+[data-style="broadsheet"] .blog-post-content hr {
+  border-top: 3px double var(--text50);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="broadsheet"] .blog-post-content pre {
+  border: 1px solid var(--text25);
+}
+
+/* Inline code: ink chips on the deeper paper (the higher-specificity pre
+   rule above unwinds this for fenced blocks). Radius is a literal 4px in
+   blog-styles. */
+[data-style="broadsheet"] .blog-post-content code {
+  background-color: var(--secondary);
+  color: var(--text);
+  border: 1px solid var(--text15);
+  border-radius: 0;
+}
+
+/* Diagrams sit on the paper itself, framed. (Mermaid reads the palette at
+   render time via blog/post.html.) */
+[data-style="broadsheet"] .blog-post-content .mermaid {
+  background-color: var(--bg);
+  border: 1px solid var(--text20);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="broadsheet"] #metr-chart {
+  border: 1px solid var(--text20);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="broadsheet"] #pareto-chart,
+[data-style="broadsheet"] #ara-objectives-chart,
+[data-style="broadsheet"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the inquiries box --------------------------------------------- */
+
+[data-style="broadsheet"] .contact-view-left {
+  background-color: transparent;
+  border: 1px solid var(--text);
+}
+
+[data-style="broadsheet"] .contact-text {
+  font-size: 15px;
+  line-height: 1.65;
+  text-align: justify;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+/* The map prints as an engraved plate in a 1px ink frame; color on hover. */
+[data-style="broadsheet"] .contact-image-wrapper {
+  border: 1px solid var(--text);
+}
+
+[data-style="broadsheet"] .contact-image {
+  filter: grayscale(1) sepia(0.28) contrast(1.06);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="broadsheet"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): catalog chips -------- */
+
+[data-style="broadsheet"] .pill {
+  background-color: transparent;
+  border: 1px solid var(--text30);
+  color: var(--text70);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+}
+
+
+/* ---- Cycler dock: a paper slip ------------------------------------------------ */
+
+[data-style="broadsheet"] .tc-dock {
+  background: var(--bg);
+  border: 1px solid var(--text);
+  box-shadow: 0 12px 32px rgba(28, 23, 16, 0.16);
+  backdrop-filter: none;
+}
+
+[data-style="broadsheet"] .tc-toggle {
+  border-radius: 0;
+}
+
+[data-style="broadsheet"] .tc-action,
+[data-style="broadsheet"] .tc-presets button,
+[data-style="broadsheet"] .tc-schemes button {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ----------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Double rules slim to 3px on the small sheet. */
+  [data-style="broadsheet"] .section-header-wrapper {
+    border-top-width: 3px;
+    margin-bottom: 32px;
+    padding: 12px 10px 0;
+  }
+
+  [data-style="broadsheet"] .section-header-wrapper::after {
+    width: 56px;
+    margin-top: 10px;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the centered
+     department heads need to wrap. */
+  [data-style="broadsheet"] .section-header {
+    white-space: normal;
+    font-size: clamp(22px, 6.5vw, 28px);
+  }
+
+  [data-style="broadsheet"] .section-spacer {
+    height: 4.5em;
+  }
+
+  /* Masthead scale on the small sheet (the mobile ID rule pins 34px). */
+  [data-style="broadsheet"] #typing-text {
+    font-size: clamp(30px, 8vw, 36px);
+  }
+
+  [data-style="broadsheet"] #sub-text {
+    font-size: 9px;
+    letter-spacing: 0.12em;
+  }
+
+  [data-style="broadsheet"] #blog-typing-text {
+    font-size: clamp(30px, 8vw, 36px);
+  }
+
+  [data-style="broadsheet"] .static-menu-mobile .menu-item {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  [data-style="broadsheet"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that,
+     and make the tap state the inversion instead. */
+  [data-style="broadsheet"] .name-logo:hover {
+    background-color: transparent;
+    color: var(--text);
+  }
+
+  [data-style="broadsheet"] .name-logo:active {
+    background-color: var(--text);
+    color: var(--bg);
+  }
+
+  [data-style="broadsheet"] .about-text::first-letter,
+  [data-style="broadsheet"] .blog-post-content > p:first-of-type::first-letter {
+    font-size: 42px;
+  }
+
+  [data-style="broadsheet"] .double-view-left,
+  [data-style="broadsheet"] .double-view-right {
+    background-color: transparent;
+  }
+
+  [data-style="broadsheet"] .double-view-right {
+    border-left: none;
+    border-top: 1px solid var(--text15);
+    margin-top: 28px;
+    padding-top: 24px;
+  }
+
+  /* Jobs rail runs horizontal: separators move to the wrapper rule, and the
+     marker thickens (height is JS-inline only on mobile, so the override
+     stays in this media block). */
+  [data-style="broadsheet"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text25);
+  }
+
+  [data-style="broadsheet"] .menu li {
+    border-bottom: none;
+  }
+
+  [data-style="broadsheet"] .highlight {
+    height: 3px !important;
+  }
+
+  [data-style="broadsheet"] .job-content {
+    padding: 18px;
+  }
+
+  [data-style="broadsheet"] .fc-style-floating .fc-card-image {
+    padding: 6px;
+  }
+
+  /* Matted figures need a real gutter between plates on the small sheet. */
+  [data-style="broadsheet"] .featured-carousel-track {
+    gap: 28px;
+  }
+
+  /* The mobile sheet re-cards these surfaces; keep them print. */
+  [data-style="broadsheet"] .blog-card {
+    background-color: transparent;
+  }
+
+  [data-style="broadsheet"] .contact-view-left {
+    background-color: transparent;
+    border: 1px solid var(--text);
+  }
+
+  [data-style="broadsheet"] .blog-post-header {
+    border-bottom-width: 3px;
+  }
+
+  [data-style="broadsheet"] .blog-post-title {
+    font-size: clamp(26px, 7.5vw, 32px);
+  }
+
+  [data-style="broadsheet"] .footer-container-mobile {
+    border-bottom: 3px double var(--text);
+    padding-bottom: 10px;
+  }
+
+  [data-style="broadsheet"] .footer-text-mobile {
+    padding-bottom: 8px;
+  }
+}

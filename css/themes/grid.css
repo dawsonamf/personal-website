@@ -1,0 +1,1045 @@
+/* Grid: Zürich orthodoxy — the visible grid. Müller-Brockmann's rulebook:
+   objective typography on a mathematical grid, flush left, ragged right,
+   one family, one red. The radical move: the grid is SHOWN — six hairline
+   columns (plus a faint baseline grid) drawn on the content sheet itself,
+   with every surface sitting on it as a white cell or a flat gray panel.
+   One family only: system Helvetica, 400 and 700 — the sheet's single
+   zero-webfont-payload skin — and the site chrome's mono (section numbers,
+   datelines, captions, pills) is retired to Helvetica; only real code keeps
+   a mono face. Lowercase display type, tight tracking, hierarchy from
+   placement. Fully still: no entrances, no tilt, no lifts, hard cuts.
+   One exception to the stillness: the default site's cursor follower
+   comes back, squared — a set square gliding over the grid.
+
+   Red discipline: #e30613 appears ONLY as terminal punctuation and active
+   state — the blinking caret (the masthead's one red mark), the square
+   period after each section title, nav/link/social hovers, the jobs
+   redline, the active carousel dot and filter pill, focus rings, and
+   selection. Everything else is ink on white with gray panels.
+
+   Line/shadow policy: NO shadows anywhere — Swiss is flat; hairlines do
+   all the separation work. Every line derives from the alpha ramps
+   (grid columns --text10, baselines --text5, panel rules --text15/--text20,
+   photo frames full --text) so the palette toy keeps working; this sheet
+   contains no literal colors at all.
+
+   Typing note: the registry entry has NO typing key — the classic caret
+   mode stays, and the caret is recolored --primary below ("red reserved
+   for terminal punctuation").
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. Stillness, the code-block ground, the tilt
+   pins, and the mobile fixes come from css/themes/theme-base.css via
+   flags.still + flags.tilt. No @keyframes in this sheet: nothing here
+   animates beyond hover transitions, so prefers-reduced-motion needs no
+   extra guard (the caret blink is the engine's own inline animation). */
+
+
+/* ---- Foundations: the visible grid, red selection, flat stillness -------- */
+
+/* Six columns on the content sheet (#main-body is the centered 1200px
+   column on every page, so the grid aligns with the content instead of the
+   viewport): hairline verticals every 1/6 of the sheet, a one-pixel cap on
+   the right edge to close the last column, and a faint 36px baseline grid
+   under everything. Attachment stays the default scroll — fixed would
+   repaint the field on every scroll tick for no payoff. */
+[data-style="grid"] #main-body {
+  background-image:
+    repeating-linear-gradient(90deg, var(--text10) 0, var(--text10) 1px, transparent 1px, transparent calc(100% / 6)),
+    linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), var(--text10) calc(100% - 1px)),
+    repeating-linear-gradient(180deg, var(--text5) 0, var(--text5) 1px, transparent 1px, transparent 36px);
+}
+
+/* Selection is an active state: the one place red is allowed to fill. */
+[data-style="grid"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* The page scrollbar joins the system: a thin ink rule in a white track
+   behind a hairline; red only while gripped/hovered, like every other
+   active state. ([data-style] sits on <html>, so these select the root
+   scrollbar.) */
+[data-style="grid"] {
+  scrollbar-color: var(--text) var(--bg);
+  scrollbar-width: thin;
+}
+
+[data-style="grid"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="grid"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text10);
+}
+
+[data-style="grid"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 3px solid var(--bg);
+}
+
+[data-style="grid"]::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* The cursor follower returns, set square. theme-base.css hides it for
+   still skins ([data-still] #cursor-container, same 1-attr + 1-id
+   specificity — this sheet loads after, so the re-display wins); here it
+   comes back as the default site's dot-and-ring drawn on the grid's terms:
+   identical sizes, easing, and hover bounce, radius 0 — a set square
+   instead of a circle. No color rule needed: styles.css paints both marks
+   with var(--accent), which is ink in this palette. */
+[data-style="grid"] #cursor-container {
+  display: block;
+}
+
+[data-style="grid"] .cursor-follow,
+[data-style="grid"] .circle-follow {
+  border-radius: 0;
+}
+
+/* One family, two weights. The system stack always carries a real 700, so
+   nothing can smear into a synthesized bold. */
+[data-style="grid"] h1,
+[data-style="grid"] h2,
+[data-style="grid"] h3,
+[data-style="grid"] h4 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Links: ink under a resting hairline; the whole link turns red on hover
+   (link hover is an allowed red). The default underline pseudo already
+   animates width — pinned full-width here so it reads as a printed rule. */
+[data-style="grid"] .text-link {
+  color: var(--text);
+}
+
+[data-style="grid"] .text-link::before {
+  width: 100%;
+  height: 1px;
+  opacity: 0.35;
+  background-color: var(--text);
+}
+
+[data-style="grid"] .text-link:hover {
+  color: var(--primary);
+}
+
+[data-style="grid"] .text-link:hover::before {
+  background-color: var(--primary);
+  opacity: 1;
+}
+
+/* Focus is an active state: a red rule around the focused element. */
+[data-style="grid"] :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+/* Swiss air between sections: a little more than the app default. */
+[data-style="grid"] .section-spacer {
+  height: 9em;
+}
+
+
+/* ---- Chrome: hairline-ruled menus, cell logo, colophon footer ------------ */
+
+/* The logo D as a grid cell: a square hairline ink box, Helvetica 700.
+   Hover is an active nav state — the one red fill in the chrome. (Its
+   intro fadein only animates opacity; nothing retimed here.) */
+[data-style="grid"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--text);
+  border: 1px solid var(--text);
+}
+
+[data-style="grid"] .name-logo:hover {
+  transform: none;
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg);
+}
+
+/* Static menu: a ruled strip — hairline top and bottom rules, no fill, so
+   the column grid runs straight through it. The header row is a stretch
+   flexbox sized by the logo's margin box (~67px), so the strip must size
+   to its own 3.5em list or the rules land ~11px apart. */
+[data-style="grid"] .static-menu {
+  background-color: transparent;
+  border-top: 1px solid var(--text20);
+  border-bottom: 1px solid var(--text20);
+  box-shadow: none;
+  align-self: flex-start;
+}
+
+/* Floating menu: an opaque white cell in a hairline box — it passes over
+   content, so it can't stay transparent. No blur, no shadow: flat. */
+[data-style="grid"] .moving-menu {
+  background-color: var(--bg);
+  border: 1px solid var(--text20);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Departments in lowercase Helvetica — Zürich never shouts. Hover is the
+   active-nav red. (The Theme trigger carries .menu-item, so it follows.) */
+[data-style="grid"] .menu-item {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13.5px;
+  letter-spacing: 0.01em;
+  text-transform: lowercase;
+  color: var(--text60);
+}
+
+[data-style="grid"] .menu-item:hover {
+  color: var(--primary);
+}
+
+/* Item separators read as column rules between entries. */
+[data-style="grid"] .menu-spacer {
+  border-color: var(--text15);
+}
+
+/* Footer: a colophon, flush left under a hairline like everything else on
+   the grid. (Blog pages re-center it via theme-base.css.) */
+[data-style="grid"] .footer-container {
+  justify-content: flex-start;
+  border-top: 1px solid var(--text15);
+  margin: 0 10px;
+  padding: 18px 0 12px;
+}
+
+[data-style="grid"] .footer-spacer {
+  display: none;
+}
+
+[data-style="grid"] .footer-text,
+[data-style="grid"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--text45);
+  text-align: left;
+}
+
+
+/* ---- Hero: lowercase masthead, the red caret ------------------------------ */
+
+/* Helvetica 700 at the tile's tight -0.04em, forced lowercase — the
+   Müller-Brockmann setting. Width check for the ~795px desktop column:
+   "full stack engineer." runs ≈ 9.1em in Helvetica Bold, ≈ 8.3em after
+   tracking — 664px at the 80px cap, caret included ≈ 680px. */
+[data-style="grid"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(60px, 5.5vw, 80px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-transform: lowercase;
+}
+
+/* THE red mark: the classic caret recolored Swiss red — the masthead's
+   terminal punctuation. Width rides the type size so it reads as a set
+   period block at any scale (the engine drives the blink inline). */
+[data-style="grid"] .cursor {
+  background-color: var(--primary);
+  width: 0.16em;
+}
+
+/* The typed accent line stays ink: --accent is ink in this palette, and
+   the caret is the only red the masthead gets. */
+[data-style="grid"] #typing-text .typing-accent {
+  color: var(--text);
+}
+
+/* Strapline: an 11px Helvetica caption with open tracking — the mono is
+   gone from the chrome (it kept --font-mono by default). */
+[data-style="grid"] #sub-text {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--text55);
+}
+
+/* Socials: ink glyphs that turn red in place. Print is still — no lift. */
+[data-style="grid"] .socials-item:hover i {
+  color: var(--primary);
+  transform: none;
+}
+
+/* The sidebar's extension rules stay hairlines. */
+[data-style="grid"] .socials-menu-spacer {
+  border-color: var(--text20);
+}
+
+/* The selfie prints as an objective black-and-white photograph in a
+   hairline ink frame; hovering restores color. Stays clickable. (It is a
+   .card tilt target, held flat by theme-base.css.) */
+[data-style="grid"] #typing-image {
+  border: 1px solid var(--text);
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="grid"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: lowercase titles ending in a red square period ------
+   The tile's poetic core — "color spent on a single red period": each
+   section title sets in lowercase Helvetica 700 and closes with a small
+   red square sitting on the baseline, the hairline rule running on to the
+   right edge of the sheet. The index number is a quiet Helvetica figure,
+   not a colored folio. */
+
+[data-style="grid"] .section-header {
+  font-weight: 700;
+  font-size: clamp(34px, 3.6vw, 46px);
+  letter-spacing: -0.03em;
+  text-transform: lowercase;
+  color: var(--text);
+}
+
+/* The red period. An empty inline-block's baseline is its bottom edge, so
+   the square sits exactly where a full stop would. */
+[data-style="grid"] .section-header::after {
+  content: '';
+  display: inline-block;
+  width: 0.14em;
+  height: 0.14em;
+  margin-left: 0.1em;
+  background-color: var(--primary);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID
+   specificity; match them so the titles stay ink whatever the toy does
+   to --accent. */
+[data-style="grid"] #about-section-header,
+[data-style="grid"] #jobs-header,
+[data-style="grid"] #project-header,
+[data-style="grid"] #blog-header,
+[data-style="grid"] #contact-section-header,
+[data-style="grid"] .blog-section-header {
+  color: var(--text);
+}
+
+/* The index figure sheds its hardcoded mono stack for Helvetica. */
+[data-style="grid"] .sec-num {
+  font-family: var(--font-body);
+  font-size: 0.42em;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--text45);
+  margin-right: 16px;
+}
+
+[data-style="grid"] .section-header-wrapper {
+  margin-bottom: 34px;
+}
+
+[data-style="grid"] .section-header-spacer {
+  background-color: var(--text15);
+}
+
+
+/* ---- About / Skills: gray panels on the grid -------------------------------
+   The surface grammar for the whole skin: flat --secondary panels in
+   hairline boxes (the tile's "light gray panels"), masking the grid where
+   content needs quiet. Labels are 11px Helvetica captions. */
+
+[data-style="grid"] .card-style {
+  background-color: var(--secondary);
+  border: 1px solid var(--text15);
+  padding: 26px 28px;
+}
+
+/* "About Me" / "Skills" become small tracked captions — hierarchy from
+   placement, not from 28px display weight. */
+[data-style="grid"] .card-title,
+[data-style="grid"] .about-header,
+[data-style="grid"] .skills-header {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text50);
+  margin-bottom: 18px;
+}
+
+[data-style="grid"] .skills-section-header {
+  color: var(--text);
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Objective body setting: modest size, open leading, capped measure —
+   flush left, ragged right; the empty panel to the right is the grid
+   showing its gutters. */
+[data-style="grid"] .about-text,
+[data-style="grid"] .skills-text,
+[data-style="grid"] .contact-text {
+  font-size: 15px;
+  line-height: 1.65;
+  max-width: 64ch;
+}
+
+[data-style="grid"] .skills-text {
+  border-bottom: 1px solid var(--text10);
+}
+
+[data-style="grid"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: index rail + the redline ---------------------------------- */
+
+/* The 3px navy spine thins to a drawn hairline. */
+[data-style="grid"] .nav-container {
+  border-left: 1px solid var(--text20);
+}
+
+/* line-height pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar. Helvetica is a system face (no late
+   webfont swap), but the pin keeps the measure independent of font
+   fallback differences across platforms. Hover/selected fills stay
+   token-driven — the registry's gray-panel ramp. */
+[data-style="grid"] .menu li {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  line-height: 18px;
+  letter-spacing: 0;
+  color: var(--text55);
+  border-radius: 0;
+}
+
+[data-style="grid"] .menu li.selected {
+  color: var(--text);
+}
+
+/* The selected-entry marker is the jobs redline — an allowed red: it IS
+   the active nav state of this section. JS writes geometry, border-radius,
+   and transition inline on every move, so radius and transition take the
+   blanket !important; the bar snaps (objective, no easing). The thickness
+   override lives in the desktop block because left/width are JS constants
+   only on desktop (mobile's inline height is already 2px). */
+[data-style="grid"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+  transition: none !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="grid"] .highlight {
+    left: -2px !important;
+    width: 2px !important;
+  }
+}
+
+/* The dossier sits on the same panel grammar as about/skills. */
+[data-style="grid"] .job-content {
+  background-color: var(--secondary);
+  border: 1px solid var(--text15);
+  padding: 26px 30px;
+}
+
+[data-style="grid"] .job-title {
+  color: var(--text);
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+
+/* Datelines lose the mono for a tracked Helvetica caption. */
+[data-style="grid"] .job-dates {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text45);
+}
+
+[data-style="grid"] .job-bullets {
+  list-style-type: square;
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 68ch;
+}
+
+[data-style="grid"] .job-bullets li::marker {
+  color: var(--text);
+}
+
+/* Panel changes hard-cut — print doesn't slide. script.js drives the swap
+   with timeouts (not animationend), so killing these animations is safe:
+   the old panel holds until the JS hides it, then the new one appears. */
+[data-style="grid"] .job-in-right {
+  transform: none;
+  animation: none;
+}
+
+[data-style="grid"] .job-out-right {
+  transform: none;
+  transition: none;
+}
+
+
+/* ---- Selected Works: black-and-white plates --------------------------------- */
+
+/* Plates print as objective photographs in hairline ink frames on a gray
+   ground; hovering the card restores color. */
+[data-style="grid"] .fc-style-floating .fc-card-image {
+  border: 1px solid var(--text);
+  background-color: var(--secondary);
+}
+
+[data-style="grid"] .fc-style-floating .fc-card-image img {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="grid"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+/* Captions hang from the plate's top edge — grid-aligned, not centered. */
+[data-style="grid"] .fc-style-floating .fc-card-body {
+  justify-content: flex-start;
+  padding-top: 2px;
+}
+
+[data-style="grid"] .fc-card-title {
+  color: var(--text);
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+
+[data-style="grid"] .fc-card-desc {
+  color: var(--text80);
+  max-width: 60ch;
+}
+
+/* CTA: a hairline ink cell; hover fills red (link hover, allowed) — the
+   moving-arrow tic goes, nothing here animates positionally.
+   featured-carousel.css pins a literal 10px radius, hence the explicit 0. */
+[data-style="grid"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text);
+  border: 1px solid var(--text);
+  border-radius: 0;
+  padding: 10px 18px;
+}
+
+[data-style="grid"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="grid"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="grid"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots become square ink markers, flush left with the track like every
+   other line on the sheet; the active one is the red unit. No scale pop. */
+[data-style="grid"] .featured-carousel-dots {
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+[data-style="grid"] .fc-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 0;
+  background-color: var(--text);
+  opacity: 0.2;
+}
+
+[data-style="grid"] .fc-dot:hover {
+  opacity: 0.5;
+}
+
+[data-style="grid"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Blog: index cells -------------------------------------------------------
+   Teasers are white cells in hairline boxes sitting on the grid; the
+   active state is a red frame (it's a link), nothing fills or lifts. */
+
+[data-style="grid"] .blog-card {
+  background-color: var(--bg);
+  border: 1px solid var(--text20);
+  padding: 24px 26px;
+  transition: border-color 0.25s ease-in-out;
+}
+
+[data-style="grid"] .blog-card:hover {
+  background-color: var(--bg);
+  border-color: var(--primary);
+}
+
+[data-style="grid"] .blog-card-title {
+  color: var(--text);
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+
+/* Datelines: mono out, tracked Helvetica caption in. */
+[data-style="grid"] .blog-card-date {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text45);
+}
+
+[data-style="grid"] .blog-card-excerpt {
+  color: var(--text80);
+}
+
+/* Flush left, like every other line on the sheet. */
+[data-style="grid"] .blog-see-all {
+  text-align: left;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="grid"] .blog-listing-grid .blog-card {
+  background-color: var(--bg);
+  border: 1px solid var(--text20);
+}
+
+[data-style="grid"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--bg);
+  border-color: var(--primary);
+}
+
+[data-style="grid"] .blog-listing-grid .blog-card .blog-card-title {
+  font-size: 19px;
+  letter-spacing: -0.01em;
+}
+
+[data-style="grid"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text45);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the masthead
+   setting — lowercase, tight, real 700. The caret rule above recolors its
+   cursor too. */
+[data-style="grid"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(54px, 5vw, 72px);
+  line-height: 1.05;
+  letter-spacing: -0.04em;
+  text-transform: lowercase;
+}
+
+[data-style="grid"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.65;
+}
+
+/* Filters: hairline cells; the active one is the red unit (active state). */
+[data-style="grid"] .filter-pill {
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: transparent;
+  border: 1px solid var(--text25);
+  color: var(--text60);
+}
+
+[data-style="grid"] .filter-pill:hover {
+  border-color: var(--text);
+  color: var(--text);
+}
+
+[data-style="grid"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg);
+}
+
+
+/* ---- Blog post page: a reading sheet over the grid --------------------------- */
+
+/* The article column masks the grid with plain white so long body copy
+   reads on a clean ground; the grid stays visible in the margins. */
+[data-style="grid"] .blog-post-container {
+  background-color: var(--bg);
+}
+
+[data-style="grid"] .blog-post-header {
+  border-bottom: 1px solid var(--text15);
+  padding-bottom: 18px;
+}
+
+[data-style="grid"] .blog-post-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: clamp(34px, 4.2vw, 42px);
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+}
+
+/* Crossheads: ink over a hairline rule. */
+[data-style="grid"] .blog-post-content h2 {
+  color: var(--text);
+  border-bottom: 1px solid var(--text15);
+  padding-bottom: 6px;
+}
+
+[data-style="grid"] .blog-post-content h3 {
+  color: var(--text);
+}
+
+/* Quotes: an ink rule, not a colored bar. */
+[data-style="grid"] .blog-post-content blockquote {
+  border-left: 2px solid var(--text);
+  color: var(--text60);
+}
+
+[data-style="grid"] .blog-post-content hr {
+  border-top: 1px solid var(--text20);
+}
+
+/* Tables rule like a schedule: hairline cells, gray header band. */
+[data-style="grid"] .blog-post-content th,
+[data-style="grid"] .blog-post-content td {
+  border: 1px solid var(--text20);
+}
+
+[data-style="grid"] .blog-post-content th {
+  background-color: var(--secondary);
+}
+
+/* Post photographs print black-and-white in hairline frames, color on
+   hover, like the plates. border-box keeps the frame inside blog-styles'
+   max-width: 100% — the site is content-box, so the border would
+   otherwise overhang the column. */
+[data-style="grid"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 1px solid var(--text);
+  filter: grayscale(1) contrast(1.04);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="grid"] .blog-post-content img.blog-image:hover {
+  filter: none;
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css; this
+   skin only rules a hairline frame around the one dark surface. */
+[data-style="grid"] .blog-post-content pre {
+  border: 1px solid var(--text20);
+}
+
+/* Inline code keeps its real mono face (--font-mono is untouched) on a
+   quiet gray chip. blog-styles pins a literal 4px radius, zeroed here. */
+[data-style="grid"] .blog-post-content code {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+  border-radius: 0;
+}
+
+/* Diagrams sit on the panel gray in a hairline frame (mermaid reads the
+   palette at render time via blog/post.html); node corners go square. */
+[data-style="grid"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--text15);
+}
+
+[data-style="grid"] .blog-post-content .mermaid .node rect {
+  rx: 0;
+  ry: 0;
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="grid"] #metr-chart {
+  border: 1px solid var(--text15);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="grid"] #pareto-chart,
+[data-style="grid"] #ara-objectives-chart,
+[data-style="grid"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the last panel, flush-left socials ----------------------------- */
+
+[data-style="grid"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 1px solid var(--text15);
+}
+
+/* Social row sits flush left under the contact text — ragged right. */
+[data-style="grid"] .contact-menu {
+  margin-left: 0;
+}
+
+[data-style="grid"] .contact-menu .menu-list {
+  justify-content: flex-start;
+}
+
+[data-style="grid"] .contact-menu .socials-item {
+  width: auto;
+  margin-right: 26px;
+  justify-content: flex-start;
+}
+
+/* The map prints black-and-white in a hairline ink frame, color on hover.
+   border-box: the wrapper is width-constrained (50%), and the site is
+   content-box. (It is a .card tilt target, held flat by theme-base.css.) */
+[data-style="grid"] .contact-image-wrapper {
+  box-sizing: border-box;
+  border: 1px solid var(--text);
+}
+
+[data-style="grid"] .contact-image {
+  filter: grayscale(1) contrast(1.05);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="grid"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): caption cells ---------- */
+
+/* The shared chip drops its mono and its fill for a 10.5px Helvetica
+   caption in a hairline cell — the radius is already 0 via the token. */
+[data-style="grid"] .pill {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background-color: transparent;
+  border: 1px solid var(--text20);
+  color: var(--text60);
+  padding: 4px 10px;
+}
+
+
+/* ---- Privacy + 404: same system, no mono left anywhere ------------------------ */
+
+[data-style="grid"] .privacy-container {
+  background-color: var(--bg);
+}
+
+[data-style="grid"] .privacy-header {
+  color: var(--text);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  text-transform: lowercase;
+}
+
+/* The title closes with the red period, like the section headers. */
+[data-style="grid"] .privacy-header::after {
+  content: '';
+  display: inline-block;
+  width: 0.14em;
+  height: 0.14em;
+  margin-left: 0.1em;
+  background-color: var(--primary);
+}
+
+[data-style="grid"] .privacy-header-spacer {
+  background-color: var(--text15);
+}
+
+[data-style="grid"] .privacy-content h2 {
+  color: var(--text);
+  border-bottom: 1px solid var(--text15);
+  padding-bottom: 6px;
+}
+
+/* The 404 code is hardcoded SF Mono + accent in the page's own styles;
+   under this skin it sets in Helvetica ink and ends in the red period. */
+[data-style="grid"] .nf-code {
+  font-family: var(--font-body);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--text);
+}
+
+[data-style="grid"] .nf-code::after {
+  content: '';
+  display: inline-block;
+  width: 0.14em;
+  height: 0.14em;
+  margin-left: 0.08em;
+  background-color: var(--primary);
+}
+
+
+/* ---- Cycler dock: a white cell in a hairline box ------------------------------- */
+
+[data-style="grid"] .tc-dock {
+  background: var(--bg);
+  border: 1px solid var(--text20);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* The fallback FAB squares off with the rest of the sheet. */
+[data-style="grid"] .tc-toggle {
+  border-radius: 0;
+}
+
+[data-style="grid"] .tc-action,
+[data-style="grid"] .tc-presets button,
+[data-style="grid"] .tc-schemes button,
+[data-style="grid"] .tc-role,
+[data-style="grid"] .tc-sw {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* The grid simplifies to quarters on the small sheet — four columns,
+     right-edge cap kept, baseline grid dropped. */
+  [data-style="grid"] #main-body {
+    background-image:
+      repeating-linear-gradient(90deg, var(--text10) 0, var(--text10) 1px, transparent 1px, transparent 25%),
+      linear-gradient(90deg, transparent 0, transparent calc(100% - 1px), var(--text10) calc(100% - 1px));
+  }
+
+  /* Masthead scale on the small sheet: the mobile ID rule pins 34px;
+     "full stack engineer." needs ≈ 8.3em, so the clamp keeps it inside a
+     ~280px column on the narrowest screens. */
+  [data-style="grid"] #typing-text {
+    font-size: clamp(27px, 8.5vw, 34px);
+  }
+
+  [data-style="grid"] #sub-text {
+    font-size: 9px;
+    letter-spacing: 0.16em;
+  }
+
+  [data-style="grid"] #blog-typing-text {
+    font-size: clamp(27px, 8.5vw, 34px);
+  }
+
+  /* The mobile header rule pins 25px nowrap; the cap keeps the longest
+     lowercase title ("where i've worked" ≈ 8.7em) on one line inside the
+     narrowest column, so the red period never wraps alone. */
+  [data-style="grid"] .section-header {
+    font-size: clamp(22px, 6.8vw, 28px);
+  }
+
+  [data-style="grid"] .section-spacer {
+    height: 6.5em;
+  }
+
+  /* Quick-links row: lowercase Helvetica like the desktop departments. */
+  [data-style="grid"] .static-menu-mobile .menu-item {
+    font-family: var(--font-body);
+    font-size: 13px;
+    letter-spacing: 0.01em;
+    text-transform: lowercase;
+    color: var(--text60);
+  }
+
+  [data-style="grid"] .static-menu-mobile .socials-item {
+    color: var(--text60);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep
+     that, and make the tap state the red fill instead. */
+  [data-style="grid"] .name-logo:hover {
+    background-color: transparent;
+    border-color: var(--text);
+    color: var(--text);
+  }
+
+  [data-style="grid"] .name-logo:active {
+    background-color: var(--primary);
+    border-color: var(--primary);
+    color: var(--bg);
+  }
+
+  /* The mobile sheet re-cards the about/skills surfaces at --text10; keep
+     them on the panel grammar. */
+  [data-style="grid"] .double-view-left,
+  [data-style="grid"] .double-view-right {
+    background-color: var(--secondary);
+    border: 1px solid var(--text15);
+  }
+
+  /* Jobs rail runs horizontal: the hairline moves to the wrapper's bottom
+     edge. The redline keeps the JS-written 2px height — already the spec
+     thickness on mobile (left/width are measured there; untouched). */
+  [data-style="grid"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text20);
+  }
+
+  [data-style="grid"] .job-content {
+    padding: 20px;
+  }
+
+  /* Plates: the image is width: 100% on mobile, so the hairline frame
+     must draw inside the box (content-box would overflow the card). */
+  [data-style="grid"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+  }
+
+  /* The mobile card rule re-pins the --text10 fill; keep the white cell. */
+  [data-style="grid"] .blog-card {
+    background-color: var(--bg);
+    border: 1px solid var(--text20);
+  }
+
+  [data-style="grid"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* The mobile footer joins the colophon grammar: hairline rule, flush
+     left. */
+  [data-style="grid"] .footer-container-mobile {
+    border-top: 1px solid var(--text15);
+    padding-top: 14px;
+  }
+
+  [data-style="grid"] .footer-text-mobile {
+    margin: 0;
+    text-align: left;
+  }
+}
