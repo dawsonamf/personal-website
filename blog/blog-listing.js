@@ -63,6 +63,13 @@
         { action: 'delete', count: 16 },
         { action: 'type', text: 'Blog.' },
       ],
+      [
+        { action: 'type', text: "Side quests." },
+        { action: 'callback', fn: onBlogTypingComplete },
+        { action: 'pause', duration: 800 },
+        { action: 'delete', count: 12 },
+        { action: 'type', text: 'Blog.' },
+      ],
     ],
   });
 

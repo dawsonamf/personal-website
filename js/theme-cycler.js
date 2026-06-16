@@ -270,25 +270,53 @@
     window.location.href = '/?style=' + encodeURIComponent(id);
   }
 
+  // Each preset card carries its theme's palette + heading font as CSS vars,
+  // so a randomized palette never repaints them — they always show the base
+  // registry colors. --tc-row-heading is absent for the default theme; the
+  // CSS uses var(--tc-row-heading, inherit) so it falls back to the dock's
+  // own font in that case.
   function renderPresets() {
     const host = document.getElementById('tc-presets');
     if (!host) return;
     host.innerHTML = STYLE_ORDER.map(id => {
       const e = REGISTRY[id];
       if (!e) return '';
-      // Each row wears its own theme: the registry's bg paints the row, the
-      // text color sets the label, and primary/secondary/accent fill the dots
-      // (registry base colors — randomized palettes don't repaint them).
       const [text, bg, primary, secondary, accent] = entryColors(e);
+      const heading = (e.tokens && e.tokens['--font-heading']) || '';
+      const headingVar = heading ? `--tc-row-heading:${heading};` : '';
       const sel = state.style === id;
-      return `<button data-id="${id}" class="${sel ? 'tc-sel' : ''}" aria-pressed="${sel}" style="--tc-row-text:${text};--tc-row-bg:${bg};--tc-row-primary:${primary};--tc-row-secondary:${secondary};--tc-row-accent:${accent}">
-        <span class="tc-row-name">${e.label}</span>
-        <span class="tc-row-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-        <i class="fa-solid fa-check tc-row-check" aria-hidden="true"></i>
+      return `<button data-id="${id}" class="${sel ? 'tc-sel' : ''}" aria-pressed="${sel}" style="--tc-row-text:${text};--tc-row-bg:${bg};--tc-row-primary:${primary};--tc-row-secondary:${secondary};--tc-row-accent:${accent};${headingVar}">
+        <span class="tc-wm-name">${e.label}</span>
+        <span class="tc-wm-rule" aria-hidden="true"></span>
       </button>`;
     }).join('');
     host.querySelectorAll('button').forEach(b => {
       b.addEventListener('click', () => switchStyle(b.dataset.id));
+    });
+  }
+
+  // The wordmark cards render each theme's name in its own heading font, so
+  // every style's Google Font has to be loaded — not just the active one.
+  // Idempotent: skips fonts already in <head>. Deferred to idle so the cost
+  // lands after first paint; visitors who never open the menu still pay it,
+  // but the requests are non-blocking with display=swap.
+  let fontsLoaded = false;
+  function loadAllFonts() {
+    if (fontsLoaded) return;
+    fontsLoaded = true;
+    const seen = new Set();
+    STYLE_ORDER.forEach(id => {
+      const e = REGISTRY[id];
+      if (!e || !Array.isArray(e.fonts)) return;
+      e.fonts.forEach(href => {
+        if (seen.has(href)) return;
+        seen.add(href);
+        if (document.querySelector('link[href="' + href + '"]')) return;
+        const l = document.createElement('link');
+        l.rel = 'stylesheet';
+        l.href = href;
+        document.head.appendChild(l);
+      });
     });
   }
 
@@ -436,26 +464,53 @@
       if (overflowRight > 0) dock.style.right = overflowRight + 'px';
       else if (r.left < margin) dock.style.right = (r.left - margin) + 'px';
     }
+    // .moving-menu carries its own backdrop-filter: blur(20px), and nested
+    // backdrop filters don't compose — a descendant's blur sees only its
+    // ancestor's offscreen group buffer, not the real page behind it. So when
+    // the trigger lives inside .moving-menu, park the dock on document.body
+    // (escaping the CSS group) and position it with fixed coords from the
+    // trigger's rect. Anywhere else, the in-place li.appendChild path keeps
+    // the dock anchored to its trigger and scrolling with the page.
+    function positionFloating(li) {
+      const trigger = li.querySelector('.tc-nav-trigger') || li;
+      const r = trigger.getBoundingClientRect();
+      dock.style.top = (r.bottom + 10) + 'px';
+      dock.style.right = Math.max(10, window.innerWidth - r.right) + 'px';
+    }
     function open(li, pin) {
       clearTimeout(closeTimer);
       if (openItem && openItem !== li) setExpanded(openItem, false);
-      if (dock.parentElement !== li) li.appendChild(dock);
+      const floating = !!li.closest('.moving-menu');
+      if (floating) {
+        if (dock.parentElement !== document.body) document.body.appendChild(dock);
+        dock.classList.add('tc-floating');
+      } else {
+        dock.classList.remove('tc-floating');
+        if (dock.parentElement !== li) li.appendChild(dock);
+      }
       dock.classList.remove('tc-hidden');
       setExpanded(li, true);
       openItem = li;
       pinned = !!pin;
-      clampDock();
+      if (floating) positionFloating(li);
+      else clampDock();
     }
     function close() {
       clearTimeout(closeTimer);
       if (!openItem) return;
       dock.classList.add('tc-hidden');
+      dock.classList.remove('tc-floating');
       dock.style.right = '';
+      dock.style.top = '';
       setExpanded(openItem, false);
       openItem = null;
       pinned = false;
     }
-    window.addEventListener('resize', () => { if (openItem) clampDock(); });
+    window.addEventListener('resize', () => {
+      if (!openItem) return;
+      if (dock.classList.contains('tc-floating')) positionFloating(openItem);
+      else clampDock();
+    });
 
     navItems.forEach(li => {
       const btn = li.querySelector('.tc-nav-trigger');
@@ -481,6 +536,20 @@
           closeTimer = setTimeout(close, 300);
         });
       }
+    });
+
+    // When the dock is detached to document.body for the moving-menu case,
+    // the trigger li's mouseleave fires the instant the cursor crosses into
+    // the dock — there's no DOM containment to keep us inside. Track hover
+    // on the dock itself so a hover-opened panel survives the trip from
+    // trigger to dock.
+    dock.addEventListener('mouseenter', () => {
+      if (dock.classList.contains('tc-floating')) clearTimeout(closeTimer);
+    });
+    dock.addEventListener('mouseleave', () => {
+      if (!dock.classList.contains('tc-floating') || !openItem || pinned) return;
+      clearTimeout(closeTimer);
+      closeTimer = setTimeout(close, 300);
     });
 
     // Touching the controls pins a hover-opened dropdown, so it survives the
@@ -532,6 +601,12 @@
     applyColors();
     renderSchemes();
     renderPresets();
+
+    // Defer loading every theme's Google Fonts so the wordmark cards render
+    // each name in its own heading typography. Idle so the cost lands after
+    // first paint; falls back to a 800ms timeout where rIC is unavailable.
+    const idle = window.requestIdleCallback || function (fn) { return setTimeout(fn, 800); };
+    idle(loadAllFonts, { timeout: 2500 });
 
     document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;

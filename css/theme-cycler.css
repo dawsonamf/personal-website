@@ -102,7 +102,8 @@
   right: 20px;
   bottom: 20px;
   z-index: 9999;
-  width: 240px;
+  width: 268px;
+  max-width: calc(100vw - 40px);
   padding: 14px;
   background: var(--text10);
   color: var(--text);
@@ -112,12 +113,24 @@
   font-family: var(--font-body, sans-serif);
   font-size: 13px;
   backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   box-shadow: 0 14px 40px rgba(0,0,0,0.3);
   /* Column layout so the styles list can scroll on short viewports while
      the header and action rows stay put. */
   display: flex;
   flex-direction: column;
   max-height: calc(100vh - 40px);
+}
+
+/* Floating mode: the dock detaches to document.body when opened from the
+   moving menu so its own backdrop-filter actually works (the moving menu
+   has backdrop-filter: blur(20px), and nested backdrop filters don't
+   compose). JS sets top/right inline from the trigger's rect; we just need
+   position: fixed and to clear the .tc-dropdown defaults. */
+.tc-dock.tc-dropdown.tc-floating {
+  position: fixed;
+  top: auto;
+  right: auto;
 }
 
 .tc-header {
@@ -148,8 +161,10 @@
 }
 .tc-close:hover { color: var(--text); }
 
-/* Action rows: one full-width button per line, pinned above the styles
-   list (Shuffle, Reset, and the Advanced reveal). */
+/* Action rows: one card-styled button per line (Shuffle, Reset, and the
+   Advanced reveal). They wear the active theme's heading face + primary
+   color on the theme bg, so they read as command cards that pair visually
+   with the preset wordmark cards below. */
 .tc-actions {
   display: flex;
   flex-direction: column;
@@ -161,48 +176,45 @@
   align-items: center;
   gap: 9px;
   width: 100%;
-  padding: 8px 11px;
-  border-radius: 10px;
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--text20);
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
   cursor: pointer;
-  font-size: 12px;
-  font-family: inherit;
+  font-family: var(--font-heading, inherit);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.01em;
   text-align: left;
-  transition: 0.25s ease-in-out;
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
 .tc-action i {
-  font-size: 13px;
-  width: 15px;
+  font-size: 12px;
+  width: 14px;
   text-align: center;
   color: var(--accent);
-  transition: color 0.25s ease-in-out;
 }
 .tc-action:hover {
-  background: var(--accent);
+  transform: translateY(-1px);
   border-color: var(--accent);
-  color: var(--bg);
 }
-.tc-action:hover i { color: var(--bg); }
 
 .tc-action .tc-action-caret {
   margin-left: auto;
   width: auto;
   font-size: 10px;
   color: var(--text50);
-  transition: transform 0.25s ease-in-out, color 0.25s ease-in-out;
+  transition: transform 0.25s ease-in-out;
 }
-.tc-action:hover .tc-action-caret { color: var(--bg); }
 .tc-action.tc-open .tc-action-caret { transform: rotate(180deg); }
 
-/* Styles list: one full-width row per style, each painted in its own
-   registry palette — bg as the row ground, text on the label, and
-   primary/secondary/accent as the dots (base colors; randomized palettes
-   don't repaint them). Scrolls when the viewport runs short. */
+/* Styles list: 2-col grid of wordmark cards. Each card wears its theme's
+   palette as CSS vars (--tc-row-*), so randomized palettes don't repaint
+   them. Scrolls when the viewport runs short. */
 .tc-presets {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 6px;
   margin-top: 12px;
   padding-top: 12px;
@@ -214,59 +226,46 @@
 }
 .tc-presets button {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  flex-shrink: 0;
-  padding: 9px 11px;
-  border-radius: 10px;
-  border: 1px solid color-mix(in srgb, var(--tc-row-text) 22%, transparent);
+  justify-content: center;
+  gap: 7px;
+  min-height: 78px;
+  padding: 14px 10px;
   background: var(--tc-row-bg);
-  color: var(--tc-row-text);
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--tc-row-text) 14%, transparent);
   cursor: pointer;
   font-family: inherit;
-  font-size: 12px;
-  line-height: 1.2;
-  text-align: left;
-  transition: border-color 0.25s ease-in-out, box-shadow 0.25s ease-in-out;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
-.tc-presets button:hover { border-color: var(--tc-row-accent); }
+.tc-presets button:hover {
+  transform: translateY(-1px);
+  border-color: var(--tc-row-accent);
+}
 .tc-presets button.tc-sel {
   border-color: var(--tc-row-accent);
-  box-shadow: inset 0 0 0 1px var(--tc-row-accent);
+  box-shadow: 0 0 0 1px var(--tc-row-accent);
 }
-
-.tc-row-name {
-  flex: 1;
-  min-width: 0;
+.tc-wm-name {
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  font-family: var(--tc-row-heading, inherit);
+  color: var(--tc-row-primary);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
 }
-
-.tc-row-dots {
-  display: flex;
-  gap: 3px;
-  flex-shrink: 0;
+.tc-wm-rule {
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--tc-row-accent);
 }
-.tc-row-dots span {
-  width: 9px;
-  height: 9px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--tc-row-text) 30%, transparent);
-}
-.tc-row-dots span:nth-child(1) { background: var(--tc-row-primary); }
-.tc-row-dots span:nth-child(2) { background: var(--tc-row-secondary); }
-.tc-row-dots span:nth-child(3) { background: var(--tc-row-accent); }
-
-/* The check column is always reserved so dots line up across rows. */
-.tc-row-check {
-  flex-shrink: 0;
-  font-size: 10px;
-  color: var(--tc-row-accent);
-  visibility: hidden;
-}
-.tc-presets button.tc-sel .tc-row-check { visibility: visible; }
 
 .tc-advanced {
   border-top: 1px solid var(--text20);
@@ -280,8 +279,10 @@
 
 .tc-group-label {
   display: block;
+  font-family: var(--font-heading, inherit);
   font-size: 11px;
-  color: var(--text50);
+  font-weight: 700;
+  color: var(--primary);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 8px;
@@ -293,18 +294,20 @@
   gap: 5px;
 }
 .tc-schemes button {
-  padding: 4px 10px;
+  padding: 5px 10px;
   border-radius: 999px;
-  border: 1px solid var(--text20);
-  background: transparent;
-  color: var(--text);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: var(--bg);
+  color: var(--primary);
   cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: -0.01em;
   text-transform: lowercase;
-  transition: 0.25s ease-in-out;
+  transition: 0.2s ease-in-out;
 }
-.tc-schemes button:hover { border-color: var(--accent); color: var(--accent); }
+.tc-schemes button:hover { border-color: var(--accent); }
 .tc-schemes button.tc-sel {
   background: var(--accent);
   color: var(--bg);
