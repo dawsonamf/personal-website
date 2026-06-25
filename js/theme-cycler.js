@@ -419,18 +419,11 @@
       <div class="tc-presets" id="tc-presets"></div>
     `;
 
-    // Pages with the nav menus get the dropdown (js/nav-config.js renders a
-    // .tc-nav-item trigger into each menu); pages without them (blog posts,
-    // privacy, lexchat, 404) keep the floating palette FAB.
     const navItems = document.querySelectorAll('.tc-nav-item');
-    if (navItems.length) {
-      dock.classList.add('tc-dropdown');
-      navItems[0].appendChild(dock);
-      wireNavDropdown(dock, navItems);
-    } else {
-      document.body.appendChild(dock);
-      wireFab(dock);
-    }
+    if (!navItems.length) return;
+    dock.classList.add('tc-dropdown');
+    navItems[0].appendChild(dock);
+    wireNavDropdown(dock, navItems);
 
     document.getElementById('tc-randomize').addEventListener('click', randomize);
     document.getElementById('tc-reset').addEventListener('click', resetToDefault);
@@ -564,31 +557,6 @@
     document.getElementById('tc-close').addEventListener('click', close);
     document.addEventListener('click', () => close());
     document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
-  }
-
-  // Floating palette button, bottom right: the fallback surface for pages
-  // without the nav menus.
-  function wireFab(dock) {
-    const toggle = document.createElement('button');
-    toggle.className = 'tc-toggle';
-    toggle.id = 'tc-toggle';
-    toggle.title = 'Customize theme';
-    toggle.setAttribute('aria-label', 'Customize theme');
-    toggle.innerHTML = '<i class="fa-solid fa-palette"></i>';
-    document.body.appendChild(toggle);
-
-    function closeDock() {
-      dock.classList.add('tc-hidden');
-      toggle.classList.remove('tc-hidden');
-    }
-    toggle.addEventListener('click', () => {
-      dock.classList.remove('tc-hidden');
-      toggle.classList.add('tc-hidden');
-    });
-    document.getElementById('tc-close').addEventListener('click', closeDock);
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && !dock.classList.contains('tc-hidden')) closeDock();
-    });
   }
 
   function boot() {

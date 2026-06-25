@@ -4,8 +4,7 @@
    menu (text + caret on desktop, palette icon in the mobile quick-links row)
    and js/theme-cycler.js parks the dock under whichever trigger opened it.
    The triggers also carry .menu-item / .socials-item, so the per-style menu
-   skins restyle them with no extra rules. Pages without the nav menus fall
-   back to the .tc-toggle FAB below. */
+   skins restyle them with no extra rules. */
 
 .tc-nav-item {
   position: relative;
@@ -71,30 +70,6 @@
 @keyframes tc-drop {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-.tc-toggle {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  z-index: 9998;
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--accent);
-  border: 1px solid var(--accent);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  transition: 0.3s ease-in-out;
-}
-.tc-toggle:hover {
-  transform: translateY(-3.5px);
-  background-color: var(--accent);
-  color: var(--bg);
 }
 
 .tc-dock {

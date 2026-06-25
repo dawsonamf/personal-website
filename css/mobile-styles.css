@@ -39,6 +39,10 @@
     width: auto;
   }
 
+  .static-menu-mobile .tc-nav-trigger i {
+    font-size: 20px;
+  }
+
   .static-menu-mobile .menu-list {
     align-items: center;
     justify-content: center;
