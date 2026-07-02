@@ -185,13 +185,19 @@ The final numbers:
 
 | Metric                        | Value                                                                                         |
 | ----------------------------- | --------------------------------------------------------------------------------------------- |
-| macOS arm64 stripped binary   | **183.7 KB** (188,176 bytes)                                                                  |
-| Linux aarch64 stripped binary | **195.0 KB** (199,680 bytes)                                                                  |
+| macOS arm64 stripped binary   | **200.8 KB** (205,688 bytes)                                                                  |
+| Linux aarch64 stripped binary | **195.0 KB** (199,704 bytes)                                                                  |
+| WebAssembly (WASI) binary     | **207.8 KB** (212,826 bytes)                                                                  |
 | Startup to interactive prompt | **~120 ms** (mean of 30 runs, σ=1.9ms)                                                        |
-| Tools                         | 10 (sh, read_file, write_file, str_replace, glob, grep, web_search, web_fetch, subagent, mcp) |
+| Tools (native)                | 10 (sh, read_file, write_file, str_replace, glob, grep, web_search, web_fetch, subagent, mcp) |
+| Tools (wasm)                  | 7 (read_file, write_file, str_replace, web_search, web_fetch, subagent, mcp)                  |
 | Swift source files            | 16                                                                                            |
 | C shim/support headers        | 4                                                                                             |
 | External C libraries vendored | 2 (cJSON, libcurl via system)                                                                 |
 
+
+## Try It in Your Browser
+
+Update: I added WebAssembly as a compilation target, so now you can [run it live in your browser](/embedded-swift-agent/). It's the same Swift code, the only changes are the os level interop: a fetch() bridge instead of libcurl and using JSPI to suspend the (synchronous) agent loop whenever the browser needs to await something. It runs on Chrome and Edge 137+. It has no sh, glob, or grep tools (WASI preview 1 has no process spawning) but it does have access to an in tab memory filesystem for the read and write tools. Tip: ask it about me, my projects, etc. Have fun chatting!
 
 [github.com/dawsonamf/EmbeddedSwiftAgent](https://github.com/dawsonamf/EmbeddedSwiftAgent)

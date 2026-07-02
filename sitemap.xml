@@ -44,9 +44,15 @@
   </url>
   <url>
     <loc>https://www.dawsonamf.com/blog/post.html?id=embedded-swift-agent</loc>
-    <lastmod>2026-02-01</lastmod>
+    <lastmod>2026-07-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.dawsonamf.com/embedded-swift-agent/</loc>
+    <lastmod>2026-07-02</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://www.dawsonamf.com/blog/post.html?id=metr-doubling</loc>

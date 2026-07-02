@@ -177,6 +177,13 @@
   padding: 4px 12px;
 }
 
+/* Row of CTA buttons — supports one or two links per card. */
+.fc-card-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
 .fc-card-cta {
   display: inline-flex;
   align-items: center;

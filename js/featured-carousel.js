@@ -67,10 +67,18 @@
     track.innerHTML = featuredProjects.map(function (proj) {
       const techHTML = proj.tech.map(function (t) { return '<span class="pill">' + t + '</span>'; }).join('');
       const linkTarget = proj.external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      const linkTarget2 = proj.external2 ? ' target="_blank" rel="noopener noreferrer"' : linkTarget;
       const imgSrc = isSubpage ? proj.image : proj.image.replace(/^\.\.\//, '');
       const url = proj.url ? (isSubpage ? proj.url : proj.url.replace(/^\.\.\//, '')) : '';
+      const url2 = proj.url2 ? (isSubpage ? proj.url2 : proj.url2.replace(/^\.\.\//, '')) : '';
       const ctaHTML = proj.url && proj.ctaLabel
         ? '<a class="fc-card-cta" href="' + url + '"' + linkTarget + '>' + proj.ctaLabel + '</a>'
+        : '';
+      const cta2HTML = proj.url2 && proj.ctaLabel2
+        ? '<a class="fc-card-cta" href="' + url2 + '"' + linkTarget2 + '>' + proj.ctaLabel2 + '</a>'
+        : '';
+      const ctasHTML = (ctaHTML || cta2HTML)
+        ? '<div class="fc-card-ctas">' + ctaHTML + cta2HTML + '</div>'
         : '';
       return '<div class="fc-card">' +
         '<div class="fc-card-image"><img src="' + imgSrc + '" alt="' + proj.title + '"></div>' +
@@ -78,7 +86,7 @@
           '<h3 class="fc-card-title">' + proj.title + '</h3>' +
           '<p class="fc-card-desc">' + proj.description + '</p>' +
           '<div class="fc-card-tech">' + techHTML + '</div>' +
-          ctaHTML +
+          ctasHTML +
         '</div></div>';
     }).join('');
   }
