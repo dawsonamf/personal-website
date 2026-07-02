@@ -197,6 +197,39 @@
   }
 }
 
+.blog-post-content figure.blog-figure {
+  margin: 1.5em auto;
+  text-align: center;
+}
+
+.blog-post-content figure.blog-figure img.blog-image {
+  display: block;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.blog-post-content figure.blog-figure figcaption {
+  margin-top: 0.75em;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text50);
+  font-style: italic;
+}
+
+.blog-post-content .blog-figure-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
+  margin: 1.5em 0;
+}
+
+.blog-post-content .blog-figure-row figure.blog-figure {
+  margin: 0;
+  flex: 1 1 280px;
+}
+
 .blog-post-content table {
   width: 100%;
   border-collapse: collapse;
@@ -215,21 +248,29 @@
   font-weight: 600;
 }
 
-.blog-nav {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  max-width: 750px;
-  margin: 0 auto;
-}
-
-
 #main-body {
   min-width: auto;
 }
 
-.blog-nav .name-logo {
-  margin: 0;
+/* Post pages have no intro typing animation to fade the nav in (that runs only
+   on the home and listing pages), so reveal the static menus immediately. The
+   logo uses .name-logo-visible; the moving menu is scroll-driven already. */
+.blog-post-page .static-menu,
+.blog-post-page .static-menu-mobile {
+  opacity: 1;
+}
+
+/* The site nav is built for full-width pages, so the logo and menu would sit at
+   the far viewport edges while a post is a centered 750px reading column (see
+   .blog-post-container). Constrain the bar, and the scroll-up moving menu, to
+   that same column so the D and the menu line up with the article. */
+.blog-post-page .header-menu-container {
+  max-width: 750px;
+  margin: 0 auto;
+}
+.blog-post-page .moving-menu {
+  right: max(10px, calc(50% - 375px));
+  margin-right: 0;
 }
 
 .blog-footer {

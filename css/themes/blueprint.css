@@ -838,11 +838,6 @@
   margin: 24px auto 0;
 }
 
-[data-style="blueprint"] .blog-nav {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 [data-style="blueprint"] .blog-post-header {
   border-bottom: 1px solid var(--text55);
   padding-bottom: 20px;

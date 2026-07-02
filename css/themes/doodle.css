@@ -744,11 +744,6 @@
   margin: 24px auto 0;
 }
 
-[data-style="doodle"] .blog-nav {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 [data-style="doodle"] .blog-post-title {
   color: var(--text);
   font-weight: 400;

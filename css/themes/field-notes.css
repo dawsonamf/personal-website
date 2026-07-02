@@ -702,11 +702,6 @@
   margin: 24px auto 0;
 }
 
-[data-style="field-notes"] .blog-nav {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 /* One strip of tape holds the sheet to the page. */
 [data-style="field-notes"] .blog-post-container::before {
   top: -11px;

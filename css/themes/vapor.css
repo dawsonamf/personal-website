@@ -675,11 +675,6 @@
   margin: 24px auto 0;
 }
 
-[data-style="vapor"] .blog-nav {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 [data-style="vapor"] .blog-post-title {
   color: var(--text);
   font-weight: 800;

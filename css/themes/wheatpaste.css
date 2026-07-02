@@ -774,11 +774,6 @@
   margin: 24px auto 0;
 }
 
-[data-style="wheatpaste"] .blog-nav {
-  padding-left: 0;
-  padding-right: 0;
-}
-
 [data-style="wheatpaste"] .blog-post-title {
   color: var(--bg);
   font-size: clamp(30px, 4vw, 38px);

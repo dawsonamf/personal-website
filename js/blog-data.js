@@ -38,8 +38,8 @@ const FEATURED_PROJECTS = [
     image: "../resources/Helm_All.png",
     tech: ["TypeScript", "VSCode API", "Webview", "CSP", "esbuild"],
     accentColor: "#61ffda",
-    url: "https://github.com/dawsonamf/helm",
-    ctaLabel: "View on GitHub",
+    url: "https://marketplace.visualstudio.com/items?itemName=dawsonamf.project-helm",
+    ctaLabel: "View on VS Code Marketplace",
     external: true,
   },
   {

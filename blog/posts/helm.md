@@ -80,7 +80,7 @@ You can drag workspace cards between spaces by dragging a card over a different 
 
 ## Distribution
 
-Helm isn't on the VS Code Marketplace. It's distributed as a `.vsix` file through GitHub Releases. I made an install script that handles the whole process:
+Helm is published on the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dawsonamf.project-helm). You can install it directly from the Extensions tab in VS Code or Cursor by searching "Helm Workspace Switcher." It's also available as a `.vsix` file through GitHub Releases, with an install script that handles the whole process:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/dawsonamf/helm/main/install.sh | bash
@@ -88,4 +88,4 @@ curl -fsSL https://raw.githubusercontent.com/dawsonamf/helm/main/install.sh | ba
 
 The script detects whether you have Cursor, VS Code, or both installed (in which case it lets you pick which to install into), downloads the latest `.vsix` from the GitHub API, and runs the install command. For local development there's a Makefile that packages, installs, and restarts the editor (the editor must restart to test changes) in one command.
 
-[github.com/dawsonamf/helm](https://github.com/dawsonamf/helm)
+[VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=dawsonamf.project-helm) | [github.com/dawsonamf/helm](https://github.com/dawsonamf/helm)
