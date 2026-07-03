@@ -32,8 +32,10 @@
     body { display: flex; align-items: center; justify-content: center; }
 
     /* The floating mac window — hosts the setup form first, then the running
-       agent. Fixed size; resizing it is just ceremony. */
+       agent. Starts flex-centered; the window manager script pins it to fixed
+       coordinates the first time you drag, resize, or zoom it. */
     #window {
+      position: relative;
       display: flex;
       flex-direction: column;
       width: min(760px, 94vw);
@@ -44,6 +46,11 @@
       box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
       overflow: hidden;
     }
+    /* Applied only for the zoom (maximize/restore) animation. */
+    #window.zooming {
+      transition: left 0.2s ease, top 0.2s ease, width 0.2s ease,
+                  height 0.2s ease, border-radius 0.2s ease;
+    }
 
     .titlebar {
       position: relative;
@@ -53,12 +60,58 @@
       padding: 0 14px;
       background: var(--titlebar);
       border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
     }
+    #window.maximized .titlebar { cursor: default; }
     .lights { display: flex; gap: 8px; }
-    .light { width: 12px; height: 12px; border-radius: 50%; }
+    .light {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      appearance: none;
+    }
     .light.red { background: #ff5f57; }
     .light.yellow { background: #febc2e; }
     .light.green { background: #28c840; }
+    button.light { cursor: pointer; }
+    /* macOS-style glyphs, revealed when hovering the light cluster. Yellow is
+       decorative only, so it gets no glyph. */
+    .light::after {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.55);
+      opacity: 0;
+    }
+    .lights:hover .light::after { opacity: 1; }
+    .light.red::after { content: "\00d7"; }
+    .light.green::after { content: "\2922"; font-size: 8px; }
+    #window.maximized .light.green::after { content: "\2921"; }
+
+    /* Invisible corner grips for resizing. */
+    .resize-handle {
+      position: absolute;
+      z-index: 10;
+      width: 14px;
+      height: 14px;
+      touch-action: none;
+    }
+    .resize-handle.nw { top: 0; left: 0; cursor: nwse-resize; }
+    .resize-handle.ne { top: 0; right: 0; cursor: nesw-resize; }
+    .resize-handle.sw { bottom: 0; left: 0; cursor: nesw-resize; }
+    .resize-handle.se { bottom: 0; right: 0; cursor: nwse-resize; }
+    #window.maximized .resize-handle { display: none; }
     .title {
       position: absolute;
       left: 0;
@@ -164,12 +217,17 @@
   <div id="window">
     <div class="titlebar">
       <div class="lights">
-        <span class="light red"></span>
+        <button class="light red" type="button" id="light-back" aria-label="Go back"></button>
         <span class="light yellow"></span>
-        <span class="light green"></span>
+        <button class="light green" type="button" id="light-zoom" aria-label="Zoom"></button>
       </div>
       <div class="title">EmbeddedSwiftAgent</div>
     </div>
+
+    <div class="resize-handle nw"></div>
+    <div class="resize-handle ne"></div>
+    <div class="resize-handle sw"></div>
+    <div class="resize-handle se"></div>
 
     <div class="window-body">
       <div id="terminal-wrap"><div id="terminal"></div></div>
@@ -215,6 +273,138 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.min.js"></script>
+  <script>
+    // Window manager: drag by the titlebar, resize from the corners, red
+    // light = back, green light = zoom (maximize/restore). Kept separate from
+    // the module script so the chrome works even if the agent fails to load.
+    (() => {
+      const win = document.getElementById("window");
+      const titlebar = win.querySelector(".titlebar");
+      const MIN_W = 380, MIN_H = 300;
+      let maximized = false;
+      let restoreRect = null;
+
+      const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+      // The window starts flex-centered by the body; before the first move or
+      // resize, freeze it at its current spot as a fixed-position element.
+      function pin() {
+        if (win.style.position === "fixed") return;
+        const r = win.getBoundingClientRect();
+        Object.assign(win.style, {
+          position: "fixed",
+          left: r.left + "px",
+          top: r.top + "px",
+          width: r.width + "px",
+          height: r.height + "px",
+        });
+      }
+
+      function setRect(l, t, w, h) {
+        win.style.left = l + "px";
+        win.style.top = t + "px";
+        win.style.width = w + "px";
+        win.style.height = h + "px";
+      }
+
+      // Drag to move — clamped so the titlebar always stays reachable.
+      titlebar.addEventListener("pointerdown", (e) => {
+        if (maximized || e.button !== 0 || e.target.closest(".light")) return;
+        pin();
+        e.preventDefault();
+        titlebar.style.cursor = "grabbing";
+        const startX = e.clientX, startY = e.clientY;
+        const startL = parseFloat(win.style.left);
+        const startT = parseFloat(win.style.top);
+        titlebar.setPointerCapture(e.pointerId);
+        const move = (ev) => {
+          win.style.left = clamp(startL + ev.clientX - startX,
+            80 - win.offsetWidth, innerWidth - 80) + "px";
+          win.style.top = clamp(startT + ev.clientY - startY,
+            0, innerHeight - 40) + "px";
+        };
+        const up = () => {
+          titlebar.style.cursor = "";
+          titlebar.removeEventListener("pointermove", move);
+          titlebar.removeEventListener("pointerup", up);
+          titlebar.removeEventListener("pointercancel", up);
+        };
+        titlebar.addEventListener("pointermove", move);
+        titlebar.addEventListener("pointerup", up);
+        titlebar.addEventListener("pointercancel", up);
+      });
+
+      // Corner grips: the opposite corner stays anchored while you drag.
+      for (const handle of win.querySelectorAll(".resize-handle")) {
+        const grabW = handle.classList.contains("nw") || handle.classList.contains("sw");
+        const grabN = handle.classList.contains("nw") || handle.classList.contains("ne");
+        handle.addEventListener("pointerdown", (e) => {
+          if (e.button !== 0) return;
+          pin();
+          e.preventDefault();
+          const startX = e.clientX, startY = e.clientY;
+          const s = {
+            l: parseFloat(win.style.left), t: parseFloat(win.style.top),
+            w: parseFloat(win.style.width), h: parseFloat(win.style.height),
+          };
+          const right = s.l + s.w, bottom = s.t + s.h;
+          handle.setPointerCapture(e.pointerId);
+          const move = (ev) => {
+            const dx = ev.clientX - startX, dy = ev.clientY - startY;
+            let { l, t, w, h } = s;
+            if (grabW) { w = clamp(s.w - dx, MIN_W, right); l = right - w; }
+            else { w = clamp(s.w + dx, MIN_W, innerWidth - s.l); }
+            if (grabN) { h = clamp(s.h - dy, MIN_H, bottom); t = bottom - h; }
+            else { h = clamp(s.h + dy, MIN_H, innerHeight - s.t); }
+            setRect(l, t, w, h);
+          };
+          const up = () => {
+            handle.removeEventListener("pointermove", move);
+            handle.removeEventListener("pointerup", up);
+            handle.removeEventListener("pointercancel", up);
+          };
+          handle.addEventListener("pointermove", move);
+          handle.addEventListener("pointerup", up);
+          handle.addEventListener("pointercancel", up);
+        });
+      }
+
+      // Green light: zoom to fill the page, or shrink back to the prior rect.
+      function toggleZoom() {
+        pin();
+        win.classList.add("zooming");
+        if (!maximized) {
+          restoreRect = {
+            left: win.style.left, top: win.style.top,
+            width: win.style.width, height: win.style.height,
+          };
+          setRect(0, 0, innerWidth, innerHeight);
+          win.style.borderRadius = "0";
+        } else {
+          Object.assign(win.style, restoreRect);
+          win.style.borderRadius = "";
+        }
+        maximized = !maximized;
+        win.classList.toggle("maximized", maximized);
+        setTimeout(() => win.classList.remove("zooming"), 260);
+      }
+      document.getElementById("light-zoom").addEventListener("click", toggleZoom);
+      titlebar.addEventListener("dblclick", (e) => {
+        if (!e.target.closest(".light")) toggleZoom();
+      });
+
+      // While maximized, track viewport size changes.
+      addEventListener("resize", () => {
+        if (maximized) setRect(0, 0, innerWidth, innerHeight);
+      });
+
+      // Red light: back to wherever you came from.
+      document.getElementById("light-back").addEventListener("click", () => {
+        if (history.length > 1) history.back();
+        else location.href = "/";
+      });
+    })();
+  </script>
   <script type="module">
     import { bootAgent, jspiSupported } from "./agent.js";
 
@@ -234,6 +424,8 @@
     term.open(document.getElementById("terminal"));
     fit.fit();
     addEventListener("resize", () => fit.fit());
+    // Refit whenever the window itself is resized or zoomed.
+    new ResizeObserver(() => fit.fit()).observe(document.getElementById("window"));
 
     const $ = (id) => document.getElementById(id);
     const setup = $("setup");
