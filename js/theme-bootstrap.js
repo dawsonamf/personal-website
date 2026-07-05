@@ -207,6 +207,33 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Patrick+Hand&display=swap'],
       css: '/css/themes/doodle.css',
     },
+    'space': {
+      id: 'space',
+      label: 'Space',
+      polarity: 'dark',
+      // No flags: cards float weightless — tilt stays on, AOS entrances
+      // stay as docking approaches, and the cursor follower reads as a
+      // nav reticle. No typing key either: the classic caret stays — a
+      // console cursor is already on-grammar (the palette turns it cyan).
+      // Mission control: ice-white readout type on the void, guidance-blue
+      // interactives, cyan reserved for HUD marks (indices, live edges).
+      colors: { text:'#dbe7f4', bg:'#050810', primary:'#5b9dff', secondary:'#0b1322', accent:'#4de3ff' },
+      tokens: {
+        '--font-body': "'Inter', sans-serif",
+        '--font-heading': "'Space Grotesk', sans-serif",
+        '--font-mono': "'IBM Plex Mono', monospace",
+        '--border-radius': '10px',
+        '--radius-pill': '999px',
+        '--neutral-gray': '#7e8ca3',
+        // Selected jobs entry reads as the lit instrument panel; hover is
+        // a step brighter into the navy.
+        '--jobs-menu-navy-dark': '#0b1322',
+        '--jobs-menu-navy': '#101b31',
+        '--jobs-menu-slate': '#8496b3',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap'],
+      css: '/css/themes/space.css',
+    },
     'vapor': {
       id: 'vapor',
       label: 'Vaporwave',
@@ -520,7 +547,7 @@
       css: '/css/themes/neo-pop.css',
     },
   };
-  var ORDER = ['default', 'brutalist', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'vapor', 'wanted', 'banknote', 'constructivist', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste'];
+  var ORDER = ['default', 'brutalist', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'space', 'vapor', 'wanted', 'banknote', 'constructivist', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

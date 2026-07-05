@@ -1,0 +1,873 @@
+/* Space: mission control / spacecraft glass cockpit. A deep-space ground
+   under two parallax starfields — scattered, irregular stars on fixed
+   layers that drift at different rates as the page scrolls, so the void
+   has depth — with a faint nebula wash falling out of the top of the
+   page. Ice-white Space Grotesk display type, Inter body, and IBM Plex
+   Mono running every label like telemetry readout. Interactives are
+   guidance-blue; the cyan accent is reserved for HUD marks — section
+   indices, carets, live edges. Surfaces are glass panels: near-black navy
+   plates with hairline borders, undecorated — the color stays in the type
+   and the marks. Motion stays on — cards float weightless (tilt), AOS
+   entrances stay as docking approaches, and the cursor follower reads as
+   a nav reticle. The classic typed caret stays: a console cursor IS the
+   grammar (recolored cyan by the palette, no work needed).
+
+   Scoped Layer-2 skin, same contract as the other sheets in this
+   directory. Line/shadow stance: every hairline, wash, and glow derives
+   from the alpha ramps (--text*, --primary*, --accent*) so the palette
+   toy keeps working; the only literals are the black depth shadows under
+   floating panels (a shadow is dark under any palette, the established
+   precedent). Legibility rule: glow lives on HUD marks and display type
+   only — body copy never glows. Space Grotesk loads 500/600/700 and
+   headings pin to the loaded 700; Inter loads 400/500/600/700. */
+
+
+/* ---- Foundations: deep space, starfield, guidance selection --------------- */
+
+[data-style="space"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* The void. The ground color and the nebula washes move up to <html> so
+   the page canvas carries them: body goes transparent, because the star
+   layers live on body's pseudos at z-index -1 — an opaque body background
+   would paint over them. */
+[data-style="space"] {
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 90% 60% at 70% -10%, var(--primary10), transparent 60%),
+    linear-gradient(180deg, var(--secondary60) 0%, transparent 480px);
+  background-repeat: no-repeat;
+}
+
+[data-style="space"] body {
+  background: transparent;
+}
+
+/* Two parallax starfields on fixed, composited layers. Each layer is one
+   large tile of hand-placed stars (irregular positions and brightnesses —
+   a repeating dot grid reads as wallpaper, not sky). The layers are
+   position: fixed and move only by transform, which runs on the
+   compositor — this is NOT background-attachment: fixed, which would
+   repaint the full field on every scroll tick (the reason the other dark
+   skins left their fields scrolling). Oversized top/bottom so the drift
+   never reveals an edge. */
+[data-style="space"] body::before,
+[data-style="space"] body::after {
+  content: '';
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: -260px;
+  bottom: -260px;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Far field: small, dim, dense — the distant background of the sky. */
+[data-style="space"] body::before {
+  background-image:
+    radial-gradient(1.3px 1.3px at 37px 41px, var(--text35), transparent),
+    radial-gradient(1.1px 1.1px at 152px 96px, var(--text25), transparent),
+    radial-gradient(1.4px 1.4px at 251px 23px, var(--text30), transparent),
+    radial-gradient(1.1px 1.1px at 329px 174px, var(--text20), transparent),
+    radial-gradient(1.3px 1.3px at 92px 233px, var(--text30), transparent),
+    radial-gradient(1.1px 1.1px at 199px 311px, var(--text25), transparent),
+    radial-gradient(1.4px 1.4px at 401px 289px, var(--text35), transparent),
+    radial-gradient(1.1px 1.1px at 283px 391px, var(--text20), transparent),
+    radial-gradient(1.3px 1.3px at 55px 356px, var(--text30), transparent),
+    radial-gradient(1.1px 1.1px at 431px 87px, var(--text25), transparent);
+  background-size: 460px 460px;
+}
+
+/* Near field: sparser and brighter, with a few standout stars carrying a
+   cold blue-cyan tinge in their halo. */
+[data-style="space"] body::after {
+  background-image:
+    radial-gradient(2.6px 2.6px at 121px 83px, var(--text90) 30%, var(--accent25) 55%, transparent),
+    radial-gradient(1.7px 1.7px at 331px 209px, var(--text55), transparent),
+    radial-gradient(1.6px 1.6px at 483px 61px, var(--text45), transparent),
+    radial-gradient(2.4px 2.4px at 553px 421px, var(--text85) 30%, var(--primary25) 55%, transparent),
+    radial-gradient(1.6px 1.6px at 87px 371px, var(--text40), transparent),
+    radial-gradient(1.8px 1.8px at 251px 497px, var(--text50), transparent),
+    radial-gradient(1.6px 1.6px at 433px 313px, var(--text45), transparent),
+    radial-gradient(1.7px 1.7px at 611px 173px, var(--text50), transparent);
+  background-size: 640px 640px;
+}
+
+/* The parallax itself: scroll-driven animations (pure CSS, so it stays
+   inside the skin contract — no JS hook exists for skins). Progress maps
+   to the root scroll; the near field travels ~3x the far field, and both
+   travel far less than the page, which is what sells the distance. On
+   engines without scroll-timeline support the fields simply hang fixed in
+   the viewport — depth without the drift, still correct. */
+@supports (animation-timeline: scroll()) {
+  [data-style="space"] body::before {
+    animation: space-drift-far linear both;
+    animation-timeline: scroll(root);
+  }
+
+  [data-style="space"] body::after {
+    animation: space-drift-near linear both;
+    animation-timeline: scroll(root);
+  }
+}
+
+@keyframes space-drift-far {
+  to { transform: translateY(-70px); }
+}
+
+@keyframes space-drift-near {
+  to { transform: translateY(-210px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-style="space"] body::before,
+  [data-style="space"] body::after {
+    animation: none;
+  }
+}
+
+/* Instrument scrollbar: a guidance-blue slider in the void, cyan when
+   touched. ([data-style] sits on <html>, so these select the root bar.) */
+[data-style="space"] {
+  scrollbar-color: var(--primary) var(--bg);
+}
+
+[data-style="space"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="space"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text10);
+}
+
+[data-style="space"]::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 3px solid var(--bg);
+  border-radius: 6px;
+}
+
+[data-style="space"]::-webkit-scrollbar-thumb:hover {
+  background: var(--accent);
+}
+
+/* Space Grotesk headings run the loaded 700. */
+[data-style="space"] h1,
+[data-style="space"] h2,
+[data-style="space"] h3,
+[data-style="space"] h4 {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+[data-style="space"] b,
+[data-style="space"] strong {
+  font-weight: 600;
+}
+
+/* Links keep the default animated underline; the line sharpens to a
+   guidance-blue hairline. */
+[data-style="space"] .text-link::before {
+  height: 1px;
+  background-color: var(--primary);
+}
+
+
+/* ---- Chrome: reticle logo, glass menus, telemetry footer ------------------- */
+
+/* The logo "D" as a HUD reticle: mono glyph in a cyan hairline ring. The
+   default hover (lift + fill) already speaks this skin's language. */
+[data-style="space"] .name-logo {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  border: 1px solid var(--accent35);
+  box-shadow: 0 0 14px var(--accent15), inset 0 0 8px var(--accent10);
+}
+
+[data-style="space"] .menu-item {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+[data-style="space"] .menu-item:hover {
+  color: var(--accent);
+}
+
+[data-style="space"] .menu-spacer {
+  border-color: var(--text15);
+}
+
+/* Static menu: a hairline glass strip, sized to its own list (the header
+   row is a stretch flexbox sized by the logo's margin box). */
+[data-style="space"] .static-menu {
+  border: 1px solid var(--text10);
+  align-self: flex-start;
+}
+
+/* Floating menu keeps the default glass blur and gains the hairline edge
+   and a deep drop into the void. */
+[data-style="space"] .moving-menu {
+  border: 1px solid var(--text15);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55), 0 0 18px var(--primary10);
+}
+
+/* Footer: the colophon runs as a telemetry readout over a hairline. */
+[data-style="space"] .footer-spacer {
+  border-color: var(--text15);
+}
+
+[data-style="space"] .footer-text,
+[data-style="space"] .footer-text-mobile {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text50);
+}
+
+
+/* ---- Hero: the orbit rings + the console line + the viewport plate --------- */
+
+/* A soft engine glow rises behind the masthead. */
+[data-style="space"] #typing-container {
+  position: relative;
+  background-image: radial-gradient(ellipse 56% 60% at 32% 62%, var(--primary10), transparent 70%);
+}
+
+/* Space Grotesk display, tight and cold — the readout on the main screen.
+   Glow stays a faint halo, never a blur on the letterforms. */
+[data-style="space"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(44px, 5vw, 62px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-shadow: 0 0 32px var(--primary25);
+}
+
+/* The typed accent words run guidance-blue — the value the console is
+   tracking. (The caret stays the default .cursor block: the palette
+   recolors it cyan, a console cursor needs no restyle.) */
+[data-style="space"] #typing-text .typing-accent,
+[data-style="space"] #blog-typing-text .typing-accent {
+  color: var(--primary);
+  text-shadow: 0 0 22px var(--primary40);
+}
+
+/* The strapline reads as the status line under the readout. */
+[data-style="space"] #sub-text {
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent85);
+}
+
+/* The selfie becomes the viewport plate: hairline frame, deep drop, a
+   faint blue bloom. It keeps its tilt — stays clickable, it is still the
+   cycler unlock. */
+[data-style="space"] #typing-image {
+  border: 1px solid var(--text15);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 30px var(--primary15);
+  filter: contrast(1.04) saturate(1.05);
+}
+
+[data-style="space"] .socials-item:hover i {
+  color: var(--accent);
+  text-shadow: 0 0 10px var(--accent40);
+}
+
+[data-style="space"] #socials-list .socials-menu-spacer,
+[data-style="space"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text15);
+}
+
+
+/* ---- Section headers: telemetry index + display title + status rule --------
+   The index number runs as a bracketed mono readout in cyan; the title is
+   Space Grotesk 700. The spacer is a guidance-blue hairline decaying into
+   the void. */
+
+[data-style="space"] .section-header {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(30px, 3.4vw, 42px);
+  letter-spacing: -0.01em;
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID
+   specificity; pin the titles back to ice white so cyan stays a mark,
+   never a paragraph of display type. */
+[data-style="space"] #about-section-header,
+[data-style="space"] #jobs-header,
+[data-style="space"] #project-header,
+[data-style="space"] #blog-header,
+[data-style="space"] #contact-section-header,
+[data-style="space"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="space"] .sec-num {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.55em;
+  letter-spacing: 0.08em;
+  /* nowrap: the bracket content carries spaces, and on the small screen's
+     two-column header grid the index column squeezes to min-content —
+     without this the brackets wrap onto their own lines. */
+  white-space: nowrap;
+  color: var(--accent);
+  text-shadow: 0 0 12px var(--accent30);
+  margin-right: 14px;
+  vertical-align: middle;
+}
+
+/* HUD brackets around the index: [ 01. ] */
+[data-style="space"] .sec-num::before {
+  content: '[ ';
+  color: var(--accent45);
+}
+
+[data-style="space"] .sec-num::after {
+  content: ' ]';
+  color: var(--accent45);
+}
+
+[data-style="space"] .section-header-spacer {
+  height: 1px;
+  background: linear-gradient(90deg, var(--primary60), var(--primary15) 55%, transparent);
+  border-radius: 0;
+}
+
+
+/* ---- About / Skills: glass instrument panels --------------------------------
+   The surface grammar for the whole skin: near-black navy plates with a
+   hairline border and a deep drop into the void. Nothing decorates the
+   plate itself — the color stays in the type and the marks. */
+
+[data-style="space"] .card-style {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  padding: 26px 28px;
+}
+
+/* "About Me" / "Skills" run as panel headings. */
+[data-style="space"] .card-title,
+[data-style="space"] .about-header,
+[data-style="space"] .skills-header {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+  color: var(--text);
+}
+
+[data-style="space"] .skills-section-header {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+[data-style="space"] .about-text,
+[data-style="space"] .skills-text,
+[data-style="space"] .contact-text {
+  line-height: 1.65;
+  color: var(--text85);
+}
+
+[data-style="space"] .skills-text {
+  border-bottom: 1px solid var(--text10);
+}
+
+[data-style="space"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the crew manifest ------------------------------------------ */
+
+[data-style="space"] .nav-container {
+  border-left: 1px solid var(--text15);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's
+   height at load to size the highlight bar, and the webfonts arrive after
+   that measure — font-relative line boxes would leave the bar sized to
+   the fallback font. Hover/selected fills stay token-driven. */
+/* Tracking is capped at 0.06em: the rail is a fixed 225px column and the
+   longest entry ("Visual Language Associates") overflows it at 0.1em. */
+[data-style="space"] .menu li {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+[data-style="space"] .menu li.selected {
+  color: var(--accent);
+}
+
+/* The bar is a live cyan edge. JS writes its geometry inline on every move. */
+[data-style="space"] .highlight {
+  box-shadow: 0 0 10px var(--accent50);
+}
+
+/* The dossier sits on the panel grammar. */
+[data-style="space"] .job-content {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+  padding: 24px 28px;
+}
+
+[data-style="space"] .job-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: 23px;
+}
+
+[data-style="space"] .job-dates {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent70);
+}
+
+[data-style="space"] .job-bullets {
+  line-height: 1.65;
+}
+
+[data-style="space"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+
+/* ---- Selected Works: the observation deck ------------------------------------ */
+
+/* Screens in hairline frames floating over the void; they keep their tilt
+   (shadows and filters only, never a base transform). */
+[data-style="space"] .fc-style-floating .fc-card-image {
+  border: 1px solid var(--text15);
+  background-color: var(--secondary);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), 0 0 24px var(--primary10);
+}
+
+[data-style="space"] .fc-style-floating .fc-card-image img {
+  filter: saturate(1.05) contrast(1.03);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="space"] .fc-card:hover .fc-card-image img {
+  filter: saturate(1.18) contrast(1.05);
+}
+
+[data-style="space"] .fc-card-title {
+  font-family: var(--font-heading);
+  color: var(--text);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.01em;
+}
+
+[data-style="space"] .fc-card-desc {
+  color: var(--text80);
+}
+
+/* CTA: a guidance-blue console button (featured-carousel.css pins a
+   literal 10px radius, not the pill token, so the pill is re-applied
+   here). The trailing letter-spacing after the last glyph is given back
+   on the right pad to keep the label optically centered. */
+[data-style="space"] .fc-card-cta {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 1px solid var(--primary45);
+  border-radius: var(--radius-pill);
+  padding: 10px calc(22px - 0.16em) 10px 22px;
+  box-shadow: 0 0 14px var(--primary15), inset 0 0 10px var(--primary10);
+}
+
+[data-style="space"] .fc-card-cta:hover {
+  border-color: var(--primary);
+  box-shadow: 0 0 20px var(--primary35), inset 0 0 10px var(--primary10);
+}
+
+/* Dots: dark ports; the active one is a lit cyan indicator. */
+[data-style="space"] .fc-dot.active {
+  background-color: var(--accent);
+  box-shadow: 0 0 8px var(--accent50);
+}
+
+
+/* ---- Blog: log entries ----------------------------------------------------------
+   Glass panels whose edge goes live under the pointer. The cards keep
+   their tilt. */
+
+[data-style="space"] .blog-card {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+}
+
+[data-style="space"] .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary60);
+  box-shadow: 0 0 18px var(--primary20);
+}
+
+[data-style="space"] .blog-card-title {
+  font-family: var(--font-heading);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 20px;
+}
+
+[data-style="space"] .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent70);
+}
+
+[data-style="space"] .blog-card-excerpt {
+  color: var(--text80);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="space"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+}
+
+[data-style="space"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary60);
+  box-shadow: 0 0 18px var(--primary20);
+}
+
+[data-style="space"] .blog-listing-grid .blog-card .blog-card-title {
+  font-family: var(--font-heading);
+  color: var(--text);
+  font-weight: 600;
+}
+
+[data-style="space"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent70);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; run the display
+   face ("Blog." is a short line — it can run bigger here). */
+[data-style="space"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: clamp(44px, 5.4vw, 64px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  text-shadow: 0 0 32px var(--primary25);
+}
+
+[data-style="space"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  line-height: 1.7;
+}
+
+/* Filters: console toggles; the active one is a lit blue switch. */
+[data-style="space"] .filter-pill {
+  background-color: transparent;
+  border: 1px solid var(--text20);
+  color: var(--text60);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-style="space"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="space"] .filter-pill.active {
+  background-color: var(--primary15);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 10px var(--primary15);
+}
+
+
+/* ---- Blog post page: the flight log ---------------------------------------------- */
+
+/* The article sits on its own glass panel; border-box keeps the frame at
+   the 750px column so it lines up with the nav and footer. */
+[data-style="space"] .blog-post-container {
+  box-sizing: border-box;
+  background-color: var(--secondary45);
+  border: 1px solid var(--text10);
+  border-radius: var(--border-radius);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+  padding: 44px 48px;
+  margin: 24px auto 0;
+}
+
+[data-style="space"] .blog-post-title {
+  color: var(--text);
+  font-weight: 700;
+  font-size: clamp(32px, 4.2vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+/* Crossheads: guidance-blue over a faint hairline — the one colored line
+   allowed near body copy, and it stays on the heading. */
+[data-style="space"] .blog-post-content h2 {
+  color: var(--primary);
+  border-bottom: 1px solid var(--primary20);
+  padding-bottom: 6px;
+}
+
+[data-style="space"] .blog-post-content h3 {
+  color: var(--text);
+}
+
+/* Margin notes: a cyan live edge with its light falling onto the page. */
+[data-style="space"] .blog-post-content blockquote {
+  border-left: 2px solid var(--accent);
+  background-image: linear-gradient(90deg, var(--accent10), transparent 60%);
+  color: var(--text70);
+}
+
+[data-style="space"] .blog-post-content hr {
+  border-top: 1px solid var(--text15);
+}
+
+[data-style="space"] .blog-post-content th,
+[data-style="space"] .blog-post-content td {
+  border: 1px solid var(--text15);
+}
+
+[data-style="space"] .blog-post-content th {
+  background-color: var(--secondary);
+  font-weight: 600;
+}
+
+/* Post photographs sit in hairline frames; border-box keeps the frame
+   inside blog-styles' max-width: 100% (the site is content-box). The
+   images keep their tilt. */
+[data-style="space"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 1px solid var(--text20);
+  filter: saturate(1.05) contrast(1.03);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="space"] .blog-post-content pre {
+  border: 1px solid var(--text15);
+}
+
+/* Inline code: cyan telemetry on navy chips (the higher-specificity pre
+   rule in theme-base.css unwinds this for fenced blocks). */
+[data-style="space"] .blog-post-content code {
+  background-color: var(--secondary);
+  color: var(--accent);
+  border: 1px solid var(--accent20);
+}
+
+/* Diagrams sit on the navy panel in a hairline (mermaid reads the palette
+   at render time via blog/post.html). */
+[data-style="space"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--text15);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="space"] #metr-chart {
+  border: 1px solid var(--text15);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="space"] #pareto-chart,
+[data-style="space"] #ara-objectives-chart,
+[data-style="space"] #kl-explainer-chart {
+  border-radius: var(--border-radius);
+}
+
+
+/* ---- Contact: the comms panel ---------------------------------------------------- */
+
+[data-style="space"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 1px solid var(--text10);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* The map is a viewport plate like the hero photo (it keeps its tilt). */
+[data-style="space"] .contact-image-wrapper {
+  border: 1px solid var(--text15);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5), 0 0 24px var(--primary10);
+}
+
+[data-style="space"] .contact-image {
+  filter: saturate(1.05) contrast(1.03);
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): readout chips -------------- */
+
+[data-style="space"] .pill {
+  background-color: transparent;
+  border: 1px solid var(--text20);
+  color: var(--text70);
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+}
+
+
+/* ---- Cycler dock: the control cluster ---------------------------------------------- */
+
+[data-style="space"] .tc-dock {
+  background: var(--bg85);
+  border: 1px solid var(--text15);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 18px var(--primary10);
+}
+
+[data-style="space"] .tc-toggle {
+  box-shadow: 0 0 12px var(--accent25);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* The parallax fields are fixed composited layers, so they stay on for
+     the small screen unchanged; only the drift shortens with the page. */
+
+  [data-style="space"] #typing-text {
+    font-size: clamp(30px, 8.6vw, 38px);
+    line-height: 1.2;
+    text-shadow: 0 0 20px var(--primary25);
+  }
+
+  [data-style="space"] #sub-text {
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+  }
+
+  [data-style="space"] #blog-typing-text {
+    font-size: clamp(32px, 9vw, 40px);
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the
+     titles need to wrap. The grid keeps a wrapped title's second line
+     aligned with the first word instead of the telemetry index (the text
+     run after .sec-num is one anonymous grid item). */
+  [data-style="space"] .section-header {
+    white-space: normal;
+    font-size: clamp(24px, 7vw, 30px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  [data-style="space"] .sec-num {
+    margin-right: 10px;
+  }
+
+  [data-style="space"] .static-menu-mobile .menu-item {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text70);
+  }
+
+  [data-style="space"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep
+     that, and make the tap state the cyan fill. */
+  [data-style="space"] .name-logo:hover {
+    background-color: transparent;
+    color: var(--accent);
+  }
+
+  [data-style="space"] .name-logo:active {
+    background-color: var(--accent);
+    color: var(--bg);
+  }
+
+  /* The mobile sheet re-cards these surfaces with the default tint; keep
+     them glass panels. */
+  [data-style="space"] .double-view-left,
+  [data-style="space"] .double-view-right {
+    background-color: var(--secondary);
+    border: 1px solid var(--text10);
+  }
+
+  [data-style="space"] .blog-card {
+    background-color: var(--secondary);
+  }
+
+  [data-style="space"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* Jobs rail runs horizontal: the hairline moves to the wrapper's bottom. */
+  [data-style="space"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--text15);
+  }
+
+  [data-style="space"] .job-content {
+    padding: 20px;
+  }
+
+  /* The frame must draw inside the box on mobile (the image is
+     width: 100%; content-box would overflow the card). */
+  [data-style="space"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+  }
+
+  [data-style="space"] .blog-post-container {
+    padding: 28px 18px;
+    margin-top: 18px;
+  }
+
+  [data-style="space"] .blog-post-title {
+    font-size: clamp(24px, 7vw, 30px);
+  }
+
+  [data-style="space"] .footer-text-mobile {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+  }
+}
