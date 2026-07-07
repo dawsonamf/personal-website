@@ -1,0 +1,887 @@
+/* Dr. Seuss: a picture-book spread from Seussville. Cream story-paper dusted
+   with a faint two-ink confetti, flat white plates in bold ink outlines with
+   solid teal offset shadows (the ink-and-watercolor illustration grammar —
+   nothing straight, nothing floating without an outline), Cat-hat red/white
+   striped rules and bars, and teal for captions and margin business. Chewy
+   carries display; Baloo 2 carries body. Motion stays fully ON — tilt, AOS
+   entrances, the cursor follower — a Seuss page never sits still. The typed
+   masthead is cursorless (registry typing: 'letter'): glyphs boing in with a
+   cartoon overshoot and boing away on delete, see the .tw rules in the hero
+   section.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see the comment block
+   in docs/theme-explorations.html. Tilt stays on, so no base rotation ever
+   lands on a tilt target (.card, .blog-card, .fc-card-image, .blog-image) —
+   the crooked paste-ins live on wrappers and chips only.
+   Line/shadow stance: every line, fill, and shadow derives from the role
+   colors or the alpha ramps — no literals in this sheet (the code-block
+   ground pin lives in theme-base.css).
+   Chewy loads as a single 400 face, so every place the site bolds
+   heading-font text is pinned back to 400 below; Baloo 2 loads 400/600/700,
+   so body bold is real — running-text emphasis goes red instead of black,
+   the way a Seuss page shouts. */
+
+
+/* ---- Foundations: confetti paper, red crayon cursor, teal selection ------- */
+
+[data-style="seuss"] ::selection {
+  background: var(--accent);
+  color: var(--secondary);
+}
+
+/* The ground: a sparse two-ink confetti of dots, red and teal offset on the
+   half grid — snowflakes over Whoville, at the 10% ramp so the paper stays
+   paper. Attachment stays the default scroll; fixed would repaint the full
+   field on every scroll tick. */
+[data-style="seuss"] body {
+  background-image:
+    radial-gradient(var(--primary10) 2.5px, transparent 3px),
+    radial-gradient(var(--accent10) 2px, transparent 2.5px);
+  background-size: 58px 58px, 58px 58px;
+  background-position: 0 0, 29px 29px;
+}
+
+/* Red crayon scrollbar on the cream. ([data-style] sits on <html>, so these
+   select the root scrollbar.) */
+[data-style="seuss"] {
+  scrollbar-color: var(--primary60) var(--bg);
+}
+
+[data-style="seuss"]::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+[data-style="seuss"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--text15);
+}
+
+[data-style="seuss"]::-webkit-scrollbar-thumb {
+  background: var(--primary60);
+  border: 3px solid var(--bg);
+  border-radius: 8px;
+}
+
+[data-style="seuss"]::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Chewy is a single 400-weight face, see header note. */
+[data-style="seuss"] h1,
+[data-style="seuss"] h2,
+[data-style="seuss"] h3,
+[data-style="seuss"] h4 {
+  font-weight: 400;
+}
+
+/* Emphasis shouts in red — Baloo's real 700 plus the second ink, the way
+   the books capitalize a THINK. */
+[data-style="seuss"] b,
+[data-style="seuss"] strong {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Links are teal with a wavy underline (nothing in Seussville is ruled
+   straight); hover switches to the red ink. */
+[data-style="seuss"] .text-link {
+  color: var(--accent);
+  text-decoration: underline wavy var(--accent40) 2px;
+  text-underline-offset: 4px;
+}
+
+[data-style="seuss"] .text-link::before {
+  display: none;
+}
+
+[data-style="seuss"] .text-link:hover {
+  color: var(--primary);
+  text-decoration-color: var(--primary50);
+}
+
+/* The cursor follower: a red crayon point inside a teal balloon that never
+   quite holds its shape. */
+[data-style="seuss"] .cursor-follow {
+  background-color: var(--primary);
+}
+
+[data-style="seuss"] .circle-follow {
+  border: 2px solid var(--accent50);
+  border-radius: 58% 42% 55% 45% / 45% 58% 42% 55%;
+}
+
+
+/* ---- Chrome: balloon logo, outlined menus, storybook sign-off -------------- */
+
+/* The logo "D" in a red balloon outline, pasted in a little crooked.
+   (.name-logo is not a tilt target, so a base rotation is safe; its intro
+   fadein only animates opacity.) */
+[data-style="seuss"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--primary);
+  border: 2.5px solid var(--primary);
+  border-radius: 62% 38% 56% 44% / 46% 60% 40% 54%;
+  transform: rotate(-3deg);
+}
+
+[data-style="seuss"] .name-logo:hover {
+  transform: rotate(-3deg) translateY(-2px);
+  background-color: var(--primary);
+  color: var(--secondary);
+}
+
+[data-style="seuss"] .menu-item {
+  font-size: 15.5px;
+  color: var(--text70);
+}
+
+[data-style="seuss"] .menu-item:hover {
+  color: var(--primary);
+}
+
+[data-style="seuss"] .menu-spacer {
+  border-color: var(--text30);
+}
+
+/* Static menu: an outlined plate. The header row is a stretch flexbox sized
+   by the logo's margin box, so the box must size to its own list or the
+   frame lands ~11px too tall. */
+[data-style="seuss"] .static-menu {
+  background-color: transparent;
+  border: 2.5px solid var(--text);
+  align-self: flex-start;
+}
+
+/* Floating menu: the same outlined plate on solid paper with the skin's
+   solid teal offset shadow (it floats over content, so it keeps a ground;
+   no glass in a picture book). */
+[data-style="seuss"] .moving-menu {
+  background-color: var(--bg);
+  border: 2.5px solid var(--text);
+  box-shadow: 4px 5px 0 var(--accent25);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Footer: signed off in the display hand, teal like a closing caption. */
+[data-style="seuss"] .footer-spacer {
+  border-color: var(--text30);
+}
+
+[data-style="seuss"] .footer-text,
+[data-style="seuss"] .footer-text-mobile {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 16px;
+  letter-spacing: 0.4px;
+  color: var(--accent);
+}
+
+
+/* ---- Hero: boinging masthead, teal caption, outlined portrait -------------- */
+
+/* Chewy runs narrow: the longest typed line ("full stack engineer.") clears
+   the ~795px desktop column budget comfortably at the 70px cap. */
+[data-style="seuss"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(52px, 5vw, 70px);
+  line-height: 1.12;
+}
+
+/* Cursorless masthead: the registry sets typing: 'letter', so the engine
+   wraps each typed glyph in span.tw — letters boing in like something
+   popping out of a hat (squash, overshoot, settle), and on delete each
+   glyph gets .tw-out and springs away. inline-block so the per-glyph
+   transform has a box. */
+[data-style="seuss"] #typing-text .tw,
+[data-style="seuss"] #blog-typing-text .tw {
+  display: inline-block;
+  animation: seuss-boing-in 0.32s cubic-bezier(0.34, 1.56, 0.64, 1) backwards;
+}
+
+[data-style="seuss"] #typing-text .tw-out,
+[data-style="seuss"] #blog-typing-text .tw-out {
+  animation: seuss-boing-out 0.28s ease-in forwards;
+}
+
+@keyframes seuss-boing-in {
+  0%   { opacity: 0; transform: scale(0.2) rotate(-14deg) translateY(0.18em); }
+  60%  { opacity: 1; transform: scale(1.12) rotate(5deg); }
+  82%  { transform: scale(0.96) rotate(-2deg); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes seuss-boing-out {
+  0%   { opacity: 1; transform: none; }
+  30%  { opacity: 1; transform: scale(1.12) rotate(6deg) translateY(-0.05em); }
+  100% { opacity: 0; transform: scale(0.1) rotate(-18deg) translateY(0.2em); }
+}
+
+/* The typed accent words go red with a soft teal offset behind them — the
+   two-ink overprint every cover uses. In letter mode every glyph is its
+   own span, so no side padding (per-glyph padding would open gaps). */
+[data-style="seuss"] #typing-text .typing-accent,
+[data-style="seuss"] #blog-typing-text .typing-accent {
+  color: var(--primary);
+  text-shadow: 3px 3px 0 var(--accent25);
+  padding: 0;
+}
+
+/* The strapline reads as the book's caption line, set in teal. */
+[data-style="seuss"] #sub-text {
+  font-weight: 600;
+  font-size: 16px;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+}
+
+/* The selfie gets the ink outline and a crooked paste-in on the WRAPPER —
+   the image itself is a .card tilt target (tilt stays on; rotation never
+   lands on it). Stays clickable, it is still the cycler unlock. */
+[data-style="seuss"] #typing-right {
+  transform: rotate(1.5deg);
+}
+
+[data-style="seuss"] #typing-image {
+  border: 2.5px solid var(--text);
+}
+
+/* Social glyphs go red on hover (the default lift stays — motion skin). */
+[data-style="seuss"] .socials-item:hover i {
+  color: var(--primary);
+}
+
+[data-style="seuss"] #socials-list .socials-menu-spacer,
+[data-style="seuss"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text30);
+}
+
+
+/* ---- Section headers: red balloon numbers + hat-striped rules --------------
+   The index number sits in a solid red balloon chip, the title stays ink,
+   and the spacer becomes the Cat's hat: a red/white striped band. */
+
+[data-style="seuss"] .section-header {
+  font-size: 42px;
+  color: var(--text);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep the titles ink — the color lives in the chip and the
+   striped rule. */
+[data-style="seuss"] #about-section-header,
+[data-style="seuss"] #jobs-header,
+[data-style="seuss"] #project-header,
+[data-style="seuss"] #blog-header,
+[data-style="seuss"] #contact-section-header,
+[data-style="seuss"] .blog-section-header {
+  color: var(--text);
+}
+
+[data-style="seuss"] .sec-num {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.5em;
+  letter-spacing: 0;
+  color: var(--secondary);
+  background-color: var(--primary);
+  border: 2px solid var(--text);
+  border-radius: 62% 38% 56% 44% / 46% 60% 40% 54%;
+  padding: 2px 13px 3px;
+  transform: rotate(-4deg);
+  margin-right: 14px;
+  vertical-align: 0.35em;
+}
+
+/* The hat brim: red/white bands, capped round. */
+[data-style="seuss"] .section-header-spacer {
+  background: repeating-linear-gradient(90deg, var(--primary) 0 20px, var(--secondary) 20px 40px);
+  height: 8px;
+  border-radius: 999px;
+  transform: translateY(3px);
+}
+
+
+/* ---- About / Skills: outlined story plates ----------------------------------
+   The surface grammar for the whole skin: flat white plates in a bold ink
+   outline with a solid teal offset shadow — every illustration in the book
+   is drawn this way. The left and right plates get different wobbles so the
+   spread reads drawn, not stamped. */
+
+[data-style="seuss"] .card-style {
+  background-color: var(--secondary);
+  border: 2.5px solid var(--text);
+  box-shadow: 6px 7px 0 var(--accent20);
+  padding: 24px 26px;
+}
+
+[data-style="seuss"] .double-view-left {
+  border-radius: 34px 22px 38px 20px / 24px 36px 20px 38px;
+}
+
+[data-style="seuss"] .double-view-right {
+  border-radius: 20px 38px 22px 34px / 38px 20px 36px 24px;
+}
+
+/* "About Me" / "Skills" in teal display type over a wavy red underline. */
+[data-style="seuss"] .card-title,
+[data-style="seuss"] .about-header,
+[data-style="seuss"] .skills-header {
+  width: fit-content;
+  font-weight: 400;
+  font-size: 26px;
+  color: var(--accent);
+  text-decoration: underline wavy var(--primary50) 3px;
+  text-underline-offset: 7px;
+  margin-bottom: 18px;
+}
+
+/* Web / iOS / ML go up in red. */
+[data-style="seuss"] .skills-section-header {
+  color: var(--primary);
+  font-size: 21px;
+}
+
+[data-style="seuss"] .about-text,
+[data-style="seuss"] .skills-text,
+[data-style="seuss"] .contact-text {
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+
+/* Wavy-adjacent rules between skill entries: teal dots. */
+[data-style="seuss"] .skills-text {
+  border-bottom: 2px dotted var(--accent30);
+}
+
+[data-style="seuss"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: dotted spine, striped bar, outlined plate ------------------ */
+
+/* Index rail: a teal dotted spine instead of the navy line. */
+[data-style="seuss"] .nav-container {
+  border-left: 3px dotted var(--accent40);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's height
+   at load to size the highlight bar, and Baloo 2 arrives after that measure —
+   font-relative line boxes would leave the bar sized to the fallback font.
+   Hover/selected fills stay token-driven (the registry maps the selected
+   ground to a pale teal wash). */
+[data-style="seuss"] .menu li {
+  font-size: 16px;
+  line-height: 19px;
+}
+
+[data-style="seuss"] .menu li.selected {
+  color: var(--text);
+}
+
+/* The bar becomes a slice of the Cat's hat: red/white bands, no glow. JS
+   writes the bar's geometry, border-radius, and transition inline on every
+   move, hence the !important; width is a JS constant only on desktop, so
+   the thickness override lives in the desktop block. */
+[data-style="seuss"] .highlight {
+  background: repeating-linear-gradient(180deg, var(--primary) 0 8px, var(--secondary) 8px 16px);
+  box-shadow: none;
+  border-radius: 4px !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="seuss"] .highlight {
+    left: -5px !important;
+    width: 5px !important;
+  }
+}
+
+/* The dossier is another outlined plate (its own wobble). */
+[data-style="seuss"] .job-content {
+  background-color: var(--secondary);
+  border: 2.5px solid var(--text);
+  border-radius: 38px 20px 34px 24px / 22px 36px 20px 38px;
+  box-shadow: 6px 7px 0 var(--accent20);
+  padding: 24px 30px;
+}
+
+[data-style="seuss"] .job-title {
+  color: var(--text);
+  font-size: 25px;
+}
+
+/* Dates as a teal caption written a little uphill. (.job-content is not a
+   tilt target, so rotating this child is safe.) */
+[data-style="seuss"] .job-dates {
+  width: fit-content;
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 16px;
+  color: var(--accent);
+  transform: rotate(-1.5deg);
+  transform-origin: left center;
+}
+
+/* Bullets become little red stars — the book's all-purpose spangle. */
+[data-style="seuss"] .job-bullets {
+  list-style-type: "★  ";
+  line-height: 1.6;
+}
+
+[data-style="seuss"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* The swap animation stays the default slide — this is a motion-positive
+   skin; nothing here is stilled. */
+
+
+/* ---- Selected Works: outlined picture plates --------------------------------- */
+
+/* Plates get the ink outline; the crop rides the radius token on
+   .fc-card-image (overflow hidden trims the screenshot to the wobble).
+   The image is a tilt target — outline only, never rotation. */
+[data-style="seuss"] .fc-style-floating .fc-card-image {
+  border: 2.5px solid var(--text);
+  background-color: var(--secondary);
+}
+
+[data-style="seuss"] .fc-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 25px;
+}
+
+[data-style="seuss"] .fc-card-desc {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* CTA: a red balloon pill with an ink outline (featured-carousel.css pins a
+   literal 10px radius, not the token, so the pill is re-applied here). The
+   default hover lift stays — motion skin. */
+[data-style="seuss"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.3px;
+  color: var(--secondary);
+  background-color: var(--primary);
+  border: 2px solid var(--text);
+  border-radius: 999px;
+  padding: 9px 20px;
+}
+
+[data-style="seuss"] .fc-card-cta:hover {
+  background-color: var(--accent);
+  color: var(--secondary);
+}
+
+/* Dots: teal buttons, the active one red (the scale pop stays). */
+[data-style="seuss"] .fc-dot {
+  background-color: var(--accent);
+  opacity: 0.3;
+}
+
+[data-style="seuss"] .fc-dot:hover {
+  opacity: 0.6;
+}
+
+[data-style="seuss"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+}
+
+
+/* ---- Blog: hat-banded story cards ----------------------------------------------
+   Cards become white plates wearing the Cat's hat: a red/white striped band
+   painted across the top inside the ink outline (a background layer, so the
+   rounded corners crop it for free). No base rotation and no hover transform
+   of our own — the cards are live tilt targets. */
+
+[data-style="seuss"] .blog-card {
+  background-color: var(--secondary);
+  background-image: repeating-linear-gradient(90deg, var(--primary) 0 20px, var(--secondary) 20px 40px);
+  background-size: 100% 9px;
+  background-repeat: no-repeat;
+  border: 2.5px solid var(--text);
+  box-shadow: 5px 6px 0 var(--accent20);
+}
+
+[data-style="seuss"] .blog-card:hover {
+  background-color: var(--secondary);
+  box-shadow: 7px 9px 0 var(--accent30);
+}
+
+[data-style="seuss"] .blog-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 21px;
+}
+
+[data-style="seuss"] .blog-card-date {
+  font-weight: 600;
+  font-size: 13.5px;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+}
+
+[data-style="seuss"] .blog-card-excerpt {
+  color: var(--text80);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="seuss"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="seuss"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="seuss"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--text);
+  font-weight: 400;
+}
+
+[data-style="seuss"] .blog-listing-grid .blog-card .blog-card-date {
+  font-size: 13.5px;
+  color: var(--accent);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin the display face
+   and the loaded 400. */
+[data-style="seuss"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(50px, 5vw, 66px);
+  line-height: 1.12;
+}
+
+[data-style="seuss"] [id^="blog-sub-text"] {
+  color: var(--text70);
+  font-size: 16.5px;
+  line-height: 1.6;
+}
+
+/* Filters: outlined balloon chips; the active one inflates red. */
+[data-style="seuss"] .filter-pill {
+  background-color: transparent;
+  border: 2px solid var(--text40);
+  color: var(--text70);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 4px 14px;
+}
+
+[data-style="seuss"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="seuss"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--text);
+  color: var(--secondary);
+}
+
+
+/* ---- Blog post page: one big story plate ---------------------------------------- */
+
+/* The article sits on its own outlined plate over the confetti paper;
+   border-box keeps the outer line at the 750px column so it lines up with
+   the nav and footer. */
+[data-style="seuss"] .blog-post-container {
+  box-sizing: border-box;
+  background-color: var(--secondary);
+  border: 2.5px solid var(--text);
+  border-radius: 34px 22px 38px 20px / 24px 36px 20px 38px;
+  box-shadow: 7px 9px 0 var(--accent20);
+  padding: 44px 48px;
+  margin: 24px auto 0;
+}
+
+[data-style="seuss"] .blog-post-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: clamp(34px, 4.5vw, 44px);
+  line-height: 1.15;
+}
+
+[data-style="seuss"] .blog-post-content {
+  font-size: 17.5px;
+  line-height: 1.7;
+}
+
+/* Crossheads: teal display over the wavy red underline (blog-styles bolds
+   them; Chewy only loads 400 — pin it). */
+[data-style="seuss"] .blog-post-content h2 {
+  width: fit-content;
+  font-weight: 400;
+  color: var(--accent);
+  text-decoration: underline wavy var(--primary50) 3px;
+  text-underline-offset: 7px;
+}
+
+[data-style="seuss"] .blog-post-content h3 {
+  font-weight: 400;
+  color: var(--text);
+}
+
+/* Pull-quotes read aloud in the display hand behind a red rule. */
+[data-style="seuss"] .blog-post-content blockquote {
+  border-left: 4px solid var(--primary40);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 1.1em;
+  color: var(--text70);
+}
+
+/* Section breaks are teal-dotted. */
+[data-style="seuss"] .blog-post-content hr {
+  border-top: 3px dotted var(--accent40);
+}
+
+/* Tables as ink-ruled grids with a teal-washed header row (Baloo's real
+   600 carries the header weight). */
+[data-style="seuss"] .blog-post-content th,
+[data-style="seuss"] .blog-post-content td {
+  border: 1.5px solid var(--text30);
+}
+
+[data-style="seuss"] .blog-post-content th {
+  background-color: var(--accent15);
+  font-weight: 600;
+}
+
+/* Post photographs get the ink outline; border-box keeps the frame inside
+   blog-styles' max-width: 100% (the site is content-box, so the border
+   would otherwise overhang the column). The image is a tilt target —
+   outline only. */
+[data-style="seuss"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 2.5px solid var(--text);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. Code
+   keeps the real mono face — the rhymes stop at the terminal. */
+[data-style="seuss"] .blog-post-content pre {
+  border: 2.5px solid var(--text);
+}
+
+/* Inline code: teal-washed chips (the higher-specificity pre rule above
+   unwinds this for fenced blocks). */
+[data-style="seuss"] .blog-post-content code {
+  background-color: var(--accent10);
+  border: 1px solid var(--accent30);
+}
+
+/* Diagrams sit on their own outlined plate (mermaid reads the palette at
+   render time via blog/post.html). */
+[data-style="seuss"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="seuss"] #metr-chart {
+  border: 2px solid var(--text);
+}
+
+/* The heretic-ARA charts' radius is a literal 10px in their post CSS; hand
+   them the wobble. */
+[data-style="seuss"] #pareto-chart,
+[data-style="seuss"] #ara-objectives-chart,
+[data-style="seuss"] #kl-explainer-chart {
+  border-radius: 26px 34px 24px 36px / 34px 24px 36px 26px;
+}
+
+
+/* ---- Contact: the last plate in the book ----------------------------------------- */
+
+[data-style="seuss"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 2.5px solid var(--text);
+  border-radius: 22px 36px 20px 38px / 36px 22px 38px 20px;
+  box-shadow: 6px 7px 0 var(--accent20);
+}
+
+/* The map gets the ink outline (the wrapper is safe; the image inside is
+   the tilt target). */
+[data-style="seuss"] .contact-image-wrapper {
+  border: 2.5px solid var(--text);
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): teal balloon chips ---------- */
+
+[data-style="seuss"] .pill {
+  background-color: var(--accent10);
+  border: 1.5px solid var(--accent40);
+  color: var(--text70);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 3px 12px;
+}
+
+
+/* ---- Cycler dock: the toy box ------------------------------------------------------- */
+
+[data-style="seuss"] .tc-dock {
+  background: var(--bg);
+  border: 2.5px solid var(--text);
+  box-shadow: 5px 6px 0 var(--accent25);
+  backdrop-filter: none;
+}
+
+/* The FAB becomes a red balloon, logo grammar. (Its hover lift stays —
+   motion skin.) */
+[data-style="seuss"] .tc-toggle {
+  border: 2.5px solid var(--primary);
+  border-radius: 62% 38% 56% 44% / 46% 60% 40% 54%;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------------ */
+
+@media screen and (max-width: 1100px) {
+  /* Tighter confetti on the small page. */
+  [data-style="seuss"] body {
+    background-size: 44px 44px, 44px 44px;
+    background-position: 0 0, 22px 22px;
+  }
+
+  /* Display lettering on the small page (the mobile ID rule pins 34px;
+     Chewy clears the column a step down with nicer air). */
+  [data-style="seuss"] #typing-text {
+    font-size: clamp(30px, 8.5vw, 35px);
+  }
+
+  [data-style="seuss"] #sub-text {
+    font-size: 13px;
+    letter-spacing: 1px;
+  }
+
+  [data-style="seuss"] #blog-typing-text {
+    font-size: clamp(30px, 8.5vw, 35px);
+  }
+
+  /* The hero photo is hidden on mobile; its wrapper sheds the paste-in crook. */
+  [data-style="seuss"] #typing-right {
+    transform: none;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the titles
+     need to wrap. The grid keeps a wrapped title's second line aligned with
+     the first word instead of the balloon number (the text run after
+     .sec-num is one anonymous grid item). */
+  [data-style="seuss"] .section-header {
+    white-space: normal;
+    font-size: clamp(26px, 8vw, 32px);
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  [data-style="seuss"] .sec-num {
+    padding: 1px 10px 2px;
+    margin-right: 10px;
+  }
+
+  [data-style="seuss"] .section-header-spacer {
+    height: 6px;
+  }
+
+  /* Rotations halve on the small page. */
+  [data-style="seuss"] .name-logo {
+    transform: rotate(-2deg);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep that
+     at the halved crook, and make the tap state the red fill. */
+  [data-style="seuss"] .name-logo:hover {
+    transform: rotate(-2deg);
+    background-color: transparent;
+    color: var(--primary);
+  }
+
+  [data-style="seuss"] .name-logo:active {
+    background-color: var(--primary);
+    color: var(--secondary);
+  }
+
+  [data-style="seuss"] .static-menu-mobile .menu-item {
+    font-size: 15px;
+    color: var(--text70);
+  }
+
+  [data-style="seuss"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  /* The mobile sheet re-cards these surfaces with a tint fill; keep them
+     white outlined plates (offset shadows shrink a step on the small page). */
+  [data-style="seuss"] .double-view-left,
+  [data-style="seuss"] .double-view-right {
+    background-color: var(--secondary);
+    border: 2.5px solid var(--text);
+    box-shadow: 4px 5px 0 var(--accent20);
+  }
+
+  [data-style="seuss"] .contact-view-left {
+    background-color: var(--secondary);
+    box-shadow: 4px 5px 0 var(--accent20);
+  }
+
+  /* Story cards keep their hat band under the mobile re-card. */
+  [data-style="seuss"] .blog-card {
+    background-color: var(--secondary);
+  }
+
+  /* Jobs rail runs horizontal: the teal spine moves to the wrapper's bottom
+     edge, and the hat stripes turn with the bar (the mobile thickness is
+     inline-only, so the override lives here). */
+  [data-style="seuss"] .menu-scroll-wrapper {
+    border-bottom: 3px dotted var(--accent40);
+  }
+
+  [data-style="seuss"] .highlight {
+    height: 4px !important;
+    background: repeating-linear-gradient(90deg, var(--primary) 0 8px, var(--secondary) 8px 16px);
+  }
+
+  [data-style="seuss"] .job-content {
+    padding: 20px;
+    box-shadow: 4px 5px 0 var(--accent20);
+  }
+
+  /* Framed plates need a real gutter between cards on the small page, and
+     the image is width: 100% on mobile, so the outline must draw inside the
+     box (content-box would overflow the card). */
+  [data-style="seuss"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="seuss"] .fc-style-floating .fc-card-image {
+    box-sizing: border-box;
+  }
+
+  [data-style="seuss"] .blog-post-container {
+    padding: 28px 18px;
+    margin-top: 18px;
+    box-shadow: 4px 6px 0 var(--accent20);
+  }
+
+  [data-style="seuss"] .blog-post-title {
+    font-size: clamp(26px, 7.5vw, 30px);
+  }
+
+  [data-style="seuss"] .footer-text-mobile {
+    font-size: 15px;
+  }
+}

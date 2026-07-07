@@ -546,8 +546,40 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap'],
       css: '/css/themes/neo-pop.css',
     },
+    'seuss': {
+      id: 'seuss',
+      label: 'Dr. Seuss',
+      polarity: 'light',
+      // No flags: the friendliest picture book keeps the tilt sway, the AOS
+      // entrances, and the cursor follower (the skin restyles it into a red
+      // crayon point in a teal balloon).
+      // Cursorless masthead: each glyph boings in like something popping out
+      // of a hat (the skin animates the engine's glyph spans).
+      typing: 'letter',
+      // Two-ink storybook: warm ink on cream story-paper, white illustration
+      // plates, Cat-hat red interactives, teal for captions and margin
+      // business. The red/white hat stripes live in the skin sheet's rules.
+      colors: { text:'#2b2118', bg:'#fdf3dd', primary:'#d63c26', secondary:'#ffffff', accent:'#12968e' },
+      tokens: {
+        '--font-body': "'Baloo 2', sans-serif",
+        '--font-heading': "'Chewy', cursive",
+        // Softly uneven corners: nothing in Seussville is drawn with a
+        // compass — every token-rounded surface wobbles a little.
+        // --font-mono stays the default: code keeps a real mono face.
+        '--border-radius': '26px 34px 24px 36px / 34px 24px 36px 26px',
+        '--radius-pill': '999px',
+        '--neutral-gray': '#8a7c6b',
+        // Selected jobs entry reads as a pale teal watercolor wash; hover is
+        // a deeper cream wash.
+        '--jobs-menu-navy-dark': '#dcf0ea',
+        '--jobs-menu-navy': '#f6e6c6',
+        '--jobs-menu-slate': '#7f7261',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Baloo+2:ital,wght@0,400;0,600;0,700&family=Chewy&display=swap'],
+      css: '/css/themes/seuss.css',
+    },
   };
-  var ORDER = ['default', 'brutalist', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'space', 'vapor', 'wanted', 'banknote', 'constructivist', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste'];
+  var ORDER = ['default', 'brutalist', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'space', 'vapor', 'wanted', 'banknote', 'constructivist', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste', 'seuss'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;
