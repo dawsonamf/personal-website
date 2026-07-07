@@ -51,7 +51,7 @@ docs/                      # AI-managed knowledge base + spikes
 - **Nav/social links are config-driven** — edit `js/nav-config.js`, not the HTML.
 - **Page-scoped CSS lives beside its page** (e.g. `blog/blog-styles.css`); shared CSS goes in `css/`.
 - **Images** at ~2x display size, ≤500 KB, JPEG for photos. Stored in `resources/`.
-- **Theme system**: 17 skins, registry in `js/theme-bootstrap.js`, skin sheets scoped under `[data-style="<id>"]`. Full architecture in the HTML comment at the top of `docs/theme-explorations.html`.
+- **Theme system**: 18 skins, registry in `js/theme-bootstrap.js`, skin sheets scoped under `[data-style="<id>"]`. Full architecture in the HTML comment at the top of `docs/theme-explorations.html`.
 
 ## New page checklist
 
