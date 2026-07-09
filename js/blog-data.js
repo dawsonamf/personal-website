@@ -109,7 +109,7 @@ const BLOG_POSTS = [
     title: "The Art Nobody Looks At",
     date: "July 2026",
     excerpt:
-      "The great museums own far more than they could ever hang. The Met's collection has more than 1.5 million objects, and only about 4 percent of them are on the walls on any given day. The rest sits in storage, catalogued but almost never seen.",
+      "Great museums contain far more art than they could ever show. The Met's collection has more than 1.5 million objects, and only about 4 percent of them are on the walls on any given day. The rest sits in storage, catalogued but almost never seen.",
     url: "blog/post.html?id=underviewed-art",
     tags: ["Tools"],
   },
