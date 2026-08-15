@@ -65,68 +65,76 @@
   pointer-events: none;
 }
 
-/* Far field: small, dim, dense — the distant background of the sky. */
+/* Far field: the distant sky. Each star is a 4-point "+" of two crossed
+   ellipses (a flat pair plus its swapped-radii twin), so it reads as a
+   sparkle, not a dot. Centers sit >=12px off the tile edges so no arm clips
+   at the seam. */
 [data-style="space"] body::before {
   background-image:
-    radial-gradient(1.3px 1.3px at 37px 41px, var(--text35), transparent),
-    radial-gradient(1.1px 1.1px at 152px 96px, var(--text25), transparent),
-    radial-gradient(1.4px 1.4px at 251px 23px, var(--text30), transparent),
-    radial-gradient(1.1px 1.1px at 329px 174px, var(--text20), transparent),
-    radial-gradient(1.3px 1.3px at 92px 233px, var(--text30), transparent),
-    radial-gradient(1.1px 1.1px at 199px 311px, var(--text25), transparent),
-    radial-gradient(1.4px 1.4px at 401px 289px, var(--text35), transparent),
-    radial-gradient(1.1px 1.1px at 283px 391px, var(--text20), transparent),
-    radial-gradient(1.3px 1.3px at 55px 356px, var(--text30), transparent),
-    radial-gradient(1.1px 1.1px at 431px 87px, var(--text25), transparent),
-    radial-gradient(1.2px 1.2px at 423px 411px, var(--text30), transparent),
-    radial-gradient(1.1px 1.1px at 177px 201px, var(--text25), transparent),
-    radial-gradient(1.4px 1.4px at 361px 131px, var(--text35), transparent),
-    radial-gradient(1.1px 1.1px at 19px 143px, var(--text20), transparent),
-    radial-gradient(1.3px 1.3px at 129px 431px, var(--text30), transparent),
-    radial-gradient(1.1px 1.1px at 303px 251px, var(--text25), transparent),
-    radial-gradient(1.4px 1.4px at 71px 301px, var(--text35), transparent),
-    radial-gradient(1.1px 1.1px at 241px 161px, var(--text20), transparent),
-    radial-gradient(1.3px 1.3px at 391px 371px, var(--text30), transparent),
-    radial-gradient(1.1px 1.1px at 113px 63px, var(--text25), transparent);
-  background-size: 460px 460px;
+    radial-gradient(3px 0.9px at 43px 61px, var(--text35) 55%, transparent),
+    radial-gradient(0.9px 3px at 43px 61px, var(--text35) 55%, transparent),
+    radial-gradient(2.8px 0.8px at 167px 41px, var(--text30) 55%, transparent),
+    radial-gradient(0.8px 2.8px at 167px 41px, var(--text30) 55%, transparent),
+    radial-gradient(3.2px 1px at 271px 108px, var(--text40) 55%, transparent),
+    radial-gradient(1px 3.2px at 271px 108px, var(--text40) 55%, transparent),
+    radial-gradient(2.5px 0.8px at 401px 71px, var(--text35) 55%, transparent),
+    radial-gradient(0.8px 2.5px at 401px 71px, var(--text35) 55%, transparent),
+    radial-gradient(3px 0.9px at 479px 181px, oklch(72% 0.16 205 / 0.55) 55%, transparent),
+    radial-gradient(0.9px 3px at 479px 181px, oklch(72% 0.16 205 / 0.55) 55%, transparent),
+    radial-gradient(3.5px 1px at 89px 199px, var(--text45) 55%, transparent),
+    radial-gradient(1px 3.5px at 89px 199px, var(--text45) 55%, transparent),
+    radial-gradient(2.6px 0.8px at 223px 251px, var(--text30) 55%, transparent),
+    radial-gradient(0.8px 2.6px at 223px 251px, var(--text30) 55%, transparent),
+    radial-gradient(4.5px 1px at 351px 221px, var(--text50) 55%, transparent),
+    radial-gradient(1px 4.5px at 351px 221px, var(--text50) 55%, transparent),
+    radial-gradient(3.4px 0.9px at 451px 311px, var(--text40) 55%, transparent),
+    radial-gradient(0.9px 3.4px at 451px 311px, var(--text40) 55%, transparent),
+    radial-gradient(3px 0.9px at 131px 361px, oklch(72% 0.16 315 / 0.5) 55%, transparent),
+    radial-gradient(0.9px 3px at 131px 361px, oklch(72% 0.16 315 / 0.5) 55%, transparent),
+    radial-gradient(4px 1px at 307px 419px, var(--text35) 55%, transparent),
+    radial-gradient(1px 4px at 307px 419px, var(--text35) 55%, transparent);
+  background-size: 520px 480px;
+  animation: space-twinkle-far 8s ease-in-out infinite;
 }
 
-/* Near field: sparser and brighter, with a few standout stars carrying a
-   cold blue-cyan tinge in their halo. */
+/* Near field: fewer, larger, brighter sparkles that carry the color. Same
+   crossed-ellipse build; breathing counter-phased against the far field. */
 [data-style="space"] body::after {
   background-image:
-    radial-gradient(2.6px 2.6px at 121px 83px, var(--text90) 30%, var(--accent25) 55%, transparent),
-    radial-gradient(1.7px 1.7px at 331px 209px, var(--text55), transparent),
-    radial-gradient(1.6px 1.6px at 483px 61px, var(--text45), transparent),
-    radial-gradient(2.4px 2.4px at 553px 421px, var(--text85) 30%, var(--primary25) 55%, transparent),
-    radial-gradient(1.6px 1.6px at 87px 371px, var(--text40), transparent),
-    radial-gradient(1.8px 1.8px at 251px 497px, var(--text50), transparent),
-    radial-gradient(1.6px 1.6px at 433px 313px, var(--text45), transparent),
-    radial-gradient(1.7px 1.7px at 611px 173px, var(--text50), transparent),
-    radial-gradient(1.7px 1.7px at 41px 571px, var(--text50), transparent),
-    radial-gradient(1.6px 1.6px at 401px 499px, var(--text45), transparent),
-    radial-gradient(1.8px 1.8px at 191px 281px, var(--text55), transparent),
-    radial-gradient(1.6px 1.6px at 571px 591px, var(--text40), transparent),
-    radial-gradient(2.5px 2.5px at 303px 89px, var(--text90) 30%, var(--accent25) 55%, transparent),
-    radial-gradient(1.7px 1.7px at 511px 247px, var(--text50), transparent);
-  background-size: 640px 640px;
+    radial-gradient(5px 1.1px at 97px 83px, var(--text70) 55%, transparent),
+    radial-gradient(1.1px 5px at 97px 83px, var(--text70) 55%, transparent),
+    radial-gradient(6px 1.2px at 331px 149px, var(--text80) 55%, transparent),
+    radial-gradient(1.2px 6px at 331px 149px, var(--text80) 55%, transparent),
+    radial-gradient(7px 1.3px at 589px 91px, var(--text85) 55%, transparent),
+    radial-gradient(1.3px 7px at 589px 91px, var(--text85) 55%, transparent),
+    radial-gradient(2px 2px at 223px 331px, var(--text95) 40%, transparent),
+    radial-gradient(8px 1.4px at 223px 331px, var(--text90) 55%, transparent),
+    radial-gradient(1.4px 8px at 223px 331px, var(--text90) 55%, transparent),
+    radial-gradient(5.5px 1.2px at 511px 271px, oklch(70% 0.18 145 / 0.85) 55%, transparent),
+    radial-gradient(1.2px 5.5px at 511px 271px, oklch(70% 0.18 145 / 0.85) 55%, transparent),
+    radial-gradient(1.8px 1.8px at 417px 471px, oklch(80% 0.12 30 / 0.9) 40%, transparent),
+    radial-gradient(6px 1.2px at 417px 471px, oklch(70% 0.18 30 / 0.8) 55%, transparent),
+    radial-gradient(1.2px 6px at 417px 471px, oklch(70% 0.18 30 / 0.8) 55%, transparent),
+    radial-gradient(5px 1.1px at 127px 511px, oklch(70% 0.18 260 / 0.7) 55%, transparent),
+    radial-gradient(1.1px 5px at 127px 511px, oklch(70% 0.18 260 / 0.7) 55%, transparent);
+  background-size: 680px 620px;
+  animation: space-twinkle-near 5.6s ease-in-out -2.1s infinite;
 }
 
-/* The parallax itself: scroll-driven animations (pure CSS, so it stays
-   inside the skin contract — no JS hook exists for skins). Progress maps
-   to the root scroll; the near field travels ~3x the far field, and both
-   travel far less than the page, which is what sells the distance. On
-   engines without scroll-timeline support the fields simply hang fixed in
-   the viewport — depth without the drift, still correct. */
+/* The parallax: the near field travels ~3x the far field, and both far less
+   than the page, which is what sells the distance. Each animation gets its
+   own timeline (scroll for the drift, auto for the twinkle) so the breathing
+   survives on engines without scroll-timeline, which just hang the fields
+   fixed. */
 @supports (animation-timeline: scroll()) {
   [data-style="space"] body::before {
-    animation: space-drift-far linear both;
-    animation-timeline: scroll(root);
+    animation: space-drift-far linear both, space-twinkle-far 8s ease-in-out infinite;
+    animation-timeline: scroll(root), auto;
   }
 
   [data-style="space"] body::after {
-    animation: space-drift-near linear both;
-    animation-timeline: scroll(root);
+    animation: space-drift-near linear both, space-twinkle-near 5.6s ease-in-out -2.1s infinite;
+    animation-timeline: scroll(root), auto;
   }
 }
 
@@ -136,6 +144,18 @@
 
 @keyframes space-drift-near {
   to { transform: translateY(-210px); }
+}
+
+/* The near field's -2.1s offset keeps the two layers out of sync, so the sky
+   never blinks all at once. */
+@keyframes space-twinkle-far {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes space-twinkle-near {
+  0%, 100% { opacity: 0.65; }
+  50% { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -196,11 +216,14 @@
 /* ---- Chrome: reticle logo, glass menus, telemetry footer ------------------- */
 
 /* The logo "D" as a HUD reticle: mono glyph in a cyan hairline ring. The
-   default hover (lift + fill) already speaks this skin's language. */
+   default hover (lift + fill) already speaks this skin's language. Needs an
+   opaque fill the base logo doesn't have, or the sparkles read through it;
+   95% rather than flat --bg so the top gradient still tints it. */
 [data-style="space"] .name-logo {
   font-family: var(--font-mono);
   font-weight: 600;
   color: var(--accent);
+  background-color: var(--bg95);
   border: 1px solid var(--accent35);
   box-shadow: 0 0 14px var(--accent15), inset 0 0 8px var(--accent10);
 }
@@ -222,9 +245,11 @@
   border-color: var(--text15);
 }
 
-/* Static menu: a hairline glass strip, sized to its own list (the header
-   row is a stretch flexbox sized by the logo's margin box). */
+/* Static menu: a hairline glass strip, sized to its own list. Opaque for the
+   same reason as the reticle above; the moving menu needs no fix, its
+   backdrop blur smears the field into a wash. */
 [data-style="space"] .static-menu {
+  background-color: var(--bg95);
   border: 1px solid var(--text10);
   align-self: flex-start;
 }
@@ -254,20 +279,41 @@
 
 /* ---- Hero: the orbit rings + the console line + the viewport plate --------- */
 
-/* A soft engine glow rises behind the masthead. */
+/* A soft engine glow rises behind the masthead, held back until the chrome
+   wave. Gradients can't transition, so the stop color is a registered custom
+   property and the fade runs on that (same trick as --doodle-ring). */
+@property --space-hero-glow {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
 [data-style="space"] #typing-container {
   position: relative;
-  background-image: radial-gradient(ellipse 56% 60% at 32% 62%, var(--primary10), transparent 70%);
+  background-image: radial-gradient(ellipse 56% 60% at 32% 62%, var(--space-hero-glow), transparent 70%);
+  transition: --space-hero-glow 0.8s ease-out 0.76s;
+}
+
+[data-style="space"].hero-extras-in #typing-container {
+  --space-hero-glow: var(--primary10);
 }
 
 /* Space Grotesk display, tight and cold — the readout on the main screen.
-   Glow stays a faint halo, never a blur on the letterforms. */
+   Glow stays a faint halo, never a blur on the letterforms. It types cold and
+   lights up on the static menu's beat: js/script.js stamps hero-extras-in
+   once the first phrase lands. Geometry matches either side of the
+   transition, so it fades on alpha alone. */
 [data-style="space"] #typing-text {
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: clamp(44px, 5vw, 62px);
   line-height: 1.15;
   letter-spacing: -0.015em;
+  text-shadow: 0 0 32px transparent;
+  transition: text-shadow 0.8s ease-out 0.76s;
+}
+
+[data-style="space"].hero-extras-in #typing-text {
   text-shadow: 0 0 32px var(--primary25);
 }
 
@@ -277,6 +323,18 @@
 [data-style="space"] #typing-text .typing-accent,
 [data-style="space"] #blog-typing-text .typing-accent {
   color: var(--primary);
+  text-shadow: 0 0 22px var(--primary40);
+}
+
+/* Accent words declare their own halo, so inheritance can't carry the gate
+   down. Home only — the blog masthead runs no hero sequence, so gating it
+   would strand its halo off for good. */
+[data-style="space"] #typing-text .typing-accent {
+  text-shadow: 0 0 22px transparent;
+  transition: text-shadow 0.8s ease-out 0.76s;
+}
+
+[data-style="space"].hero-extras-in #typing-text .typing-accent {
   text-shadow: 0 0 22px var(--primary40);
 }
 
@@ -291,11 +349,18 @@
 
 /* The selfie becomes the viewport plate: hairline frame, deep drop, a
    faint blue bloom. It keeps its tilt — stays clickable, it is still the
-   cycler unlock. */
+   cycler unlock. Only the bloom is gated: the plate starts off the left edge
+   (#typing-container's -290px) and its glow bleeds back onto an otherwise
+   empty screen. The deep drop is depth, not glow, so it stays. */
 [data-style="space"] #typing-image {
   border: 1px solid var(--text15);
-  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 30px var(--primary15);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 30px transparent;
   filter: contrast(1.04) saturate(1.05);
+  transition: box-shadow 0.8s ease-out 0.76s;
+}
+
+[data-style="space"].hero-extras-in #typing-image {
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.55), 0 0 30px var(--primary15);
 }
 
 [data-style="space"] .socials-item:hover i {
@@ -786,9 +851,14 @@
   /* The parallax fields are fixed composited layers, so they stay on for
      the small screen unchanged; only the drift shortens with the page. */
 
+  /* Tighter halo, same gate. The transition comes from the desktop rule. */
   [data-style="space"] #typing-text {
     font-size: clamp(30px, 8.6vw, 38px);
     line-height: 1.2;
+    text-shadow: 0 0 20px transparent;
+  }
+
+  [data-style="space"].hero-extras-in #typing-text {
     text-shadow: 0 0 20px var(--primary25);
   }
 

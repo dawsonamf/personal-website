@@ -162,6 +162,20 @@
           { action: 'delete', count: 8 },
           { action: 'type', text: "software engineer." },
         ],
+        [
+          { action: 'type', text: "Hi,\nI'm Dawson,\nbuilder." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 8 },
+          { action: 'type', text: "software engineer." },
+        ],
+        [
+          { action: 'type', text: "Hey,\nI'm Dawson,\nagentic engineer." },
+          { action: 'callback', fn: startAnimations },
+          { action: 'pause', duration: 1500 },
+          { action: 'delete', count: 17 },
+          { action: 'type', text: "software engineer." },
+        ],
         // [
         //   { action: 'type', text: "Hi,\nI'm Dawson,\nsoftware engineer." },
         //   { action: 'callback', fn: startAnimations },

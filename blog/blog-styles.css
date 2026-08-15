@@ -262,8 +262,8 @@
 
 /* The site nav is built for full-width pages, so the logo and menu would sit at
    the far viewport edges while a post is a centered 750px reading column (see
-   .blog-post-container). Constrain the bar, and the scroll-up moving menu, to
-   that same column so the D and the menu line up with the article. */
+   .blog-post-container). Center the bar over that column so the D and the menu
+   line up with the article. (Mobile keeps this clamp inside the 500px body.) */
 .blog-post-page .header-menu-container {
   max-width: 750px;
   margin: 0 auto;
@@ -271,6 +271,34 @@
 .blog-post-page .moving-menu {
   right: max(10px, calc(50% - 375px));
   margin-right: 0;
+}
+
+/* Wide-tracking skins push the 7-item menu past 750px, so the clamp above
+   squeezed the pill and "Theme" spilled. Size to content instead, floored at
+   the column so the bar's edges stay on ±375 with the moving menu. Desktop
+   only: below 1101px the bar is narrower than the column and flush ends would
+   shove the D against the viewport edge. */
+@media screen and (min-width: 1101px) {
+  .blog-post-page .header-menu-container {
+    width: fit-content;
+    min-width: 750px;
+    max-width: calc(100vw - 40px);
+  }
+  /* The base calc(100% - 90px) is relative to the now content-sized bar, which
+     would re-clip the pill. */
+  .blog-post-page .static-menu {
+    max-width: calc(100vw - 40px);
+  }
+
+  /* Drop the site-wide inline margins (logo 20px, pill 10px) that held both
+     ends inside the column edge. Vertical margins and margin-left: auto stay. */
+  .blog-post-page .name-logo {
+    margin-left: 0;
+  }
+
+  .blog-post-page .static-menu {
+    margin-right: 0;
+  }
 }
 
 .blog-footer {

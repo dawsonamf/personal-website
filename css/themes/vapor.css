@@ -183,10 +183,23 @@
 
 /* ---- Hero: the neon sign + the chrome line + the lit plate ------------------ */
 
-/* A sunset wash glows up behind the masthead. */
+/* A sunset wash glows up behind the masthead, held back until the chrome
+   wave. Gradients can't transition, so the stop color is a registered custom
+   property and the fade runs on that (same trick as --doodle-ring). */
+@property --vapor-hero-glow {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+
 [data-style="vapor"] #typing-container {
   position: relative;
-  background-image: radial-gradient(ellipse 58% 64% at 30% 60%, var(--primary15), transparent 72%);
+  background-image: radial-gradient(ellipse 58% 64% at 30% 60%, var(--vapor-hero-glow), transparent 72%);
+  transition: --vapor-hero-glow 0.8s ease-out 0.76s;
+}
+
+[data-style="vapor"].hero-extras-in #typing-container {
+  --vapor-hero-glow: var(--primary15);
 }
 
 /* The signature move: a slatted outrun sun sinking behind the sign. One
@@ -250,6 +263,14 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--accent);
+  text-shadow: 2px 0 0 var(--primary45), -2px 0 0 var(--accent25), 0 0 7px transparent, 0 0 28px transparent;
+  transition: text-shadow 0.8s ease-out 0.76s;
+}
+
+/* The tubes warm up with the sun, so the sign types unlit. Only the two
+   zero-offset bloom layers are gated; the hard 2px fringe is letterform, not
+   glow, and stays throughout. */
+[data-style="vapor"].hero-extras-in #typing-text {
   text-shadow: 2px 0 0 var(--primary45), -2px 0 0 var(--accent25), 0 0 7px var(--accent60), 0 0 28px var(--primary50);
 }
 
@@ -258,6 +279,18 @@
 [data-style="vapor"] #typing-text .typing-accent,
 [data-style="vapor"] #blog-typing-text .typing-accent {
   color: var(--primary);
+  text-shadow: 2px 0 0 var(--accent45), -2px 0 0 var(--primary25), 0 0 7px var(--primary60), 0 0 28px var(--accent45);
+}
+
+/* Accent words declare their own shadow, so inheritance can't carry the gate
+   down. Home only — the blog masthead runs no hero sequence, so gating it
+   would strand its bloom off for good. */
+[data-style="vapor"] #typing-text .typing-accent {
+  text-shadow: 2px 0 0 var(--accent45), -2px 0 0 var(--primary25), 0 0 7px transparent, 0 0 28px transparent;
+  transition: text-shadow 0.8s ease-out 0.76s;
+}
+
+[data-style="vapor"].hero-extras-in #typing-text .typing-accent {
   text-shadow: 2px 0 0 var(--accent45), -2px 0 0 var(--primary25), 0 0 7px var(--primary60), 0 0 28px var(--accent45);
 }
 
@@ -310,11 +343,18 @@
 
 /* The selfie becomes a lit plate: neon frame, cyan-magenta bloom, punched
    saturation. It keeps its tilt — stays clickable, it is still the cycler
-   unlock. */
+   unlock. The bloom is gated: the plate starts off the left edge
+   (#typing-container's -290px) and its 44px glow bleeds back onto an
+   otherwise empty screen. */
 [data-style="vapor"] #typing-image {
   border: 1px solid var(--accent);
-  box-shadow: 0 0 16px var(--accent30), 0 0 44px var(--primary20);
+  box-shadow: 0 0 16px transparent, 0 0 44px transparent;
   filter: saturate(1.18) contrast(1.05);
+  transition: box-shadow 0.8s ease-out 0.76s;
+}
+
+[data-style="vapor"].hero-extras-in #typing-image {
+  box-shadow: 0 0 16px var(--accent30), 0 0 44px var(--primary20);
 }
 
 [data-style="vapor"] .socials-item:hover i {
@@ -832,13 +872,23 @@
   /* Monoton is very wide: "FULL STACK ENGINEER." must clear a ~335px column
      on a 375px screen, which caps the sign at 22px. The chromatic fringe
      halves with the type. */
+  /* Halved fringe and bloom, same gate. Transitions come from the desktop
+     rules. */
   [data-style="vapor"] #typing-text {
     font-size: clamp(19px, 5.8vw, 22px);
     line-height: 1.4;
+    text-shadow: 1px 0 0 var(--primary45), -1px 0 0 var(--accent25), 0 0 6px transparent, 0 0 20px transparent;
+  }
+
+  [data-style="vapor"].hero-extras-in #typing-text {
     text-shadow: 1px 0 0 var(--primary45), -1px 0 0 var(--accent25), 0 0 6px var(--accent60), 0 0 20px var(--primary50);
   }
 
   [data-style="vapor"] #typing-text .typing-accent {
+    text-shadow: 1px 0 0 var(--accent45), -1px 0 0 var(--primary25), 0 0 6px transparent, 0 0 20px transparent;
+  }
+
+  [data-style="vapor"].hero-extras-in #typing-text .typing-accent {
     text-shadow: 1px 0 0 var(--accent45), -1px 0 0 var(--primary25), 0 0 6px var(--primary60), 0 0 20px var(--accent45);
   }
 
