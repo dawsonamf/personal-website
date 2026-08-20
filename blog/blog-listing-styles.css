@@ -162,10 +162,13 @@
   line-height: 1.5;
   margin: 0 0 14px 0;
   display: -webkit-box;
-  -webkit-line-clamp: 3;
+  -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  flex: 1;
+  /* No flex-grow: growing the -webkit-box past its clamped height leaves room
+     for the lines after the ellipsis to still render. Tags stay pinned to the
+     bottom via margin-top: auto on .blog-card-tags. */
+  flex: 0 1 auto;
 }
 
 .blog-listing-grid .blog-card .blog-card-tags {

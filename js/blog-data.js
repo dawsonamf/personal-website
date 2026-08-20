@@ -36,7 +36,7 @@ const FEATURED_PROJECTS = [
     id: "silicon-fly",
     title: "Silicon Fly",
     description:
-      "A team of more than 200 researchers from 50 labs mapped every neuron and synapse in a real fly's brain and open sourced it. Others turned half a percent of that brain into a desktop app that produces a fly that wanders across your display, sees your cursor, and runs away from it.<br><br>I wrote a Metal kernel that cut the per step work by 560x by scattering instead of gathering, making running the whole brain feasible. I used integer arithmetic to make the kernel bit for bit verifiable against a CPU reference. The result is 139,255 neurons and 15,091,983 connections running at 13.5x realtime on an M4 Pro in 163 lines of Metal.",
+      "A team of more than 200 researchers from 50 labs mapped every neuron and synapse in a real fly's brain and open sourced it. Others turned half a percent of that brain into a desktop app that produces a fly that wanders across your display, sees your cursor, and runs away from it.<br><br>I wrote a Metal kernel that made running the whole brain feasible by scattering instead of gathering, cutting the per step work by 560x. I used integer arithmetic to make the kernel bit for bit verifiable against a CPU reference. The result is 139,255 neurons and 15,091,983 connections running at 13.5x realtime on an M4 Pro in 163 lines of Metal.",
     image: "../resources/Fly_Media.jpg",
     tech: ["Metal", "Swift", "Compute Shaders", "Connectomics", "GPU"],
     accentColor: "#61ffda",
