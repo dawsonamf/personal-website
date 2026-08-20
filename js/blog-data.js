@@ -132,7 +132,7 @@ const BLOG_POSTS = [
     title: "The Art Nobody Looks At",
     date: "July 2026",
     excerpt:
-      "Great museums contain far more art than they could ever show. The Met's collection has more than 1.5 million objects, and only about 4 percent of them are on the walls on any given day. The rest sits in storage, catalogued but almost never seen.",
+      "A gallery of works of art currently sitting in storage at some of the world's most popular art museums.",
     url: "blog/post.html?id=underviewed-art",
     tags: ["Tools"],
   },
