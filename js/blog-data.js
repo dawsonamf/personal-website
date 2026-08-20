@@ -33,6 +33,20 @@ const FEATURED_PROJECTS = [
     external2: true,
   },
   {
+    id: "silicon-fly",
+    title: "Silicon Fly",
+    description:
+      "A team of more than 200 researchers from 50 labs mapped every neuron and synapse in a real fly's brain and open sourced it. Others turned half a percent of that brain into a desktop app that produces a fly that wanders across your display, sees your cursor, and runs away from it.<br><br>I wrote a Metal kernel that cut the per step work by 560x by scattering instead of gathering, making running the whole brain feasible. I used integer arithmetic to make the kernel bit for bit verifiable against a CPU reference. The result is 139,255 neurons and 15,091,983 connections running at 13.5x realtime on an M4 Pro in 163 lines of Metal.",
+    image: "../resources/Fly_Media.jpg",
+    tech: ["Metal", "Swift", "Compute Shaders", "Connectomics", "GPU"],
+    accentColor: "#61ffda",
+    url: "../blog/post.html?id=fly-on-my-laptop",
+    ctaLabel: "Read the post",
+    url2: "https://github.com/dawsonamf/siliconfly",
+    ctaLabel2: "View on GitHub",
+    external2: true,
+  },
+  {
     id: "helm",
     title: "Helm",
     description:
@@ -96,6 +110,15 @@ if (typeof window !== "undefined") {
 }
 
 const BLOG_POSTS = [
+  {
+    id: "fly-on-my-laptop",
+    title: "There is a fly on my laptop and it runs away",
+    date: "August 2026",
+    excerpt:
+      "How inverting a kernel from gather to scatter and porting from WebGPU to Metal cut per step work by 560x and lets me run a complete insect brain on my laptop.",
+    url: "blog/post.html?id=fly-on-my-laptop",
+    tags: ["Swift", "Systems"],
+  },
   // {
   //   id: "gemma4-heretic-ara",
   //   title: "Fine-Tuning Gemma 4 MoE with Heretic-ARA",
