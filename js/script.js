@@ -81,12 +81,26 @@
     }
 
     // Waits for the later (right) card to finish sliding: delay 3.34s + duration 1.5s.
+    // The wrapper stays put — it carries the section's ground under skins that
+    // reverse this block out to ink, so only its contents enter. The header's
+    // own reveal class goes on at the same beat, which is what skins with a
+    // scroll entrance for their titles animate against (js/anim-utils.js).
     const aboutHeaderWrapper = document.querySelector('#about-header-wrapper');
     if (aboutHeaderWrapper) {
-      aboutHeaderWrapper.style.animation = "fadein 0.8s ease-out";
-      aboutHeaderWrapper.style.animationDelay = `${4.84 - DELAY_ADJUSTMENT}s`;
-      aboutHeaderWrapper.style.animationFillMode = "forwards";
-      persistAfterAnimation(aboutHeaderWrapper, { visibility: 'visible', opacity: '1' });
+      const aboutHeaderDelay = 4.84 - DELAY_ADJUSTMENT;
+      animateThenPersist(
+        aboutHeaderWrapper.querySelector('.section-header'),
+        'fadein 0.8s ease-out', `${aboutHeaderDelay}s`,
+        { visibility: 'visible', opacity: '1' }
+      );
+      animateThenPersist(
+        aboutHeaderWrapper.querySelector('.section-header-spacer'),
+        'fadein 0.8s ease-out', `${aboutHeaderDelay}s`,
+        { visibility: 'visible', opacity: '1' }
+      );
+      setTimeout(function () {
+        window.revealSectionHeader(aboutHeaderWrapper);
+      }, aboutHeaderDelay * 1000);
     }
   }
 

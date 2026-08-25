@@ -24,7 +24,8 @@
   .static-menu-mobile {
     display: flex;
     border-radius: var(--border-radius);
-    z-index: 1;
+    /* No z-index — same reason as .static-menu in styles.css: as a flex item
+       it would become a stacking context and trap the theme dropdown. */
     margin-right: 10px;
     margin-left: auto;
     position: static;
@@ -93,9 +94,15 @@
     color: var(--bg);
   }
 
+  /* The wide sheet bottom-aligns the text column against the portrait
+     (styles.css). There is no portrait here and the box is pinned to 125px
+     with the type deliberately overflowing it, so the column goes back to
+     hanging from the top — bottom-aligned, the overflow would run UP through
+     the header instead of down. */
   #typing-container {
     position: relative;
     display: flex;
+    align-items: flex-start;
     height: 125px;
     transform: translateX(0px) translateY(calc(50vh - 220px));
   }
@@ -103,6 +110,7 @@
   #typing-left {
     border-radius: var(--border-radius);
     text-align: left;
+    padding-bottom: 0;
   }
 
   #typing-right {
@@ -199,6 +207,16 @@
     width: 73%;
     margin-right: 0px;
     padding-right: 0px;
+  }
+
+  /* 8em is a wide-sheet measure. On a 390px phone it left ~160px of dead
+     column between a section's last card and the next department head —
+     "Where I've Worked" opened a screen and a half below the skills panel.
+     Every skin that overrides this steps its own spacer down by about a third
+     on the small sheet (7em -> 5em, 8em -> 5em); this is that same step for
+     the base, and therefore for the five skins that never overrode it. */
+  .section-spacer {
+    height: 5em;
   }
 
 

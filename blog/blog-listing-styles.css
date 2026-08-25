@@ -207,12 +207,27 @@
 }
 
 
-/* Selected Works slide-up after typing */
+/* Selected Works slide-up after typing.
 
-#selected-works-header,
-#featured-carousel {
+   The header wrapper is left visible and only its contents enter: skins that
+   reverse this section out to a colour paint that ground on the wrapper, and
+   sliding the wrapper slid the ground up with the title. The spacer is faded
+   rather than slid — the base sheet parks it on transform: translateY(5px),
+   which a slide-up animation would land on zero.
+
+   The carousel below is the other half of that same field and gets the same
+   treatment for the same reason: the box holds the ground, so the track and
+   the dots are what travel. */
+
+#selected-works-header .section-header,
+#featured-carousel .featured-carousel-container,
+#featured-carousel .featured-carousel-dots {
   opacity: 0;
   transform: translateY(60px);
+}
+
+#selected-works-header .section-header-spacer {
+  opacity: 0;
 }
 
 @keyframes slideInUp {

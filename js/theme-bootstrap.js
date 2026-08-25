@@ -207,56 +207,62 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Patrick+Hand&display=swap'],
       css: '/css/themes/doodle.css',
     },
-    'space': {
-      id: 'space',
-      label: 'Space',
-      polarity: 'dark',
-      // No flags: cards float weightless — tilt stays on, AOS entrances
-      // stay as docking approaches, and the cursor follower reads as a
-      // nav reticle. No typing key either: the classic caret stays — a
-      // console cursor is already on-grammar (the palette turns it cyan).
-      // Mission control: ice-white readout type on the void, guidance-blue
-      // interactives, cyan reserved for HUD marks (indices, live edges).
-      colors: { text:'#dbe7f4', bg:'#050810', primary:'#5b9dff', secondary:'#0b1322', accent:'#4de3ff' },
-      tokens: {
-        '--font-body': "'Inter', sans-serif",
-        '--font-heading': "'Space Grotesk', sans-serif",
-        '--font-mono': "'IBM Plex Mono', monospace",
-        '--border-radius': '10px',
-        '--radius-pill': '999px',
-        '--neutral-gray': '#7e8ca3',
-        // Selected jobs entry reads as the lit instrument panel; hover is
-        // a step brighter into the navy.
-        '--jobs-menu-navy-dark': '#0b1322',
-        '--jobs-menu-navy': '#101b31',
-        '--jobs-menu-slate': '#8496b3',
-      },
-      fonts: ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap'],
-      css: '/css/themes/space.css',
-    },
-    'vapor': {
-      id: 'vapor',
-      label: 'Vaporwave',
-      polarity: 'dark',
-      // No flags: tilt stays on and the motion pack stays — the one skin
-      // that turns the dials up instead of down.
-      colors: { text:'#f3eaff', bg:'#20094a', primary:'#ff2ec4', secondary:'#2c1160', accent:'#00e5ff' },
-      // Cursorless masthead: each glyph is a neon tube that flickers alight
-      // (the skin animates the engine's glyph spans).
-      typing: 'letter',
-      tokens: {
-        '--font-body': "'Exo 2', sans-serif",
-        '--font-heading': "'Exo 2', sans-serif",
-        '--border-radius': '14px',
-        '--radius-pill': '999px',
-        '--neutral-gray': '#8f7fb8',
-        '--jobs-menu-navy-dark': '#2c1160',
-        '--jobs-menu-navy': '#341473',
-        '--jobs-menu-slate': '#9d8ec7',
-      },
-      fonts: ['https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,800;1,800&family=Monoton&display=swap'],
-      css: '/css/themes/vapor.css',
-    },
+    // --- space — retired from the switcher. Commented out, not deleted:
+    //     restore by uncommenting this block and adding 'space' back to ORDER.
+    //     css/themes/space.css is left in place and loads only via this entry.
+    //     'space': {
+    //       id: 'space',
+    //       label: 'Space',
+    //       polarity: 'dark',
+    //       // No flags: cards float weightless — tilt stays on, AOS entrances
+    //       // stay as docking approaches, and the cursor follower reads as a
+    //       // nav reticle. No typing key either: the classic caret stays — a
+    //       // console cursor is already on-grammar (the palette turns it cyan).
+    //       // Mission control: ice-white readout type on the void, guidance-blue
+    //       // interactives, cyan reserved for HUD marks (indices, live edges).
+    //       colors: { text:'#dbe7f4', bg:'#050810', primary:'#5b9dff', secondary:'#0b1322', accent:'#4de3ff' },
+    //       tokens: {
+    //         '--font-body': "'Inter', sans-serif",
+    //         '--font-heading': "'Space Grotesk', sans-serif",
+    //         '--font-mono': "'IBM Plex Mono', monospace",
+    //         '--border-radius': '10px',
+    //         '--radius-pill': '999px',
+    //         '--neutral-gray': '#7e8ca3',
+    //         // Selected jobs entry reads as the lit instrument panel; hover is
+    //         // a step brighter into the navy.
+    //         '--jobs-menu-navy-dark': '#0b1322',
+    //         '--jobs-menu-navy': '#101b31',
+    //         '--jobs-menu-slate': '#8496b3',
+    //       },
+    //       fonts: ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap'],
+    //       css: '/css/themes/space.css',
+    //     },
+    // --- vapor — retired from the switcher. Commented out, not deleted:
+    //     restore by uncommenting this block and adding 'vapor' back to ORDER.
+    //     css/themes/vapor.css is left in place and loads only via this entry.
+    //     'vapor': {
+    //       id: 'vapor',
+    //       label: 'Vaporwave',
+    //       polarity: 'dark',
+    //       // No flags: tilt stays on and the motion pack stays — the one skin
+    //       // that turns the dials up instead of down.
+    //       colors: { text:'#f3eaff', bg:'#20094a', primary:'#ff2ec4', secondary:'#2c1160', accent:'#00e5ff' },
+    //       // Cursorless masthead: each glyph is a neon tube that flickers alight
+    //       // (the skin animates the engine's glyph spans).
+    //       typing: 'letter',
+    //       tokens: {
+    //         '--font-body': "'Exo 2', sans-serif",
+    //         '--font-heading': "'Exo 2', sans-serif",
+    //         '--border-radius': '14px',
+    //         '--radius-pill': '999px',
+    //         '--neutral-gray': '#8f7fb8',
+    //         '--jobs-menu-navy-dark': '#2c1160',
+    //         '--jobs-menu-navy': '#341473',
+    //         '--jobs-menu-slate': '#9d8ec7',
+    //       },
+    //       fonts: ['https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,400;0,600;0,800;1,800&family=Monoton&display=swap'],
+    //       css: '/css/themes/vapor.css',
+    //     },
     'wheatpaste': {
       id: 'wheatpaste',
       label: 'Street Poster',
@@ -416,71 +422,77 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap'],
       css: '/css/themes/gallery.css',
     },
-    'wanted': {
-      id: 'wanted',
-      label: 'Wanted',
-      polarity: 'light',
-      // Territorial reward poster: tilt off, fully still — handbills nailed
-      // to a board do not move. Every hover is an ink-press hard cut.
-      flags: { tilt: false, still: true },
-      // Cursorless masthead: each glyph lands like a typebar strike — held
-      // off the page a beat, one over-inked frame, then it settles clean
-      // (the skin animates the engine's glyph spans; the Special Elite
-      // body makes the typewriter grammar literal).
-      typing: 'letter',
-      colors: { text:'#3a2a18', bg:'#f0e2c0', primary:'#8c3b22', secondary:'#f7eed6', accent:'#b08945' },
-      tokens: {
-        '--font-body': "'Special Elite', cursive",
-        '--font-heading': "'Rye', cursive",
-        // --font-mono stays the default: code keeps a real mono face.
-        '--border-radius': '0px',
-        '--radius-pill': '0px',
-        '--neutral-gray': '#8a7a5c',
-        // Selected jobs entry reads as the bright handbill panel; hover is
-        // a deeper sun-toasted parchment wash.
-        '--jobs-menu-navy-dark': '#f7eed6',
-        '--jobs-menu-navy': '#e4d2a6',
-        '--jobs-menu-slate': '#7a6644',
-      },
-      fonts: ['https://fonts.googleapis.com/css2?family=Rye&family=Smokum&family=Special+Elite&display=swap'],
-      css: '/css/themes/wanted.css',
-    },
-    'constructivist': {
-      id: 'constructivist',
-      label: 'Constructivist',
-      polarity: 'light',
-      // Merges theme-explorations tiles 06 (red wedge agitprop) + 06·B (Rodchenko's
-      // 1924 advertising shout): one red, one black, unbleached paper.
-      // Tilt off — posters lie flat — but no still flag: AOS fade-ups stay
-      // as the agit entrances, and the cursor follower stays (accent is ink,
-      // so the dot-and-ring reads as the black disc roaming the sheet).
-      flags: { tilt: false },
-      // Cursorless masthead: slogans stamp onto the sheet a word at a time,
-      // each one slamming in like a press pass (the skin animates the
-      // engine's glyph spans).
-      typing: 'word',
-      // ...and they leave the same way: dead slogans drop off the form a
-      // whole word per beat, not a char-by-char backspace
-      // (js/typing-engine.js reads this via __styleTypingDeleteMode).
-      typingDelete: 'word',
-      // accent is ink, not red — red stays scarce: active states and the
-      // words being sold only (06·B's discipline).
-      colors: { text:'#1d1a16', bg:'#f1e7d0', primary:'#d22b1f', secondary:'#e9ddbd', accent:'#1d1a16' },
-      tokens: {
-        '--font-body': "'Inter', sans-serif",
-        '--font-heading': "'Anton', sans-serif",
-        '--font-mono': "'IBM Plex Mono', monospace",
-        '--border-radius': '0px',
-        '--radius-pill': '0px',
-        '--neutral-gray': '#7a7264',
-        // Selected jobs entry reads as the solid ink block of the plan.
-        '--jobs-menu-navy-dark': '#1d1a16',
-        '--jobs-menu-navy': '#e0d3b2',
-        '--jobs-menu-slate': '#6e6450',
-      },
-      fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;700&display=swap'],
-      css: '/css/themes/constructivist.css',
-    },
+    // --- wanted — retired from the switcher. Commented out, not deleted:
+    //     restore by uncommenting this block and adding 'wanted' back to ORDER.
+    //     css/themes/wanted.css is left in place and loads only via this entry.
+    //     'wanted': {
+    //       id: 'wanted',
+    //       label: 'Wanted',
+    //       polarity: 'light',
+    //       // Territorial reward poster: tilt off, fully still — handbills nailed
+    //       // to a board do not move. Every hover is an ink-press hard cut.
+    //       flags: { tilt: false, still: true },
+    //       // Cursorless masthead: each glyph lands like a typebar strike — held
+    //       // off the page a beat, one over-inked frame, then it settles clean
+    //       // (the skin animates the engine's glyph spans; the Special Elite
+    //       // body makes the typewriter grammar literal).
+    //       typing: 'letter',
+    //       colors: { text:'#3a2a18', bg:'#f0e2c0', primary:'#8c3b22', secondary:'#f7eed6', accent:'#b08945' },
+    //       tokens: {
+    //         '--font-body': "'Special Elite', cursive",
+    //         '--font-heading': "'Rye', cursive",
+    //         // --font-mono stays the default: code keeps a real mono face.
+    //         '--border-radius': '0px',
+    //         '--radius-pill': '0px',
+    //         '--neutral-gray': '#8a7a5c',
+    //         // Selected jobs entry reads as the bright handbill panel; hover is
+    //         // a deeper sun-toasted parchment wash.
+    //         '--jobs-menu-navy-dark': '#f7eed6',
+    //         '--jobs-menu-navy': '#e4d2a6',
+    //         '--jobs-menu-slate': '#7a6644',
+    //       },
+    //       fonts: ['https://fonts.googleapis.com/css2?family=Rye&family=Smokum&family=Special+Elite&display=swap'],
+    //       css: '/css/themes/wanted.css',
+    //     },
+    // --- constructivist — retired from the switcher. Commented out, not deleted:
+    //     restore by uncommenting this block and adding 'constructivist' back to ORDER.
+    //     css/themes/constructivist.css is left in place and loads only via this entry.
+    //     'constructivist': {
+    //       id: 'constructivist',
+    //       label: 'Constructivist',
+    //       polarity: 'light',
+    //       // Merges theme-explorations tiles 06 (red wedge agitprop) + 06·B (Rodchenko's
+    //       // 1924 advertising shout): one red, one black, unbleached paper.
+    //       // Tilt off — posters lie flat — but no still flag: AOS fade-ups stay
+    //       // as the agit entrances, and the cursor follower stays (accent is ink,
+    //       // so the dot-and-ring reads as the black disc roaming the sheet).
+    //       flags: { tilt: false },
+    //       // Cursorless masthead: slogans stamp onto the sheet a word at a time,
+    //       // each one slamming in like a press pass (the skin animates the
+    //       // engine's glyph spans).
+    //       typing: 'word',
+    //       // ...and they leave the same way: dead slogans drop off the form a
+    //       // whole word per beat, not a char-by-char backspace
+    //       // (js/typing-engine.js reads this via __styleTypingDeleteMode).
+    //       typingDelete: 'word',
+    //       // accent is ink, not red — red stays scarce: active states and the
+    //       // words being sold only (06·B's discipline).
+    //       colors: { text:'#1d1a16', bg:'#f1e7d0', primary:'#d22b1f', secondary:'#e9ddbd', accent:'#1d1a16' },
+    //       tokens: {
+    //         '--font-body': "'Inter', sans-serif",
+    //         '--font-heading': "'Anton', sans-serif",
+    //         '--font-mono': "'IBM Plex Mono', monospace",
+    //         '--border-radius': '0px',
+    //         '--radius-pill': '0px',
+    //         '--neutral-gray': '#7a7264',
+    //         // Selected jobs entry reads as the solid ink block of the plan.
+    //         '--jobs-menu-navy-dark': '#1d1a16',
+    //         '--jobs-menu-navy': '#e0d3b2',
+    //         '--jobs-menu-slate': '#6e6450',
+    //       },
+    //       fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;700&display=swap'],
+    //       css: '/css/themes/constructivist.css',
+    //     },
     'miami-deco': {
       id: 'miami-deco',
       label: 'Miami Deco',
@@ -546,8 +558,69 @@
       fonts: ['https://fonts.googleapis.com/css2?family=Bangers&family=Comic+Neue:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;600&display=swap'],
       css: '/css/themes/neo-pop.css',
     },
+    'marquee': {
+      id: 'marquee',
+      label: 'Marquee',
+      polarity: 'light',
+      // Tilt off: a 3D card lean fights flat poster geometry. Motion stays —
+      // the drifting headers and ticking label strips ARE the design.
+      flags: { tilt: false },
+      // Ink on paper. primary is the band ink (a hair off text so a shuffled
+      // palette can separate them); accent is ink too, because links here
+      // are marked by rule weight, not by colour.
+      colors: { text:'#241f1a', bg:'#faf9f7', primary:'#2a2722', secondary:'#edeae4', accent:'#241f1a' },
+      // Cursorless masthead: poster copy is set, not typed. Words clack down
+      // into place a word at a time and drain the same way.
+      typing: 'word',
+      typingDelete: 'word',
+      // Random-palette profile: hold the near-monochrome. Text and the band
+      // ink stay dark and desaturated; the ground stays near-white. All five
+      // roles share a narrow saturation draw so a shuffle re-tints the ink
+      // rather than turning the skin colourful.
+      random: {
+        light: {
+          sat: [0.02, 0.16],
+          roles: [
+            { l: [0.08, 0.15], hueT: 0 },     // text: ink
+            { l: [0.94, 0.98], hueT: 0 },     // bg: paper
+            { l: [0.11, 0.18], hueT: 0.25 },  // primary: band ink
+            { l: [0.88, 0.93], hueT: 0 },     // secondary: panel paper
+            { l: [0.08, 0.15], hueT: 0 },     // accent: ink (links use rules)
+          ],
+        },
+        dark: {
+          sat: [0.02, 0.16],
+          roles: [
+            { l: [0.90, 0.96], hueT: 0 },
+            { l: [0.05, 0.10], hueT: 0 },
+            { l: [0.86, 0.93], hueT: 0.25 },
+            { l: [0.12, 0.18], hueT: 0 },
+            { l: [0.90, 0.96], hueT: 0 },
+          ],
+        },
+      },
+      tokens: {
+        '--font-body': "'Inter Tight', sans-serif",
+        // The shouting voice: ultra-condensed heavy grotesque, caps only.
+        '--font-heading': "'Anton', sans-serif",
+        // The speaking voice: high-contrast literary serif with real italics.
+        // Consumed by css/themes/marquee.css for project + post titles.
+        '--font-heading-serif': "'Instrument Serif', Georgia, serif",
+        '--border-radius': '12px',
+        '--radius-pill': '12px',
+        '--neutral-gray': '#6b665e',
+        // Jobs rail: selected reverses to the band, hover is a paper step.
+        '--jobs-menu-navy-dark': '#2a2722',
+        '--jobs-menu-navy': '#e6e2da',
+        '--jobs-menu-slate': '#6b665e',
+      },
+      fonts: ['https://fonts.googleapis.com/css2?family=Anton&family=Instrument+Serif:ital,wght@0,400;1,400&family=Inter+Tight:wght@400;500;600&display=swap'],
+      css: '/css/themes/marquee.css',
+    },
   };
-  var ORDER = ['default', 'brutalist', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'space', 'vapor', 'wanted', 'banknote', 'constructivist', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste'];
+  // 'space', 'vapor', 'wanted' and 'constructivist' are retired — their
+  // REGISTRY entries above are commented out. Re-add them here when restoring.
+  var ORDER = ['default', 'brutalist', 'marquee', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'banknote', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste'];
 
   window.__THEME_REGISTRY = REGISTRY;
   window.__THEME_ORDER = ORDER;

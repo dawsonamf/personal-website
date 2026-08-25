@@ -976,6 +976,25 @@
   border-radius: 0;
 }
 
+/* This is the one skin whose menu strip is REVERSED: .moving-menu /
+   .static-menu paint --text (paper) and .menu-item prints --bg70 (ink) on it.
+   The theme panel's style rows and palette actions carry .menu-item too — by
+   design, it is how every skin styles them in its own menu voice — but the
+   panel's ground is --bg, the same ink. Unqualified, those rules printed ink
+   on ink: the panel opened with its content present and completely unreadable.
+   Reverse them back for the panel only; the strip is untouched. (0,3,0) so it
+   clears the .menu-item rules above without touching anything else.
+   The hover needs answering for the same reason — it too is written for a
+   paper ground. */
+[data-style="wheatpaste"] .tc-dock .menu-item {
+  color: var(--text70);
+}
+
+[data-style="wheatpaste"] .tc-dock .menu-item:hover {
+  background-color: var(--primary);
+  color: var(--text);
+}
+
 
 /* ---- Mobile (site breakpoint: 1100px) ------------------------------------------------------- */
 

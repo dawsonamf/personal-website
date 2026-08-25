@@ -144,10 +144,14 @@
   ];
   // Release-day markers, toggled by the "AI Releases" checkbox. o3 uses the
   // full public release (not the Dec 2024 preview announcement); Fable 5 uses
-  // the original June 9 release, not the post-export-control redeploy.
+  // the original June 9 release, not the post-export-control redeploy. Cursor
+  // launched March 2023 with no firm public day, so it shares the GPT-4 line
+  // (separate lines two weeks apart would collide at this axis scale); Claude
+  // Code is the Feb 24, 2025 research-preview launch.
   const EVENTS = [
     { date: '2022-11-30', label: 'ChatGPT' },
-    { date: '2023-03-14', label: 'GPT-4' },
+    { date: '2023-03-14', label: 'GPT-4 / Cursor' },
+    { date: '2025-02-24', label: 'Claude Code' },
     { date: '2025-04-16', label: 'o3' },
     { date: '2025-11-24', label: 'Opus 4.5' },
     { date: '2026-06-09', label: 'Fable 5' },
@@ -178,10 +182,32 @@
   function toTs(v) {
     return new Date(String(v).replace(' ', 'T')).getTime();
   }
-  function fmtDate(dateStr) {
+  // Same granularity rule as the hover header: monthly data must not claim
+  // day-level precision, so "as of" reads "Jun 2026", not "Jun 1, 2026".
+  function fmtDate(dateStr, monthly) {
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const p = dateStr.split('-');
-    return MONTHS[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+    const mon = MONTHS[parseInt(p[1], 10) - 1];
+    return monthly ? mon + ' ' + p[0] : mon + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+  }
+
+  // Unified-hover header granularity: match whatever the data actually is.
+  // A series that only ever lands on the 1st is monthly ("Aug 2026"); anything
+  // finer shows the day ("Aug 14, 2026"). Indeed publishes daily, the NY Fed /
+  // ADP / FRED series are monthly, so each chart reads at its own resolution.
+  // The overlay is deliberately not consulted: the header has to match the
+  // finest line on the axis, and the rate strip is always the coarser one.
+  function isMonthlyData(datasets) {
+    const sets = datasets.filter(d => d && d.length);
+    if (!sets.length) return true;
+    return sets.every(d => d.every(pt => pt.date.slice(8, 10) === '01'));
+  }
+  function hoverDateFormat(datasets) {
+    return isMonthlyData(datasets) ? '%b %Y' : '%b %-d, %Y';
+  }
+  // Granularity of the plotted series, for the JS-side date readouts.
+  function monthlyNow() {
+    return isMonthlyData(SERIES.map(s => state[s.key]));
   }
 
   // "+4.25%" / "-11.2%": sign always shown, ≤2 decimals, trailing zeros
@@ -384,7 +410,7 @@
     const grab = el.querySelector('.rangeslider-grabber-' + dragSide);
     if (!grab) return;
     const tip = dragTipEl(el);
-    tip.textContent = fmtDate(rangeDateStr(el._fullLayout.xaxis.range[dragSide === 'min' ? 0 : 1]));
+    tip.textContent = fmtDate(rangeDateStr(el._fullLayout.xaxis.range[dragSide === 'min' ? 0 : 1]), monthlyNow());
     tip.style.display = 'block';
     const box = el.getBoundingClientRect();
     const g = grab.getBoundingClientRect();
@@ -511,6 +537,7 @@
     const layout = {
       xaxis: {
         type: 'date',
+        hoverformat: hoverDateFormat(SERIES.map(s => state[s.key])),
         // The strip's mini chart keeps its own fixed y scale (auto = fit the
         // full data once) instead of the default 'match', so it doesn't
         // bounce every time the main plot's y refits to the window.
@@ -611,11 +638,12 @@
         s.name.toLowerCase() + ': <span class="jm-val">' + shown + '</span>';
     });
     const end = state[SERIES[0].key][endIdxFor(SERIES[0].key, win.x1)];
+    const mo = monthlyNow();
     if (pct) {
       const anchor = anchorFor(SERIES[0].key, win.x0) || state[SERIES[0].key][0];
-      rows.push('<span class="jm-asof">' + fmtDate(anchor.date) + ' → ' + fmtDate(end.date) + '</span>');
+      rows.push('<span class="jm-asof">' + fmtDate(anchor.date, mo) + ' → ' + fmtDate(end.date, mo) + '</span>');
     } else {
-      rows.push('<span class="jm-asof">as of ' + fmtDate(end.date) + '</span>');
+      rows.push('<span class="jm-asof">as of ' + fmtDate(end.date, mo) + '</span>');
     }
     el.innerHTML = rows.join('<br>');
   }

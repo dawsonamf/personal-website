@@ -12,8 +12,23 @@
     animateThenPersist(document.querySelector('.name-logo'), 'fadein 0.8s ease-out', '0.38s', { visibility: 'visible', opacity: '1' });
     animateThenPersist(document.querySelector('.static-menu'), 'fadein 0.8s ease-out', '0.76s', { visibility: 'visible', opacity: '1' });
     animateThenPersist(document.querySelector('.static-menu-mobile'), 'fadein 0.8s ease-out', '0.76s', { visibility: 'visible', opacity: '1' });
-    animateThenPersist(document.getElementById('selected-works-header'), 'slideInUp 0.8s ease-out', '0.25s', { opacity: '1', transform: 'translateY(0)' });
-    animateThenPersist(document.getElementById('featured-carousel'), 'slideInUp 0.8s ease-out', '0.25s', { opacity: '1', transform: 'translateY(0)' });
+    const selectedWorks = document.getElementById('selected-works-header');
+    if (selectedWorks) {
+      animateThenPersist(selectedWorks.querySelector('.section-header'), 'slideInUp 0.8s ease-out', '0.25s', { opacity: '1', transform: 'translateY(0)' });
+      animateThenPersist(selectedWorks.querySelector('.section-header-spacer'), 'fadein 0.8s ease-out', '0.25s', { opacity: '1' });
+      setTimeout(function () { window.revealSectionHeader(selectedWorks); }, 250);
+    }
+    // Only the carousel's contents enter, not the section box. On skins that
+    // reverse this section out to a colour the box IS the section's ground,
+    // and sliding it up carried the ground away with the cards — the header
+    // band above stood in its final ink while the half below it showed the
+    // page through, with a hard seam between the two. Same fix as the header
+    // wrapper above: the ground stays put and what sits on it arrives.
+    const carousel = document.getElementById('featured-carousel');
+    if (carousel) {
+      animateThenPersist(carousel.querySelector('.featured-carousel-container'), 'slideInUp 0.8s ease-out', '0.25s', { opacity: '1', transform: 'translateY(0)' });
+      animateThenPersist(carousel.querySelector('.featured-carousel-dots'), 'slideInUp 0.8s ease-out', '0.25s', { opacity: '1', transform: 'translateY(0)' });
+    }
   }
 
   startTypingSequence({

@@ -357,9 +357,67 @@
     }, { passive: true });
   }
 
+  // ---- Section-header ticker ----------------------------------------------
+  // The Selected Works header strip is drawn by whichever skin wants it (only
+  // marquee does today) out of --ticker-run, and the terms in it are the same
+  // .pill chips the cards below carry: the strip reads as an index of what is
+  // in the section rather than a fixed slogan. Written unconditionally — the
+  // custom properties cost nothing under skins that never read them, and
+  // because they live on :root the strip survives a theme switch without this
+  // running again.
+  //
+  // Deduped case-insensitively on first appearance, so the run follows card
+  // order (Python shows once, at Toolbelt, not three times). Casing is left
+  // exactly as authored in blog-data.js: these are proper names, and
+  // uppercasing turns cJSON into CJSON and L-BFGS into L-BFGS's less legible
+  // twin. A skin that wants caps can add text-transform itself.
+  // Same bullet the marquee sheet sets between folio numbers and in its list
+  // markers, so the strip speaks the skin's punctuation.
+  const TICKER_SEP = '✷';
+  // The run is written twice into one string and travelled -50%, so copy 2
+  // lands where copy 1 began (see the marquee sheet). Each half must be wider
+  // than the widest viewport or a gap opens at the right edge: the sheet's
+  // hand-written run was 402 characters per half, so two passes of the 33
+  // chips (~760) clears it with room to spare.
+  const TICKER_PASSES_PER_HALF = 2;
+  // Baseline pairing from the marquee sheet: 402 chars per half took 46s.
+  // Holding chars/second constant keeps the strip moving at the speed it was
+  // tuned at no matter how many chips the section ends up with.
+  const TICKER_CHARS_PER_SEC = 402 / 46;
+
+  function buildTickerRun() {
+    const projects = window.FEATURED_PROJECTS || [];
+    const seen = {};
+    const terms = [];
+    projects.forEach(function (proj) {
+      (proj.tech || []).forEach(function (t) {
+        const key = String(t).toLowerCase();
+        if (seen[key]) return;
+        seen[key] = true;
+        terms.push(String(t));
+      });
+    });
+    if (!terms.length) return;
+
+    // Trailing space on every term so the join needs no separator of its own
+    // and the seam between passes spaces identically to every other gap.
+    const pass = terms.map(function (t) { return TICKER_SEP + ' ' + t + ' '; }).join('');
+    let half = '';
+    for (let i = 0; i < TICKER_PASSES_PER_HALF; i++) half += pass;
+
+    // content: takes a quoted string, so the quotes are part of the value.
+    // Escaping backslashes and quotes keeps a chip like 6" from ending the
+    // declaration early and dropping the whole strip.
+    const escaped = half.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+    const root = document.documentElement;
+    root.style.setProperty('--ticker-run', '"' + escaped + escaped + '"');
+    root.style.setProperty('--ticker-dur', Math.round(half.length / TICKER_CHARS_PER_SEC) + 's');
+  }
+
   window.initFeaturedCarousel = function (opts) {
     const isSubpage = opts && opts.isSubpage;
     renderFeaturedCarousel(isSubpage);
+    buildTickerRun();
     if (EXPAND_VISUAL && !isSubpage) setupExpandVisual();
     initCarouselTilt();
     setupCarouselFades();

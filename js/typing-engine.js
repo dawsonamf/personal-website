@@ -21,6 +21,12 @@
  *     onComplete: function () { ... },
  *   });
  *
+ * Before the first character lands, the element is given a min-height equal
+ * to the tallest state the chosen sequence will reach, so the lines that are
+ * already written stay where they are as the ones below them arrive (and
+ * whatever sits under the headline stops being pushed around). See
+ * reserveHeight below.
+ *
  * One sequence is picked at random per call. Steps run in order:
  *   - type:     inserts characters one at a time before the cursor
  *   - delete:   removes characters one at a time before the cursor
@@ -44,6 +50,15 @@
  * nodes (a lone space inside an inline-block span collapses to nothing);
  * newlines stay <br>. The accent span contract holds: glyphs typed after
  * the second newline also carry .typing-accent.
+ *
+ * A word's glyph spans share a <span class="tw-word">, which css/styles.css
+ * sets nowrap. Without it the line breaker treats every glyph as its own
+ * atomic inline and is free to break between any two of them, which is how a
+ * masthead ends up setting a lone letter on its own line the moment its
+ * column gets tight. Spaces and <br>s stay direct children of the headline,
+ * so they remain the only break opportunities. The boxes are an insertion
+ * detail only: getContentNodes() walks through them, so deletion still sees
+ * one flat run of glyphs, spaces and <br>s.
  *
  * Deletion normally backspaces one glyph per tick in every mode. A style
  * can additionally set typingDelete: 'word' in the registry (read here via
@@ -106,8 +121,45 @@ function startTypingSequence(config) {
     draining.add(node);
     setTimeout(function () {
       draining.delete(node);
-      if (node.parentNode) node.parentNode.removeChild(node);
+      const box = node.parentNode;
+      if (box) box.removeChild(node);
+      // A word box that has lost its last glyph has nothing left to hold.
+      if (box && box !== element && !box.firstChild && box.parentNode) {
+        box.parentNode.removeChild(box);
+      }
     }, ERASE_MS);
+  }
+
+  // ---- Word boxes ---------------------------------------------------------
+  // The cursorless modes give every glyph its own inline-block so a skin can
+  // transform it, and the line breaker is allowed to break between any two
+  // atomic inlines — so the moment the column got tight the masthead broke
+  // mid-word and set a lone letter on its own line. Each word's glyphs go in
+  // a shared <span class="tw-word">, which css/styles.css sets nowrap; the
+  // spaces and <br>s stay direct children of the headline, so they remain the
+  // only places a line can break.
+  //
+  // Everything downstream still sees the flat list it always did: the box is
+  // an implementation detail of insertion, and getContentNodes() below walks
+  // through it. Cursor mode has no glyph spans and never opens one.
+  let wordBox = null;
+
+  function glyphHost() {
+    if (!wordBox) {
+      wordBox = document.createElement('span');
+      wordBox.className = 'tw-word';
+      element.insertBefore(wordBox, cursor);
+    }
+    return wordBox;
+  }
+
+  // Called wherever a word ends: a space, a newline, or any deletion. After a
+  // delete the next glyph opens a fresh box rather than rejoining whatever is
+  // left of the old one — the sequences only ever delete whole trailing
+  // phrases, so there is no word to rejoin, and starting clean means a
+  // half-drained box can never collect the retype.
+  function endWord() {
+    wordBox = null;
   }
 
   const steps = sequences[Math.floor(Math.random() * sequences.length)];
@@ -124,6 +176,108 @@ function startTypingSequence(config) {
   }
   element.appendChild(cursor);
 
+  // ---- Reserve the block's height -----------------------------------------
+  // The typed block grows a line at a time, and every layout it sits in
+  // reacts to that: a top-aligned column pushes whatever is under the
+  // headline further down with each line, and a bottom-aligned one (the home
+  // masthead hangs off the portrait's bottom edge, css/styles.css) lifts the
+  // lines already written by a whole line every time a new one starts. Either
+  // way the type is not where it will end up until the last line lands.
+  //
+  // So work out how tall the block will ever get and hold that from the
+  // first frame. Every state the chosen sequence passes through is known up
+  // front: type appends, delete takes from the end, and a step can only be
+  // at its tallest once its typing has finished, so the completed states are
+  // the only ones worth measuring.
+  //
+  // Measuring happens on a copy laid out beside the real element, which
+  // keeps the reservation off the live node — the element is mid-animation
+  // by the time fonts finish loading and we measure again. The copy keeps
+  // the id on purpose: the id is what most of the type is hung off
+  // (#typing-text is 70px, marquee's is a 96px clamp), so dropping it would
+  // measure the wrong block. It exists for one synchronous function and
+  // nothing looks the element up in between; getElementById keeps returning
+  // the original either way, since the copy is appended after it.
+  //
+  // The copy is left in normal flow, hidden rather than taken out of it. The
+  // column around the headline is shrink-to-fit, so its width is decided by
+  // the widest thing in it — which, while the real element is still empty,
+  // is the standfirst underneath. Pinning the copy to that width made every
+  // word wrap and reserved six lines for a three-line sequence. In flow the
+  // copy sizes the column itself, exactly as the finished text will. Nothing
+  // paints between the insert and the remove, so the page never shows it.
+  function plannedStates() {
+    const out = [];
+    let text = '';
+    for (let i = 0; i < steps.length; i++) {
+      const step = steps[i];
+      if (step.action === 'type') {
+        text += (step.text || '');
+        out.push(text);
+      } else if (step.action === 'delete') {
+        text = text.slice(0, Math.max(0, text.length - (step.count || 0)));
+      }
+    }
+    return out;
+  }
+
+  function fill(node, str) {
+    node.textContent = '';
+    const lines = str.split('\n');
+    for (let i = 0; i < lines.length; i++) {
+      if (i) node.appendChild(document.createElement('br'));
+      node.appendChild(document.createTextNode(lines[i]));
+    }
+  }
+
+  function reserveHeight() {
+    const states = plannedStates();
+    if (!states.length || !element.parentNode) return;
+
+    const cs = getComputedStyle(element);
+    const padY = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    const borderY = parseFloat(cs.borderTopWidth) + parseFloat(cs.borderBottomWidth);
+
+    const probe = element.cloneNode(false);
+    probe.style.minHeight = '0';
+    probe.style.height = 'auto';
+    probe.style.visibility = 'hidden';
+    probe.style.pointerEvents = 'none';
+    element.parentNode.insertBefore(probe, element.nextSibling);
+
+    let tallest = 0;
+    for (let i = 0; i < states.length; i++) {
+      fill(probe, states[i]);
+      const h = probe.getBoundingClientRect().height;
+      if (h > tallest) tallest = h;
+    }
+    probe.parentNode.removeChild(probe);
+
+    if (!tallest) return;
+    // min-height addresses the content box unless the element is
+    // border-box, in which case the frame has to be added back.
+    const content = tallest - padY - borderY;
+    const reserve = cs.boxSizing === 'border-box' ? tallest : content;
+    if (reserve > 0) element.style.minHeight = reserve + 'px';
+  }
+
+  reserveHeight();
+  // The line count depends on where the text wraps, and that changes with
+  // the column width and with the webfont replacing whatever stood in for it
+  // during the first paint. The resize handler is bound once for the life of
+  // the page and always calls the current run's version, so a live style
+  // switch (which starts a fresh run) does not stack another listener.
+  if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
+    document.fonts.ready.then(function () { if (!run.cancelled) reserveHeight(); });
+  }
+  startTypingSequence._reserve = reserveHeight;
+  if (!startTypingSequence._resizeBound) {
+    startTypingSequence._resizeBound = true;
+    window.addEventListener('resize', function () {
+      if (startTypingSequence._reserve) startTypingSequence._reserve();
+    });
+  }
+
   let newlineCount = 0;
   let newlineCbFired = false;
 
@@ -132,6 +286,7 @@ function startTypingSequence(config) {
   }
 
   function insertBreak() {
+    endWord();
     element.insertBefore(document.createElement('br'), cursor);
     newlineCount++;
     if (
@@ -154,11 +309,24 @@ function startTypingSequence(config) {
 
   // Collect all text/br/glyph nodes before the cursor so we can delete from
   // the end. Nodes already mid-drain are skipped — they're awaiting removal.
+  // Word boxes are stepped THROUGH rather than reported: they exist purely to
+  // stop the line breaker splitting a word (see glyphHost above), so the rest
+  // of the engine keeps seeing one flat run of glyphs, spaces and <br>s in
+  // document order, exactly as it did before they were introduced.
   function getContentNodes() {
     const nodes = [];
     let child = element.firstChild;
     while (child && child !== cursor) {
-      if (!draining.has(child)) nodes.push(child);
+      if (!draining.has(child)) {
+        if (child.nodeType === Node.ELEMENT_NODE && child.classList &&
+            child.classList.contains('tw-word')) {
+          for (let g = child.firstChild; g; g = g.nextSibling) {
+            if (!draining.has(g)) nodes.push(g);
+          }
+        } else {
+          nodes.push(child);
+        }
+      }
       child = child.nextSibling;
     }
     return nodes;
@@ -203,11 +371,13 @@ function startTypingSequence(config) {
             insertBreak();
             later(typeToken, typingDelay);
           } else if (token === ' ') {
+            endWord();
             element.insertBefore(document.createTextNode(' '), cursor);
             later(typeToken, typingDelay);
           } else {
+            const host = glyphHost();
             for (let i = 0; i < token.length; i++) {
-              element.insertBefore(makeGlyph(token.charAt(i)), cursor);
+              host.appendChild(makeGlyph(token.charAt(i)));
             }
             later(typeToken, typingDelay * token.length);
           }
@@ -226,9 +396,10 @@ function startTypingSequence(config) {
             insertBreak();
           } else if (mode === 'letter') {
             if (ch === ' ') {
+              endWord();
               element.insertBefore(document.createTextNode(' '), cursor);
             } else {
-              element.insertBefore(makeGlyph(ch), cursor);
+              glyphHost().appendChild(makeGlyph(ch));
             }
           } else if (newlineCount >= 2) {
             const prev = cursor.previousSibling;
@@ -256,6 +427,9 @@ function startTypingSequence(config) {
 
     if (step.action === 'delete') {
       setCursorBlink(false);
+      // Nothing types during a delete step, so closing the open word box once
+      // here is enough: whatever gets retyped afterwards starts its own.
+      endWord();
       let remaining = step.count || 0;
 
       // In the cursorless modes the last erased glyphs are still fading out
@@ -393,8 +567,8 @@ function startTypingSequence(config) {
           const txt = last.textContent;
           if (txt.length > 1) {
             last.textContent = txt.slice(0, -1);
-          } else {
-            element.removeChild(last);
+          } else if (last.parentNode) {
+            last.parentNode.removeChild(last);
           }
           remaining--;
           later(deleteChar, deleteDelay);

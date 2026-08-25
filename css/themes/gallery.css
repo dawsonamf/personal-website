@@ -302,6 +302,20 @@
   margin: 0 10px 56px;
 }
 
+/* See broadsheet: the About wall line is on screen while the masthead types,
+   and the wrapper never hides. Gate the ink on the intro wave's reveal. */
+/* See studio: the transition belongs on the ARRIVED state. On the resting rule
+   it also arms the page's first style change, which runs the fade backwards
+   and prints the line at full ink before wiping it. */
+[data-style="gallery"] #about-header-wrapper {
+  border-top-color: transparent;
+}
+
+[data-style="gallery"] #about-header-wrapper.section-header-in {
+  border-top-color: var(--text10);
+  transition: border-top-color 0.8s ease-out;
+}
+
 [data-style="gallery"] .section-header-spacer {
   display: none;
 }

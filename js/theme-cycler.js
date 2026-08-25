@@ -191,6 +191,12 @@
     try { window.dispatchEvent(new CustomEvent('dawson:palette')); } catch {}
     if (writeUi) renderRoles();
     else updateRoleSwatches();
+    // The preview card shows the ACTIVE style's live palette, so anything
+    // that moves the palette (shuffle, a scheme redraw, dragging a color)
+    // has to repaint it. Pointing at some other style parks previewId
+    // elsewhere, and that card must not move — it is showing that style's
+    // own registry colors, which a shuffle never touches.
+    if (previewId && previewId === state.style) paintPreview(previewId, previewMeta);
   }
 
   // The jobs-menu navy palette and --neutral-gray are static (styles.css or
@@ -285,13 +291,73 @@
       const heading = (e.tokens && e.tokens['--font-heading']) || '';
       const headingVar = heading ? `--tc-row-heading:${heading};` : '';
       const sel = state.style === id;
-      return `<button data-id="${id}" class="${sel ? 'tc-sel' : ''}" aria-pressed="${sel}" style="--tc-row-text:${text};--tc-row-bg:${bg};--tc-row-primary:${primary};--tc-row-secondary:${secondary};--tc-row-accent:${accent};${headingVar}">
-        <span class="tc-wm-name">${e.label}</span>
-        <span class="tc-wm-rule" aria-hidden="true"></span>
-      </button>`;
+      // Two shapes per row: a plain text link for the wide panel and a
+      // wordmark card for the narrow sheet. css/theme-cycler.css shows one
+      // and hides the other, so order lives in exactly one place.
+      //
+      // The wide row is an <a> with the real ?style= href, not a <button>:
+      // it keeps middle-click working, and it sidesteps the .tc-presets
+      // button card rules entirely (see css/theme-cycler.css). .menu-item is
+      // what makes each skin style it in that theme's own menu voice.
+      return `<li class="${sel ? 'tc-row-sel' : ''}" style="--tc-row-text:${text};--tc-row-bg:${bg};--tc-row-primary:${primary};--tc-row-secondary:${secondary};--tc-row-accent:${accent};${headingVar}">
+        <a href="/?style=${encodeURIComponent(id)}" data-id="${id}" class="tc-row-link menu-item tc-stagger ${sel ? 'tc-sel' : ''}"${sel ? ' aria-current="true"' : ''}>${e.label}</a>
+        <button data-id="${id}" class="tc-row-card tc-stagger ${sel ? 'tc-sel' : ''}" aria-pressed="${sel}" tabindex="-1" aria-hidden="true">
+          <span class="tc-wm-name">${e.label}</span>
+          <span class="tc-wm-rule" aria-hidden="true"></span>
+        </button>
+      </li>`;
     }).join('');
-    host.querySelectorAll('button').forEach(b => {
-      b.addEventListener('click', () => switchStyle(b.dataset.id));
+    host.querySelectorAll('[data-id]').forEach(b => {
+      // preventDefault so the anchor's own navigation doesn't race
+      // switchStyle, which clears the palette override first.
+      b.addEventListener('click', e => { e.preventDefault(); switchStyle(b.dataset.id); });
+      // Pointing at a style previews it in the card; leaving the list puts
+      // the active style back.
+      b.addEventListener('mouseenter', () => paintPreview(b.dataset.id, 'preview'));
+      b.addEventListener('focus',      () => paintPreview(b.dataset.id, 'preview'));
+    });
+    host.addEventListener('mouseleave', () => paintPreview(state.style, 'current'));
+    paintPreview(state.style, 'current');
+    stampStagger();
+  }
+
+  // Which style the preview card is currently showing, so a palette change
+  // can repaint it without guessing.
+  let previewId = null;
+  let previewMeta = 'current';
+
+  // Repaints the preview card. The ACTIVE style draws from the live palette,
+  // so Shuffle colors is visible in the card as well as on the page. Every
+  // other style draws from the registry, never from the live CSS vars, so a
+  // shuffle can't bleed into a preview of a style you're only pointing at.
+  function paintPreview(id, meta) {
+    const card = document.getElementById('tc-preview');
+    const entry = REGISTRY[id];
+    if (!card || !entry) return;
+    previewId = id;
+    previewMeta = meta;
+    const [text, bg, primary, , accent] = id === state.style ? state.colors : entryColors(entry);
+    const heading = (entry.tokens && entry.tokens['--font-heading']) || '';
+    card.style.setProperty('--tc-pv-bg', bg);
+    card.style.setProperty('--tc-pv-text', text);
+    card.style.setProperty('--tc-pv-primary', primary);
+    card.style.setProperty('--tc-pv-accent', accent);
+    if (heading) card.style.setProperty('--tc-pv-heading', heading);
+    else card.style.removeProperty('--tc-pv-heading');
+    const name = document.getElementById('tc-preview-name');
+    const label = document.getElementById('tc-preview-meta');
+    if (name) name.textContent = entry.label;
+    if (label) label.textContent = meta;
+  }
+
+  // Index every animated child so the CSS cascade delay produces the stagger.
+  function stampStagger() {
+    const dock = document.getElementById('tc-dock');
+    if (!dock) return;
+    let i = 0;
+    dock.querySelectorAll('.tc-stagger').forEach(el => {
+      if (el.classList.contains('tc-row-card') && getComputedStyle(el).display === 'none') return;
+      el.style.setProperty('--i', i++);
     });
   }
 
@@ -331,15 +397,31 @@
     renderSchemes();
   }
 
-  function toggleAdvanced() {
-    state.advanced = !state.advanced;
-    const panel = document.getElementById('tc-advanced');
-    const link  = document.getElementById('tc-advanced-link');
-    if (panel) panel.classList.toggle('tc-hidden', !state.advanced);
+  // Advanced swaps what the left column shows — the styles list steps aside
+  // for the scheme + color editor — instead of expanding the panel downward.
+  // The action's own label flips to the way back out, so there is no hidden
+  // second gesture to discover.
+  function setAdvanced(on) {
+    state.advanced = !!on;
+    const panel   = document.getElementById('tc-advanced');
+    const presets = document.getElementById('tc-presets');
+    const head    = document.getElementById('tc-styles-head');
+    const link    = document.getElementById('tc-advanced-link');
+    const label   = document.getElementById('tc-advanced-label');
+    const sub     = document.getElementById('tc-advanced-sub');
+    if (panel)   panel.classList.toggle('tc-hidden', !state.advanced);
+    if (presets) presets.classList.toggle('tc-hidden', state.advanced);
+    if (head)    head.textContent = state.advanced ? 'Advanced' : 'Styles';
+    if (label)   label.textContent = state.advanced ? 'Back to styles' : 'Advanced';
+    if (sub)     sub.textContent = state.advanced ? 'done editing' : 'scheme & colors';
     if (link) {
       link.classList.toggle('tc-open', state.advanced);
       link.setAttribute('aria-expanded', state.advanced ? 'true' : 'false');
     }
+  }
+
+  function toggleAdvanced() {
+    setAdvanced(!state.advanced);
   }
 
   function renderRoles() {
@@ -376,53 +458,90 @@
     const host = document.getElementById('tc-schemes');
     if (!host) return;
     const opts = ['random',...SCHEMES];
-    host.innerHTML = opts.map(s => `<button data-s="${s}" class="${state.scheme===s?'tc-sel':''}">${s}</button>`).join('');
-    host.querySelectorAll('button').forEach(b => {
-      b.addEventListener('click', () => { state.scheme = b.dataset.s; renderSchemes(); });
+    host.innerHTML = opts.map(s => `<button type="button" data-s="${s}" aria-pressed="${state.scheme===s}" class="${state.scheme===s?'tc-sel':''}">${s}</button>`).join('');
+    const buttons = host.querySelectorAll('button');
+    buttons.forEach(b => {
+      b.addEventListener('click', () => {
+        state.scheme = b.dataset.s;
+        // Move the selection in place rather than re-rendering. A rebuild
+        // detaches the button mid-click, and the outside-click handler that
+        // closes the panel tests dock.contains(e.target) on the way up — a
+        // detached node is in nothing, so the panel used to dismiss itself
+        // every time a scheme was picked.
+        buttons.forEach(o => {
+          const on = o.dataset.s === state.scheme;
+          o.classList.toggle('tc-sel', on);
+          o.setAttribute('aria-pressed', on ? 'true' : 'false');
+        });
+      });
     });
   }
 
   function injectDom() {
     const dock = document.createElement('aside');
-    dock.className = 'tc-dock tc-hidden';
+    // .tc-dock is kept so all 20 skins keep theming this panel unchanged;
+    // .tc-mega layers the wide geometry on top. Same element IDs as the
+    // compact dock, so renderSchemes/renderRoles/toggleAdvanced are untouched.
+    dock.className = 'tc-dock tc-mega tc-hidden';
     dock.id = 'tc-dock';
     dock.setAttribute('aria-label', 'Theme controls');
     dock.innerHTML = `
-      <div class="tc-header">
-        <span class="tc-title">Theme</span>
-        <button class="tc-close" id="tc-close" type="button" aria-label="Close">
-          <i class="fa-solid fa-xmark"></i>
-        </button>
-      </div>
+      <div class="tc-mega-clip">
+        <div class="tc-mega-inner">
 
-      <div class="tc-actions">
-        <button class="tc-action" id="tc-randomize" type="button" title="Random palette for this theme">
-          <i class="fa-solid fa-dice" aria-hidden="true"></i>Shuffle colors
-        </button>
-        <button class="tc-action" id="tc-reset" type="button" title="Back to the default style and palette">
-          <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>Reset
-        </button>
-        <button class="tc-action" id="tc-advanced-link" type="button" aria-expanded="false" aria-controls="tc-advanced">
-          <i class="fa-solid fa-sliders" aria-hidden="true"></i>Advanced
-          <i class="fa-solid fa-chevron-down tc-action-caret" aria-hidden="true"></i>
-        </button>
-      </div>
+          <div class="tc-mega-styles">
+            <h3 class="tc-mega-head tc-stagger" id="tc-styles-head">Styles</h3>
+            <!-- The list and the editor are the two faces of one box: both
+                 fill .tc-mega-swap, so switching between them cannot change
+                 the panel's height no matter how tall a skin's type runs. -->
+            <div class="tc-mega-swap">
+            <ul class="tc-presets" id="tc-presets"></ul>
+            <div class="tc-advanced tc-hidden" id="tc-advanced">
+              <div class="tc-group tc-group-schemes">
+                <span class="tc-group-label">Scheme</span>
+                <div class="tc-schemes" id="tc-schemes"></div>
+              </div>
+              <div class="tc-group tc-group-roles">
+                <span class="tc-group-label">Colors</span>
+                <div class="tc-roles" id="tc-roles"></div>
+              </div>
+            </div>
+            </div>
+          </div>
 
-      <div class="tc-advanced tc-hidden" id="tc-advanced">
-        <div class="tc-group">
-          <span class="tc-group-label">Scheme</span>
-          <div class="tc-schemes" id="tc-schemes"></div>
+          <div class="tc-mega-side">
+            <h3 class="tc-mega-head tc-stagger">Palette</h3>
+            <div class="tc-actions">
+              <button class="tc-action menu-item tc-stagger" id="tc-randomize" type="button">Shuffle colors<span class="tc-action-sub">random palette</span></button>
+              <button class="tc-action menu-item tc-stagger" id="tc-reset" type="button">Reset<span class="tc-action-sub">back to default</span></button>
+              <button class="tc-action menu-item tc-stagger" id="tc-advanced-link" type="button" aria-expanded="false" aria-controls="tc-advanced"><span id="tc-advanced-label">Advanced</span><span class="tc-action-sub" id="tc-advanced-sub">scheme &amp; colors</span></button>
+            </div>
+          </div>
+
+          <div class="tc-preview tc-stagger" id="tc-preview">
+            <span class="tc-preview-name" id="tc-preview-name"></span>
+            <span class="tc-preview-rule" aria-hidden="true"></span>
+            <span class="tc-preview-meta" id="tc-preview-meta">current</span>
+          </div>
+
         </div>
-        <div class="tc-roles" id="tc-roles"></div>
       </div>
-
-      <div class="tc-presets" id="tc-presets"></div>
     `;
 
     const navItems = document.querySelectorAll('.tc-nav-item');
     if (!navItems.length) return;
-    dock.classList.add('tc-dropdown');
-    navItems[0].appendChild(dock);
+
+    // The panel always lives on <body>, never inside the pill: .moving-menu
+    // carries backdrop-filter, which would make it the containing block for
+    // this fixed element and collapse it to the pill's width. See the note
+    // at the top of the mega block in css/theme-cycler.css.
+    document.body.appendChild(dock);
+
+    const scrim = document.createElement('div');
+    scrim.className = 'tc-scrim';
+    scrim.id = 'tc-scrim';
+    document.body.appendChild(scrim);
+
     wireNavDropdown(dock, navItems);
 
     document.getElementById('tc-randomize').addEventListener('click', randomize);
@@ -434,76 +553,107 @@
   // and outside click / Esc / the X close it. The single dock node reparents
   // under whichever trigger opened it (static menu at the top of the page,
   // moving menu once it appears on scroll-up, or the mobile quick-links row).
+  // Nav dropdown, mega style. The panel is body-parented and fixed, so both
+  // the static header pill and the scroll-up moving pill drive the same
+  // element; open() just re-reads whichever pill the trigger sits in and
+  // positions from its rect. The box starts at that pill's own width and
+  // widens to its measure while its height opens, so it reads as the menu
+  // growing rather than a panel appearing.
   function wireNavDropdown(dock, navItems) {
     let openItem = null;
     let pinned = false;
     let closeTimer = null;
+    let liftedPill = null;
     const canHover = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+    const scrim = () => document.getElementById('tc-scrim');
+    const MEASURE = 940;   // widest the panel opens to on a roomy viewport
+    const EDGE = 10;       // keep this much clear of the viewport edge
 
     function setExpanded(li, on) {
       li.classList.toggle('tc-open', on);
       const btn = li.querySelector('.tc-nav-trigger');
       if (btn) btn.setAttribute('aria-expanded', on ? 'true' : 'false');
     }
-    // The dock hangs from right: 0 of its trigger li; with the trigger near
-    // the viewport's right edge (or a wide skin menu) that can land it
-    // partly off screen. After every open, nudge it back inside by writing
-    // an inline right offset (positive shifts left, negative shifts right).
-    function clampDock() {
-      dock.style.right = '';
-      const margin = 10;
-      const r = dock.getBoundingClientRect();
-      const overflowRight = r.right - (window.innerWidth - margin);
-      if (overflowRight > 0) dock.style.right = overflowRight + 'px';
-      else if (r.left < margin) dock.style.right = (r.left - margin) + 'px';
+
+    // The pill the trigger lives in: the header menu, the scroll-up menu, or
+    // the mobile row. Falls back to the trigger itself if markup changes.
+    function pillFor(li) {
+      return li.closest('.moving-menu, .static-menu, .static-menu-mobile') ||
+             li.querySelector('.tc-nav-trigger') || li;
     }
-    // .moving-menu carries its own backdrop-filter: blur(20px), and nested
-    // backdrop filters don't compose — a descendant's blur sees only its
-    // ancestor's offscreen group buffer, not the real page behind it. So when
-    // the trigger lives inside .moving-menu, park the dock on document.body
-    // (escaping the CSS group) and position it with fixed coords from the
-    // trigger's rect. Anywhere else, the in-place li.appendChild path keeps
-    // the dock anchored to its trigger and scrolling with the page.
-    function positionFloating(li) {
-      const trigger = li.querySelector('.tc-nav-trigger') || li;
-      const r = trigger.getBoundingClientRect();
+
+    // Anchor to the pill's right edge and hang below it. Widths are written
+    // as custom properties so CSS owns the transition.
+    function position(li) {
+      const pill = pillFor(li);
+      const r = pill.getBoundingClientRect();
+      const target = Math.min(MEASURE, window.innerWidth - EDGE * 2);
+      // Clamp so a narrow viewport can't push the left edge off screen.
+      const right = Math.min(
+        Math.max(EDGE, window.innerWidth - r.right),
+        Math.max(EDGE, window.innerWidth - target - EDGE)
+      );
       dock.style.top = (r.bottom + 10) + 'px';
-      dock.style.right = Math.max(10, window.innerWidth - r.right) + 'px';
+      dock.style.right = right + 'px';
+      dock.style.setProperty('--tc-mega-w', Math.round(r.width) + 'px');
+      dock.style.setProperty('--tc-mega-target', target + 'px');
     }
+
     function open(li, pin) {
       clearTimeout(closeTimer);
       if (openItem && openItem !== li) setExpanded(openItem, false);
-      const floating = !!li.closest('.moving-menu');
-      if (floating) {
-        if (dock.parentElement !== document.body) document.body.appendChild(dock);
-        dock.classList.add('tc-floating');
-      } else {
-        dock.classList.remove('tc-floating');
-        if (dock.parentElement !== li) li.appendChild(dock);
-      }
+      const reopening = !openItem;
+      // Advanced is a detour, not a mode: every fresh open lands on the
+      // styles list. Done here rather than on close so the swap happens
+      // while the panel is still hidden, not mid-collapse.
+      if (reopening && state.advanced) setAdvanced(false);
+      position(li);
       dock.classList.remove('tc-hidden');
+      if (reopening) {
+        // Commit the closed state (pill width, zero height) before opening,
+        // or the browser coalesces both into one paint and the morph never
+        // shows. Reading offsetWidth forces that flush synchronously —
+        // deliberately not requestAnimationFrame, which is throttled in
+        // background tabs and skipped under some automation, either of which
+        // would leave the panel stuck shut.
+        dock.classList.remove('tc-mega-open');
+        void dock.offsetWidth;
+      }
+      dock.classList.add('tc-mega-open');
+      const s = scrim();
+      if (s) s.classList.add('tc-on');
+      // The scrim dims the page, but not the menu you opened it from — that
+      // pill is the thing being pointed at, so it rides above the veil.
+      if (liftedPill && liftedPill !== pillFor(li)) liftedPill.classList.remove('tc-lift');
+      liftedPill = pillFor(li);
+      liftedPill.classList.add('tc-lift');
       setExpanded(li, true);
       openItem = li;
       pinned = !!pin;
-      if (floating) positionFloating(li);
-      else clampDock();
+      stampStagger();
     }
+
     function close() {
       clearTimeout(closeTimer);
       if (!openItem) return;
-      dock.classList.add('tc-hidden');
-      dock.classList.remove('tc-floating');
-      dock.style.right = '';
-      dock.style.top = '';
+      dock.classList.remove('tc-mega-open');
+      const s = scrim();
+      if (s) s.classList.remove('tc-on');
+      if (liftedPill) { liftedPill.classList.remove('tc-lift'); liftedPill = null; }
       setExpanded(openItem, false);
       openItem = null;
       pinned = false;
+      // Hide only once the collapse has run, so the height animates out.
+      closeTimer = setTimeout(() => {
+        if (!openItem) dock.classList.add('tc-hidden');
+      }, 440);
     }
-    window.addEventListener('resize', () => {
-      if (!openItem) return;
-      if (dock.classList.contains('tc-floating')) positionFloating(openItem);
-      else clampDock();
-    });
+
+    // The moving pill slides down as it appears and the header pill scrolls,
+    // so keep the anchor honest while the panel is open.
+    function reanchor() { if (openItem) position(openItem); }
+    window.addEventListener('resize', reanchor);
+    window.addEventListener('scroll', reanchor, { passive: true });
 
     navItems.forEach(li => {
       const btn = li.querySelector('.tc-nav-trigger');
@@ -531,33 +681,34 @@
       }
     });
 
-    // When the dock is detached to document.body for the moving-menu case,
-    // the trigger li's mouseleave fires the instant the cursor crosses into
-    // the dock — there's no DOM containment to keep us inside. Track hover
-    // on the dock itself so a hover-opened panel survives the trip from
-    // trigger to dock.
-    dock.addEventListener('mouseenter', () => {
-      if (dock.classList.contains('tc-floating')) clearTimeout(closeTimer);
-    });
-    dock.addEventListener('mouseleave', () => {
-      if (!dock.classList.contains('tc-floating') || !openItem || pinned) return;
-      clearTimeout(closeTimer);
-      closeTimer = setTimeout(close, 300);
-    });
+    if (canHover) {
+      dock.addEventListener('mouseenter', () => clearTimeout(closeTimer));
+      dock.addEventListener('mouseleave', () => {
+        if (pinned || !openItem) return;
+        clearTimeout(closeTimer);
+        closeTimer = setTimeout(close, 300);
+      });
+    }
 
-    // Touching the controls pins a hover-opened dropdown, so it survives the
-    // pointer wandering off into a native color picker. stopPropagation keeps
-    // inside clicks from reaching the document-level close (preset clicks
-    // re-render their buttons, so the document handler can't recheck
-    // containment on a detached target).
-    dock.addEventListener('click', e => {
-      pinned = true;
-      e.stopPropagation();
+    // Anything inside the panel is handled by the panel. Stopping here rather
+    // than testing dock.contains() on the document listener is deliberate:
+    // controls that re-render themselves detach the clicked node first, and a
+    // detached node is contained by nothing — which read as an outside click
+    // and dismissed the panel. This holds the panel open regardless of what
+    // any individual control does to the DOM on its way through.
+    dock.addEventListener('click', e => e.stopPropagation());
+
+    document.addEventListener('click', e => {
+      if (!openItem) return;
+      if (dock.contains(e.target) || e.target.closest('.tc-nav-item')) return;
+      close();
     });
-    document.getElementById('tc-close').addEventListener('click', close);
-    document.addEventListener('click', () => close());
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') close();
+    });
   }
+
+
 
   function boot() {
     if (isReload()) {

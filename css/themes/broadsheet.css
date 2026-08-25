@@ -249,6 +249,31 @@
   margin: 14px auto 0;
 }
 
+/* The About head is the one department head on screen while the masthead is
+   still typing. Its title is held hidden inline until the intro wave reaches
+   it (index.html), but the wrapper is never hidden — skins paint the section's
+   ground on it — so these rules printed under the masthead alone: a column
+   rule leading nothing. Hold the ink rather than the border, so the box keeps
+   its height and nothing shifts when the rule arrives with the title.
+   js/anim-utils.js adds .section-header-in on the same beat.
+
+   The transition rides on the ARRIVED state, not this one: declared here it
+   also armed the page's very first style change — the skin sheet is appended
+   by a script, so there is a recalc where the wrapper has the base border
+   colour and not yet the transparent override — and ran that backwards,
+   printing the column rule at full ink and fading it out while the type was
+   still going. */
+[data-style="broadsheet"] #about-header-wrapper,
+[data-style="broadsheet"] #about-header-wrapper::after {
+  border-top-color: transparent;
+}
+
+[data-style="broadsheet"] #about-header-wrapper.section-header-in,
+[data-style="broadsheet"] #about-header-wrapper.section-header-in::after {
+  border-top-color: var(--text);
+  transition: border-top-color 0.8s ease-out;
+}
+
 [data-style="broadsheet"] .section-header-spacer {
   display: none;
 }

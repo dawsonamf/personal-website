@@ -212,6 +212,25 @@
   margin: 0 10px 48px;
 }
 
+/* See broadsheet: the About folio rule is on screen while the masthead types,
+   and the wrapper never hides. Gate the ink on the intro wave's reveal. */
+/* The transition is declared on the ARRIVED state, not on the resting one.
+   Declared on the resting rule it also armed the very first style change of
+   the page: the skin sheet is appended by a script, so there is a recalc where
+   the wrapper has already picked up currentColor for its border and has not
+   yet been told the About one is transparent — and the transition dutifully
+   ran that backwards, printing the rule at full ink and fading it out over
+   0.8s just as the type started. With it here there is nothing to interpolate
+   until .section-header-in arrives. */
+[data-style="studio"] #about-header-wrapper {
+  border-top-color: transparent;
+}
+
+[data-style="studio"] #about-header-wrapper.section-header-in {
+  border-top-color: var(--text);
+  transition: border-top-color 0.8s ease-out;
+}
+
 [data-style="studio"] .section-header-spacer {
   display: none;
 }

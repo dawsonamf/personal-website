@@ -85,7 +85,8 @@
   // Same release-day markers as the postings chart, for visual continuity.
   const EVENTS = [
     { date: '2022-11-30', label: 'ChatGPT' },
-    { date: '2023-03-14', label: 'GPT-4' },
+    { date: '2023-03-14', label: 'GPT-4 / Cursor' },
+    { date: '2025-02-24', label: 'Claude Code' },
     { date: '2025-04-16', label: 'o3' },
     { date: '2025-11-24', label: 'Opus 4.5' },
     { date: '2026-06-09', label: 'Fable 5' },
@@ -94,10 +95,28 @@
   function toTs(v) {
     return new Date(String(v).replace(' ', 'T')).getTime();
   }
-  function fmtDate(dateStr) {
+  // Same granularity rule as the hover header: monthly data must not claim
+  // day-level precision, so "as of" reads "Jun 2026", not "Jun 1, 2026".
+  function fmtDate(dateStr, monthly) {
     const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const p = dateStr.split('-');
-    return MONTHS[parseInt(p[1], 10) - 1] + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+    const mon = MONTHS[parseInt(p[1], 10) - 1];
+    return monthly ? mon + ' ' + p[0] : mon + ' ' + parseInt(p[2], 10) + ', ' + p[0];
+  }
+
+  // Unified-hover header granularity: match whatever the data actually is.
+  // A series that only ever lands on the 1st is monthly ("Aug 2026"); anything
+  // finer shows the day ("Aug 14, 2026"). Indeed publishes daily, the NY Fed /
+  // ADP / FRED series are monthly, so each chart reads at its own resolution.
+  // The overlay is deliberately not consulted: the header has to match the
+  // finest line on the axis, and the rate strip is always the coarser one.
+  function isMonthlyData(datasets) {
+    const sets = datasets.filter(d => d && d.length);
+    if (!sets.length) return true;
+    return sets.every(d => d.every(pt => pt.date.slice(8, 10) === '01'));
+  }
+  function hoverDateFormat(datasets) {
+    return isMonthlyData(datasets) ? '%b %Y' : '%b %-d, %Y';
   }
   function rangeDateStr(v) {
     if (typeof v === 'number') return new Date(v).toISOString().slice(0, 10);
@@ -313,7 +332,7 @@
       const grab = el.querySelector('.rangeslider-grabber-' + dragSide);
       if (!grab) return;
       const tip = dragTipEl(el);
-      tip.textContent = fmtDate(rangeDateStr(el._fullLayout.xaxis.range[dragSide === 'min' ? 0 : 1]));
+      tip.textContent = fmtDate(rangeDateStr(el._fullLayout.xaxis.range[dragSide === 'min' ? 0 : 1]), monthlyNow());
       tip.style.display = 'block';
       const box = el.getBoundingClientRect();
       const g = grab.getBoundingClientRect();
@@ -352,6 +371,11 @@
     });
 
     // ---- render --------------------------------------------------------------
+    // Granularity of this chart's series, for the JS-side date readouts.
+    function monthlyNow() {
+      return isMonthlyData(cfg.series.map(s => state.data[s.key]));
+    }
+
     function traceFor(s, T) {
       const data = state.data[s.key];
       return {
@@ -392,6 +416,7 @@
       const layout = {
         xaxis: {
           type: 'date',
+          hoverformat: hoverDateFormat(cfg.series.map(s => state.data[s.key])),
           // The strip's mini chart keeps its own fixed y scale (auto = fit the
           // full data once) instead of the default 'match', so it doesn't
           // bounce every time the main plot's y refits to the window.
@@ -493,11 +518,12 @@
       });
       const ref = cfg.series[0].key;
       const end = state.data[ref][endIdxFor(ref, win.x1)];
+      const mo = monthlyNow();
       if (pct) {
         const anchor = anchorFor(ref, win.x0) || state.data[ref][0];
-        rows.push('<span class="jm-asof">' + fmtDate(anchor.date) + ' → ' + fmtDate(end.date) + '</span>');
+        rows.push('<span class="jm-asof">' + fmtDate(anchor.date, mo) + ' → ' + fmtDate(end.date, mo) + '</span>');
       } else {
-        rows.push('<span class="jm-asof">as of ' + fmtDate(end.date) + '</span>');
+        rows.push('<span class="jm-asof">as of ' + fmtDate(end.date, mo) + '</span>');
       }
       el.innerHTML = rows.join('<br>');
     }

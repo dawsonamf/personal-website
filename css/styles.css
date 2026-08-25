@@ -93,8 +93,17 @@ h1, h2, h3, h4 {
 
 /* Cursor follow */
 
+/* Pinned to the viewport, not to its static position in the header. The
+   followers are placed in raw client coordinates (js/cursor-follow.js), so
+   the container they are absolutely positioned inside has to have its origin
+   at the viewport origin — left/top: auto would put it at #main-body's
+   content edge, which moves with the page gutter and therefore with the
+   skin. That drift is what the old translate()/gutter-math pair existed to
+   cancel; with the container pinned, neither is needed. */
 #cursor-container {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
@@ -104,7 +113,6 @@ h1, h2, h3, h4 {
 
 .cursor-follow {
   position: absolute;
-  transform: translate(-28.5px, -29.5px);
   width: 6px;
   height: 6px;
   background-color: var(--accent);
@@ -115,7 +123,6 @@ h1, h2, h3, h4 {
 
 .circle-follow {
   position: absolute;
-  transform: translate(-28.5px, -29.5px);
   width: 28px;
   height: 28px;
   border: 0.8px solid var(--accent);
@@ -158,7 +165,11 @@ h1, h2, h3, h4 {
   width: auto;
   min-width: 500px;
   max-width: calc(100% - 90px);
-  z-index: 1;
+  /* Deliberately no z-index. .header-menu-container is display:flex, so a
+     z-index here would create a stacking context even at position:static
+     (Flexbox §5.4) and trap the theme dropdown that js/theme-cycler.js parks
+     inside this menu: its z-index:9999 would collapse to this element's layer
+     and .text-link (z-index:2) would paint over the open panel. */
   margin-right: 10px;
   margin-left: auto;
   position: static;
@@ -277,11 +288,21 @@ h1, h2, h3, h4 {
 
 /* Typing animation */
 
+/* The caret is baseline-bottomed, so its 1em box reaches higher above the
+   baseline than the strut of a 1.2 line-height does (~0.95em). While a line
+   is being typed the caret therefore inflates that line's box, and the
+   moment a <br> carries the caret to the next line the box collapses back —
+   which is the finished line visibly hopping up as the one below it starts.
+   The negative top margin drops the caret's margin box to the baseline so it
+   contributes nothing to line height; painting is unaffected by margin, so
+   the bar still draws its full height. Skins that set a taller caret
+   (brutalist's 1.25em) come down by the same 1em and still clear the strut. */
 .cursor {
   background-color: var(--accent);
   width: 4px;
   display: inline-block;
   height: 1em;
+  margin-top: -1em;
   margin-left: 2px;
   animation: none;
 }
@@ -290,14 +311,41 @@ h1, h2, h3, h4 {
   50% { background-color: transparent; }
 }
 
+/* Word boxes, written by js/typing-engine.js in the cursorless reveal modes.
+   Those modes wrap every glyph in its own inline-block so a skin can transform
+   it — and the line breaker is allowed to break between any two atomic
+   inlines, so the moment a column got tight the masthead broke mid-word and
+   set a lone letter on its own line. Each word's glyphs share a nowrap box;
+   the spaces between words are text nodes on the headline itself and still
+   break normally, so wrapping goes back to being a word-level thing. */
+.tw-word {
+  white-space: nowrap;
+}
+
+/* The hero is two columns that share ONE edge: the bottom one. #typing-right
+   pads 60px above the portrait and 0 below it, and the portrait is always the
+   taller of the two items, so the row's bottom edge IS the photo's bottom
+   edge — bottom-aligning the text column lands the standfirst a fixed 20px
+   above it in every skin.
+
+   It used to hang off a padding-top: 2.25em on the h1, an em measured against
+   the DEFAULT sheet's 70px type. Every skin that set its own size inherited a
+   proportional drop and finished somewhere else: measured across the sixteen
+   skins the standfirst landed anywhere from 11px under the photo's edge (grid)
+   to 109px (banknote), against the 20px the default sheet has always had. */
 #typing-container {
   display: flex;
+  align-items: flex-end;
   transform: translateX(-290px);
 }
 
 #typing-left {
   border-radius: var(--border-radius);
   text-align: left;
+  /* The gap to the photo's bottom edge, owned here rather than left to the
+     standfirst's UA margin — that margin is 1em of ITS font size, which every
+     skin sets differently, and re-introduces exactly the drift above. */
+  padding-bottom: 20px;
 }
 
 #typing-right {
@@ -333,7 +381,6 @@ h1, h2, h3, h4 {
   line-height: 1.2;
   font-weight: bold;
   position: relative;
-  padding-top: 2.25em;
 }
 
 #typing-text .typing-accent {
@@ -347,6 +394,9 @@ h1, h2, h3, h4 {
   position: relative;
   opacity: 0;
   font-family: var(--font-mono);
+  /* Last thing in the column, so its box IS the column's bottom edge — see
+     #typing-left, which owns the gap from here to the photo. */
+  margin-bottom: 0;
 }
 
 @keyframes fadein {

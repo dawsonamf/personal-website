@@ -7,16 +7,15 @@
   let circleX = 0, circleY = 0;
   let cursorX = 0, cursorY = 0;
 
+  // #cursor-container is pinned to the viewport origin (css/styles.css), so
+  // client coordinates land as-is. The follower is centred on the pointer by
+  // the half-size subtraction in animate() below. This used to correct for
+  // the container sitting at #main-body's content edge by measuring the page
+  // gutter every move — arithmetic that assumed the classic centred 1240px
+  // column and drifted by the difference under any skin that widens it.
   document.addEventListener('mousemove', function (e) {
-    const body = document.body.getBoundingClientRect();
-    const mainBody = document.getElementById('main-body');
-    let adjustment = 8;
-    if (mainBody) {
-      const diff = (body.width - mainBody.getBoundingClientRect().width) / 2;
-      adjustment = diff <= 0 ? 8 : 8 - diff;
-    }
-    mouseX = e.clientX - body.left - window.scrollX + adjustment;
-    mouseY = e.clientY - body.top - window.scrollY + 8;
+    mouseX = e.clientX;
+    mouseY = e.clientY;
   });
 
   (function animate() {

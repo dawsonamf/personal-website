@@ -88,9 +88,14 @@
 
 
     <!-- about and skills -->
-    <div class="section-header-wrapper" id="about-header-wrapper" style="visibility: hidden; opacity: 0;">
-      <h2 class="section-header" id="about-section-header"><span class="sec-num">01.</span>About</h2>
-      <span class="section-header-spacer" id="about-header-spacer"></span>
+    <!-- The wrapper itself never hides: skins that reverse this section out to
+         a colour paint that ground on the wrapper, and fading the wrapper
+         faded the ground in along with the words. Only the contents enter.
+         data-header-intro hands the reveal to the intro wave in js/script.js
+         instead of the scroll observer in js/anim-utils.js. -->
+    <div class="section-header-wrapper" id="about-header-wrapper" data-header-intro>
+      <h2 class="section-header" id="about-section-header" style="visibility: hidden; opacity: 0;"><span class="sec-num">01.</span>About</h2>
+      <span class="section-header-spacer" id="about-header-spacer" style="visibility: hidden; opacity: 0;"></span>
     </div>
     <section class="double-view-container" id="about">
       <div class="double-view-left card-style">
