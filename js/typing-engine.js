@@ -270,6 +270,38 @@ function startTypingSequence(config) {
   if (document.fonts && document.fonts.ready && document.fonts.ready.then) {
     document.fonts.ready.then(function () { if (!run.cancelled) reserveHeight(); });
   }
+  // The type being measured is the SKIN's, and the skin sheet is a <link>
+  // js/theme-bootstrap.js appends in <head> (data-style-asset). Warm in the
+  // HTTP cache it applies before these deferred scripts run; cold — which is
+  // exactly the first load after switching to a style — it can land after
+  // them, and the reservation gets made against the DEFAULT sheet's 70px/1.2
+  // type. The masthead column is bottom-anchored (css/styles.css), so a
+  // min-height left over from taller type falls as slack under the last line
+  // and the headline floats up off the standfirst instead of sitting flush on
+  // it: bauhaus reserves the default's 252px, then sets three lines of 58px
+  // in 200px. fonts.ready does not cover this — it can resolve before the
+  // sheet lands, and the sheet is what decides the size, not just the face.
+  // So re-measure as each sheet lands, with window load as the backstop for
+  // any that had already landed by the time the listener went on. The links
+  // are listened to unconditionally rather than skipping the ones that look
+  // settled: a link.sheet is readable well before the sheet has actually
+  // arrived, so it can't be used to tell the two apart, and a load listener
+  // on a sheet that is genuinely done simply never fires. Load alone would
+  // not do — it waits on the portrait and the CDN scripts too, so on a slow
+  // connection the headline would sit wrong for seconds before snapping.
+  Array.prototype.forEach.call(
+    document.querySelectorAll('link[data-style-asset]'),
+    function (link) {
+      link.addEventListener('load', function () {
+        if (!run.cancelled) reserveHeight();
+      });
+    }
+  );
+  if (document.readyState !== 'complete') {
+    window.addEventListener('load', function () {
+      if (!run.cancelled) reserveHeight();
+    }, { once: true });
+  }
   startTypingSequence._reserve = reserveHeight;
   if (!startTypingSequence._resizeBound) {
     startTypingSequence._resizeBound = true;

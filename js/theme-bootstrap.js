@@ -573,29 +573,43 @@
       // into place a word at a time and drain the same way.
       typing: 'word',
       typingDelete: 'word',
-      // Random-palette profile: hold the near-monochrome. Text and the band
-      // ink stay dark and desaturated; the ground stays near-white. All five
-      // roles share a narrow saturation draw so a shuffle re-tints the ink
-      // rather than turning the skin colourful.
+      // Random-palette profile: a two-colour poster press, not a monochrome.
+      // What holds the skin's identity is the VALUE structure, never the
+      // absence of colour: the ground stays paper-pale and every mark stays
+      // ink-dark, so text-on-bg can't fall below ~9:1 no matter what the
+      // shuffle draws (the near-black alpha steps this skin leans on,
+      // --text35 upward, stay readable at that floor).
+      //
+      // Inside that structure the draws run wide. text/bg/secondary share one
+      // saturation, so the sheet and the body copy are always tinted by the
+      // same wash, from bare grey to a strong stock tint. primary and accent
+      // draw their own, higher, so the band ink and links can come up as a
+      // genuine second colour against a quiet sheet. Hue offsets separate the
+      // three inks (accent takes the scheme's full spread, primary about
+      // half), while paper and panels sit just off the base hue so the stock
+      // reads as its own warmth rather than a wash of the ink.
       random: {
         light: {
-          sat: [0.02, 0.16],
+          sat: [0.04, 0.45],
           roles: [
-            { l: [0.08, 0.15], hueT: 0 },     // text: ink
-            { l: [0.94, 0.98], hueT: 0 },     // bg: paper
-            { l: [0.11, 0.18], hueT: 0.25 },  // primary: band ink
-            { l: [0.88, 0.93], hueT: 0 },     // secondary: panel paper
-            { l: [0.08, 0.15], hueT: 0 },     // accent: ink (links use rules)
+            { l: [0.07, 0.20], hueT: 0 },                       // text: ink
+            { l: [0.90, 0.98], hueT: 0.08 },                    // bg: paper
+            { l: [0.10, 0.23], hueT: 0.55, sat: [0.12, 0.62] }, // primary: band ink
+            { l: [0.82, 0.92], hueT: 0.18 },                    // secondary: panel paper
+            { l: [0.09, 0.24], hueT: 1.00, sat: [0.12, 0.62] }, // accent: second ink (links)
           ],
         },
+        // Inverted press. Lightness caps sit a touch lower than light mode's
+        // floors are high: a saturated hue at L 0.90 carries less luminance
+        // than a grey does, and the ink ground has no headroom to give back.
         dark: {
-          sat: [0.02, 0.16],
+          sat: [0.04, 0.42],
           roles: [
-            { l: [0.90, 0.96], hueT: 0 },
-            { l: [0.05, 0.10], hueT: 0 },
-            { l: [0.86, 0.93], hueT: 0.25 },
-            { l: [0.12, 0.18], hueT: 0 },
-            { l: [0.90, 0.96], hueT: 0 },
+            { l: [0.84, 0.96], hueT: 0 },
+            { l: [0.04, 0.12], hueT: 0.08 },
+            { l: [0.76, 0.92], hueT: 0.55, sat: [0.12, 0.55] },
+            { l: [0.10, 0.22], hueT: 0.18 },
+            { l: [0.78, 0.94], hueT: 1.00, sat: [0.12, 0.55] },
           ],
         },
       },

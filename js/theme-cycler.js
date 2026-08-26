@@ -430,14 +430,39 @@
     host.innerHTML = ROLES.map((r,i) => {
       const hex = state.colors[i];
       const locked = state.locks[i];
-      return `<label class="tc-role" title="${hex}">
-        <span class="tc-sw" style="background:${hex}"></span>
-        <span class="tc-role-name">${r.label}</span>
-        <button class="tc-lk ${locked?'tc-on':''}" data-i="${i}" aria-label="${locked?'Unlock':'Lock'} ${r.label}">
+      // One <label> per control, and neither one contains the other.
+      //
+      // The row used to BE a single <label> holding the lock <button> and the
+      // <input type="color"> as siblings, which made clicking it a coin toss:
+      // a label's labelled control is the FIRST labelable element inside it,
+      // and a <button> is labelable, so the row's control was the LOCK, not
+      // the input. Clicking anywhere in the tile toggled the lock — including
+      // the 46px block of colour, which is the one thing on screen that looks
+      // like it opens a picker. The picker opened only where the input's own
+      // box happened to lie, and that box was an invisible ~50x27 in the
+      // tile's top-left corner lining up with nothing (see the note on
+      // .tc-sw input[type="color"] in css/theme-cycler.css). Which of the two
+      // you got depended purely on where in the tile you landed; the lock's
+      // z-index and its preventDefault could not help, because the ambiguity
+      // was in the label association, not in the paint order.
+      //
+      // So: the swatch is a label wrapping the input and nothing else, and the
+      // name is a second label pointing at the same input by id — which also
+      // gives the input the accessible name it never had while the row-label
+      // belonged to the button. The lock sits outside both.
+      //
+      // The three children stay flat and stay in this order: the compact dock
+      // lays them out as one row and the mega panel wraps the name and lock
+      // under a full-width swatch, both purely with flex on .tc-role.
+      return `<div class="tc-role" title="${hex}">
+        <label class="tc-sw" style="background:${hex}">
+          <input type="color" id="tc-color-${i}" value="${hex}" data-i="${i}">
+        </label>
+        <label class="tc-role-name" for="tc-color-${i}">${r.label}</label>
+        <button type="button" class="tc-lk ${locked?'tc-on':''}" data-i="${i}" aria-label="${locked?'Unlock':'Lock'} ${r.label}">
           <i class="fa-solid fa-${locked?'lock':'lock-open'}"></i>
         </button>
-        <input type="color" value="${hex}" data-i="${i}">
-      </label>`;
+      </div>`;
     }).join('');
     host.querySelectorAll('input[type="color"]').forEach(inp => {
       // Live-drag updates: avoid re-rendering so the native picker stays open.
@@ -445,8 +470,10 @@
       inp.addEventListener('click', e => e.stopPropagation());
     });
     host.querySelectorAll('.tc-lk').forEach(btn => {
-      btn.addEventListener('click', e => {
-        e.preventDefault(); e.stopPropagation();
+      // No preventDefault/stopPropagation needed any more: the lock is outside
+      // every label so nothing forwards its click, and the dock's own
+      // click listener already keeps the panel open for anything inside it.
+      btn.addEventListener('click', () => {
         const i = +btn.dataset.i;
         state.locks[i] = !state.locks[i];
         renderRoles();
@@ -684,7 +711,14 @@
     if (canHover) {
       dock.addEventListener('mouseenter', () => clearTimeout(closeTimer));
       dock.addEventListener('mouseleave', () => {
-        if (pinned || !openItem) return;
+        // A focused control in the panel counts as pinned. <input type="color">
+        // opens the OS colour panel over the page, which pulls the pointer out
+        // of the web contents and fires this mouseleave — so the hover-close
+        // timer ran while you were still picking, and the menu dismissed itself
+        // mid-edit. The input keeps DOM focus the whole time the native panel
+        // is up, so testing focus is what tells "hovered away" apart from
+        // "still using it".
+        if (pinned || !openItem || dock.contains(document.activeElement)) return;
         clearTimeout(closeTimer);
         closeTimer = setTimeout(close, 300);
       });

@@ -302,18 +302,25 @@
   padding: 6px 8px;
   border-radius: 8px;
   background: var(--text5);
-  position: relative;
   min-width: 0;
 }
 
+/* The swatch is the <label> that wraps the colour input (renderRoles), so it
+   is both the painted colour and the picker's hit target. position: relative
+   is what the input positions against — the row deliberately is NOT the
+   containing block any more, so the input can never reach under the lock. */
 .tc-sw {
+  position: relative;
   width: 16px;
   height: 16px;
   border-radius: 4px;
   flex-shrink: 0;
   border: 1px solid var(--text20);
+  cursor: pointer;
 }
 
+/* A <label for> pointing at the same input: clicking the caption still opens
+   the picker, and it supplies the input's accessible name. */
 .tc-role-name {
   flex: 1;
   min-width: 0;
@@ -322,6 +329,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .tc-lk {
@@ -335,16 +343,23 @@
   line-height: 1;
   transition: color 0.25s ease-in-out;
   flex-shrink: 0;
-  /* Lift above the row-covering color input so the lock is clickable. */
-  position: relative;
-  z-index: 1;
 }
 .tc-lk:hover { color: var(--text); }
 .tc-lk.tc-on { color: var(--accent); }
 
-.tc-role input[type="color"] {
+/* Fills its swatch label exactly, in every layout, with no magic numbers.
+   width/height are load-bearing: an <input type="color"> is a replaced
+   element, so `inset: 0` alone could never stretch it — with width: auto it
+   rendered at its intrinsic ~50x27 and only top/left applied, which left an
+   invisible picker target hanging out of the corner of every role while the
+   rest of the row only worked because the row itself was the label. */
+.tc-sw input[type="color"] {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Invisible but still focusable, and still the element that opens the
+     native picker; the swatch label paints the colour behind it. */
   opacity: 0;
   cursor: pointer;
 }
@@ -666,9 +681,9 @@
 /* Colours: one tall chip per role, five across the column. The old shape was
    a 3-up grid of little rows — a 16px swatch, a name, a lock — which spent
    most of its width on the label and showed almost none of the colour it was
-   there to edit. Here the colour IS the control (renderRoles lays the
-   <input type="color"> over the whole tile) and the name and lock drop under
-   it as a caption. Five across also comes in shorter than the 3-up's two
+   there to edit. Here the colour IS the control — the swatch is the <label>
+   that wraps the <input type="color"> — and the name and lock drop under it
+   as a caption. Five across also comes in shorter than the 3-up's two
    rows, which is height the fixed-size swap box gives back as air. */
 .tc-mega .tc-roles {
   grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -686,7 +701,10 @@
 /* flex: 0 0 100% is what puts the caption on its own line. A wrapper element
    would be cleaner markup and worse everything else: renderRoles() writes the
    same flat .tc-sw / .tc-role-name / .tc-lk list the compact dock uses and
-   that every skin's .tc-role rules already match. */
+   that every skin's .tc-role rules already match. It is also why the lock is
+   separated from the picker by making the swatch and the name each a <label>,
+   rather than by boxing the pair up — a wrapper here would hand the name and
+   lock their own line box and this wrap would stop working. */
 .tc-mega .tc-sw {
   flex: 0 0 100%;
   width: auto;
