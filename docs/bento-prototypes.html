@@ -1,0 +1,350 @@
+<!-- PROTOTYPE, throwaway. Five bento variations for dawsonamf.com in one scrollable
+     file. Each frame scrolls on its own. Real strings and images from the site,
+     one placeholder about-line. Not linked from the site, nothing here is a skin. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bento prototypes (throwaway)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f1115;color:#e6e9ef;font:15px/1.5 'Inter Tight',system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+.intro{max-width:1140px;margin:0 auto;padding:48px 24px 8px}
+.intro h1{font-size:28px;font-weight:800}
+.intro p{color:#9aa3b2;margin-top:6px}
+.proto{max-width:1140px;margin:44px auto;padding:0 24px}
+.label{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#9aa3b2;margin-bottom:10px}
+.label b{color:#fff;font-size:15px}
+.frame{height:88vh;overflow-y:auto;border:1px solid #2a2f3a;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+
+/* shared tile bits (colors overridden per variant) */
+.k{font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-bottom:10px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips span{font-size:12px;padding:4px 9px;border-radius:999px}
+.img-tile{padding:0 !important;position:relative}
+.img-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.img-tile .cap{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;background:linear-gradient(transparent,rgba(0,0,0,.78));color:#fff}
+.img-tile .cap b{display:block;font-size:14px}
+.img-tile .cap small{opacity:.75;font-size:12px}
+.rows li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;font-size:14px}
+.rows li small{opacity:.6;white-space:nowrap}
+.rows li b{display:block;font-size:14px}
+.rows li span{opacity:.7;font-size:13px}
+
+/* A · glass ----------------------------------------------------------------- */
+.va{background:#0b0c10;color:#eef0f4;padding:26px}
+.va .g{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:14px}
+.va .t{background:#14161c;border:1px solid #23262e;border-radius:22px;padding:20px;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:inset 0 1px 0 rgba(255,255,255,.04);transition:transform .15s,border-color .15s}
+.va .t:hover{transform:translateY(-2px);border-color:#3a3f4b}
+.va .name{grid-column:span 2;grid-row:span 2;background:radial-gradient(120% 90% at 100% 0%,#61ffda22,transparent 55%),linear-gradient(140deg,#171a24,#1d1830)}
+.va .name h1{font-size:40px;line-height:1.05;font-weight:800;margin-top:auto}
+.va .name h1 span{color:#61ffda}
+.va .name p{color:#9aa3b2;font-size:14px;margin-top:10px}
+.va .photo{grid-row:span 2}
+.va .job{grid-row:span 2}
+.va .about,.va .post,.va .works{grid-column:span 2}
+.va .works{grid-row:span 2}
+.va .t p{font-size:14px;color:#c3c8d3}
+.va .t b{font-size:16px}
+.va .chips span{background:#23262e}
+.va .rows li{border-top:1px solid #23262e}
+.va .rows li:first-child{border-top:none;padding-top:0}
+.va .works .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1}
+.va .works .grid .img-tile{border-radius:12px;overflow:hidden;background:#1f222a}
+.va .cta{margin-top:auto;font-size:15px;color:#61ffda;font-weight:600}
+.va .soc{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto;font-size:13px;color:#c3c8d3}
+.va .map{background:#1f222a}
+.va .map img{opacity:.85;filter:saturate(.6)}
+.va .date{margin-top:auto;font-size:12px;color:#7d8494}
+
+/* B · paper ----------------------------------------------------------------- */
+.vb{background:#f7f5f0;color:#1c1b19;padding:34px 34px 40px}
+.vb .hero{display:flex;align-items:center;gap:28px;padding:18px 6px 34px}
+.vb .hero img{width:96px;height:96px;border-radius:50%;object-fit:cover}
+.vb .hero h1{font:400 44px/1.05 'Instrument Serif',Georgia,serif}
+.vb .hero h1 i{color:#c2410c}
+.vb .hero .soc{margin-left:auto;display:flex;gap:14px;font-size:13px;color:#6b665e}
+.vb .g{display:grid;grid-template-columns:repeat(3,1fr);grid-auto-rows:170px;gap:16px}
+.vb .t{border-radius:26px;padding:22px;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 10px 30px rgba(0,0,0,.06);transition:transform .15s}
+.vb .t:hover{transform:translateY(-3px)}
+.vb .k{position:absolute;top:14px;right:14px;margin:0;background:rgba(255,255,255,.7);padding:4px 8px;border-radius:999px;opacity:1;color:#6b665e}
+.vb .about{grid-column:span 2;background:#fbf3e2}
+.vb .skills{background:#e6efe4}
+.vb .work{grid-row:span 2;background:#e3ecf7}
+.vb .works{grid-column:span 2;grid-row:span 2;background:#efece4}
+.vb .blog{grid-column:span 2;background:#fbe7dc}
+.vb .contact{background:#ece6f6}
+.vb .t h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.vb .t p{font-size:14px;color:#3d3a34}
+.vb .chips span{background:#fff}
+.vb .rows li{border-top:1px solid rgba(0,0,0,.08)}
+.vb .rows li:first-child{border-top:none;padding-top:0}
+.vb .works .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1;margin-top:4px}
+.vb .works .grid .img-tile{border-radius:14px;overflow:hidden}
+.vb .cta{margin-top:auto;background:#1c1b19;color:#fff;font-size:13px;font-weight:600;padding:9px 12px;border-radius:999px;align-self:flex-start}
+.vb .contact img{position:absolute;right:-10px;bottom:-10px;width:110px;height:110px;object-fit:cover;border-radius:16px;opacity:.9}
+
+/* C · chaptered ------------------------------------------------------------- */
+.vc{background:#fbfbfa;color:#16181d;padding:40px 44px 60px}
+.vc .hero{display:flex;justify-content:space-between;align-items:center;gap:24px;padding:20px 0 44px}
+.vc .hero h1{font-size:44px;line-height:1.08;font-weight:800;letter-spacing:-.02em}
+.vc .hero h1 span{color:#0f766e}
+.vc .hero img{width:150px;height:150px;border-radius:18px;object-fit:cover}
+.vc h2{display:flex;align-items:center;gap:14px;font-size:20px;font-weight:600;margin:40px 0 14px}
+.vc h2 small{font:600 11px 'IBM Plex Mono',monospace;color:#0f766e;letter-spacing:.1em}
+.vc h2::after{content:'';flex:1;border-top:1px solid #16181d}
+.vc .cl{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:minmax(120px,auto);gap:12px}
+.vc .cl4{grid-template-columns:repeat(4,1fr)}
+.vc .t{background:#fff;border:1px solid #e4e4df;border-radius:14px;padding:18px;position:relative;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s}
+.vc .t:hover{border-color:#16181d}
+.vc .s2{grid-column:span 2}.vc .s3{grid-column:span 3}.vc .s4{grid-column:span 4}.vc .r2{grid-row:span 2}
+.vc .t p{font-size:14px;color:#3a3e46}
+.vc .t b{font-size:15px}
+.vc .t .role{font-size:13px;color:#0f766e;font-weight:600}
+.vc .t .dates{font:12px 'IBM Plex Mono',monospace;color:#6b6f78;margin:2px 0 8px}
+.vc .chips span{background:#f1f1ec}
+.vc .img-tile{min-height:180px}
+.vc .cta{margin-top:auto;background:#0f766e;color:#fff;font-size:13px;font-weight:600;padding:9px 12px;border-radius:8px;align-self:flex-start}
+.vc .date{font:12px 'IBM Plex Mono',monospace;color:#6b6f78;margin-top:auto;padding-top:10px}
+
+/* D · neo-brutal ------------------------------------------------------------ */
+.vd{background:#f2efe6;color:#111;padding:26px}
+.vd .g{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:18px}
+.vd .t{background:#fff;border:3px solid #111;border-radius:8px;box-shadow:6px 6px 0 #111;padding:18px;position:relative;overflow:hidden;display:flex;flex-direction:column;transition:transform .1s,box-shadow .1s}
+.vd .t:hover{transform:translate(-2px,-2px);box-shadow:9px 9px 0 #111}
+.vd .k{opacity:1;color:#111}
+.vd .name{grid-column:span 2;grid-row:span 2;background:#ffd400}
+.vd .name h1{font:400 64px/.9 'Anton',Impact,sans-serif;text-transform:uppercase;margin-top:auto}
+.vd .name p{font:400 22px 'Anton';text-transform:uppercase;letter-spacing:.04em;margin-top:8px}
+.vd .photo{grid-row:span 2}
+.vd .photo img{border:0}
+.vd .stat{background:#fff}
+.vd .stat b{font:400 56px/1 'Anton';margin-top:auto}
+.vd .stat span{font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.vd .about{grid-column:span 2}
+.vd .skills{background:#7ee787}
+.vd .contact{background:#ff7ab6}
+.vd .works{grid-column:span 2;grid-row:span 2;background:#6aa0ff}
+.vd .job,.vd .blog{grid-row:span 2}
+.vd .blog{background:#ffd400}
+.vd .t p{font-size:14px}
+.vd .t b{font-size:15px}
+.vd .chips span{background:#fff;border:2px solid #111;font-weight:600}
+.vd .rows li{border-top:2px solid #111}
+.vd .rows li:first-child{border-top:none;padding-top:0}
+.vd .works .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1}
+.vd .works .grid .img-tile{border:3px solid #111;border-radius:6px;overflow:hidden;background:#fff}
+.vd .cta{margin-top:auto;font:400 28px 'Anton';text-transform:uppercase}
+
+/* E · editorial mosaic ------------------------------------------------------ */
+.ve{background:#14110f;color:#efe7da;padding:22px}
+.ve .g{display:grid;grid-template-columns:repeat(6,1fr);grid-auto-rows:120px;gap:10px}
+.ve .t{background:#1e1a17;border-radius:16px;padding:18px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.ve .k{color:#b9ad9c;opacity:1}
+.ve .portrait{grid-column:span 2;grid-row:span 3}
+.ve .name{grid-column:span 4;grid-row:span 2;background:#221d19}
+.ve .name h1{font:400 52px/1 'Instrument Serif',Georgia,serif;margin-top:auto}
+.ve .name h1 i{color:#e0a458}
+.ve .name p{font:12px 'IBM Plex Mono',monospace;letter-spacing:.1em;text-transform:uppercase;color:#b9ad9c;margin-top:12px}
+.ve .about,.ve .skills{grid-column:span 2}
+.ve .big{grid-column:span 3;grid-row:span 2}
+.ve .mid{grid-column:span 2;grid-row:span 2}
+.ve .work,.ve .blog{grid-column:span 3;grid-row:span 2}
+.ve .contact{grid-column:span 4}
+.ve .soc{grid-column:span 2}
+.ve .t p{font-size:14px;color:#d6ccbd}
+.ve .chips span{background:#2c2622;color:#efe7da}
+.ve .rows li{border-top:1px solid #2c2622}
+.ve .rows li:first-child{border-top:none;padding-top:0}
+.ve .rows li span{color:#b9ad9c}
+.ve .contact img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.35;filter:sepia(.5)}
+.ve .contact .cta{position:relative;margin-top:auto;font:400 26px 'Instrument Serif',serif;font-style:italic;color:#e0a458}
+.ve .soc ul{margin-top:auto;display:flex;gap:14px;font-size:13px;color:#d6ccbd}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <h1>Bento prototypes</h1>
+  <p>Five takes on the bento idea. A: dark glass, one grid. B: light paper, hero above, pastel tiles. C: chaptered, keeps the site's section headers (closest to the current DOM). D: neo-brutal, stats and hard shadows. E: image-led editorial mosaic.</p>
+</header>
+
+<!-- A ------------------------------------------------------------------- -->
+<section class="proto">
+  <div class="label"><b>A · Glass dashboard</b><span>dark · 4 col · one grid, no section headers</span><span>feel: Linear / Apple</span></div>
+  <div class="frame va"><div class="g">
+    <div class="t name"><div class="k">dawsonamf.com</div><h1>Hi, I'm Dawson,<br><span>full stack engineer.</span></h1><p>Web · iOS and visionOS · ML and RL</p></div>
+    <div class="t img-tile photo"><img src="../resources/profile_photo.jpg" alt=""></div>
+    <div class="t job"><div class="k">Now</div><ul class="rows">
+      <li><div><b>About Objects</b><span>Software Engineer</span></div><small>2023 – now</small></li>
+      <li><div><b>Johns Hopkins</b><span>Guest Lecturer</span></div><small>2024 – now</small></li>
+      <li><div><b>Visual Language Associates</b><span>Technical Co-Founder</span></div><small>2019 – 23</small></li>
+      <li><div><b>Startup Shell</b><span>Fellow</span></div></li>
+    </ul></div>
+    <div class="t about"><div class="k">About</div><p>Software engineer working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy, two or three sentences long.</p></div>
+    <div class="t"><div class="k">Skills</div><div class="chips"><span>Swift</span><span>RealityKit</span><span>TypeScript</span><span>Python</span><span>PyTorch</span><span>AWS</span></div></div>
+    <div class="t"><div class="k">Elsewhere</div><div class="soc"><a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">Email</a><a href="#">Résumé</a></div></div>
+    <div class="t works"><div class="k">Selected Works</div><div class="grid">
+      <div class="img-tile"><img src="../resources/Helm_All.png" alt=""><div class="cap"><b>Helm</b><small>TypeScript · VS Code API</small></div></div>
+      <div class="img-tile"><img src="../resources/Fly_Media.jpg" alt=""><div class="cap"><b>Silicon Fly</b><small>Metal · Swift</small></div></div>
+      <div class="img-tile"><img src="../resources/LexChat_Media.jpeg" alt=""><div class="cap"><b>LexChat</b><small>Python · Pinecone</small></div></div>
+      <div class="img-tile"><img src="../resources/KLvsRefusals.png" alt=""><div class="cap"><b>Gemma 4 MoE Heretic-ARA</b><small>PyTorch · HuggingFace</small></div></div>
+    </div></div>
+    <div class="t post"><div class="k">Latest post</div><b>There is a fly on my laptop and it runs away</b><div class="date">August 2026</div></div>
+    <div class="t img-tile map"><img src="../resources/location.png" alt=""><div class="cap"><b>Washington, DC area</b></div></div>
+    <div class="t"><div class="k">Contact</div><div class="cta">Book a call →</div></div>
+    <div class="t post"><div class="k">Earlier</div><b>The Art Nobody Looks At</b><div class="date">July 2026</div></div>
+    <div class="t post"><div class="k">Earlier</div><b>Arena.ai Leaderboard Update Badges</b><div class="date">May 2026</div></div>
+  </div></div>
+</section>
+
+<!-- B ------------------------------------------------------------------- -->
+<section class="proto">
+  <div class="label"><b>B · Paper</b><span>light · 3 col · hero stays above, tinted tiles by category</span><span>feel: bento.me</span></div>
+  <div class="frame vb">
+    <div class="hero"><img src="../resources/profile_photo.jpg" alt=""><h1>Hi, I'm Dawson,<br><i>full stack engineer.</i></h1><div class="soc"><a href="#">GitHub</a><a href="#">LinkedIn</a><a href="#">Email</a><a href="#">Résumé</a></div></div>
+    <div class="g">
+      <div class="t about"><div class="k">About</div><h3>Software engineer</h3><p>Working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy, two or three sentences long.</p></div>
+      <div class="t skills"><div class="k">Skills</div><h3>Stack</h3><div class="chips"><span>Swift</span><span>visionOS</span><span>TypeScript</span><span>Python</span><span>PyTorch</span></div></div>
+      <div class="t work"><div class="k">Work</div><h3>Where I've worked</h3><ul class="rows">
+        <li><div><b>About Objects</b><span>Software Engineer</span></div><small>2023 –</small></li>
+        <li><div><b>Johns Hopkins</b><span>Guest Lecturer</span></div><small>2024 –</small></li>
+        <li><div><b>Visual Language Associates</b><span>Technical Co-Founder</span></div><small>2019 – 23</small></li>
+        <li><div><b>Startup Shell</b><span>Fellow</span></div></li>
+      </ul></div>
+      <div class="t works"><div class="k">Projects</div><h3>Selected works</h3><div class="grid">
+        <div class="img-tile"><img src="../resources/Helm_All.png" alt=""><div class="cap"><b>Helm</b></div></div>
+        <div class="img-tile"><img src="../resources/Purple_Toolbelt_Image.jpg" alt=""><div class="cap"><b>Toolbelt</b></div></div>
+        <div class="img-tile"><img src="../resources/Amino_Media.png" alt=""><div class="cap"><b>Amino Amigo</b></div></div>
+        <div class="img-tile"><img src="../resources/EmbeddedSwiftAgent_CLIScreenshot.png" alt=""><div class="cap"><b>Embedded Swift Agent</b></div></div>
+      </div></div>
+      <div class="t blog"><div class="k">Blog</div><h3>Writing</h3><ul class="rows">
+        <li><b>There is a fly on my laptop and it runs away</b><small>Aug 2026</small></li>
+        <li><b>The Art Nobody Looks At</b><small>Jul 2026</small></li>
+        <li><b>How Fast Are Agents Improving?</b><small>Jan 2026</small></li>
+      </ul></div>
+      <div class="t contact"><div class="k">Contact</div><h3>Say hi</h3><p>DC area.</p><a class="cta" href="#">Book a call</a><img src="../resources/location.png" alt=""></div>
+    </div>
+  </div>
+</section>
+
+<!-- C ------------------------------------------------------------------- -->
+<section class="proto">
+  <div class="label"><b>C · Chaptered</b><span>light · section headers stay · each section is its own cluster</span><span>closest to current DOM, cheapest skin</span></div>
+  <div class="frame vc">
+    <div class="hero"><h1>Hi,<br>I'm Dawson,<br><span>full stack engineer.</span></h1><img src="../resources/profile_photo.jpg" alt=""></div>
+
+    <h2><small>01</small>About</h2>
+    <div class="cl">
+      <div class="t s4"><div class="k">Bio</div><p>Software engineer working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy, two or three sentences long.</p></div>
+      <div class="t s2"><div class="k">Skills</div><div class="chips"><span>Web</span><span>iOS</span><span>visionOS</span><span>ML</span><span>RL</span></div></div>
+    </div>
+
+    <h2><small>02</small>Where I've Worked</h2>
+    <div class="cl cl4">
+      <div class="t"><b>About Objects</b><div class="role">Software Engineer</div><div class="dates">July 2023 – Present</div><p>Multi-platform event management for government clients, RealityKit 3D, featured in Apple's enterprise showcase.</p></div>
+      <div class="t"><b>Johns Hopkins University</b><div class="role">Guest Lecturer</div><div class="dates">Spring 2024 – Present</div><p>Statistics for interpreters, from fundamentals to multiple linear regression.</p></div>
+      <div class="t"><b>Visual Language Associates</b><div class="role">Technical Co-Founder</div><div class="dates">Sep 2019 – Jul 2023</div><p>Interpreting agency serving two dozen clients and MD/VA state contracts.</p></div>
+      <div class="t"><b>Startup Shell</b><div class="role">Fellow</div><div class="dates">&nbsp;</div><p>Placeholder line for the Startup Shell blurb.</p></div>
+    </div>
+
+    <h2><small>03</small>Selected Works</h2>
+    <div class="cl">
+      <div class="t s3 img-tile"><img src="../resources/Helm_All.png" alt=""><div class="cap"><b>Helm</b><small>TypeScript · VS Code API</small></div></div>
+      <div class="t s3 img-tile"><img src="../resources/Fly_Media.jpg" alt=""><div class="cap"><b>Silicon Fly</b><small>Metal · Swift · Connectomics</small></div></div>
+      <div class="t s2 img-tile"><img src="../resources/KLvsRefusals.png" alt=""><div class="cap"><b>Gemma 4 MoE Heretic-ARA</b><small>PyTorch</small></div></div>
+      <div class="t s2 img-tile"><img src="../resources/EmbeddedSwiftAgent_CLIScreenshot.png" alt=""><div class="cap"><b>Embedded Swift Agent</b><small>Embedded Swift · C</small></div></div>
+      <div class="t s2 img-tile"><img src="../resources/Purple_Toolbelt_Image.jpg" alt=""><div class="cap"><b>Toolbelt</b><small>Python · FastMCP</small></div></div>
+      <div class="t s2 img-tile"><img src="../resources/Amino_Media.png" alt=""><div class="cap"><b>Amino Amigo</b><small>SwiftUI</small></div></div>
+      <div class="t s2 img-tile"><img src="../resources/LexChat_Media.jpeg" alt=""><div class="cap"><b>LexChat</b><small>Python · Pinecone</small></div></div>
+      <div class="t s2 img-tile"><img src="../resources/RL_Media.png" alt=""><div class="cap"><b>Deep RL</b><small>Python · C++</small></div></div>
+    </div>
+
+    <h2><small>04</small>Blog</h2>
+    <div class="cl">
+      <div class="t s2"><div class="k">Post</div><b>There is a fly on my laptop and it runs away</b><div class="date">August 2026</div></div>
+      <div class="t s2"><div class="k">Post</div><b>The Art Nobody Looks At</b><div class="date">July 2026</div></div>
+      <div class="t s2"><div class="k">Post</div><b>Arena.ai Leaderboard Update Badges</b><div class="date">May 2026</div></div>
+    </div>
+
+    <h2><small>05</small>Contact</h2>
+    <div class="cl">
+      <div class="t s3 img-tile"><img src="../resources/location.png" alt=""><div class="cap"><b>Washington, DC area</b></div></div>
+      <div class="t s3"><div class="k">Say hi</div><p>Placeholder contact line. Email, LinkedIn, GitHub, résumé.</p><a class="cta" href="#">Book a call</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- D ------------------------------------------------------------------- -->
+<section class="proto">
+  <div class="label"><b>D · Neo-brutal</b><span>light · 4 col · hard shadows, stat tiles, colored fills</span><span>feel: loud, playful</span></div>
+  <div class="frame vd"><div class="g">
+    <div class="t name"><div class="k">dawsonamf.com</div><h1>Hi, I'm<br>Dawson.</h1><p>Full stack engineer</p></div>
+    <div class="t img-tile photo"><img src="../resources/profile_photo.jpg" alt=""></div>
+    <div class="t job"><div class="k">Work</div><ul class="rows">
+      <li><div><b>About Objects</b><span>Software Engineer</span></div><small>'23 –</small></li>
+      <li><div><b>Johns Hopkins</b><span>Guest Lecturer</span></div><small>'24 –</small></li>
+      <li><div><b>Visual Language Associates</b><span>Co-Founder</span></div><small>'19 – '23</small></li>
+      <li><div><b>Startup Shell</b><span>Fellow</span></div></li>
+    </ul></div>
+    <div class="t stat"><b>4</b><span>Employers</span></div>
+    <div class="t stat"><b>8</b><span>Projects</span></div>
+    <div class="t stat"><b>10</b><span>Posts</span></div>
+    <div class="t stat"><b>3</b><span>Platforms</span></div>
+    <div class="t about"><div class="k">About</div><p>Software engineer working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy.</p></div>
+    <div class="t skills"><div class="k">Skills</div><div class="chips"><span>Swift</span><span>visionOS</span><span>TS</span><span>Python</span><span>PyTorch</span></div></div>
+    <div class="t contact"><div class="k">Contact</div><div class="cta">Say hi →</div></div>
+    <div class="t works"><div class="k">Selected Works</div><div class="grid">
+      <div class="img-tile"><img src="../resources/Helm_All.png" alt=""><div class="cap"><b>Helm</b></div></div>
+      <div class="img-tile"><img src="../resources/Fly_Media.jpg" alt=""><div class="cap"><b>Silicon Fly</b></div></div>
+      <div class="img-tile"><img src="../resources/Purple_Toolbelt_Image.jpg" alt=""><div class="cap"><b>Toolbelt</b></div></div>
+      <div class="img-tile"><img src="../resources/Amino_Media.png" alt=""><div class="cap"><b>Amino Amigo</b></div></div>
+    </div></div>
+    <div class="t blog"><div class="k">Blog</div><ul class="rows">
+      <li><div><b>There is a fly on my laptop and it runs away</b></div><small>Aug 26</small></li>
+      <li><div><b>The Art Nobody Looks At</b></div><small>Jul 26</small></li>
+      <li><div><b>Arena.ai Leaderboard Update Badges</b></div><small>May 26</small></li>
+    </ul></div>
+    <div class="t img-tile"><img src="../resources/location.png" alt=""><div class="cap"><b>DC area</b></div></div>
+    <div class="t"><div class="k">Elsewhere</div><ul class="rows"><li><b>GitHub</b></li><li><b>LinkedIn</b></li><li><b>Résumé</b></li></ul></div>
+  </div></div>
+</section>
+
+<!-- E ------------------------------------------------------------------- -->
+<section class="proto">
+  <div class="label"><b>E · Editorial mosaic</b><span>warm dark · 6 col · image-led, serif masthead</span><span>feel: magazine / gallery</span></div>
+  <div class="frame ve"><div class="g">
+    <div class="t img-tile portrait"><img src="../resources/profile_photo.jpg" alt=""></div>
+    <div class="t name"><div class="k">dawsonamf.com</div><h1>Hi, I'm Dawson,<br><i>full stack engineer.</i></h1><p>Web · iOS and visionOS · ML and RL</p></div>
+    <div class="t about"><div class="k">About</div><p>Software engineer working across web, Apple platforms, and machine learning. Placeholder line.</p></div>
+    <div class="t skills"><div class="k">Skills</div><div class="chips"><span>Swift</span><span>RealityKit</span><span>TypeScript</span><span>PyTorch</span></div></div>
+    <div class="t img-tile big"><img src="../resources/Helm_All.png" alt=""><div class="cap"><b>Helm</b><small>A minimalist workspace switcher for your IDE · TypeScript</small></div></div>
+    <div class="t img-tile big"><img src="../resources/Fly_Media.jpg" alt=""><div class="cap"><b>Silicon Fly</b><small>Half a percent of a fly brain on the GPU · Metal, Swift</small></div></div>
+    <div class="t img-tile mid"><img src="../resources/LexChat_Media.jpeg" alt=""><div class="cap"><b>LexChat</b><small>Python · Pinecone</small></div></div>
+    <div class="t img-tile mid"><img src="../resources/Purple_Toolbelt_Image.jpg" alt=""><div class="cap"><b>Toolbelt</b><small>Python · FastMCP</small></div></div>
+    <div class="t img-tile mid"><img src="../resources/KLvsRefusals.png" alt=""><div class="cap"><b>Gemma 4 MoE Heretic-ARA</b><small>PyTorch</small></div></div>
+    <div class="t work"><div class="k">Where I've Worked</div><ul class="rows">
+      <li><div><b>About Objects</b><span>Software Engineer</span></div><small>2023 –</small></li>
+      <li><div><b>Johns Hopkins University</b><span>Guest Lecturer</span></div><small>2024 –</small></li>
+      <li><div><b>Visual Language Associates</b><span>Technical Co-Founder</span></div><small>2019 – 23</small></li>
+      <li><div><b>Startup Shell</b><span>Fellow</span></div></li>
+    </ul></div>
+    <div class="t blog"><div class="k">Blog</div><ul class="rows">
+      <li><div><b>There is a fly on my laptop and it runs away</b></div><small>Aug 2026</small></li>
+      <li><div><b>The Art Nobody Looks At</b></div><small>Jul 2026</small></li>
+      <li><div><b>Helm: A Minimalist Workspace Switcher</b></div><small>Apr 2026</small></li>
+      <li><div><b>How Fast Are Agents Improving?</b></div><small>Jan 2026</small></li>
+    </ul></div>
+    <div class="t contact"><img src="../resources/location.png" alt=""><div class="k" style="position:relative">Contact · DC area</div><div class="cta">Book a call →</div></div>
+    <div class="t soc"><div class="k">Elsewhere</div><ul><li>GitHub</li><li>LinkedIn</li><li>Email</li><li>Résumé</li></ul></div>
+  </div></div>
+</section>
+
+</body>
+</html>

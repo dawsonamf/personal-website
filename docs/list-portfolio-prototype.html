@@ -1,0 +1,216 @@
+<!-- PROTOTYPE, throwaway. One full-page mock in the manner of benjamincreative.me:
+     white ground, Inter at poster scale, one hot accent, numbered hairline lists
+     with hover previews, giant statements, a big-type ticker, all-caps footer block.
+     Real site strings and images; the statement, pull quote, and about copy are
+     placeholders. Not linked from the site, nothing here is a skin. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>List portfolio prototype (throwaway)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Fragment+Mono&display=swap">
+<style>
+:root{--ink:#212121;--gray:#878787;--line:#e6e6e6;--accent:#fb4617;--pad:clamp(20px,4vw,56px)}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#fff;color:var(--ink);font:16px/1.5 Inter,system-ui,sans-serif;letter-spacing:-.01em}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+::selection{background:var(--accent);color:#fff}
+
+.meta{font:400 12px/1 'Fragment Mono','IBM Plex Mono',monospace;text-transform:uppercase;letter-spacing:.02em;color:var(--gray)}
+.meta b{color:var(--ink);font-weight:400}
+section{padding:0 var(--pad)}
+.hair{border-top:1px solid var(--line)}
+
+/* top bar */
+.top{display:flex;justify-content:space-between;align-items:center;padding:22px var(--pad);position:sticky;top:0;background:rgba(255,255,255,.85);backdrop-filter:blur(10px);z-index:10}
+.top ul{display:flex;gap:28px}
+.top .pill{background:var(--ink);color:#fff;font:500 12px/1 Inter;text-transform:uppercase;letter-spacing:.04em;padding:11px 16px;border-radius:999px}
+.top .pill:hover{background:var(--accent)}
+
+/* hero */
+.hero{min-height:calc(100vh - 70px);display:flex;flex-direction:column;justify-content:space-between;padding-top:14vh;padding-bottom:40px}
+.hero h1{font-size:clamp(44px,7.4vw,108px);line-height:.98;letter-spacing:-.04em;font-weight:500;max-width:1400px}
+.hero h1 .dim{color:var(--gray)}
+.hero h1 .acc{color:var(--accent)}
+.hero .foot{display:flex;justify-content:space-between;align-items:flex-end;margin-top:60px}
+.hero .cta{display:inline-flex;align-items:center;gap:10px;background:var(--ink);color:#fff;font:500 13px/1 Inter;text-transform:uppercase;letter-spacing:.04em;padding:16px 22px;border-radius:999px;margin-top:22px}
+.hero .cta:hover{background:var(--accent)}
+.hero .scroll{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+
+/* section heads */
+.head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:40px;padding-top:150px;padding-bottom:40px}
+.head h2{font-size:clamp(48px,8.6vw,132px);line-height:.92;letter-spacing:-.045em;font-weight:500}
+.head h2 .dim{color:var(--gray)}
+.head .side{display:flex;flex-direction:column;gap:10px;text-align:right;padding-bottom:10px}
+
+/* numbered list rows */
+.rows li{position:relative}
+.rows a{display:grid;grid-template-columns:70px 1fr auto;align-items:baseline;gap:24px;padding:26px 0;border-top:1px solid var(--line);font-size:clamp(24px,3.4vw,44px);letter-spacing:-.03em;font-weight:500;line-height:1.05;transition:color .2s,padding-left .25s}
+.rows li:last-child a{border-bottom:1px solid var(--line)}
+.rows a:hover{color:var(--accent);padding-left:18px}
+.rows .n{font:400 13px 'Fragment Mono',monospace;color:var(--gray)}
+.rows .r{font:400 13px 'Fragment Mono',monospace;text-transform:uppercase;letter-spacing:.02em;color:var(--gray);white-space:nowrap}
+.rows img{position:absolute;right:22%;top:50%;width:300px;aspect-ratio:4/3;object-fit:cover;border-radius:6px;transform:translateY(-50%) rotate(-4deg) scale(.86);opacity:0;pointer-events:none;transition:opacity .22s,transform .3s cubic-bezier(.2,.8,.2,1);z-index:3;box-shadow:0 30px 60px rgba(0,0,0,.18)}
+.rows li:hover img{opacity:1;transform:translateY(-50%) rotate(-2deg) scale(1)}
+.rows.small a{font-size:clamp(18px,2vw,26px);padding:18px 0}
+.rows .sub{display:block;font-size:14px;color:var(--gray);letter-spacing:0;font-weight:400;margin-top:8px}
+
+/* statement */
+.statement{padding-top:160px;padding-bottom:120px;display:grid;grid-template-columns:auto 1fr;gap:60px;align-items:start}
+.statement p{font-size:clamp(28px,3.6vw,54px);line-height:1.12;letter-spacing:-.035em;font-weight:500;max-width:22ch}
+.statement p .dim{color:var(--gray)}
+
+/* ticker */
+.ticker{overflow:hidden;padding:30px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);white-space:nowrap}
+.ticker div{display:inline-block;animation:tick 28s linear infinite;font-size:clamp(56px,9vw,140px);line-height:1;letter-spacing:-.045em;font-weight:500}
+.ticker span{margin-right:.6em}
+.ticker sup{color:var(--accent);font-size:.45em;vertical-align:top;margin-left:.1em}
+@keyframes tick{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker div{animation:none}}
+
+/* skill sets */
+.skills{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;padding-bottom:120px}
+.skills h3{display:flex;justify-content:space-between;align-items:baseline;font-size:clamp(22px,2.4vw,32px);letter-spacing:-.03em;font-weight:500;padding-bottom:16px;border-bottom:1px solid var(--ink);margin-bottom:8px}
+.skills h3 span{font:400 13px 'Fragment Mono',monospace;color:var(--gray)}
+.skills li{padding:12px 0;border-top:1px solid var(--line);font-size:17px;display:flex;justify-content:space-between}
+.skills li:first-child{border-top:none}
+.skills li small{color:var(--gray);font:400 12px 'Fragment Mono',monospace}
+
+/* quote */
+.quote{padding-top:120px;padding-bottom:140px;text-align:center}
+.quote p{font-size:clamp(28px,4vw,60px);line-height:1.08;letter-spacing:-.04em;font-weight:500;max-width:22ch;margin:0 auto 30px}
+.quote p .acc{color:var(--accent)}
+.quote .by{display:flex;justify-content:center;gap:18px}
+
+/* closing CTA */
+.close{padding-top:160px;padding-bottom:60px}
+.close h2{font-size:clamp(48px,8.4vw,128px);line-height:.94;letter-spacing:-.045em;font-weight:500;max-width:14ch;margin:20px 0 40px}
+.close h2 .dim{color:var(--gray)}
+.close .cta{display:inline-flex;align-items:center;gap:10px;background:var(--accent);color:#fff;font:500 13px/1 Inter;text-transform:uppercase;letter-spacing:.04em;padding:18px 24px;border-radius:999px}
+.close .cta:hover{background:var(--ink)}
+
+/* footer */
+footer{padding:80px var(--pad) 40px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:40px;border-top:1px solid var(--line);margin-top:60px}
+footer .big{font-size:clamp(18px,2vw,26px);letter-spacing:-.02em;font-weight:500;text-transform:uppercase;line-height:1.2}
+footer .big .dim{color:var(--gray)}
+footer ul.links li{font-size:clamp(18px,2vw,26px);letter-spacing:-.02em;font-weight:500;line-height:1.35}
+footer ul.links li:hover{color:var(--accent)}
+footer .bottom{grid-column:1/-1;display:flex;justify-content:space-between;margin-top:60px}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <ul class="meta"><li><b>Dawson Metzger-Fleetwood</b></li><li>Full stack engineer</li><li>Washington, DC</li></ul>
+  <ul class="meta"><li>/2026/</li></ul>
+  <a class="pill" href="#">Book a call</a>
+</div>
+
+<section class="hero">
+  <div>
+    <h1>Hi, I'm Dawson,<br>a <span class="acc">full stack engineer</span> building for the web, <span class="dim">Apple platforms,</span> and ML.</h1>
+    <a class="cta" href="#">Book a call <span>↗</span></a>
+  </div>
+  <div class="foot">
+    <div class="meta">/Currently at About Objects/</div>
+    <div class="scroll meta"><span>(Scroll)</span><span>↓</span></div>
+  </div>
+</section>
+
+<section>
+  <div class="head">
+    <h2>My Recently<br><span class="dim">Selected Works</span></h2>
+    <div class="side meta"><span>(08 — 2019 to 2026)</span><span>/From zero to one/</span></div>
+  </div>
+  <ul class="rows">
+    <li><a href="#"><span class="n">(01)</span><span>Gemma 4 MoE Heretic-ARA</span><span class="r">Fine-tuning</span></a><img src="../resources/KLvsRefusals.png" alt=""></li>
+    <li><a href="#"><span class="n">(02)</span><span>Embedded Swift Agent</span><span class="r">Agents</span></a><img src="../resources/EmbeddedSwiftAgent_CLIScreenshot.png" alt=""></li>
+    <li><a href="#"><span class="n">(03)</span><span>Silicon Fly</span><span class="r">GPU · Metal</span></a><img src="../resources/Fly_Media.jpg" alt=""></li>
+    <li><a href="#"><span class="n">(04)</span><span>Helm</span><span class="r">Tooling</span></a><img src="../resources/Helm_All.png" alt=""></li>
+    <li><a href="#"><span class="n">(05)</span><span>Toolbelt</span><span class="r">MCP</span></a><img src="../resources/Purple_Toolbelt_Image.jpg" alt=""></li>
+    <li><a href="#"><span class="n">(06)</span><span>Amino Amigo</span><span class="r">iOS</span></a><img src="../resources/Amino_Media.png" alt=""></li>
+    <li><a href="#"><span class="n">(07)</span><span>LexChat</span><span class="r">Search</span></a><img src="../resources/LexChat_Media.jpeg" alt=""></li>
+    <li><a href="#"><span class="n">(08)</span><span>Deep RL</span><span class="r">RL</span></a><img src="../resources/RL_Media.png" alt=""></li>
+  </ul>
+</section>
+
+<section class="statement">
+  <div class="meta">(About) *</div>
+  <p>Software is the strategic, the intentional, <span class="dim">and often the invisible</span> work of turning a hard problem into something that feels obvious to use. <span class="dim">Placeholder statement.</span></p>
+</section>
+
+<div class="ticker"><div>
+  <span>Web<sup>*</sup></span><span>iOS and visionOS<sup>#</sup></span><span>ML and RL<sup>™</sup></span>
+  <span>Web<sup>*</sup></span><span>iOS and visionOS<sup>#</sup></span><span>ML and RL<sup>™</sup></span>
+</div></div>
+
+<section>
+  <div class="head">
+    <h2>Skill<br><span class="dim">sets</span></h2>
+    <div class="side meta"><span>(16)</span><span>/What I reach for/</span></div>
+  </div>
+  <div class="skills">
+    <div><h3>Web <span>(06)</span></h3><ul>
+      <li>TypeScript</li><li>PHP · WordPress</li><li>AWS Lambda</li><li>DynamoDB</li><li>GitHub Actions</li><li>Cloudflare</li>
+    </ul></div>
+    <div><h3>iOS and visionOS <span>(05)</span></h3><ul>
+      <li>Swift</li><li>SwiftUI</li><li>RealityKit</li><li>Metal</li><li>TestFlight</li>
+    </ul></div>
+    <div><h3>ML and RL <span>(05)</span></h3><ul>
+      <li>PyTorch</li><li>HuggingFace</li><li>Directional ablation</li><li>OpenAI Gym</li><li>Pinecone</li>
+    </ul></div>
+  </div>
+</section>
+
+<section class="quote">
+  <p>From a Vision Pro platform for 10,000 concurrent users to a coding agent in Embedded Swift, <span class="acc">I like the problems where the constraint is the point.</span></p>
+  <div class="by meta"><span>DAWSON METZGER-FLEETWOOD</span><span>/2026/</span></div>
+</section>
+
+<section>
+  <div class="head">
+    <h2>Where I've<br><span class="dim">worked *</span></h2>
+    <div class="side meta"><span>(04)</span><span>/2019 to now/</span></div>
+  </div>
+  <ul class="rows">
+    <li><a href="#"><span class="n">(01)</span><span>About Objects<span class="sub">Software Engineer</span></span><span class="r">Jul 2023 – Present</span></a></li>
+    <li><a href="#"><span class="n">(02)</span><span>Johns Hopkins University<span class="sub">Guest Lecturer</span></span><span class="r">Spring 2024 – Present</span></a></li>
+    <li><a href="#"><span class="n">(03)</span><span>Visual Language Associates<span class="sub">Technical Co-Founder</span></span><span class="r">Sep 2019 – Jul 2023</span></a></li>
+    <li><a href="#"><span class="n">(04)</span><span>Startup Shell<span class="sub">Fellow</span></span><span class="r"></span></a></li>
+  </ul>
+</section>
+
+<section>
+  <div class="head">
+    <h2>Writing</h2>
+    <div class="side meta"><span>(10)</span><span>/Notes and posts/</span></div>
+  </div>
+  <ul class="rows small">
+    <li><a href="#"><span class="n">(01)</span><span>There is a fly on my laptop and it runs away</span><span class="r">Aug 2026</span></a></li>
+    <li><a href="#"><span class="n">(02)</span><span>The Art Nobody Looks At</span><span class="r">Jul 2026</span></a></li>
+    <li><a href="#"><span class="n">(03)</span><span>Arena.ai Leaderboard Update Badges</span><span class="r">May 2026</span></a></li>
+    <li><a href="#"><span class="n">(04)</span><span>Helm: A Minimalist Workspace Switcher for your IDE</span><span class="r">Apr 2026</span></a></li>
+    <li><a href="#"><span class="n">(05)</span><span>How Fast Are Agents Improving?</span><span class="r">Jan 2026</span></a></li>
+  </ul>
+</section>
+
+<section class="close">
+  <div class="meta">Dawson ( . 26)</div>
+  <h2>Have something you want to build? <span class="dim">Let's talk it through.</span></h2>
+  <a class="cta" href="#">Let's connect <span>↗</span></a>
+</section>
+
+<footer>
+  <div class="big">Washington, DC<br><span class="dim">Working globally</span><br>USA</div>
+  <ul class="links"><li>GitHub</li><li>LinkedIn</li><li>Email</li><li>Résumé</li><li>Blog</li></ul>
+  <div class="big" style="text-align:right">©2026 Dawson Metzger-Fleetwood<br><span class="dim">All rights reserved</span></div>
+  <div class="bottom meta"><span>dawsonamf.com</span><span>/2026/</span></div>
+</footer>
+
+</body>
+</html>
