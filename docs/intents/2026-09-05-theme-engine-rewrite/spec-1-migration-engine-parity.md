@@ -1,6 +1,11 @@
 # Spec 1: Astro migration, prose file, theme engine, parity harness, deploy
 
-**Status:** owner decisions Q1-Q14 settled 2026-09-05; architecture completion required; ready for ticket breakdown with T0/T1 technical gates. Review round 1 is historical evidence (see docs/reviews/).
+**Status:** owner decisions Q1-Q14 settled 2026-09-05; architecture completion required; [28 execution tickets written](../../superpowers/plans/2026-09-05-spec-1-migration-engine.md). Review round 1 is historical evidence (see docs/reviews/).
+**Latest owner execution clarification, 2026-09-05:** no intermediate gates. Agents execute the
+ordered tickets, resolve implementation issues and perform automated verification. The owner
+does their own QA only after the whole migration is complete. This supersedes the earlier staged
+approval and owner-sign-off timing in §§10, 12 and 14; actual tool/environment permissions still
+apply. The linked ticket plan is the current execution schedule.
 **Owner clarification, 2026-09-05:** architectural completion and demonstrated theme authoring are
 required for Spec 1 (§1.1, D3, D38, §5.3, T8). §13 records the owner's settled answers and delegated implementation choices.
 **Written:** 2026-09-05 from `intent.md` §8.1 and the seven research files in `research/`.
@@ -1250,6 +1255,12 @@ they do not inherit unfinished migration cleanup or gaps in Spec 1's demonstrate
 ---
 
 ## 12. Tickets
+
+The T0–T9 table below remains the scope grouping. The executable breakdown is the
+[ordered 28-ticket backlog](../../superpowers/plans/2026-09-05-spec-1-migration-engine.md), with
+one file per agent assignment, concrete interfaces, file ownership and verification commands.
+Follow that backlog's dependency ordering and the latest owner execution clarification above;
+historical references below to owner previews/sign-offs are not intermediate execution stops.
 
 Dependency graph: **T0 and T1 may overlap after the runner prerequisites are available**; T0
 must pass before T2/T3 implementation proceeds. T1 initially runs old-vs-old with a baseline

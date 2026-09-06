@@ -2,6 +2,7 @@
 
 ## Up next
 
+- [ ] **Spec 1 migration engine** — [28 ordered agent tickets](superpowers/plans/2026-09-05-spec-1-migration-engine.md), with implementation dependencies and automated verification. Owner QA happens once the complete migration is finished.
 - [ ] **AI & Job Market post — more charts.** Research done; plan + data sources + pending decisions in [ai-job-market-post-plan.md](ai-job-market-post-plan.md). Blocked on 4 user decisions (D1–D6 in that file) before building.
 - [ ] OG / Twitter card images per blog post (so links unfurl nicely when shared — social crawlers don't execute JS, so `post.html` can only carry generic tags; inherent tradeoff of no-build)
 - [ ] Case studies for 2–3 strongest projects (problem → constraints → decisions → outcome → what I'd do differently). Either a separate "Case Studies" section on the home page or tag existing posts as Case Study.
@@ -19,7 +20,6 @@
 - [ ] "X reads" badge on blog posts (needs an analytics service — GoatCounter free / Plausible paid / Umami self-hosted. Site can stay on GH Pages; only the counter source moves.)
 - [ ] Basic build step (esbuild or similar: minify, bundle, version assets). Only worth it if the site outgrows raw static.
 - [ ] Reading list / "things that shaped me" page — books, papers, talks.
-- [ ] Astro migration — only if style-mode authoring hurts after 2–3 takeover modes ship; default is to stay no-build. Context in [theme-explorations.html](theme-explorations.html).
 
 ## Done
 

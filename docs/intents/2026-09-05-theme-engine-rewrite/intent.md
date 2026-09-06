@@ -5,6 +5,10 @@
 implementation contract and the Q1-Q14 decision record. Nothing below has been built.
 **Owner clarification, 2026-09-05:** Spec 1 must finish with a coherent repo
 architecture and a demonstrated workflow for adding themes (§3.4, §8.1).
+**Latest execution clarification, 2026-09-05:** no intermediate gates or owner QA checkpoints.
+Agents complete the migration and their automated verification; the owner does their own QA
+only once the whole thing is complete. The [execution tickets](../../superpowers/plans/2026-09-05-spec-1-migration-engine.md)
+apply this clarification to Spec 1's earlier staged approval/sign-off sequence.
 **How to read this:** §3 is the owner's hard requirements (non-negotiable). §4 is
 what was decided in the session (locked unless the owner reopens it). §5 is what
 the owner delegated to agent judgment (latitude, but say what you chose). §6 is
