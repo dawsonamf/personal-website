@@ -1,8 +1,10 @@
 # Spec 1: Astro migration, prose file, theme engine, parity harness, deploy
 
-**Status:** final draft, awaiting owner approval; review round 1 applied 2026-09-05 (see docs/reviews/)
+**Status:** owner decisions Q1-Q14 settled 2026-09-05; architecture completion required; ready for ticket breakdown with T0/T1 technical gates. Review round 1 is historical evidence (see docs/reviews/).
+**Owner clarification, 2026-09-05:** architectural completion and demonstrated theme authoring are
+required for Spec 1 (§1.1, D3, D38, §5.3, T8). §13 records the owner's settled answers and delegated implementation choices.
 **Written:** 2026-09-05 from `intent.md` §8.1 and the seven research files in `research/`.
-**Finalized:** 2026-09-05. Every claim about the current codebase was re-checked against `main` @
+**Review baseline finalized:** 2026-09-05, before the owner decisions in §13. Current-code claims were checked against `main` @
 `0f196d0` (file:line), every version and API against the npm registry, GitHub docs and the Astro 7 /
 Playwright 1.61 docs on that date. What could not be verified is marked "verified in T0/T1/T7" with a
 stated fallback. Research errors found on the way, and the one error the finalizing pass itself
@@ -13,7 +15,7 @@ here; §11 desk-checks the engine against their demands so they do not force a r
 
 How to read this: §2 lists every decision this spec makes on the owner's behalf (intent §5 says to
 state them) and is the single index of them. §12 is the ticket breakdown. §13 is the batch of
-questions only the owner can answer, each with the default the spec assumes until answered. §15 is
+settled owner decisions and the implementation choices made under that delegation. §15 is
 the list of deliberate visible changes, which is what the parity harness allow-lists (§9 step 8).
 
 ---
@@ -25,21 +27,53 @@ When this spec is done:
 1. `www.dawsonamf.com` is built by Astro 7 and deployed by GitHub Actions on every push to `main`.
    Old URLs redirect. Blog posts are static pages at `/blog/<id>/` with real `<title>`, description,
    canonical and JSON-LD in the served HTML.
-2. Every visitor-facing string lives in `src/content/prose.yaml`, sized, schema-validated. A draft
-   anywhere in that file fails the production build. A size a component asks for but nobody wrote
-   fails the build with the list of what is missing.
+2. Shared visitor-facing prose lives in `src/content/prose.yaml`; each post owns its metadata
+   and body in its own source (D8). Publishable prose is sized and validated through shared rules.
+   Unapproved publishable prose and missing requested sizes fail production; unpublished post
+   drafts remain in source and are excluded from production output (§7).
 3. The theme engine is a typed registry with two kinds (`skin`, `structural`). The default theme and
    the 15 active skins (16 themes) are prerendered under `/`, `/<skin>/`, `/<skin>/blog/`,
    `/<skin>/blog/<id>/`, `/<skin>/privacy/`, `/<skin>/lexchat/`. The `structural` kind ships as the
-   `kind` discriminant, `layouts`, the composition fallback and its stub test (D38); §11 shows where
-   each remaining demand of the five future themes lands and by what mechanism.
+   `kind` discriminant, `layouts`, the composition fallback and the authoring fixture (§5.3, D38).
+   §11 shows where each remaining demand of the five future themes lands and by what mechanism.
 4. The parity harness proves the 16 themes are unchanged to the eye on every page type at 1440 and
    390, settled and after each scripted interaction in §9, and the owner has signed off the manual
    QA list. Only the changes in §15 differ.
+5. The migrated repo has one coherent architecture and a documented, demonstrated workflow for
+   adding skins and structural themes. All four architecture completion criteria in §1.1 pass;
+   any refactoring needed to satisfy them is finished before cutover.
 
-Non-goals (intent §1, §7): no visual redesign, no case studies, no posts leaving Markdown, no library
+Non-goals (intent §1, §7): no visual redesign, no new case studies or conversion of existing Markdown bodies, no library
 cleanup beyond what the migration forces (gsap 3.9.1 stays loaded, Boxicons stays, jQuery stays), no
 build-time syntax highlighting via Astro's pipeline, no `<Image />`.
+
+### 1.1 Architecture completion criteria
+
+These are acceptance criteria for Spec 1, alongside visual and behavioral parity:
+
+1. **One coherent system.** Migrated pages, prose, theme registration, composition, assets,
+   behavior, build and deploy use the architecture in §3. Each retained behavior module has a
+   documented owner, inputs, dependencies and initialization/lifecycle contract. Canonical
+   behavior is loaded by canonical layouts; shared picker behavior is independent of it.
+   Structural layouts can run without canonical DOM, scripts or libraries. Refactoring required
+   to make these boundaries true is completed in this spec (D3).
+2. **Theme additions stay local.** The authoring guide explains how to add a skin or structural
+   theme using theme-owned files, typed registry registration, prose and schema registration,
+   and any theme-owned page files. For the capabilities shipped here, adding a theme requires
+   no edits to shared engine algorithms, canonical layouts/behavior or unrelated themes, and
+   introduces no scattered theme-id checks. §11's future capabilities may add explicit shared
+   contracts with their consumers; unfinished migration work cannot be passed to those specs.
+3. **The authoring workflow is demonstrated.** The test-only structural theme in §5.3 is built
+   using the documented extension points, with owned and fallback pages, isolated assets, prose,
+   routing, picker interaction and mobile checks. T8 records its results and the file-change list
+   needed to add it in `research/architecture-signoff.md`. A type declaration or fallback-only
+   stub does not satisfy this criterion.
+4. **The transition is finished.** T8 audits the migrated tree and build output, removes
+   superseded page/rendering implementations, duplicate content/theme sources and temporary
+   migration scaffolding, and records intentionally retained code with its owner and reason.
+   The specified URL shims, four inactive skin sheets, verbatim subsites, vendored libraries and
+   test fixtures are intentional retained assets. Authoring and repo docs describe the final
+   system. Architecture acceptance is a cutover gate in §10, T8 and T9.
 
 ---
 
@@ -49,33 +83,33 @@ build-time syntax highlighting via Astro's pipeline, no `<Image />`.
 |---|---|---|
 | D1 | **Astro 7.3.1**, exact pin. Node **24 LTS** via `.nvmrc`, npm, committed `package-lock.json`. | Astro's install page states that odd-numbered Node lines (v23, v25) are not supported, and its `engines` field (`node >=22.12.0`, no upper bound) would not warn on 25; Node 25 reached end-of-life on 2026-06-01 and Node 24 is Active LTS until 2026-10-20 (nodejs release schedule). |
 | D2 | `compressHTML: false`, `prerenderConflictBehavior: 'error'`, `build.inlineStylesheets: 'never'`, `trailingSlash: 'always'`, `build.format: 'directory'`, `site: 'https://www.dawsonamf.com'`, no `base`. | `compressHTML` defaults to `'jsx'` (whitespace around elements stripped by JSX rules), which breaks DOM parity; `false` preserves every byte, and `true` is lossless whitespace removal, not byte-preserving. `prerenderConflictBehavior` is `'error' \| 'warn' \| 'ignore'` (default `'warn'`); `'error'` fails on any two routes producing the same prerendered URL and, in 7.3.1, on duplicate content-entry ids from `file()`. The rest matches GitHub Pages and today's URL shape (§3.2). |
-| D3 | **Structure is rewritten; the behavior runtime is kept.** HTML becomes Astro components fed by the prose file and the registry. The existing behavior scripts (typing engine, intro reveals, carousel, jobs panel, cursor, palette toy) stay classic scripts served from `public/js/`, edited only where the render/behavior split and the prose feed require (§8). Dead branches inside a file this spec already edits are deleted in the same edit and listed in §8. | Intent §4.13 allows refactoring behavior "where the output provably does not change" but does not require it; sync/defer load order is load-bearing today (§8). Modularising them is intent §7's cleanup pass; carrying dead code through a file being edited is not. |
+| D3 | **Architecture is completed; behavior is preserved.** HTML becomes Astro components fed by the prose file and registry. Existing behavior scripts may remain classic scripts in `public/js/` when they meet §1.1: canonical behavior stays within the canonical family, and the shared picker works independently. Refactor, split or remove code wherever needed to establish those boundaries, preserving behavior, constants and required load order. §8 is the starting edit inventory; T8 closes any architectural gaps and removes superseded code. | The owner's clarification of intent §3.4 makes architectural completion a Spec 1 requirement. Retaining working logic is compatible with it; postponing necessary isolation or modularization is not. Optional library replacement remains intent §7's later work. |
 | D4 | **Theme application moves to build time.** `theme-bootstrap.js` is retired. Each `/<theme>/…` page is emitted with `data-style`, the flag and typing attributes, inline tokens, the colour ramp and the theme `<link>`s already in place. Two `is:inline` pre-paint scripts survive on canonical (default-theme) routes, one on themed routes: the palette-toy override everywhere, plus the `?style=` shim on default-theme routes only (§5.4). A structural theme may add its own, in its own head (D26). No runtime theme registry (D32). The 404 page is the one exception (D27). | The theme is in the path (intent §4.5), so nothing needs resolving at runtime. But a pre-paint override does exist today (`theme-bootstrap.js:727-742` reads `sessionStorage['dawson-theme-cycler']` in the blocking head script and writes the saved colours into the ramp before first paint), and with build-time ramps plus D11's persistence, dropping it would paint the base palette and flip at `DOMContentLoaded` on every navigation. The cycler still restores after load: `restore()` is `theme-cycler.js:142-154` (`:141` closes `persist()`), called from `boot()`, which is `:747-770` and is invoked at `:772-776`. |
 | D5 | **Libraries: npm is the source of truth; the copied files are committed and served verbatim.** One table, `scripts/vendor-map.mjs` (`{ npm path, public path, CDN URL }` per file), is the only list; `npm run vendor` copies the npm artifacts into `public/vendor/`, which is committed. No `prebuild`/`predev` hook, no sha256 list, no separate `vendor-static/` (§8). **Exceptions:** mermaid, Plotly and the post-side js-yaml stay on their pinned CDN URLs (mermaid's npm package is 76.3 MB for one 3.3 MB IIFE global build nothing bundles); Boxicons is a committed copy, not an npm install (its package declares six runtime dependencies including React 16). **Deviation from intent §4.12**, stated: the libraries move to npm but are served as files rather than Vite-split per theme, and three stay on CDN; per-theme isolation (intent §3.3) comes from which layout emits which tags. | The copied output never changes while the pins are frozen, so committing it removes a build hook that CI would not have run (§10) and makes git the integrity record. |
 | D6 | **Posts render at build with marked 18.0.5 + the three existing renderer overrides + highlight.js `lib/common`**, not with Astro's Markdown pipeline. Mermaid stays client-run, and ships only on posts that have a diagram (D35). | The marked output is what every skin sheet targets (§7). Astro 7's pipeline is Sätteri (`@astrojs/markdown-satteri`); its markup has not been compared to marked's and its fenced-code shape under `syntaxHighlight: false` is unverified (`research/astro-capabilities.md` §2.4, §3.5). Reproducing it would be risk without upside. |
-| D7 | **Prose file shape:** every prose field is a size map (`{ xs, s, m, l }`); data fields (urls, ids, dates, colours) are plain scalars; lists of labels (tech chips, tags) are lists of `string \| { draft }` declared `xs` by the schema. One YAML document loaded as **one** content-collection entry via `file()` with `parser: (text) => [{ id: 'prose', ...yaml.load(text) }]`, so one zod tree validates it and one `superRefine` lists every draft at once. | `research/astro-capabilities.md` §2.2: per-section entries would surface only the first failing section per build. The array-of-one parser is required: `file()` treats a non-array parser return as an id→data map, so a plain `yaml.load` would yield one entry per top-level key and lose the single-`superRefine` guarantee (verified in `astro@7.3.1`'s `content/loaders/file.ts`). |
-| D8 | **Post metadata (title, date, excerpt, tags, external url) moves into `prose.yaml`**; post frontmatter keeps only `scripts`/`styles`. The build asserts a 1:1 match between `src/content/posts/*.md` and `prose.posts`. | "All prose in one file" (intent §3.1). Also removes the two sources that already disagree (§13 Q1) and the hand-rolled frontmatter parser (`blog-post.js:32-48`, a line splitter that survives `helm`'s colon only because it splits on the first one). |
-| D9 | **Draft rendering:** the accessor always marks drafts (`get`: `<span class="prose-draft" data-prose="path.size">` for `xs`/`s`, `<div …>` for `m`/`l`; `text`: a `[DRAFT] ` prefix, since attributes and `<title>` cannot carry markup). Production output contains none because the gate (D10) refuses drafts. `DraftPill.astro` is rendered by the Shell only when `PROSE_DRAFTS=allow` (set by `npm run dev` and `npm run build:preview`): a fixed pill with the page's draft count (counted in the DOM at runtime) and a toggle that stores `localStorage['prose-drafts']='native'` and sets `<html data-prose-native>`, which the pill's own CSS uses to drop the red marking; persists across pages. | Intent §4.4. One env var, read with `process.env` everywhere; config files cannot read `import.meta.env`, so `--mode` is not used. |
-| D10 | **Two gates.** Drafts: a `superRefine` on the single prose entry adds one issue per draft path unless `PROSE_DRAFTS=allow`; Astro's content validation error prints every issue and fails the build (documented path, `research/astro-capabilities.md` §2.2). Unwritten sizes: the accessor records every `(path, size)` a component requests that is neither written nor `null` in a module-scope set it exports; `assertNoUnwrittenSizes` in the checks integration (D39) prints the full list and throws from `astro:build:done`, which fails the build. Word budgets (intent §4.2) are documented, not linted. | Lists "exactly what is unwritten" (intent §4.2). A throw inside `astro:build:done` propagates (`integrations/hooks.ts` rethrows, `runHookBuildDone` awaits) and `astro build` exits non-zero, so no `process.exit(1)` fallback is needed; T0 confirms it. |
+| D7 | **Shared prose lives in one YAML document**, loaded as one content entry via `file()` with `parser: (text) => [{ id: 'prose', ...yaml.load(text) }]`. Sized fields and draft-capable label lists use the shared schema; URLs, ids, dates and colors are data. **Post metadata is owned by each post source**, using those same field types and validation helpers (D8). | Q1 establishes one source per content item. One YAML entry still permits a complete shared-prose draft report; post issues carry their source filename. |
+| D8 | **Each post source owns title, date, description, tags, publication state, external URL and body.** Listings, rails, SEO and sitemap derive from that record; there is no `prose.posts` mirror. Existing post title/date win conflicts, and missing descriptions/tags migrate verbatim from the listing. Existing bodies remain Markdown; the shared post layout takes metadata plus a body slot so future component/MDX posts can use it (§7). | Owner Q1: keep post content together and leave room for animation/case studies. Q2: preserve current listing membership; unpublished bodies remain drafts instead of becoming new public pages. |
+| D9 | **Preview draft marking is shared across content owners.** Accessors mark unapproved fields as in §4.2; the Shell emits `DraftPill` only under `PROSE_DRAFTS=allow`, with the persistent native-prose toggle. A whole unpublished post carries a visible draft marker, contributes to the pill count and is `noindex`; its body never reaches production. | Q1/Q2 retain one approval flow while allowing unpublished posts to remain in source. Production has no preview pill or unpublished post output. |
+| D10 | **Two shared publication gates.** Drafts: validate the shared YAML and metadata for `published`/`external` post records with the same draft walker, reporting every source/path; production fails on any unapproved field. Whole `publication: draft` posts are excluded before routes, listings and sitemap are generated. Unwritten sizes: every accessor instance records source/path/size in the shared set, asserted by the checks integration (D39) at `astro:build:done`. `PROSE_DRAFTS=allow` enables marked previews. | Preserves the owner's approval rule while allowing unpublished drafts in the repo. Word budgets remain documented; missing requested sizes are fatal. |
 | D11 | **Theme switch keeps the current page** (`/blog/x/` → `/brutalist/blog/x/`). Today every switch lands on `/` (`theme-cycler.js:276`, `window.location.href = '/?style=' + …`). Palette-toy state persists for the session and survives reload (today a reload wipes the theme at `theme-bootstrap.js:687` and the toy at `:730-731`, both behind the reload detection at `:674-678`; the cycler's own `isReload()` is `theme-cycler.js:126-131`). `switchStyle` still clears toy state on every switch (`theme-cycler.js:275`), unchanged: a new theme has a new base palette. | Consistent with "reload keeps the theme" (intent §4.5). Listed in §15. |
-| D12 | **Picker floating fallback (FAB) is new code.** Today privacy, 404 and lexchat load the cycler and get no picker (`theme-cycler.js:558-559` returns when no `.tc-nav-item` exists); the `.tc-toggle` FAB described in `docs/theme-explorations.html` never existed, though dead `.tc-toggle` rules survive in 12 active and 4 inactive skin sheets plus `theme-base.css:81` and the real FAB (`.tc-fab`) inherits none of them. Built in T6, visual approval by the owner (§13 Q4). | Intent §4.7 requires the picker reachable everywhere. |
+| D12 | **Build a picker FAB on privacy and 404. LexChat remains picker-free.** Today all three lack a picker; `theme-cycler.js:558-559` returns with no mount. `PickerFab` is new UI in T6. The LexChat project still links to `/lexchat/` (`js/blog-data.js:93`, also verified in the live JS on 2026-09-05); its iframe shell stays, with an explicit `picker: none` composition. | Q4 exempts LexChat and permits removing it only if the project already links directly to Hugging Face; that condition is false. |
 | D13 | **Skins get their full sheet on every page type** (that is what a skin is; grid, banknote, gallery and neo-pop, plus the inactive constructivist, style `.privacy-*`/`.nf-*` today). "Tokens only" applies to structural themes' unowned page types and to utility pages under structural themes. | Parity for skins; intent §4.7 for structural. |
 | D14 | **CSS `content:` prose.** marquee's sheet reads `content: var(--ticker-run, "<literal>")` (`marquee.css:572`); `--ticker-run` is data (deduped project tech), now computed at build (D35) and emitted in `<html style>` on pages that render the carousel. The fallback literal, which renders on post/privacy/404/lexchat under marquee, moves to `prose.themes.marquee.ticker` (the unit string; the build repeats it 12 times, byte-equal to today's literal). doodle's `content: 'currently here \2713'` (`doodle.css:535`) moves to `themes.doodle.currentlyHere`. Both reach CSS as `--prose-<key>` custom properties on `<html>` under that theme; the sheets become `var(--ticker-run, var(--prose-ticker))` and `var(--prose-currently-here)`. Counters and glyphs (`FIG.`, `№`, `✷`, `■`, `·`, `/`, `(01)`) stay in CSS as decoration (§13 Q6). | Intent §3.1; these are the only two `content:` literals that are prose rather than labels or ornament (`blueprint.css:652`'s `"FIG. "` is a third word-bearing literal but is a counter label, Q6). `research/prose-and-url-inventory.md` §2.9's claim that `--ticker-run` is never assigned is wrong, see §17. |
 | D15 | **`<br><br>` paragraph separators** (about body, skills body 3, seven of the eight project descriptions; `deep-rl` is one paragraph) are stored as normal Markdown paragraphs; the canonical components call `prose.paragraphs(path, size)` and join with `<br><br>` inside one element (D37). Structural themes render the array as `<p>` elements. | Readable YAML, identical DOM for skins, and the join is a presentation choice in the component rather than a mode on the shared accessor (D17's principle). |
 | D16 | **Calendly link inside prose** (new behavior, not parity): the renderer turns a Markdown link to `#calendly` into `<a href="#" class="text-link calendly-link">`; http(s) **and `mailto:`** links get `class="text-link" target="_blank" rel="noopener noreferrer"`, every other link `class="text-link"`, attributes emitted in today's order (`href, class, target, rel, title?`, `blog-post.js:8-15`). `.calendly-link` is **not** unique to the contact paragraph: `nav-config.js:59` puts it on the rendered Calendly social anchor (about four per page on home, one on the listing), so the canonical socials component emits it too and the click handler binds every `.calendly-link`, as today. | Markdown cannot emit the class; the contact paragraph must become prose. The `mailto:` branch is required by `index.html:273`, which carries `target="_blank" rel="noopener noreferrer"` on the email link. |
 | D17 | **Section numbers** (`<span class="sec-num">01.</span>` … `05.` on home, `01.`/`02.` on the listing) are generated from section order per page; only the label is prose. Job titles are `role` + `company` (+ url); the hero subtitle is the three skill-group names joined by the component with `&nbsp;\|&nbsp;` (`index.html:79`). The jobs panel's DOM keys stay positional: the canonical Jobs component emits `data-job="job-{i+1}"` on the tabs and `id="job-{i+1}"` on the panels in source order (`index.html:153-156` and `:163,176,185,197`; `initJobsMenu` is `script.js:271-370`, reading `data-job` at `:344` and `getElementById(newJobID)` at `:355`); `jobs[].id` in prose is a content key only and never reaches the DOM. | Themes reorder sections; presentation quirks belong in components, not prose. |
-| D18 | **Repo layout:** `src/` (components, prose, registry, pages), `public/` keeps today's URL paths for everything static (`/css/*`, `/js/*`, `/resources/*`, `/blog/posts/assets/*`, `/blog/*.css`, `/privacy/privacy-styles.css`, `/lexchat/lexchat-styles.css`) so the two sides resolve to the same file. The **href strings** still differ (today's pages author `css/styles.css` and `../css/styles.css`; the new side authors `/css/styles.css`), which is why §9 rule 6 maps them. New: `/vendor/*` (committed, D5). `CNAME` and `.nojekyll` stay at the repo root (needed only for a legacy-mode rollback) and are **not** put in `public/`. **Deviation from intent §4.10**, stated: the intent has both ride in `public/`. | GitHub docs: a custom Actions workflow ignores any `CNAME`; `upload-pages-artifact@v5` excludes every dotfile unless `include-hidden-files: true` (`research/deploy-and-parity-harness.md` §1.2-1.3, re-verified against the action's `action.yml`). Both facts verified; the rollback path is the only consumer. |
-| D19 | **Posts move to `src/content/posts/`**; ids stay the filenames. Post-body links are rewritten once: `../../resources/` → `/resources/` (six posts), `post.html?id=x` → `/blog/x/` (autoencoders-1 ↔ 2). Frontmatter `scripts`/`styles` (three posts) and the chart scripts' fetch URLs become root-absolute (`/blog/posts/assets/…`). | Prerendering at `/blog/<id>/` changes the depth; page-relative URLs 404 (`research/library-migration.md` R1). |
+| D18 | **Repo layout:** `src/` (components, prose, registry, pages), `public/` keeps today's URL paths for everything static (`/css/*`, `/js/*`, `/resources/*`, `/blog/posts/assets/*`, `/blog/*.css`, `/privacy/privacy-styles.css`, `/lexchat/lexchat-styles.css`) so the two sides resolve to the same file. The **href strings** still differ (today's pages author `css/styles.css` and `../css/styles.css`; the new side authors `/css/styles.css`), which is why §9 rule 6 maps them. New: `/vendor/*` (committed, D5). `CNAME` and `.nojekyll` stay at the repo root (needed only for a legacy-mode rollback) and are **not** put in `public/`. Intent §4.10 reflects this rollback-only placement. | GitHub docs: a custom Actions workflow ignores any `CNAME`; `upload-pages-artifact@v5` excludes every dotfile unless `include-hidden-files: true` (`research/deploy-and-parity-harness.md` §1.2-1.3, re-verified against the action's `action.yml`). Both facts verified; the rollback path is the only consumer. |
+| D19 | **Post sources move to `src/content/posts/` in T2, with metadata and publication state colocated.** Published body links and asset URLs become root-absolute; two autoencoder records stay external listing items with archived bodies, and Gemma stays a draft. T5 renders the eight published local posts and generates redirects from known external ids. | Q1/Q2; avoids accidental publication and broken paths at the new route depth. |
 | D20 | **Harness:** Playwright `@playwright/test@1.61.1` (pins Chromium and headless shell build 1228, both already in `~/Library/Caches/ms-playwright`, so no browser download), both sites served by `python3 -m http.server --bind 127.0.0.1` (old worktree :8781, `dist/` :8782), baselines generated from OLD then compared against NEW, DOM dump equality (under the §9 step 8 exception table) + screenshot diff + computed-token sample. `settle()` keeps four generic waits; every per-page-type readiness predicate lives beside its selectors in `harness/sentinels.ts`. | §9. Same server on both sides removes a class of false diffs; page knowledge in one file is what T8 grows. |
 | D21 | **Deploy:** generic `actions/checkout@v7` → `setup-node@v7` → `npm ci` → `npm run build` → `upload-pages-artifact@v5` → `deploy-pages@v5` (latest majors on 2026-09-05: v7.0.1, v7.0.0, v5.0.0, v5.0.1), with a `workflow_dispatch` input `deploy` (`type: boolean, default: false`) guarding the deploy job. `withastro/action` not used. `refresh-chart-data.yml` gains `permissions: actions: write`, `env: GH_TOKEN: ${{ github.token }}` and `gh workflow run deploy.yml`. | §10; `research/deploy-and-parity-harness.md` §2.2-2.6. GitHub docs: pushes made with `GITHUB_TOKEN` never trigger `push` workflows; `workflow_dispatch` and `repository_dispatch` are the documented exceptions, and `actions: write` is the documented permission for the dispatch endpoint. |
-| D22 | **`docs/` stops being served.** Today legacy Pages serves the whole repo, including three unpublished post drafts (`docs/planned-posts/`, which also holds `ai-job-market-listing.patch`) and `CLAUDE.md`. Nothing links there. Until cutover, `main` gets a `Disallow: /docs/` line in `robots.txt` (§14), because committing `docs/intents/` publishes the planning corpus at live URLs while Pages is still legacy. (§13 Q8 to confirm.) | Free under Astro; a leak today, and a bigger one the moment the planning corpus is committed. |
+| D22 | **`docs/` stops being served.** Today legacy Pages serves the whole repo, including three unpublished post drafts (`docs/planned-posts/`, which also holds `ai-job-market-listing.patch`) and `CLAUDE.md`. Nothing links there. Until cutover, `main` gets a `Disallow: /docs/` line in `robots.txt` (§14), because committing `docs/intents/` publishes the planning corpus at live URLs while Pages is still legacy. (Settled in §13 Q8.) | Free under Astro; a leak today, and a bigger one the moment the planning corpus is committed. |
 | D23 | **`docs/theme-explorations.html` is frozen** with a banner comment pointing here; the engine's authoring docs move to `src/themes/README.md`, and `CLAUDE.md` is rewritten for the new layout plus the prose rule. | Intent §9 left this open; the file has six stale claims and eleven omissions (`research/theme-engine-contracts.md` §9), several load-bearing for the harness. |
-| D24 | **Sitemap** is generated by `@astrojs/sitemap`, which emits `/sitemap-index.xml` plus `/sitemap-0.xml`: default-theme pages only (themed prefixes and 404 filtered), posts carry `lastmod` from their date, other pages carry none. `robots.txt`'s `Sitemap:` line points at `/sitemap-index.xml`. Today's hand-written `/sitemap.xml` becomes a dead URL (§6.4). `color-randomizer` (a live 404 today) is dropped. | Intent §4.6; three of today's hand-written `lastmod` values disagree with the post dates. No meta-refresh stub can redirect an XML fetch, so `/sitemap.xml` is retired rather than redirected (§14: the owner resubmits it). |
+| D24 | **Sitemap** is generated by `@astrojs/sitemap` at `/sitemap-index.xml` and `/sitemap-0.xml`. Include default-theme public pages and published local posts; exclude themed routes, 404, drafts and external-post redirect stubs. `lastmod` comes from each published post's authoritative date. `color-randomizer` and the withdrawn Gemma entry disappear; no duplicate local autoencoder URLs are added. | Q1/Q2 and intent §4.6. The old `/sitemap.xml` is retired; the owner resubmits the index (§14). |
 | D25 | **Mobile structure for structural themes** (intent §9): CSS-first reflow; a theme that truly needs a different mobile DOM renders both subtrees toggled by media query and accepts the duplication. Must be resize-stable: no boot-time JS breakpoint flag. The theme's CSS owns its breakpoint; the engine adds nothing and the registry has no breakpoint field. | Both prototypes read the breakpoint once and break on rotation (`research/structural-theme-demands.md` §1.20). |
-| D26 | **Theme-internal colour modes** (mono): separate state from the palette toy; sessionStorage key `theme.<id>.mode`; the theme ships its own `is:inline` pre-paint component in its own head, which reads the key and stamps `data-mode` plus the mode's custom properties; mode switches dispatch `dawson:palette`; palette toy hidden on themes that declare modes. Designed here; the `modes` registry field and the UI are added by the mono spec, not by spec 1 (D38). | `research/structural-theme-demands.md` §1.7-1.9, §3.10-3.11, §4.5-4.7, §4.11. With D32 there is no shared runtime block to hang it on, and a theme's pre-paint code belongs in that theme's head. |
+| D26 | **Every theme supports the palette randomizer; none hides or disables it.** Structural themes may use narrow `random` profiles and map the five roles into their own derived variables. Future internal modes keep session state under `theme.<id>.*`; the mode's pre-paint code applies its base, then any saved palette override, and maps changes to its derived tokens. Mode/override state is scoped per theme and mode. `dawson:palette` remains the notification contract. The first mode-owning consumer adds the mode UI and mapping; the Spec 1 fixture proves basic structural randomization now. | Settled Q10/Q12. The 16 existing themes keep their current palette behavior; extra color modes cannot remove access to the shared tool. |
 | D27 | **The 404 page resolves its theme at runtime.** GitHub Pages serves one `/404.html` for every missing URL, so `/brutalist/nope/` cannot be prerendered per theme. `404.astro` is built in the default theme; a small bundled script reads the first path segment, else `?style=`, and if either names a theme applies `themeHtml(theme)` (D33) to the document: attributes (including `data-style`), the inline style, the three link appends in the bootstrap's order, and the active-row marker in `#tc-dock` that the cycler reads. This is the only page that carries the full registry and the only page that applies a theme at runtime; the brief default flash is accepted (§15). | Intent §4.7-4.8 want the 404 themed under every theme path; this is the only mechanism a static host allows. |
 | D28 | **Registry slimmed to what the engine reads.** No `ORDER` (array order is picker order), no `owns` (the keys of `layouts`), no `storageNamespace` (keys are `theme.<id>.*` by rule; the canonical family keeps `dawson-theme-cycler` verbatim, and only structural themes use the namespace), no `breakpoint` (D25), no `root` CSS (a theme's root rules live in its own layouts, which fallback pages never import), and none of the structural fields spec 1 has no consumer for (D38). `layouts` values are lazy imports, so the registry never statically imports a layout. | Every dropped field was derivable, unused by the engine, or unbuilt; the lazy import keeps the module graph acyclic (§3.3). |
-| D29 | **One page shell.** `Shell.astro` is the only component that emits `<html>` (attributes, inline style) and the tail of `<body>` (dock, scrim, cycler script, FAB when the composition says so, draft pill when due). It does **not** own the head: each canonical layout writes its own head and places `<ThemeAssets />` at the parity position (§6.2, D34). The checks integration (D39) asserts every emitted page has exactly one `#tc-dock`, one `#tc-scrim`, one `ThemeAssets` marker and at least one `.tc-nav-item`. | One place for every engine-owned element in `<body>`; enforcement is a scan, not a README rule. The head position is a per-layout fact, not a Shell fact (§6.2). |
+| D29 | **One page shell.** `Shell.astro` emits `<html>` and the shared tail of `<body>` from the composition: dock, scrim, cycler, optional FAB and draft pill. Each layout owns its head and parity-positioned `ThemeAssets`. The checks integration requires exactly one `ThemeAssets` marker on every page; picker-enabled compositions require one dock/scrim and a valid trigger. LexChat is the explicit picker-free composition and must emit none of those picker elements/scripts. | One owner for engine chrome, with Q4's explicit page exemption encoded in composition and tested. |
 | D30 | **Picker trigger contract:** a mount is a `.tc-nav-item` element **containing a `button.tc-nav-trigger`** (`aria-haspopup`, `aria-controls="tc-dock"`, `aria-expanded` as `nav-config.js:98-105`). The canonical Nav, `PickerFab.astro` (a fixed `.tc-nav-item.tc-fab`) and `<ThemePicker />` all emit both. The cycler never creates DOM; `injectDom()` becomes `wireDom()`. | Click is bound on the trigger (`theme-cycler.js:686-688`) and hover-open on the item only under `(hover: hover) and (pointer: fine)` (`:594`), so a bare `.tc-nav-item` never opens on touch, which is exactly the utility pages the FAB exists for. |
 | D31 | **`href()` is the only way a component writes an internal link** (§6.1): throws on relative paths, prefixes `/<theme>` onto every root-absolute path that is not a static asset, passes schemes and fragments through. `assertNoRelativeHrefs` (D39) fails the build on `href="..` or `href="blog/` in `src/`. | Mechanical instead of "remember to prefix", and the rule needs no knowledge of the post ids or of any theme's extra pages (D7 of the review round; see §6.1). |
 | D32 | **No runtime theme registry and no `window.__*` theme globals.** The seven the bootstrap defines today (`__THEME_CYCLER_ENABLED` `:8`, `__THEME_REGISTRY` `:639`, `__THEME_ORDER` `:640`, `__ACTIVE_STYLE` `:700`, and the three helpers `:646`, `:654`, `:664`) are deleted rather than re-created: `<html>` gains `data-typing` and `data-typing-delete` beside `data-style`/`data-still`/`data-no-tilt`; the five tilt gates read `data-no-tilt` **in the polarity each one already has**, which is not uniform: the two **early-return** gates (`featured-carousel.js:190`, `script.js:257`, today `if (window.__styleAllowsTilt && !window.__styleAllowsTilt()) return;`) become `if (document.documentElement.hasAttribute('data-no-tilt')) return;`, and the three **positive** gates (`script.js:397`, `blog/blog-listing.js:142`, `blog/blog-post.js:182`, today `if (!window.__styleAllowsTilt \|\| window.__styleAllowsTilt()) {`) become `if (!document.documentElement.hasAttribute('data-no-tilt')) { … }`. Writing the negated form in all five would disable tilt on exactly the themes that allow it; `typing-engine.js:99,109` read `document.documentElement.dataset`; the cycler reads the rendered `#tc-presets` rows and `<html>` (§5.5). No `__PAGE_PATH` is introduced either: it appeared only in this spec's earlier draft, never in the codebase. The full registry ships on one page, the 404 (D27). §3.3's three bridges become one rule (§3.3). | Every consumer outside the cycler reads one flag of the active theme that `<html>` already carries, so the blob is a second carrier of a fact the page states; the edits are seven one-liners and output-identical (intent §4.13). |
@@ -83,8 +117,8 @@ build-time syntax highlighting via Astro's pipeline, no `<Image />`.
 | D34 | **A page's composition is decided once.** `compose(theme, pageType)` (`src/layouts/compose.ts`, §5.2) covers the full page-type union including the utility pages and returns the layout, the asset set, the picker mount, the canonical URL and the robots flag. The Shell, `ThemeAssets` and `PickerFab` render that value and never inspect `theme.kind`; the Shell has no `pageType` prop. Each canonical layout writes its own head, sharing one `Meta.astro` spine; `Head.astro` and its per-page-type ladder do not exist. | The same three-way branch otherwise gets re-derived in five page files, the Shell and `ThemeAssets`, which is intent §3.4's "feature checks scattered through shared code"; one table test then covers the whole rule. |
 | D35 | **Build-time facts stay at build.** Carousel dots (aria-label from prose), `--ticker-run`/`--ticker-dur` (today's formula: case-insensitive dedupe, `'✷ ' + t + ' '`, the pass doubled into a half and the half doubled into the run, `Math.round(half.length / (402/46))` s), the code copy buttons, and the mermaid `<script>` + `is:inline` initialize block + `mermaid.run` call (only on posts whose rendered body contains `class="mermaid"`) all move to build. `buildTickerRun`, `data-tech`, `addCopyButtons`, `data-copy-label` and `data-slide-label` are deleted, with settle's `--ticker-run` wait. | Each was a `data-*` bridge plus a DOM builder for a pure function of build data, against §3.3's own rule; the conditional mermaid emission also removes the lazy loader, so the initialize block can never run before the library. |
 | D36 | **The masthead prose is the lines; the module derives the choreography.** `canonical.masthead.<page>` stores each sequence as an ordered list of terminal strings plus an optional per-sequence `pause` override; a ten-line pure function derives the `type`/`delete`/`pause` steps by longest common prefix; the JSON island carries the derived steps; `script.js` and `blog-listing-client.js` splice their page's callback after the first `type` step, as today. Schema rule 5 (delete counts) is deleted. | Verified mechanically across all 16 sequences: every hand-counted delete equals that derivation. Hand-counted integers and animation vocabulary do not belong in the owner's prose file, and a JSON island cannot carry the function-valued callback step the sequences have today. |
-| D37 | **One door into prose.** The type of `prose.data` maps every size map to `never`, so a sized field cannot be read except through `get`/`text`/`list`/`paragraphs`/`has` (`astro check` enforces it; T2's test carries one `@ts-expect-error`). Chip and tag list items are `string \| { draft }` so a new chip takes the draft flow. | `prose.data` otherwise reaches every sized field a second way that bypasses draft marking (D9) and unwritten recording (D10); the owner's bar is mechanical enforcement, not a convention. |
-| D38 | **The structural surface spec 1 ships is `kind`, `layouts`, the composition fallback and its stub test.** `extraPages`, `picker`, `modes`, the `chrome` and `<defs>` slots, `--tc-z`, `fragments(n)`, per-slot `constraints`, the optional `category`/`year`/`summary`/`description.s`/`group`/`images[]` fields and plural template fields are **not** built here; §11 lists each with the mechanism that adds it and the consumer that will. Theme-only pages are page files under `src/pages/<theme>/` that the theme's spec adds; there is no registry field for them. `PickerFab.astro` does ship (D12 needs it for the utility pages). | Intent §8.1 asks for a desk-check, not shipped surface, and §8.2 says cream fixes the engine if it finds a gap; fields and helpers nothing writes are the "big interface over little machinery" intent §3.4 forbids. |
+| D37 | **One validated accessor implementation for shared and post prose.** Size maps are inaccessible through `data`; `get`/`text`/`list`/`paragraphs`/`has` share draft marking and unwritten-size recording. `createProseAccess` binds a validated tree and source namespace; `prose` and `post.prose` use it. `astro check` runs before the production build, with a negative type fixture in T2. | Q1 changes ownership, not the approval/validation contract. Post layouts must not introduce a second renderer or bypass for sized metadata. |
+| D38 | **Spec 1 ships a demonstrated structural authoring contract:** `kind`, `layouts`, composition/fallback, the Shell and picker, plus §5.3's representative test-only theme. T3 establishes the fallback test; T8 verifies the full workflow and closes architecture gaps before cutover. `extraPages`, `picker`, `modes`, the `chrome` and `<defs>` slots, `--tc-z`, `fragments(n)`, per-slot `constraints`, the optional `category`/`year`/`summary`/`description.s`/`group`/`images[]` fields and plural template fields remain future-consumer additions per §11. Theme-only pages use theme-owned page files; no registry field is needed. | Intent §3.4 and §8.1 now require proof of clean authoring in Spec 1. The fixture exercises the shipped contract without implementing one of the five production themes or speculative future APIs. |
 | D39 | **Engine invariants live in `src/build/checks.ts`**, one integration whose `astro:build:done` hook calls named pure functions (`assertNoUnwrittenSizes`, `assertShellInvariants`, `assertNoRelativeHrefs`) over the hook's `pages[]`, plus `assertNoYamlSyntaxError` in `astro:config:setup`. It iterates page routes only, so redirect stubs and `public/` passthroughs are not scanned. No `globalThis` side channel: the accessor exports its unwritten set from module scope, and T0 keeps one check that the two modules share an instance. | Theme-engine assertions do not belong in the prose integration merely because it owns the hook, and an untyped global is a hidden contract between two modules that can import each other. |
 
 ---
@@ -97,12 +131,13 @@ build-time syntax highlighting via Astro's pipeline, no `<Image />`.
 astro.config.mjs  package.json  package-lock.json  .nvmrc  tsconfig.json  playwright.config.ts
 CNAME  .nojekyll                               # repo root: legacy-mode rollback only (D18)
 src/
-  content.config.ts                            # collections: prose (file + array-of-one parser + zod tree), posts (glob)
+  content.config.ts                            # shared prose collection + post sources with publication filtering
   content/prose.yaml                           # THE prose file (§4)
-  content/posts/*.md                           # moved from blog/posts/ (D19)
-  prose/schema.ts  prose/index.ts  prose/markdown.ts     # zod tree; accessor; marked wrapper (§4.2)
+  content/posts/*.md                           # metadata + body; published/external/draft (D8/D19)
+  prose/fields.ts  prose/schema.ts  prose/index.ts  prose/markdown.ts # reusable field types; site schema; accessor; marked
+  posts/schema.ts                              # pure post schema; no theme/Astro-runtime dependency
   prose/drafts.ts  prose/integration.ts  prose/check.ts  # draft walker; collection wiring; `npm run prose:check`
-  build/checks.ts  build/posts.ts               # invariants integration (D39); postIds() + postDates() (§6.1)
+  build/checks.ts  build/posts.ts               # invariants; shared post-source reader + publication projections (§7)
   themes/types.ts  themes/registry.ts  themes/paths.ts   # types; THEMES + assertions; themeParams(), href()
   themes/ramp.ts  themes/apply.ts  themes/README.md      # ramp; themeHtml() (build, 404, pre-paint); docs
   layouts/Shell.astro  ThemeAssets.astro  compose.ts     # §5.2, §5.4
@@ -136,7 +171,7 @@ import sitemap from '@astrojs/sitemap';
 import prose from './src/prose/integration.ts';
 import checks from './src/build/checks.ts';
 import { THEME_IDS } from './src/themes/registry.ts';
-import { postDates } from './src/build/posts.ts';    // parses prose.yaml with js-yaml; see below
+import { postDates, publishedPostIds } from './src/build/posts.ts'; // reads authoritative post sources
 
 export default defineConfig({
   site: 'https://www.dawsonamf.com',
@@ -148,20 +183,22 @@ export default defineConfig({
   markdown: { syntaxHighlight: false },// posts do not go through Astro's pipeline (D6)
   redirects: {                         // static output: <meta http-equiv="refresh"> stubs, no status code
     '/12years/': '/subsites/elise/12years/',
-    '/embedded-swift-agent/': '/subsites/dawson/embedded-swift-agent/',   // §13 Q3 default = intent §4.8
+    '/embedded-swift-agent/': '/subsites/dawson/embedded-swift-agent/',   // settled Q3
   },
   integrations: [prose(), checks(), sitemap({
     filter: (page) => !THEME_IDS.some((id) => new URL(page).pathname.startsWith(`/${id}/`))
-                   && !/\/404(\.html|\/)$/.test(page),
+                   && !/\/404(\.html|\/)$/.test(page)
+                   && (!/^\/blog\/[^/]+\/$/.test(new URL(page).pathname)
+                       || publishedPostIds().includes(new URL(page).pathname.split('/')[2])),
     serialize: (item) => { /* lastmod for /blog/<id>/ from postDates() */ return item; },
   })],
 });
 ```
 
 `serialize` cannot read a content collection: `astro.config.mjs` runs before collections exist. The
-date map comes from `src/build/posts.ts`, which parses `src/content/prose.yaml` with js-yaml directly
-(the same dependency the loader uses), which is also why the sitemap's dates and the pages' dates
-cannot drift. It lives outside `themes/` so `paths.ts` keeps no content dependency (§6.1). The integration emits `/sitemap-index.xml` and `/sitemap-0.xml`, never `/sitemap.xml` (D24).
+date map comes from `src/build/posts.ts`, which reads and validates the same post frontmatter
+sources as the post collection, using js-yaml and shared schema helpers. It filters by publication
+state, so sitemap dates and page metadata have one source. It lives outside `themes/` so `paths.ts` keeps no content dependency (§6.1). The integration emits `/sitemap-index.xml` and `/sitemap-0.xml`, never `/sitemap.xml` (D24).
 
 ### 3.3 Build-time vs runtime boundary
 
@@ -175,6 +212,12 @@ reveals, typing masthead, jobs panel switching, carousel click-centering and scr
 cursor follower, AOS, sticky header, smooth scroll, Calendly popup, palette toy and dock open/close,
 copy-button clicks, `mermaid.run`, read time, blog filter, the 404's theme application (D27).
 
+The canonical runtime is a layout-family dependency, not an engine dependency. Theme authors use
+the typed build-time contract and the documented shared picker/data contracts; they do not edit
+canonical scripts to install a theme. T4/T5 document the retained modules' owners, inputs,
+dependencies and lifecycle. T8 verifies their isolation and completes any necessary refactoring
+under D3 before architecture sign-off (§1.1).
+
 One rule for build-to-runtime data (D32): **a script reads `data-*` on the element it owns, or a
 JSON island emitted by the component that owns the data.** The active theme's flags ride on `<html>`
 (`data-style`, `data-still`, `data-no-tilt`, `data-typing`, `data-typing-delete`); the dock's strings
@@ -186,8 +229,9 @@ parses the prose file.
 Module graph (one direction, no cycles): `themes/types` ← `themes/registry` ← `themes/paths` ←
 `layouts/canonical/*` ← `layouts/compose` ← `pages/*`; `prose/schema` → `themes/registry` for the
 rule-4 cross-check. `prose/*` is a leaf imported by layouts and components; `build/checks` imports
-`prose/index` (the unwritten set) and nothing else from `src/`; `build/posts` imports nothing from
-`src/` and is read by the schema, the posts glob and `astro.config.mjs`. `themes/ramp` and `themes/apply`
+`prose/index` (the unwritten set) and nothing else from `src/`; `build/posts` uses only the pure post schema/field helpers and reads the post sources; it never
+imports theme modules or `astro:content`. It serves the collection, route projections, sitemap
+and checks without depending on Astro's runtime collection instance. `themes/ramp` and `themes/apply`
 import nothing from the rest of `src/` (the 404 client script and the pre-paint component bundle
 them). Structural theme entries reference layouts only through `() => import(...)`.
 
@@ -198,7 +242,7 @@ them). Structural theme entries reference layouts only through `() => import(...
 ### 4.1 `prose.yaml` shape
 
 ```yaml
-# Every visitor-facing string on the site. Read src/themes/README.md before editing.
+# Shared site/theme prose; each post owns its metadata/body (§7). Read src/themes/README.md.
 # A plain string is approved. { draft: "…" } is unapproved and blocks the production build.
 # Sizes: xs ≤ ~3 words · s one line ≤ ~15 words · m ≤ ~60 words or ≤ 3 bullets · l = full.
 # null at a size = "nothing fits here, omit the element". A missing size is only an error
@@ -256,14 +300,6 @@ projects:                                              # 8 entries today
     # `external` is per CTA, but today's second CTA inherits the first's target when it has none of its own
     # (`linkTarget2` fallback, featured-carousel.js:70): embedded-swift-agent sets external2 and no external,
     # so its CTA 2 renders with CTA 1's target/rel. The component reproduces that fallback. deep-rl has no CTAs.
-posts:                                                 # keyed by post id = src/content/posts/<id>.md (11 today)
-  fly-on-my-laptop:
-    title: { s: There is a fly on my laptop and it runs away }
-    date: August 2026                                  # as displayed; ISO derived for JSON-LD and lastmod
-    excerpt: { m: "…" }
-    tags: [ Swift, Systems ]
-  gemma4-heretic-ara: { title: …, date: …, excerpt: null, tags: null }   # unlisted today; explicit null, not unwritten (Q2)
-  autoencoders-1: { title: …, date: January 2024, excerpt: …, tags: [ AI & ML ], external: "https://www.aboutobjects.com/…" }
 post:                                                  # post-page chrome
   copyCode: { xs: Copy code }                          # aria-label on every copy button (rendered at build, D35)
   readTime: { xs: "{n} min read" }                     # template; the client substitutes {n}
@@ -305,12 +341,13 @@ Rules the schema enforces (all objects are `z.strictObject`, so a misspelt key f
    `(string | { draft: string })[] | null` (each item `xs`), so a new chip takes the draft flow (D37).
    Template fields (`post.readTime`, `carousel.goToSlide`) must contain `{n}`.
 2. `xs` strings contain no Markdown (`[`, `*`, `` ` ``); they are used raw in attributes.
-3. `posts` keys must equal the set of `src/content/posts/*.md` ids (both directions; `readdirSync`
-   at schema time). Every entry has `title` and `date`; `excerpt` and `tags` may be explicit `null`
-   (gemma4-heretic-ara today), which renders nothing rather than counting as unwritten.
+3. Shared YAML contains no post records. Post source ids are unique filenames; their publication
+   state and required metadata are validated by §7's post schema, using these same prose field types.
+   The production listing-id set must equal today's ten active entries; no draft id may enter it.
 4. `themes` keys must equal `THEME_IDS`; every entry has `label.xs`.
-5. Drafts: unless `PROSE_DRAFTS=allow`, every `{ draft }` anywhere is an issue; all are reported at
-   once (D10).
+5. Drafts: unless `PROSE_DRAFTS=allow`, every `{ draft }` in the shared YAML or publishable post
+   metadata is an issue, reported with its source/path (D10). Whole unpublished post drafts are
+   excluded from production and do not block it.
 6. The `file()` loader swallows YAML syntax errors into an empty collection
    (`research/astro-capabilities.md` §2.2, §3.11; confirmed in the loader source), so
    `assertNoYamlSyntaxError` (D39) parses the file itself in `astro:config:setup` and throws.
@@ -324,7 +361,7 @@ Rules the schema enforces (all objects are `z.strictObject`, so a misspelt key f
 What existing text becomes: everything live today enters as approved prose at the size the canonical
 family asks for. The canonical family requests `l` for bodies, bullets, excerpts and project
 descriptions; `m` for `meta.*.description` and `home.contact.body`; `s` for `meta.*.title`,
-`meta.*.ogDescription`, `posts.*.title` and `site.footerCredit`; `xs` everywhere else (labels, chips,
+`meta.*.ogDescription`, each post's `title` and `site.footerCredit`; `xs` everywhere else (labels, chips,
 tags, theme labels, nav, picker strings, the logo glyph, templates). Those are the only sizes this
 spec writes; the first structural theme's build lists the sizes it needs and those arrive as drafts.
 
@@ -350,24 +387,35 @@ and pass the index). Behavior per `(path, size)`:
 | absent | `''` | `[]` | `false` | recorded as unwritten → build fails at the end (D10) |
 | no such `path` | throws | throws | throws | build fails immediately (a typo is a bug, not a gap) |
 
+Post layouts use `post.prose.text('title', 's')` and the same accessor methods for description/tags.
+`createProseAccess(tree, source)` underlies both `prose` and `post.prose`; source-qualified paths
+share the draft walker and unwritten set. There is no duplicate post tree in the shared YAML.
+
 Markdown rendering is marked 18.0.5 with `gfm: true, breaks: false` and the link rule from D16;
 `text()` renders inline then strips tags. Output is injected with `set:html` on a `<Fragment>` so no
 wrapper appears. The same `src/prose/markdown.ts` renders post bodies (§7).
 
 ### 4.3 Draft flow, standing rule, lint
 
-`CLAUDE.md` gains: "Every new visitor-facing string enters `src/content/prose.yaml` as
-`{ draft: … }`. Nothing ships until the owner clears it. Exempt: subsites under
-`public/subsites/` (verbatim copies), and blog post bodies plus their per-post assets under
-`public/blog/posts/assets/` (already-approved content that stays in Markdown by intent §4.6, §7).
-The one string in that exemption that is not approved content is `underviewed-art.js:295`, which
-builds an aria-label from a museum API field; it needs an approved template before that post's
-strings are touched again (§13 Q11)." npm scripts: `dev` = `PROSE_DRAFTS=allow astro dev`, `build` =
-`astro build` (the gate), `build:preview` = `PROSE_DRAFTS=allow astro build`, `vendor` =
-`node scripts/vendor.mjs` (D5), `prose:check` = `node src/prose/check.ts` (Node 24 strips types
-natively), which runs the same walker (`src/prose/drafts.ts`) the schema uses, for anyone who wants
-a pre-push hook (`.githooks/pre-push`, enabled by the owner with `git config core.hooksPath
-.githooks`; optional).
+`CLAUDE.md` gains the settled ownership rule: shared site/theme prose belongs in
+`src/content/prose.yaml`; post-specific metadata and body belong to the post source. New prose
+fields use `{ draft: ... }` until approved. New/rewritten post bodies remain `publication: draft`
+until the owner approves publication. Whole unpublished drafts are preview-only and never copied
+to production; draft fields in publishable metadata or shared prose fail the production check.
+
+Verbatim subsites and existing per-post scripts/assets are grandfathered for migration parity.
+This is not permission to add future unapproved strings there: new/changed UI strings use the
+owning content source and approval flow. `underviewed-art.js:295` gets an approved aria-label
+template when its text is next touched (Q11). Blog bodies are approved as whole documents.
+
+npm scripts: `dev` = `PROSE_DRAFTS=allow astro dev`; `check` = `astro check`;
+`build` = `npm run prose:check && npm run check && astro build`;
+`build:preview` = `PROSE_DRAFTS=allow astro build`; `vendor` = `node scripts/vendor.mjs`;
+`prose:check` = `node src/prose/check.ts`. The last command uses the shared walker and source
+reader to report every unapproved shared/publishable metadata field before Astro runs.
+`@astrojs/check@0.9.10` and `typescript@5.8.3` are exact dev pins: the checker's declared peer
+range supports TypeScript 5/6, not the registry's current TypeScript 7. T0 confirms the toolchain.
+An optional pre-push hook may run the same check; enabling it remains an owner action.
 
 ---
 
@@ -430,7 +478,7 @@ decided, over the full `PageType` union:
 type Composition = {
   layout: AstroComponentFactory;                 // canonical[pageType] or the theme's own
   assets: { fonts: boolean; base: boolean; skin: boolean };   // what ThemeAssets emits
-  picker: { mount: 'nav' } | { mount: 'fab'; corner: 'br' | 'bl' | 'tr' | 'tl' };
+  picker: { mount: 'nav' } | { mount: 'fab'; corner: 'br' | 'bl' | 'tr' | 'tl' } | { mount: 'none' }; // none only for LexChat
   canonical: string;                             // absolute URL of the default-theme page
   noindex: boolean;                              // true on every /<theme>/ path
 };
@@ -438,11 +486,11 @@ type Composition = {
 
 | theme, page type | layout | assets | picker |
 |---|---|---|---|
-| `default` | canonical | none | nav (utility pages: fab) |
-| skin, any page type | canonical | fonts, `theme-base.css`, skin css | nav (utility pages: fab) |
-| structural, page type in `layouts` | the theme's layout | fonts | whatever the layout mounts, else fab |
-| structural, otherwise (fallback) | canonical | fonts, `theme-base.css` | nav (utility pages: fab) |
-| structural, utility page type | canonical | fonts | fab |
+| `default` | canonical | none | nav; privacy/404: fab; lexchat: none |
+| skin, any page type | canonical | fonts, `theme-base.css`, skin css | nav; privacy/404: fab; lexchat: none |
+| structural, page type in `layouts` | the theme's layout | fonts | fab; an own-mount declaration is added with its consumer (§11) |
+| structural, unowned home/blog/post | canonical | fonts, `theme-base.css` | nav |
+| structural, utility page type | canonical | fonts | privacy/404: fab; lexchat: none |
 
 Each page file is five lines: `getStaticPaths` from `themeParams()` (× post ids for `[id].astro`),
 `compose`, `<Layout theme page composition />`. The Shell, `ThemeAssets` and `PickerFab` render what
@@ -450,16 +498,43 @@ the composition says and never inspect `theme.kind`; the Shell has no `pageType`
 table test over {skin, structural-with-layout, structural-fallback} × the six page types covers the
 whole rule, and T3's stub-theme fallback test hits the same interface.
 
-### 5.3 Structural-kind contract (built by the first consumer, cream)
+### 5.3 Structural authoring contract and acceptance fixture
 
-The types above are the contract. Spec 1 ships: the discriminated type, `compose`'s fallback branch
-exercised by a build-time test with a stub structural entry (registered only under test, never in
-`THEMES`), the reserved-id assertion, `href()`, the `.tc-nav-item` + `button.tc-nav-trigger` trigger
-contract (D30), the Shell's end-of-body mount (dock, scrim, FAB, draft pill, all `position: fixed`
-and restylable by a theme's CSS), and the storage-key rule (`theme.<id>.*`). Spec 1 does **not**
-ship: any structural layout, modes, extra pages, preloader or smooth-scroll wrappers, and none of
-the registry fields, schema helpers or Shell slots those need (D38). §11 maps each demand to the
-mechanism that adds it and the consumer that will.
+Spec 1 ships the discriminated type, owned-page composition and fallback, the reserved-id
+assertion, `href()`, the picker trigger contract (D30), the Shell's end-of-body mount and the
+storage-key rule (`theme.<id>.*`). Structural owned pages use the FAB by default until a consumer
+adds the own-mount declaration in §11. The five production themes and their additional modes,
+extra pages, preloaders and smooth-scroll wrappers remain in their own specs (D38).
+
+T3 establishes the composition table test and initial fallback stub. T8 extends that into a
+representative fixture under `harness/fixtures/theme-authoring/`, using the completed T4-T6
+components and runtime. The fixture is assembled in an isolated test build through the normal
+registration and prose/schema extension points, uses existing approved prose, and never appears
+in the production registry, picker, routes, sitemap or output. No fixture-specific branch is
+added to the shared engine.
+
+The fixture checks the following at both 1440px and 390px, including a resize between them:
+
+1. An owned home page uses a distinct DOM, its own head, responsive layout, root CSS, stylesheet
+   and small behavior script. It reads sized prose through the accessor and uses `href()` for
+   internal navigation. Adding it changes only theme-owned files, registration and prose/schema
+   registration; the test records that file-change list against the documented authoring steps.
+2. Its unowned listing/post and utility pages use canonical composition with the declared tokens
+   and fonts. Owned-page root sizing, selectors, script and assets do not leak into those pages
+   or default-theme pages. The test asserts this in built HTML and loaded resources/computed styles.
+3. Its owned page loads no canonical behavior or canonical-only libraries. The shared picker
+   opens from the FAB by mouse and touch and can switch to an existing theme. A subsequent
+   navigation/reload follows the normal theme-path rules without any canonical runtime dependency.
+   Its randomizer is visible and enabled, produces an effective palette within the declared
+   profile, and restores it before paint after navigation/reload. LexChat stays picker-free.
+4. The ordinary prose validation, route generation and Shell checks run against the fixture;
+   a production build afterward contains none of its registration, routes or assets.
+
+This is an authoring/integration check with its own expected behavior, separate from the old-site
+parity matrix. T8 records the results, permitted file-change list and retained-code audit in
+`research/architecture-signoff.md`; `src/themes/README.md` contains a working authoring walkthrough
+for skins and structural themes. Any missing boundary or extension point needed by this fixture
+is fixed before Spec 1 is accepted. §11 maps additional capabilities to their future consumers.
 
 ### 5.4 Shell, theme assets, pre-paint
 
@@ -606,7 +681,9 @@ Changed:
 
 `src/pages/[...theme]/…` with `themeParams()` returning `{ theme: undefined }` (the documented way to
 match the root with a rest parameter) plus one entry per non-default id. Page count: 16 themes ×
-(home, listing, 11 posts, privacy, lexchat) = 240, plus `404.html`. No page files exist outside
+(home, listing, 8 published local posts, privacy, lexchat) = 192, plus `404.html`.
+The two external listing records produce redirect stubs, not local post pages; the Gemma draft
+produces no production page. All counts derive from publication-filtered records (§7). No page files exist outside
 `[...theme]/` except `404.astro`. A structural theme's own extra pages, when one arrives, are page
 files under `src/pages/<theme>/` added by that theme's spec; there is no registry field and no
 catch-all route in spec 1 (D38).
@@ -622,15 +699,15 @@ catch-all route in spec 1 (D38).
 4. If `theme` is unset or `default` → unchanged.
 5. If the path starts with a **static-asset prefix** (`/resources/`, `/vendor/`, `/subsites/`,
    `/blog/posts/`, `/css/`, `/js/`, `/blog/post.html`, `/sitemap-index.xml`, `/sitemap-0.xml`,
-   `/robots.txt`, and `/embedded-swift-agent/` only if §13 Q3 leaves it there) → unchanged.
+   `/robots.txt`) → unchanged.
    Otherwise → `'/' + theme + path`.
 
 The rule is "a root-absolute path is themed unless it is a static asset", so `paths.ts` needs no
 knowledge of the post ids, of `extraPages`, or of the content collections, and stays a synchronous
 leaf module. A mistyped internal path (`/blog/helmm/`) becomes a themed 404, which harness check 4
 catches as a 404 response rather than passing silently as an unprefixed link. The post id set has one
-reader, `postIds()` in `src/build/posts.ts` (used by schema rule 3, the posts glob and
-`harness/urls.ts`), which is deliberately not in `themes/` so `paths.ts` stays a content-free leaf.
+reader, `publishedPostIds()` in `src/build/posts.ts` (used by routes, sitemap and
+`harness/urls.ts`; `listingPosts()` separately includes the two external records), which is deliberately not in `themes/` so `paths.ts` stays a content-free leaf.
 
 No component authors a same-origin absolute URL. Today two links are absolute: the logo
 (`index.html:57`, `privacy/index.html:25`, `https://www.dawsonamf.com/`) and the vCard
@@ -654,7 +731,7 @@ favicon spine. Today's order per page type, verified against `main` @ `0f196d0`:
 | post (`blog/post.html:4-58`) | charset, viewport, title, description, two favicons, Font Awesome, Boxicons, `/css/styles.css`, `/css/mobile-styles.css`, `/blog/blog-styles.css`, `/css/theme-cycler.css`, **theme links here**, `github-dark.min.css` from `/vendor/`, then scripts, and last the inline mermaid `initialize` block (`:27-58`), which is the final node in this head. No canonical and no OG today; both are **gained** per §15.4. No Calendly css and no AOS today either, and both **stay absent**: §15.4 does not add them, §7's post-head list does not carry them, and the step 8 table excludes no `<link>` for either. marked and highlight.js's runtime script are gone (rendered at build); the mermaid `<script>` and its `is:inline` `initialize` block appear only on posts that have a diagram (D35), in today's position |
 | privacy (`:4-18`) | charset, viewport, title, description, two favicons, FA, Boxicons, `/css/styles.css`, `/css/mobile-styles.css`, `/privacy/privacy-styles.css`, `/css/theme-cycler.css`, **theme links here**, end of head |
 | 404 (`:4-40`) | charset, viewport, title, `robots: noindex`, two favicons, `/css/styles.css`, `/css/mobile-styles.css`, `/css/theme-cycler.css`, **theme links here**, the `.nf-*` `<style is:inline>`; plus the new `/vendor/fontawesome/css/all.min.css` (§15.3) |
-| lexchat (`:4-11`) | charset, viewport, title, two favicons, `/lexchat/lexchat-styles.css`, `/css/theme-cycler.css`, **theme links here**, end of head; plus the new `/vendor/fontawesome/css/all.min.css` (§15.3) |
+| lexchat (`:4-11`) | charset, viewport, title, two favicons, `/lexchat/lexchat-styles.css`, `/css/theme-cycler.css`, **theme links here**, end of head; no new icon font or picker (Q4) |
 
 **Theme links are not last in `<head>`.** `document.head.appendChild` (`theme-bootstrap.js:715-721`)
 runs inside the blocking bootstrap `<script>`, which sits immediately after `/css/theme-cycler.css` on
@@ -667,10 +744,9 @@ sheets that both style `pre` are separated by specificity (`theme-base.css:13,18
 the checks integration (D39) asserts exactly one `ThemeAssets` marker per page so placement stays
 mechanical.
 
-404 and lexchat load no icon font today, and both gain the dock (whose lock and caret glyphs are Font
-Awesome) plus the FAB (the palette icon). They get `/vendor/fontawesome/css/all.min.css` rather than
-inline SVG, so the dock markup stays one component on all six page types; the added `<link>` is
-listed under §15 item 3.
+404 gains the dock/FAB and `/vendor/fontawesome/css/all.min.css` for their icons (§15 item 3).
+LexChat is exempt under Q4, so it gains no dock, FAB or icon font. Shell invariants and script
+allow-lists explicitly cover that picker-free composition.
 
 No component `<style>` and no frontmatter CSS imports anywhere in the canonical family: Astro's
 injection position is undocumented, so the family gives it nothing to inject (T0 confirms an empty
@@ -680,9 +756,9 @@ injected `<link>` at an undocumented position.
 
 ### 6.3 Utility pages
 
-`privacy`, `404` and `lexchat` become Astro pages that share the Shell (`<html>`, the end-of-body
-mount, the FAB) and nothing else; there is no common header/footer utility layout, because the three
-pages do not share that chrome:
+`privacy`, `404` and `lexchat` become Astro pages that share the Shell (`<html>` and composition).
+Privacy/404 receive the end-of-body picker mount and FAB; LexChat receives none. There is no common
+header/footer utility layout, because the three pages do not share that chrome:
 
 - `Privacy.astro`: the `<div id="main-body">` wrapper, then logo header + content + **both** footer
   blocks (a desktop `<footer class="footer-container">` at `:113` and a mobile
@@ -694,7 +770,8 @@ pages do not share that chrome:
   and applies a theme at runtime per D27.
 - `LexChat.astro`: the full-viewport `<iframe class="lexchat-iframe">`
   (`https://dawsonamf-lexchat.hf.space`) and nothing else, as `lexchat/index.html` (19 lines, no logo,
-  no footer).
+  no footer). Its project CTA still targets `/lexchat/` in both the repo and live JS; retain the
+  shell, theme tokens and URL, with `composition.picker.mount = 'none'` (Q4).
 
 ### 6.4 Redirects and shims
 
@@ -702,9 +779,10 @@ pages do not share that chrome:
 |---|---|---|
 | `/?style=<id>` (any default page) | `/<id>/<same page>` | `StyleQueryShim` (§5.4), which preserves the rest of the query and the hash; `?style=default` → same page; unknown id ignored |
 | `/<id>/<missing>` and `/404.html?style=<id>` | themed 404 | runtime apply on `404.html` (D27) |
-| `/blog/post.html?id=<id>` | `/blog/<id>/` | `public/blog/post.html`: inline `location.replace`, which forwards `style` when present (`?id=p&style=x` → `/blog/p/?style=x`, and the page's own shim finishes the job), meta-refresh fallback to `/blog/`, canonical `/blog/` |
+| `/blog/post.html?id=<id>` | published local route, known external URL, or 404 | The build-generated shim embeds a destination map from §7's public records: published ids forward `style` to the new local route; external ids redirect to their approved external URL; drafts/unknown ids go to `/404.html`. Never accept a destination URL from the query. Meta-refresh fallback and canonical point to `/blog/`. |
+| `/blog/autoencoders-1/`, `/blog/autoencoders-2/` | existing aboutobjects.com article URLs | static redirect stubs generated from the authoritative external records; exclude these stubs from the sitemap |
 | `/12years/` | `/subsites/elise/12years/` | `redirects` config: static output emits a `<meta http-equiv="refresh">` stub (no status code possible) |
-| `/embedded-swift-agent/` | `/subsites/dawson/embedded-swift-agent/` | `redirects` config (intent §4.8; §13 Q3 can move it) |
+| `/embedded-swift-agent/` | `/subsites/dawson/embedded-swift-agent/` | `redirects` config (settled Q3) |
 | `/sitemap.xml` | gone | none. `@astrojs/sitemap` writes `/sitemap-index.xml` and `/sitemap-0.xml`; a meta-refresh stub cannot redirect an XML fetch, so the old URL is dead and the owner resubmits the new one in Search Console (§14) |
 | `/docs/*`, `/CLAUDE.md` | gone | none (D22) |
 
@@ -714,7 +792,7 @@ pages do not share that chrome:
 its gsap 3.12.5 + ScrollTrigger from cdnjs stay; ~395 words of the owner's prose).
 `public/subsites/dawson/embedded-swift-agent/` (4 files: `index.html`, `agent.js`,
 `EmbeddedSwiftAgent.wasm`, `embedded-swift-agent-context.md`; `agent.js:11-18` has a bare `+esm`
-import Vite must never see) verbatim, per intent §4.8 and §13 Q3's default. It is linked from a
+import Vite must never see) verbatim, per intent §4.8 and settled Q3. It is linked from a
 project CTA, a post body and the sitemap; project CTAs in `prose.projects` and the post body point at
 the final URL, and the old path redirects (§6.4).
 
@@ -722,10 +800,62 @@ the final URL, and the old path redirects (§6.4).
 
 ## 7. Blog
 
-- Collection `posts`: `glob({ pattern: '*.md', base: './src/content/posts', generateId: filename
-  without .md })`, frontmatter schema `{ scripts?: string[]; styles?: string[] }`. `entry.body` holds
-  the raw Markdown by default in Astro 7, so no extra option is needed. Titles, dates, excerpts and
-  tags come from `prose.posts[id]` (D8).
+### 7.1 Post ownership, publication and rendering contract
+
+`src/content/posts/<id>.md` is the authoritative source for a post's metadata and body. Its
+frontmatter uses the shared prose field types from `src/prose/fields.ts`, validated by the pure
+`src/posts/schema.ts`. Example (schematic, the actual migration uses existing approved text):
+
+```yaml
+---
+publication: published               # published | external | draft; always explicit
+listingOrder: 0                       # preserve today's listing order, independent of corrected dates
+title: { s: "There is a fly on my laptop and it runs away" }
+date: August 2026
+description: { l: "...existing listing excerpt..." }
+tags: [Swift, Systems]
+scripts: []                           # existing per-post assets, root-absolute or pinned external URL
+styles: []
+---
+...existing Markdown body...
+```
+
+`external` records also require `externalUrl`; their body is an archived local copy, never
+rendered publicly. `draft` records may have unfinished metadata/body. Draft prose fields in a
+`published` or `external` record fail production; whole `draft` records are excluded instead.
+Title and description retain sizes for future layouts, using the shared accessor through
+`post.prose`. There is one `description` source, used for cards and page metadata; an additional
+size is written only when a consumer needs it. Dates and publication/listing order are data.
+
+T2 migrates title/date from each existing post and description/tags from the current listing,
+verbatim where absent from the post. Q1 resolves Helm to its post title and March 2026, and METR
+to February 2026. Serialize valid YAML during migration, quoting titles containing `: ` (such as
+Helm and Toolbelt); preserve the text, not today's hand-rolled parser's invalid YAML spelling.
+Preserve exactly today's ten listing ids/order: eight `published` local posts
+and the two `external` autoencoder records. Gemma is `draft`; its featured project card remains
+unchanged because projects and posts are different content items. Existing planning drafts are
+not promoted. Future additions require explicit owner approval and an updated listing baseline.
+
+`src/build/posts.ts` exports `readPostSources()`, `publishedPostIds()`, `listingPosts()`,
+`postDates()` and the known legacy redirect destinations as projections of those same sources.
+It parses frontmatter with js-yaml and the shared schema, not a second metadata catalog. The
+Astro post collection uses that same schema; no second id-to-metadata map is authored in YAML
+or JavaScript. Listing/rail/SEO/sitemap consume these validated records. A production build
+emits no draft route, listing, sitemap entry, raw source or archived external body. Preview may
+render drafts with marking and `noindex`; deploy always uses the production command.
+
+**Format decision (Q1):** keep existing Markdown bodies and marked/highlight.js output for
+parity. Per-post scripts already support animations. `BlogPost` and structural post layouts
+consume validated metadata and a named `post-body` slot; the current adapter supplies rendered
+Markdown through that slot. A future MDX or Astro-component adapter can supply components there
+without changing metadata ownership, URLs, listings or theme layout internals. No unused format
+registry or MDX dependency is added now. The first component post/case study adds its adapter and
+approval checks. Astro's [MDX integration](https://docs.astro.build/en/guides/integrations-guide/mdx/)
+supports component-containing content; retaining the current renderer now is the migration
+choice based on the existing parity contract.
+
+### 7.2 Migration rendering and behavior
+
 - Rendering (`src/prose/markdown.ts`, shared with prose fields): marked 18.0.5, `gfm: true`,
   `breaks: false`, renderer overrides copied from `blog/blog-post.js:4-30`: `link` (D16, the renderer
   itself at `:8-15`, attribute order `href, class, target, rel, title?`), `image` →
@@ -738,17 +868,17 @@ the final URL, and the old path redirects (§6.4).
   through. The copy-button markup is the one `blog-post.js:95-101,110` injects today, now emitted at
   build (D35). Each post body is rendered **once**, in `getStaticPaths`, and passed to the route as a
   prop; otherwise `[...theme]/blog/[id].astro` would render every post 16 times.
-- Page head: `<title>{title} | {suffix}</title>`, description = excerpt, canonical, OG
+- Page head: `<title>{title} | {suffix}</title>`, description = the post's `description.l`, canonical, OG
   title/description/url/image (site avatar; per-post images are intent §7), JSON-LD `BlogPosting`
   with the same fields `blog-post.js:56-88` builds today (`@context`, `@type`, headline, url,
   mainEntityOfPage, author, publisher, `datePublished`/`dateModified`, and `description`/`keywords`
-  only when the post has an excerpt or tags, as today), `github-dark.min.css` from `/vendor/`,
+  only when the post has a description or tags, as today), `github-dark.min.css` from `/vendor/`,
   per-post `styles` as `<link>`s. Dates parse at build with the same rule as `blog-post.js:50-54`
   (`new Date(date + ' 1')`), which also removes today's client-timezone drift.
 - Body (exactly today's DOM, `blog/post.html:87-93`):
   `article.blog-post-container > header.blog-post-header > h1#post-title.blog-post-title +
   div#post-meta.blog-post-meta` (pills: date, tags, `span#read-time`), then
-  `div#post-content.blog-post-content` with the rendered HTML. All three class names are load-bearing:
+  `div#post-content.blog-post-content` containing the `post-body` slot and its rendered content. All three class names are load-bearing:
   20 of 20 sheets in `css/themes/` target `.blog-post-content`. Per-post `scripts` are emitted as
   classic `<script src>` tags at the end of `<body>` in frontmatter order (today's loader chains them
   sequentially; `styles` were a plain `forEach`, and become `<link>`s).
@@ -771,8 +901,8 @@ the final URL, and the old path redirects (§6.4).
 - Assets: `public/blog/posts/assets/*` verbatim; the page-relative fetch URLs inside
   `cohorts-chart.js` (`:642-682`) and `job-market-chart.js` (`:12`), both unpublished
   `ai-job-market` assets, rewritten to `/blog/posts/assets/…`; `.github/workflows/refresh-chart-data.yml`
-  and `docs/prebake-cohort-data.py` (`OUT_DIR`) updated to the `public/` path. These assets carry
-  visitor-facing strings and are covered by the `CLAUDE.md` exemption in §4.3.
+  and `docs/prebake-cohort-data.py` (`OUT_DIR`) updated to the `public/` path. Existing asset text is
+  grandfathered under §4.3; any new/changed UI text uses the owning approved content source.
 - `/sitemap-index.xml` + `/sitemap-0.xml` generated (D24); `robots.txt` in `public/`, its `Sitemap:`
   line pointing at `/sitemap-index.xml`.
 
@@ -780,7 +910,9 @@ the final URL, and the old path redirects (§6.4).
 
 ## 8. Behavior runtime (`public/js/`)
 
-Per file, what changes (everything else is verbatim, same constants):
+The minimum migration edits are listed below. Preserve behavior and constants throughout;
+additional refactoring needed for §1.1's boundaries is part of D3 and must pass parity. A "kept"
+entry preserves its behavior, not an exemption from architecture acceptance.
 
 | File | Removed (now build-time or dead) | Kept / changed |
 |---|---|---|
@@ -793,7 +925,7 @@ Per file, what changes (everything else is verbatim, same constants):
 | `blog-post.js` | fetch, frontmatter parse, marked, JSON-LD, asset loading, `addCopyButtons` (`:90-112`), the unconditional mermaid load | → `blog-post-client.js` (§7); the **positive** tilt gate (`:182`) becomes `if (!document.documentElement.hasAttribute('data-no-tilt')) { … }` |
 | `theme-cycler.js` | dock construction (`:507-577`, `:284-322`), `?style=` navigation, reload wipe (`:748-750`), `isReload()` (`:126-131`), unused `STYLE_KEY` (`:125`), the registry globals it read at `:9-10` | §5.5 |
 | `typing-engine.js` | dead `__restartTypingSequence` (`:637-639`) and the `_lastConfig` (`:88`) it needed | otherwise verbatim; `:99` and `:109` read `document.documentElement.dataset.typing` / `.typingDelete` with the same fallbacks instead of the deleted globals (D32) |
-| `anim-utils.js`, `cursor-follow.js` | nothing | verbatim (including the `data-style` MutationObserver at `anim-utils.js:301-306`, which now never fires; it goes in the cleanup pass with the file) |
+| `anim-utils.js`, `cursor-follow.js` | the obsolete `data-style` MutationObserver at `anim-utils.js:301-306`, after verifying that no remaining canonical flow changes the attribute at runtime | preserve intro finalization, animation constants and cursor behavior; document their canonical ownership and lifecycle under D3 |
 
 Load order per page type is copied from today's `<head>`/`<body>` verbatim, including the
 asymmetries: `aos.js`, `featured-carousel.js` and `typing-engine.js` are `defer` on home and sync on
@@ -801,8 +933,7 @@ the listing; `vanilla-tilt` and `anim-utils.js` are sync wherever they appear; t
 `async`; `nav-behavior.js` and `cursor-follow.js` are `defer` on home, the listing and posts and are
 **absent from privacy, 404 and lexchat**. Those three load the cycler (`privacy/index.html:128`,
 `404.html:69`, `lexchat/index.html:17`) **and** `theme-bootstrap.js` (`privacy/index.html:18`,
-`404.html:16`, `lexchat/index.html:11`) today; the cycler is all they load only once the bootstrap is
-deleted, which is what this table does; page scripts (`blog-listing-client.js`,
+`404.html:16`, `lexchat/index.html:11`) today; after migration privacy/404 load the cycler, while LexChat emits no picker runtime (Q4); page scripts (`blog-listing-client.js`,
 `blog-post-client.js`) are sync at the end of `<body>` and the cycler is `defer` after them.
 `research/theme-engine-contracts.md` §6 is the per-page table (re-verified).
 
@@ -838,7 +969,7 @@ carries §15's allow-list; "harness green" in T4, T5, T6 and T8 means green unde
 4. No 4xx/5xx network response on either side (catches broken asset paths silently).
 5. No page references a `<script src>` outside its allow-list in `harness/scripts.ts` (today's set
    per page type minus highlight.js and marked on posts, the §8 renames, the 404's bundled apply
-   script; grep of built HTML; also the §3.3 lean guard for future themes).
+   script, and no cycler on LexChat; grep of built HTML; also the §3.3 lean guard for future themes).
 
 **Matrix:** 16 themes × pages {home, listing, `toolbelt` (2 mermaid + bash/json), `embedded-swift-agent`
 (9 swift + 1 c fence + image), `metr-doubling` (Plotly + js-yaml + assets), privacy, 404, lexchat}
@@ -863,7 +994,7 @@ harness failure, not a regression, and T1 records that. URL pairs in `harness/ur
 form (`x` ≠ default; the default theme uses the bare paths on both sides): `/?style=x` ↔ `/x/`,
 `/blog/?style=x` ↔ `/x/blog/`, `/blog/post.html?id=p&style=x` ↔ `/x/blog/p/`, `/privacy/?style=x` ↔
 `/x/privacy/`, `/lexchat/?style=x` ↔ `/x/lexchat/`, `/404.html?style=x` ↔ `/404.html?style=x` (both
-sides apply the theme at runtime, D27). One `postIds()` helper (§6.1) supplies the post ids. Fresh
+sides apply the theme at runtime, D27). `publishedPostIds()` (§7) supplies the local post ids. Fresh
 browser context per test, except the palette-toy state, which navigates within one context.
 
 **Determinism:** one `addInitScript` replaces `Math.random` with mulberry32; the harness pins
@@ -978,15 +1109,22 @@ every page-type predicate lives beside its selectors in `harness/sentinels.ts` (
 7. `<html style>` is compared as a **declaration map** (parsed, sorted by property), not verbatim, so
    build-time additions (the ticker properties, D35) cannot fail on ordering; `--prose-*` is dropped
    from the new side first.
-8. **Exception table**, applied to the new dump, keyed one-to-one to §15:
+8. **Exception table**, keyed to §15. Rows say which side is normalized: remove fields that
+   exist on both sides from both, and remove newly added nodes from the new side only. Afterward
+   compare DOMs. Independently assert the new metadata against the authoritative post record.
+   For accepted visible additions/changed card text, the screenshot pair masks the same bounded
+   rectangle on both pages; do not infer visual masking from a string-only DOM normalization.
+   New picker UI also receives its own interaction/visual QA. Palette persistence after reload
+   is a new-side behavioral assertion: compare its saved effective colors before/after reload,
+   rather than demanding equality with the old side that intentionally resets them.
 
-| §15 item | Applies to | Excluded before comparison |
+| §15 item | Applies to | Normalization before comparison |
 |---|---|---|
-| 3 | privacy, 404, lexchat | the `.tc-fab` subtree, `#tc-dock`, `#tc-scrim`, and on 404 and lexchat the `/vendor/fontawesome/css/all.min.css` `<link>` |
-| 4 | post pages | `link[rel=canonical]`, `meta[name=description]`, `meta[property^="og:"]`, `meta[name="twitter:card"]`, `<title>`. No `gemma4-heretic-ara` clause: under the Q2 default `tags: null` renders no pills, so `#post-meta` matches on both sides. If the owner approves tags, this row gains that clause and §15.4 gains the change |
-| 4 (Q1) | listing, home rail | the card title and date for `helm` and `metr-doubling`, whichever way Q1 resolves |
-| 9 | every page with a dock | `#tc-presets a[href]`, `data-fonts` and the active row's profile attribute, and the dock's `data-*` prose attributes |
-| 10 | themed pages (15 skins) | `link[rel=canonical]`, `meta[name=robots]`; `data-typing` and `data-typing-delete` on `<html>` (D32) |
+| 3 | privacy, 404 | New side only: `.tc-fab`, `#tc-dock`, `#tc-scrim`, and 404's added Font Awesome link. LexChat adds none of these. |
+| 4 | post pages | Both sides: `<title>` and `meta[name=description]`. New side only: added canonical/OG/Twitter tags. No Gemma production page is compared: its withdrawal is explicitly accepted under Q2 and tested as absence. |
+| 4 (Q1) | listing, home rail | Both sides: card title/date fields for Helm and METR. Separately assert the new values equal their post source; preserve all other card content/order. |
+| 9 | pages with a dock | Both sides: preset-link `href` attributes. New side only: added `data-fonts`, active-row profile and dock prose attributes. |
+| 10 | themed pages | Both sides: canonical and robots metadata being standardized. New side only: `data-typing` and `data-typing-delete`. Verify canonical/noindex separately against the route contract. |
 | 11 | 404 | everything above, and nothing further: rule 6 skips the theme step on this page, so the logo, the "Back to the home page" link and the preset rows carry the same default-theme hrefs on both sides. §15.11 still records the visible change (a themed 404's links go to the default theme) |
 
 Nothing else is excluded. A new exception requires a new §15 line, which is the point: the table is
@@ -1041,7 +1179,9 @@ trigger workflows; T7's run is a confirmation, not the only evidence.
 
 Cutover runbook (owner drives, agent prepares commands; each step separately approved):
 
-1. Parity green on every theme; manual QA signed; `npm run build` clean (drafts gate on).
+1. Parity green on every theme; manual QA signed; `npm run build` clean (drafts gate on);
+   §1.1 architecture criteria passed, with §5.3 fixture results and the retained-code audit in
+   `research/architecture-signoff.md`; repo and authoring docs reflect the finished system.
 2. A dispatch-only `deploy.yml` (no `push` trigger) is committed to `main` first: GitHub only runs
    `workflow_dispatch` for workflows present on the default branch. Harmless while `main` is legacy.
    T7 prepares it, and prepares the branch copy by **merging `main` into `astro` first and editing
@@ -1077,13 +1217,13 @@ optional field, a page file, or code inside the theme's own layouts.
 
 | Demand (§3 ids) | Spec 1 ships | Added by the first consumer that needs it |
 |---|---|---|
-| Own DOM per page type; own `<head>`; own root CSS incl. `html{font-size:1vw}` (1-3) | `kind: 'structural'`, `layouts`, `compose`'s fallback branch; a build test renders a stub theme's fallback blog page and asserts tokens + fonts present and none of the stub layout's markup | the layouts (each writes its own head, as the canonical layouts do, D34) |
+| Own DOM per page type; own `<head>`; own root CSS incl. `html{font-size:1vw}` (1-3) | `kind: 'structural'`, `layouts`, owned/fallback composition; §5.3's fixture proves distinct owned DOM/head and isolation of root CSS/assets from fallback pages | the production theme layouts (each writes its own head, as the canonical layouts do, D34) |
 | Own nav with a picker mount; full-screen menu; no always-visible control (4, 24) | the `.tc-nav-item` + `button.tc-nav-trigger` contract (D30), `ThemePicker.astro`, the body-parented dock | `picker: { mount: 'own' }` in the registry; the theme's CSS sets a z-index on `#tc-dock` if its chrome needs one; placement (§13 Q9) |
 | Floating fallback (5) | `PickerFab.astro` (D12); `compose` returns `{ mount: 'fab', corner }` | the corner choice per theme |
 | Theme-only routes (`/mono/work/`, mosbyfiles About) (6, 31) | `href()` already themes any non-asset root path (§6.1), so no engine change is needed | page files under `src/pages/<theme>/`, added by that theme's spec; no registry field (D38) |
 | Unowned page types in theme tokens + fonts (7) | the composition rule §5.2 | none |
 | Theme scripts only on theme pages; two GSAP versions (8, 9) | layouts emit their own tags; `"gsap-next": "npm:gsap@3.15.0"` alias reserved (`research/library-migration.md` §3.2; README rule: never mix `gsap` and `gsap-next` objects in one animation) | the imports |
-| Internal colour modes coexisting with picker and toy (10, 11) | the design (D26): separate state, `theme.<id>.mode`, `dawson:palette` on change, toy hidden when a theme declares modes | the `modes` registry field, the theme's own `is:inline` pre-paint component, the mode UI and the wipe: all in the mono spec |
+| Internal colour modes coexisting with picker and toy (10, 11) | D26: session mode state, shared role mapping and an always-enabled randomizer; the fixture tests baseline structural palette support | the `modes` registry field, the theme's own `is:inline` pre-paint component, the mode UI and the wipe: all in the mono spec |
 | Prose by slot and size with null; theme-specific strings; ordered fragment arrays; structural constraints (12-15) | the accessor §4.2, sizes with explicit `null`, and the `themes.<id>.*` section under the same `strictObject` rules | a per-theme zod fragment, a `fragments(n)` helper for fixed-length `xs` arrays, and per-slot `constraints` (max lines, initial letter) as refinements: added with cream's strings |
 | New fields: project `category`, `year`; `jobs[i].summary` (m); `projects[i].description` (s) (16-19) | nothing; sizes are per field, so `description.s` is a size someone writes, not a schema change | `category`, `year` and `summary` as optional fields, one schema line each, in the spec that writes them |
 | Sized job bullets that fit (20) | sizes per field; cream's three bullets (~112 words) exceed the `m` budget (~60) | §13 Q13 |
@@ -1102,39 +1242,51 @@ optional field, a page file, or code inside the theme's own layouts.
 | Contact form → mailto; stats/testimonials omitted (30, 32) | `null` sizes + section-level omission in data-driven page composition | the choices |
 | WebGL canvases (three.js/OGL), Rive, video demos, self-hosted paid fonts, cursor coordinate readout (illoca) | the same mechanisms: theme scripts and assets only on its pages (§5.2, §9 check 5), theme-owned `<head>` for fonts, a layout that owns its document chrome | a `public/themes/<id>/` asset directory convention for video and GLB; recorded clips and font licensing (owner); drafts for tags, one-liners and the FAQ |
 
-Cream (first consumer) will exercise the fallback branch, the trigger contract, root CSS in its
-layouts, the GSAP alias and `themes.cream.*` strings, and will be the spec that adds the per-theme
-zod fragment. If it finds a gap the engine has to close, it closes it there (intent §8).
+The Spec 1 fixture proves the shipped authoring workflow before cutover (§5.3). Cream is the first
+production consumer; it adds its layouts, the GSAP alias and `themes.cream.*` strings with their
+zod fragment. Later specs may extend the engine for additional capabilities, as intent §8 allows;
+they do not inherit unfinished migration cleanup or gaps in Spec 1's demonstrated contract.
 
 ---
 
 ## 12. Tickets
 
-Dependency graph: **T0 and T1 run together** (T1 needs only the baseline worktree and Playwright,
-which is T0 item (j)); **T2 → T3** is sequential (T3's dock strings, theme labels and the rule-4
-cross-check are T2 deliverables); **T7 runs alongside T2/T3** (it touches nothing in `src/`); **T4**
+Dependency graph: **T0 and T1 may overlap after the runner prerequisites are available**; T0
+must pass before T2/T3 implementation proceeds. T1 initially runs old-vs-old with a baseline
+adapter derived from the old worktree, without imports from future `src/` or vendor modules and
+without migration-only normalizations or new-behavior assertions. T3 wires the new
+URL/registry/post projections into that harness; T4 supplies the vendor mapping. **T2 → T3** is sequential: T2 owns registry data/types,
+shared prose fields, post sources/schema/reader and the prose-to-theme cross-check; T3 completes
+engine behavior and file assertions after the public assets move; **T7 runs alongside T2/T3** (it touches nothing in `src/`); **T4**
 follows T3; **T5 and T6 run in parallel** after T4 on **block-level** disjoint paths, not file-level: both edit
 `astro.config.mjs` (T5 the `sitemap` block, T6 the `redirects` block), so that one file needs
 coordinating or serialising; everything else they touch is disjoint. **T8 is the join**; T9 last.
-Each ticket ends with the harness green for its scope, under the §9 step 8 exception table
-(T0/T1/T7/T9 excepted).
+T2/T3 end with their specified schema, type, build and composition checks; their scaffolds do
+not claim full-page visual parity. T4-T6 and T8 require the harness green for completed page
+scopes under §9. T0/T1/T7/T9 use their own done criteria below.
+
+Architecture acceptance is distributed through the work: T3 establishes the extension points and
+initial fallback test; T4/T5 establish and document canonical behavior boundaries; T6 completes the
+shared picker and utility integration. T8 demonstrates the complete authoring workflow and closes
+any remaining architecture/cleanup work. T9 verifies that sign-off before executing cutover.
 
 | # | Ticket | Delivers | Done when |
 |---|---|---|---|
 | T0 | **Spike: Astro 7 on this markup** | Astro 7.3.1 scaffold on the `astro` branch/worktree; `index.html` ported verbatim into one page; `compressHTML:false`; build. Settles: (a) the Rust compiler (`@astrojs/compiler-rs`, strict: unclosed tags error) accepts today's markup once ported; (b) Astro injects nothing into `<head>` for a page whose components have no `<style>` or bundled `<script>` (§6.2 premise) and where an injection would land if one existed; (c) `[...theme]` with `theme: undefined` emits `/` and `/blog/…`; (d) `404.astro` → `dist/404.html`; (e) `prerenderConflictBehavior: 'error'` fires on a planted collision; (f) a throw in `astro:build:done` exits non-zero (source says it does: `integrations/hooks.ts` rethrows and `runHookBuildDone` awaits; this confirms it); (g) a post rendered from `entry.body` with our renderer emits marked's markup, not Sätteri's; (h) `redirects` emits `dist/12years/index.html` as a meta-refresh stub; (i) `public/` copies verbatim, nested dirs and `agent.js`'s `+esm` import untouched; (j) `python3 -m http.server --bind 127.0.0.1` + Playwright 1.61.1 run against the cached Chromium 1228 without a download; (k) the accessor module instance the checks integration imports is the same one the components use (D39). | A `research/spike-findings.md` with each item answered; installs approved and recorded (§14). |
 | T1 | **Parity harness v1 (old vs old)** | `harness/` per §9 against the baseline worktree on both ports; DOM dump, screenshots, token sample with the sentinel list, settle with `sentinels.ready`, draw-aware pinned seeds, interactions incl. the wheel and palette-toy states, derived URL map, `scripts.ts`, reporter config. Captures the reference `<html>` attributes and inline style per theme **before `theme-cycler.js` boots**, in both of the ramp's formats (the 95 `hsla()` step properties and the 5 raw-hex base roles, §5.4). | Old-vs-old run is green for all 16 themes × 8 pages × 2 viewports × applicable states; listeners gone after the run. |
-| T2 | **Prose model** | `prose.yaml` with every string from `research/prose-and-url-inventory.md` migrated verbatim (`l`/`xs`/`s`/`m` per §4.1), schema (§4.1 rules 1-8) with the array-of-one `file()` parser, accessor (§4.2) with `prose.data`'s size maps typed `never` (D37), marked wrapper (D15, D16), draft marking + pill (D9), both gates (D10) inside `src/build/checks.ts` (D39), `PROSE_DRAFTS` scripts, `CLAUDE.md` rule with its exemptions, `prose:check`, and the masthead step derivation (D36). Resolves §13 Q1 metadata once the owner answers. | `astro build` fails on a planted draft listing it; `build:preview` renders it red and the pill counts it; a planted unwritten request fails with the list; a planted YAML syntax error fails the build; a sized field read through `prose.data` fails `astro check` (one `@ts-expect-error`); the derived masthead steps equal today's 16 literal arrays; unit test: every field renders to exactly today's HTML fragment (fixture from the old files). |
-| T3 | **Registry, routing, shell, theme assets** | `types.ts`, `registry.ts` + assertions, `paths.ts` (`themeParams`, `href`), `src/build/posts.ts` (`postIds`; deliberately outside `themes/` so `paths.ts` stays a content-free leaf, §6.1), `ramp.ts`, `apply.ts` (`themeHtml`, D33), `Shell`, `ThemeAssets`, `Meta`, `compose.ts` (D34), `[...theme]/` pages (empty layouts ok), `404.astro` with D27, canonical/noindex, `PalettePrepaint` + `StyleQueryShim` (§5.4), `prerenderConflictBehavior`, the structural-kind fallback test (§5.3), the checks integration (D39), `README.md` skeleton, and the move of `css/`, `resources/`, `blog/*.css`, `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css` into `public/` (D18 assumes it from here on). | Build emits the non-post routes (16 × 4 = 64) + `404.html`, the 240 total landing in T5; `<html>` attributes and inline style byte-equal to the T1 pre-cycler capture for each theme (compared as a declaration map, §9 step 7), which includes the ramp's 95 `hsla()` step properties **and** its 5 raw-hex base roles (§5.4: a port that emits `hsla()` for all 100 fails here); `/?style=brutalist` on `/` lands on `/brutalist/` and preserves any other query parameter; `/404.html?style=brutalist` applies brutalist at runtime; a stub structural theme's blog page has tokens + fonts + `theme-base.css` and none of the stub layout's markup; the checks pass. |
+| T2 | **Content ownership and shared contracts** | Shared `prose.yaml`, reusable field types/accessor/draft walker, pure post schema and source reader, all 11 post source records migrated with publication state (8 local, 2 external, 1 draft), description/title ownership per Q1, fixed listing membership/order per Q2, registry data/types needed by the theme-label cross-check, marked wrapper, preview pill, production validation/type-check scripts and `CLAUDE.md` rule. | Production fails on planted unapproved shared/publishable metadata and missing requested sizes; a whole draft is retained without entering public projections; metadata conflicts resolve to post values; malformed YAML/frontmatter fails; a negative accessor fixture fails `astro check`; masthead derivation and migrated prose fragments match their old fixtures. |
+| T3 | **Registry, routing, shell, theme assets** | completion of T2's `types.ts`/`registry.ts` with engine/file assertions, `paths.ts` (`themeParams`, `href`), T2's publication-filtered post projections and the new-side harness adapter (§7; `paths.ts` stays content-free), `ramp.ts`, `apply.ts` (`themeHtml`, D33), `Shell`, `ThemeAssets`, `Meta`, `compose.ts` (D34), `[...theme]/` pages (empty layouts ok), `404.astro` with D27, canonical/noindex, `PalettePrepaint` + `StyleQueryShim` (§5.4), `prerenderConflictBehavior`, the structural-kind fallback test (§5.3), the checks integration (D39), `README.md` skeleton, and the move of `css/`, `resources/`, `blog/*.css`, `privacy/privacy-styles.css`, `lexchat/lexchat-styles.css` into `public/` (D18 assumes it from here on). | Build emits the non-post routes (16 × 4 = 64) + `404.html`; T5 completes the 192 page routes plus `404.html` and post redirect stubs; `<html>` attributes and inline style byte-equal to the T1 pre-cycler capture for each theme (compared as a declaration map, §9 step 7), which includes the ramp's 95 `hsla()` step properties **and** its 5 raw-hex base roles (§5.4: a port that emits `hsla()` for all 100 fails here); `/?style=brutalist` on `/` lands on `/brutalist/` and preserves any other query parameter; `/404.html?style=brutalist` applies brutalist at runtime; a stub structural theme's blog page has tokens + fonts + `theme-base.css` and none of the stub layout's markup; the checks pass. |
 | T4 | **Canonical home** | `Nav`, `Hero`, `About`, `Skills`, `Jobs`, `FeaturedCarousel` (dots and ticker properties at build, D35), `BlogRail`, `Contact`, `Footer`, `Socials`, `ThemePicker` (dock rendered by the Shell); `public/js/` edits and dead-code deletions per §8; `scripts/vendor-map.mjs` + `scripts/vendor.mjs`, `public/vendor/` committed (Boxicons included); masthead JSON island; `--prose-*` emission (D14) and the marquee/doodle sheet edits. | Harness green for home × 16 × 2 × all states. |
-| T5 | **Blog listing and posts** | posts collection, marked-at-build with the copy-button markup, per-post head, per-post assets as tags, conditional mermaid (D35), `blog-post-client.js`, `blog-listing-client.js`, `BlogCards`, the three-paragraph intro with today's ids, `post.html` shim with `style` forwarding, `.md` link rewrites, frontmatter cleanup, R1 fetch-URL fix, sitemap integration and the `postDates()` helper. (The `refresh-chart-data.yml` path patch moves to T7, which owns `.github/workflows/*`.) | Harness green for listing + the 3 posts × 16 × 2; the build emits all 240 pages; every one of the 11 posts builds; `/blog/post.html?id=helm` lands on `/blog/helm/` and `?style=doodle` survives; no 4xx in the network log on any post. |
-| T6 | **Utility pages, FAB, subsites, redirects** | privacy/404/lexchat pages on the Shell (§6.3); `PickerFab` (new UI, owner preview) and its `public/css/theme-cycler.css` rules; the Font Awesome link on 404 and lexchat; `public/subsites/elise/12years/`, `public/subsites/dawson/embedded-swift-agent/`; `redirects` config; `robots.txt`; `docs/` unpublished. | Harness green for privacy/404/lexchat under the step 8 table; owner approves the FAB visually on 3 skins; the FAB opens the dock on a touch emulation (the `.tc-nav-trigger` path, D30); `/12years/` and `/embedded-swift-agent/` land on the new URLs; `/404.html?style=brutalist` and `/404.html?style=doodle` apply their skins; a unit test covers the path-segment resolution `[pathname.split('/')[1], q].find(…)` for `/brutalist/nope/`, `/nope/`, `/brutalist/` and an unknown segment (the live check stays in §10 step 8, because neither `http.server` nor `astro preview` is documented to serve `404.html` for unknown paths). |
+| T5 | **Blog listing and posts** | T2's post records wired into the collection/routes, the metadata/body-slot contract, marked-at-build with copy buttons, per-post head, per-post assets as tags, conditional mermaid (D35), `blog-post-client.js`, `blog-listing-client.js`, `BlogCards`, the three-paragraph intro with today's ids, `post.html` shim with `style` forwarding, published `.md` link rewrites, generated external-id redirects, exclusion of drafts/archived bodies, R1 fetch-URL fix, sitemap integration and the `postDates()` helper. (The `refresh-chart-data.yml` path patch moves to T7, which owns `.github/workflows/*`.) | Harness green for listing + the 3 posts × 16 × 2; the build emits 192 page routes plus `404.html` and redirect stubs; exactly 8 local posts render and 10 listing entries remain; Gemma/raw drafts/archived external bodies are absent; `/blog/post.html?id=helm` lands on `/blog/helm/` and `?style=doodle` survives; no 4xx in the network log on any post. |
+| T6 | **Utility pages, FAB, subsites, redirects** | privacy/404/lexchat pages on the Shell (§6.3); `PickerFab` (new UI, owner preview) and its `public/css/theme-cycler.css` rules; the Font Awesome link on 404; `public/subsites/elise/12years/`, `public/subsites/dawson/embedded-swift-agent/`; `redirects` config; `robots.txt`; `docs/` unpublished. | Harness green for privacy/404/lexchat under the step 8 table; owner approves privacy/404 FABs visually on 3 skins; LexChat remains linked and picker-free; the FAB opens the dock on a touch emulation (the `.tc-nav-trigger` path, D30); `/12years/` and `/embedded-swift-agent/` land on the new URLs; `/404.html?style=brutalist` and `/404.html?style=doodle` apply their skins; a unit test covers the path-segment resolution `[pathname.split('/')[1], q].find(…)` for `/brutalist/nope/`, `/nope/`, `/brutalist/` and an unknown segment (the live check stays in §10 step 8, because neither `http.server` nor `astro preview` is documented to serve `404.html` for unknown paths). |
 | T7 | **Deploy workflow** | `deploy.yml` (full, on the branch, built by first merging `main` into `astro` and editing the dispatch-only file that arrives) plus the dispatch-only copy for `main` (§10 step 2, owner commits), `.nvmrc`, `refresh-chart-data.yml` patch (paths; `actions: write` **added to** today's `contents: write`, not replacing it; `GH_TOKEN`; the dispatch), `prebake-cohort-data.py` `OUT_DIR`. | The dispatch-only workflow has run once on `main`; a dry run (`-F deploy=false`) dispatched with `--ref astro` runs the build job and, if legacy Pages allows it, uploads an artifact; a manual `workflow_dispatch` of `refresh-chart-data.yml` dispatches `deploy.yml` (visible in Actions, confirming the permission and token); Pages still legacy. |
-| T8 | **All 16 themes green + manual QA** | The full harness matrix; per-skin fixes; the dead `.tc-toggle` rules in 12 active and 4 inactive sheets and `theme-base.css:81` audited against the real `.tc-fab`; manual QA list run by the owner, ordered by skin. | Full sweep green; owner sign-off recorded in `research/qa-signoff.md` per skin. |
-| T9 | **Docs and cutover** | `CLAUDE.md` rewrite, `src/themes/README.md` (registry, kinds, composition, runtime contracts, the inactive skins' commit and line ranges, the hard-won rules and the eleven omissions from `theme-engine-contracts.md` §9 carried over and corrected), banner on `docs/theme-explorations.html`, runbook §10 executed with the owner. | Live site serves from Actions; §10 step 8 checks pass; rollback command recorded. |
+| T8 | **Architecture completion, all 16 themes green + manual QA** | §5.3's complete authoring fixture and tests; `CLAUDE.md` rewrite and working skin/structural authoring walkthrough in `src/themes/README.md`, including module contracts, inactive skins, hard-won rules and the eleven corrected omissions from `theme-engine-contracts.md` §9; banner on `docs/theme-explorations.html`; required boundary refactors and removal of superseded code/scaffolding under §1.1; the full parity matrix and per-skin fixes; the dead `.tc-toggle` rules audited against the real `.tc-fab`; manual QA run by the owner. | All four §1.1 criteria pass, with fixture results, its permitted file-change list and the retained-code audit in `research/architecture-signoff.md`; production output contains no fixture; full parity sweep green after final code changes; owner sign-off recorded in `research/qa-signoff.md` per skin. |
+| T9 | **Docs verification and cutover** | Final verification of T8's repo/authoring docs and sign-offs; runbook §10 executed with the owner. | T8's architecture and parity sign-offs are complete; repo/authoring docs match the finished code; live site serves from Actions; §10 step 8 checks pass; rollback command recorded. |
 
 Paths each ticket may touch: T0 the spike worktree only; T1 `harness/`, `playwright.config.ts`; T2
-`src/content/prose.yaml`, `src/prose/*`, `src/build/checks.ts`, the prose collection in
-`src/content.config.ts`, `package.json` scripts, `CLAUDE.md` (rule only); T3 `src/themes/*`,
+`src/content/prose.yaml`, `src/content/posts/*`, `src/prose/*`, `src/posts/schema.ts`,
+`src/build/{checks,posts}.ts`, `src/themes/{types,registry}.ts`, content collection definitions,
+`package.json` scripts and dev pins, `CLAUDE.md` (rule only); T3 `src/themes/*`,
 `src/layouts/{Shell,ThemeAssets}.astro`, `src/layouts/canonical/Meta.astro`,
 `src/layouts/compose.ts`, `src/pages/*`, `src/build/*`, `astro.config.mjs`, and the `public/` move; T4
 `src/layouts/canonical/*` (home + components), `public/js/*`, `public/css/themes/{marquee,doodle}.css`,
@@ -1142,35 +1294,41 @@ Paths each ticket may touch: T0 the spike worktree only; T1 `harness/`, `playwri
 `BlogCards`, `public/js/blog-*-client.js`, `public/blog/**`, `src/content/posts/*`, `src/build/*`, the
 sitemap block of `astro.config.mjs`; T6 `Privacy`/`NotFound`/`LexChat`/`PickerFab`, `public/css/theme-cycler.css`,
 `public/subsites/**`, `public/robots.txt`, the `redirects` block of `astro.config.mjs`; T7
-`.github/workflows/*`, `.nvmrc`, `docs/prebake-cohort-data.py`; T8 `public/css/themes/*.css`,
-harness fixes; T9 docs only.
+`.github/workflows/*`, `.nvmrc`, `docs/prebake-cohort-data.py`; T8 `harness/` including the authoring
+fixture, `CLAUDE.md`, `src/themes/README.md`, the banner in `docs/theme-explorations.html`, the
+architecture/QA sign-off docs, per-skin fixes, and any migrated
+`src/`/`public/` modules or superseded root implementations that need changes to satisfy §1.1;
+T9 docs only. T4/T5 also update the retained-module contracts in `src/themes/README.md`.
 
 Rough size: T0 half a day; T1 two days; T2 two days; T3 one and a half days; T4 three days; T5 three
-days; T6 one day; T7 half a day; T8 two to four days (owner QA bound); T9 one day.
+days; T6 one day; T7 half a day; T8 re-estimated after T3 to include the authoring fixture,
+boundary refactors, cleanup and owner QA (the earlier two-to-four-day estimate covered parity/QA
+only); T9 one day.
 
 ---
 
-## 13. Questions only the owner can answer (batch for the grilling session)
+## 13. Settled owner decisions (Q1-Q14, 2026-09-05)
 
-Each has the default this spec assumes. Answers change T2/T5/T6 scope only (Q13 affects the cream
-spec; Q14 is a confirmation, and only a "no" would change anything, in §5.2 and T6).
+The owner settled all fourteen points and delegated the choices noted below. These replace the
+earlier assumed defaults. Q ids are retained for traceability; none is awaiting another answer.
+Technical spikes and future per-command install/cutover authorization remain execution steps.
 
-| # | Question | Default assumed |
+| # | Topic | Settled decision and implementation judgment |
 |---|---|---|
-| Q1 | **Post metadata conflicts.** `helm`: listing says *"Helm: A Minimalist Workspace Switcher for your IDE" / April 2026*, the post file says *"Helm: A Workspace Switcher for VS Code and Cursor" / March 2026*. `metr-doubling`: listing *January 2026*, post file *February 2026*. Which wins? | Post-file values (they are what a reader of the post sees). Either way the listing cards and home rail for those two posts change; §15 item 4 lists it. |
-| Q2 | **Unlisted and duplicate posts.** `gemma4-heretic-ara` is live and in the sitemap but commented out of the listing: list it, and do you want to approve an excerpt and tags for it (rule 3 needs a `posts` entry, and unapproved strings cannot ship, so until you answer it carries explicit `null`s and the page renders no excerpt and no tag pills, exactly as today; approving tags is what would give it the pills it lacks)? `autoencoders-1/2` exist locally but the listing links to aboutobjects.com: keep the local copies published at `/blog/autoencoders-1/` (and link them?), or drop them and redirect to the external posts? `color-randomizer` sitemap entry is a live 404: drop it? | gemma4 stays unlisted but is prerendered, with `excerpt: null` and `tags: null` until you approve strings; autoencoders local copies stay published, listing still links external, and both are **added to the sitemap** (they are not in today's); color-randomizer dropped. |
-| Q3 | **Where does `/embedded-swift-agent/` live?** Intent §4.8 groups subsites by person, but this is your own project demo, linked from a project CTA, a post body and the sitemap. `/subsites/dawson/embedded-swift-agent/`, `/subsites/embedded-swift-agent/`, or leave it at `/embedded-swift-agent/` (no redirect needed)? | `/subsites/dawson/embedded-swift-agent/` with the old URL redirecting, which is intent §4.8's locked decision; leaving it in place would need you to reopen that. |
-| Q4 | **Picker on privacy, 404 and lexchat.** Today they have none (the FAB in the docs never existed). Building it is new UI: a fixed bottom-right button with the palette icon opening the same dock. Do you want it on all three, or exempt lexchat (a full-viewport iframe app shell)? You will see it before it ships. Note it also adds a Font Awesome stylesheet to 404 and lexchat, which load no icon font today. | All three, bottom-right. |
-| Q5 | **`loadAllFonts`.** The picker fetches all the Google Fonts stylesheets it does not already have on every page after idle so the dock's style rows render in their own fonts. Keep (parity, up to 14 requests per page) or load them on first dock open (lean, brief font flash in the dock)? | Keep for parity; cleanup pass changes it. |
-| Q6 | **CSS counter prefixes and glyphs** (`FIG. 01`, `№ 3`, `(01)`, `✷`, `■`, `·`, `/`) in blueprint, field-notes, banknote, marquee, studio, brutalist, gallery: prose (editable in the YAML) or decoration (stays in CSS)? Only marquee's ticker fallback and doodle's "currently here ✓" move regardless. | Decoration. |
-| Q7 | **Home masthead duplicates.** Sequences 5-8 are two exact duplicate pairs, so "builder." runs on 4 of 9 loads. Intentional weighting? | Keep verbatim. |
-| Q8 | **`docs/` stops being public** (`/docs/theme-explorations.html`, three unpublished post drafts under `docs/planned-posts/`, `/CLAUDE.md`, `/docs/TODO.md` are live URLs today, and committing `docs/intents/` adds the planning corpus). OK to drop without redirects, with a `Disallow: /docs/` line on `main` in the meantime? | Yes. |
-| Q9 | **Structural themes and the picker** (shapes the mount API): may a structural theme hide the global picker inside its own menu with no always-visible control (cream has no room; mono's bottom-right is taken)? | Yes; the FAB is only for themes that mount nothing. |
-| Q10 | **Palette toy on structural themes and mono's modes.** Hide the toy on themes that declare their own colour modes (it can only reach 2 of mono's 11 variables and would break cream's single-ink design)? Should a theme's internal mode persist for the session (not in the URL)? | Hide it there; session persistence, namespaced key. |
-| Q11 | **Subsites, post assets and the prose rule.** `12years/` (~395 words you wrote) and `embedded-swift-agent-context.md` (a public bio the agent reads to visitors) are verbatim copies outside `prose.yaml`; so are the per-post chart and gallery scripts under `blog/posts/assets/`, which carry about 35 visitor-facing strings, one of them (`underviewed-art.js:295`) an aria-label built from a museum API field. Exempt them all explicitly in `CLAUDE.md`, with an approved template for that aria-label? | Exempt; the aria-label gets an approved template the next time that post is touched. |
-| Q12 | **Palette-toy state on reload.** Today a reload clears both the theme and the toy. The theme now survives reload (intent §4.5). Should the toy's colours survive too? | Yes (no reload detection at all). Its pre-paint restore stays, so there is no flash. |
-| Q13 | **The `m` budget versus cream's job rows.** Cream shows three bullets per job; today's bullets run ~112 words for three, against the `m` budget of ~60 words (`research/structural-theme-demands.md` §3 item 20). Tighter `m` bullets as drafts for you to clear, or a wider budget for bullets? | Tighter `m` bullets as drafts; the budget stays. |
-| Q14 | **Confirmation, not a new choice: "utility pages get tokens only".** Intent §4.7 says utility pages (privacy, 404, lexchat) always get tokens only. This spec reads that as governing **structural** themes, and gives a **skin** its full sheet on those pages (D13, §5.2, §16). Confirm? | Yes, D13's reading: a skin keeps its full sheet everywhere. Five skin sheets style `.privacy-*` / `.nf-*` today, so tokens-only would visibly change privacy and 404 under those skins, against intent §3.2 parity; and the §4.7 paragraph is about the owned/unowned fallback, which only structural themes have. |
+| Q1 | Post ownership and format | One source per post: title/date/description/tags and body live together. Post-file title/date win conflicts; existing listing descriptions/tags move into the post. Keep existing Markdown for parity and a metadata/body-slot contract for future MDX/component posts and case studies (§7). The format choice was delegated. |
+| Q2 | Listing membership and drafts | Do not list anything currently unlisted. Preserve the ten current listing entries/order: eight local posts plus two external autoencoder links. Keep Gemma and other unpublished content as drafts excluded from production. Autoencoder source records retain authoritative metadata and archived bodies, but publish no duplicate local body; old URLs redirect external. Drop the broken color-randomizer sitemap entry. |
+| Q3 | Embedded Swift Agent | Move to `/subsites/dawson/embedded-swift-agent/` and redirect the old URL. Agreed. |
+| Q4 | Utility pickers and LexChat | Add FABs to privacy and 404; exempt LexChat. Remove its shell only if the project already links directly to Hugging Face. Repo and live `js/blog-data.js` still point to `/lexchat/`, so retain the shell and its URL with no picker (D12). |
+| Q5 | Picker fonts | Delegated: preserve current idle font loading for existing skins. Change it if a concrete architectural need warrants it, with a documented check. New structural heavy assets/fonts still obey active-theme isolation; no new owner question is needed. |
+| Q6 | CSS decoration | Counters/prefixes/glyphs remain decoration in CSS. Actual marquee ticker text and doodle's message belong in approved prose. Agreed. |
+| Q7 | Masthead duplicates | Keep existing sequences and weighting exactly. An explicit probability-weighted typing engine may be a later refactor. |
+| Q8 | Public docs | Stop serving docs and `CLAUDE.md` at cutover, without redirects. Add the interim `Disallow: /docs/` rule now. Agreed. |
+| Q9 | Picker placement | Delegated: each theme has a reachable picker, including mobile. It may live inside the theme's own menu; supply the floating fallback if no mount is provided. LexChat is the explicit page exception. |
+| Q10 | Palette randomizer and modes | Always present and enabled in every theme's picker. Narrow randomization ranges are allowed; do not hide/gray out the tool. Structural themes map the five shared roles into their own variables. Preserve session-scoped internal modes and palette state (D26). |
+| Q11 | Prose exemptions | Delegated: grandfather verbatim subsites and existing per-post assets for migration. New/changed UI text uses its owning content source and approval flow. Post bodies are approved as documents; the museum-derived aria-label gets an approved template when next touched. No blanket exemption for future unapproved text. |
+| Q12 | Palette persistence | Keep randomized colors across navigation and reload, restored before paint. Agreed. |
+| Q13 | Cream job bullets | Delegated: retain the roughly 60-word `m` budget, draft shorter bullets and let the owner review the actual prose. |
+| Q14 | Utility styles | Delegated: existing skins keep their full skin sheet on utility pages for parity; structural themes use the canonical utility layout with their tokens/fonts. LexChat remains picker-free. |
 
 ---
 
@@ -1181,7 +1339,7 @@ spec; Q14 is a confirmation, and only a "no" would change anything, in §5.2 and
    `nvm install 24`, or `fnm`). `.nvmrc` = `24`.
 2. **Install approvals**, requested again at execution time, one command each:
    `npm install --save-exact astro@7.3.1 @astrojs/sitemap@3.7.4 js-yaml@4.3.0 marked@18.0.5 highlight.js@11.9.0 jquery@3.6.0 jquery-ui-dist@1.12.1 aos@2.3.1 vanilla-tilt@1.7.0 gsap@3.9.1 @fortawesome/fontawesome-free@6.5.1`
-   and `npm install --save-dev --save-exact @playwright/test@1.61.1` (no browser download at 1.61.1).
+   and `npm install --save-dev --save-exact @playwright/test@1.61.1 @astrojs/check@0.9.10 typescript@5.8.3` (no browser download at 1.61.1).
    Playwright's browser garbage collection is refcounted by installed clients, so build 1228 survives
    as long as 1.61.1 stays a dependency; installing a newer Playwright alongside it would fetch its
    own build (1.63.0 pins Chromium 1243, ~150 MB) and can remove unreferenced ones, and
@@ -1189,12 +1347,11 @@ spec; Q14 is a confirmation, and only a "no" would change anything, in §5.2 and
    from npm (its package declares six runtime dependencies including React 16); its files are
    committed under `public/vendor/boxicons/`. `js-yaml` is pinned to the 4.x line Astro itself depends
    on (`^4.3.0`) so npm installs one copy; 5.4.1 is latest but not needed. All versions above were
-   confirmed on the registry on 2026-09-05.
-3. **Commit the prototypes** (`docs/*-prototype*.html`, `docs/intents/`): they are untracked and
-   specs 2-3 start from two of them. Consequence to accept: while Pages is still legacy, everything
-   under `docs/` is served, so the planning corpus becomes live URLs at `/docs/intents/…` the moment
-   it is pushed. The cheap interim mitigation is a `Disallow: /docs/` line in `robots.txt` on `main`
-   now; D22 removes the exposure at cutover.
+   confirmed on the registry on 2026-09-05. The checker's TypeScript peer range accepts the pinned
+   5.8.3; do not substitute TypeScript 7 without checking compatibility.
+3. **Planning sources are already committed** in `d14e459`. This owner-decision update is also
+   authorized for commit/push to `main`; the interim robots rule is included. Legacy Pages still
+   serves these files until cutover; `robots.txt` discourages crawling but is not access control.
 4. **Create the baseline worktree** once: `git worktree add --detach ../personal-website-old 0f196d0`
    (the harness only reads it; it never runs git there). And the working branch:
    `git worktree add ../personal-website-astro -b astro`.
@@ -1215,18 +1372,19 @@ The §9 step 8 exception table implements this list; anything not here must matc
    logo, an absolute URL to the default home today (`index.html:57`, `privacy/index.html:25`), is now
    a themed link, so it keeps the theme instead of dropping to default.
 2. Palette-toy state survives reload and navigation, applied pre-paint as today (D11, Q12).
-3. Theme picker FAB plus the dock on privacy, 404 and lexchat (D12, Q4), and with it
-   `/vendor/fontawesome/css/all.min.css` on 404 and lexchat, which load no icon font today.
+3. Theme picker FAB plus the dock on privacy and 404 (D12, Q4), with the added Font Awesome
+   stylesheet on 404. LexChat stays picker-free and loads no redundant picker runtime.
 4. Posts at `/blog/<id>/` with real `<title>`, description, canonical, OG and JSON-LD in the served
    HTML; no "Loading…" title; old URL redirects via a shim page that forwards `?style=`. Post
-   metadata is unified per Q1, so the listing cards and home rail for `helm` and `metr-doubling`
-   change; `gemma4-heretic-ara` is **unchanged** under the Q2 default, because `excerpt: null` and
-   `tags: null` render nothing, so it gains no tag pills, no excerpt and no keywords. It gains all
-   three only if the owner approves strings for it, which is what Q2 asks (D8).
+   metadata derives from each post source (Q1), so Helm/METR title/date differences are resolved.
+   Preserve current listing membership/order; Gemma is withdrawn into drafts and produces no
+   public page. Autoencoder cards retain their external targets; archived local bodies are not
+   republished, and their known old URLs redirect external. Draft/unknown legacy ids reach 404.
+
 5. `/12years/` moves under `/subsites/elise/`, `/embedded-swift-agent/` under `/subsites/dawson/`
    (Q3); both old URLs redirect.
 6. Generated sitemap at `/sitemap-index.xml` + `/sitemap-0.xml` (entries and `lastmod` change;
-   `color-randomizer` gone; autoencoders added). `/sitemap.xml` becomes a dead URL.
+   `color-randomizer` and Gemma gone; no duplicate local autoencoder entries). `/sitemap.xml` becomes a dead URL.
 7. `docs/` and `CLAUDE.md` no longer served (Q8).
 8. Third-party files served from `/vendor/` instead of CDNs (byte-identical except jquery-ui's one
    escape byte; mermaid, Plotly, js-yaml still CDN). Mermaid loads only on posts that have a diagram,
@@ -1253,28 +1411,23 @@ site to the harness's tolerances and to your eye.
 | §3.1 prose ownership | §4, D7-D10, D14-D17, D36, D37, Q6, Q11, Q13 |
 | §3.2 parity | §9 (incl. the step 8 exception table), §15, T1, T8, D27, D29, D33 |
 | §3.3 lean | D5, §5.2 fallback (no theme scripts), §9 check 5, §11 GSAP alias and capability 37 |
-| §3.4 done properly | §3.3 boundary and module graph, typed registry §5.1 (D28), accessor §4.2 (D37), Shell D29, `compose` D34, `href()` D31, D3 and D32 stated |
+| §3.4 done properly | §1.1 architecture completion gate, §3.3 boundary and module graph, typed registry §5.1 (D28), accessor §4.2 (D37), Shell D29, `compose` D34, `href()` D31, D3/D32, §5.3 authoring fixture (D38), T8 sign-off and T9 cutover |
 | §3.5 URLs | §6.4 |
 | §3.6-3.7 structural freedom, five consumers | §5.3, D38, §11 |
 | §4.1-4.13 locked decisions | D1-D2 (stack), §4 (sizes, file, drafts), §6 (paths, posts, coverage incl. 404 via D27, subsites), §9 (harness), §10 (deploy), §14 item 4 + D20 (baseline and working worktrees), D5 (libraries, deviation stated), D3 (behavior policy) |
 | §5 delegated | §2 |
-| §9 undecided | D7 (YAML shape), D25 (mobile), D26 (modes), D9 (draft toggle), D10 (budgets), §6.1 (canonical/noindex/sitemap), D23 (explorations doc), §9 (thresholds, viewports, settling) |
+| §9 delegated choices | D7 (YAML shape), D25 (mobile), D26 (modes), D9 (draft toggle), D10 (budgets), §6.1 (canonical/noindex/sitemap), D23 (explorations doc), §9 (thresholds, viewports, settling) |
 
-Deviations from a locked intent decision, stated rather than silent: **D5 vs intent §4.12** (mermaid,
-Plotly and js-yaml stay on CDN; the rest move to npm but are served as committed files rather than
-Vite-split per theme). **D18 vs intent §4.10** (`CNAME` and `.nojekyll` stay at the repo root instead
-of `public/`, because a custom Actions workflow ignores `CNAME` and `upload-pages-artifact@v5`
-excludes dotfiles; both facts verified, and the rollback path is the only consumer). **§9 vs intent
-§4.9** (the intent asks for a "carousel scroll" interaction; the matrix has both a dot click and a
-`mouse.wheel` on the track, the latter added so the vertical wheel guard is exercised).
+Deviation from the initial library preference, stated rather than silent: **D5 vs intent §4.12**
+(mermaid, Plotly and js-yaml stay on CDN; the rest move to npm but are served as committed files
+rather than Vite-split per theme). Intent §4.10 now reflects D18: `CNAME` and `.nojekyll` stay at
+the repo root for rollback. The §9 matrix fulfills intent §4.9's "carousel scroll" requirement
+with both a dot click and a `mouse.wheel` on the track, exercising the vertical wheel guard.
 
-Resolved ambiguities, as distinct from deviations: **intent §4.7's "utility pages (privacy, 404,
-lexchat) always get tokens only"** is read as governing **structural** themes only, so a skin keeps
-its full sheet on the utility pages (D13, §5.2). The reason is parity: five skin sheets style
-`.privacy-*` / `.nf-*` today, so tokens-only would visibly break those pages, and the paragraph it
-sits in is about the owned/unowned fallback, which only structural themes have. Recorded here rather
-than as a deviation because the reading is what the surrounding paragraph means; Q14 asks the owner
-to confirm it.
+Settled owner clarifications supersede earlier wording: Q1 places each post's metadata with its
+body; Q2 defines publication separately from source retention; Q10 requires the palette tool in
+every theme; Q14 keeps full skin CSS on utility pages and tokens/fonts for structural fallback;
+Q4 exempts the still-linked LexChat shell from the picker. The intent has been updated to match.
 
 ---
 

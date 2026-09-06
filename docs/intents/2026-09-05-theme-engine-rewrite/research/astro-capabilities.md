@@ -1,5 +1,7 @@
 # Astro capabilities for the theme-engine migration
 
+> Historical research snapshot. The settled owner decisions in [Spec 1 §13](../spec-1-migration-engine-parity.md#13-settled-owner-decisions-q1-q14-2026-09-05) supersede earlier recommendations about post ownership/format, drafts, picker placement and palette support; use the current spec for implementation.
+
 Research date: 2026-09-05. All facts verified against the Astro npm registry entry,
 `docs.astro.build`, the `withastro/docs` repo source, or the `withastro/astro` repo source.
 Every claim carries a URL. Anything I could not verify is labelled **unverified**.

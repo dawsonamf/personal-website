@@ -1,5 +1,7 @@
 # Structural theme demands: a desk-check for spec 1
 
+> Historical research snapshot. The settled owner decisions in [Spec 1 §13](../spec-1-migration-engine-parity.md#13-settled-owner-decisions-q1-q14-2026-09-05) supersede earlier recommendations about post ownership/format, drafts, picker placement and palette support; use the current spec for implementation.
+
 **Written:** 2026-09-05. Read-only research pass. Sources: `docs/intents/2026-09-05-theme-engine-rewrite/intent.md`,
 `docs/cream-prototype.html` and `docs/mono-prototype.html` read in full, the other three prototypes skimmed,
 the architecture comment at the top of `docs/theme-explorations.html`, and the current engine source

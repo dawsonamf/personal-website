@@ -1,5 +1,7 @@
 # Page behavior, nondeterminism, blog pipeline, canonical DOM
 
+> Historical research snapshot. The settled owner decisions in [Spec 1 §13](../spec-1-migration-engine-parity.md#13-settled-owner-decisions-q1-q14-2026-09-05) supersede earlier recommendations about post ownership/format, drafts, picker placement and palette support; use the current spec for implementation.
+
 Research for spec 1 (Astro migration + parity harness). Read-only pass over the
 repo at `main` (working tree, 2026-09-05). Every claim cites `file:line`.
 Anything I could not verify from the repo is marked **unverified**.

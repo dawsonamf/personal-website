@@ -1,5 +1,7 @@
 # Theme engine contracts (current, pre-Astro)
 
+> Historical research snapshot. The settled owner decisions in [Spec 1 §13](../spec-1-migration-engine-parity.md#13-settled-owner-decisions-q1-q14-2026-09-05) supersede earlier recommendations about post ownership/format, drafts, picker placement and palette support; use the current spec for implementation.
+
 Research for spec 1, §3.2 parity. Read-only pass over the current engine on
 `main` @ `0f196d0` (working tree clean for every file cited). Every claim below
 is `file:line` against the repo; anything I could not confirm is marked

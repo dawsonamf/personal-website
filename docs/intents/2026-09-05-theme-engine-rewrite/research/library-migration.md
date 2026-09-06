@@ -1,5 +1,7 @@
 # Library migration research: CDN → npm (spec 1, parity first)
 
+> Historical research snapshot. The settled owner decisions in [Spec 1 §13](../spec-1-migration-engine-parity.md#13-settled-owner-decisions-q1-q14-2026-09-05) supersede earlier recommendations about post ownership/format, drafts, picker placement and palette support; use the current spec for implementation.
+
 Research for the Astro migration spec (`../intent.md` §2, §3.3, §4.6, §4.12, §6, §7).
 Everything below was verified on 2026-09-05 against the repo working tree and the
 npm registry / jsDelivr / unpkg. Byte comparisons are `shasum -a 256` of the two

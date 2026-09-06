@@ -1,5 +1,7 @@
 # Research: Actions deploy to Pages + local Playwright parity harness
 
+> Historical research snapshot. The settled owner decisions in [Spec 1 §13](../spec-1-migration-engine-parity.md#13-settled-owner-decisions-q1-q14-2026-09-05) supersede earlier recommendations about post ownership/format, drafts, picker placement and palette support; use the current spec for implementation.
+
 **For:** Spec 1 (§8.1 of `intent.md`) — covers §4.9 (parity harness), §4.10 (deploy), §4.11 (worktree).
 **Verified:** 2026-09-05. Every claim below has a URL. Anything I could not verify from a
 primary source is labelled **unverified** and should be tested, not assumed.

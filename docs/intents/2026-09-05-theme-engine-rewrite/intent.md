@@ -1,12 +1,16 @@
 # Intent: theme engine rewrite and structural themes
 
 **Written:** 2026-09-05, from a grilling/brainstorming session with the site owner.
-**Status:** intent, not a spec. A later session with a fresh agent splits this into
-specs (see §8). Nothing below has been built.
+**Status:** intent with owner decisions settled on 2026-09-05; Spec 1 records the
+implementation contract and the Q1-Q14 decision record. Nothing below has been built.
+**Owner clarification, 2026-09-05:** Spec 1 must finish with a coherent repo
+architecture and a demonstrated workflow for adding themes (§3.4, §8.1).
 **How to read this:** §3 is the owner's hard requirements (non-negotiable). §4 is
 what was decided in the session (locked unless the owner reopens it). §5 is what
 the owner delegated to agent judgment (latitude, but say what you chose). §6 is
-per-theme detail for the five consumers (§6.5 was added after the session). §9 lists what is deliberately undecided.
+per-theme detail for the five consumers (§6.5 was added after the session). §9 lists
+implementation choices delegated to the spec. The settled decisions are recorded in
+`spec-1-migration-engine-parity.md` §13; dated research/reviews remain historical evidence.
 
 ---
 
@@ -23,9 +27,11 @@ change, and it does it purely in CSS).
 Two things matter as much as the engine itself:
 
 1. **The owner controls every word on the site.** All visitor-facing prose lives
-   in one place, in sizes, and nothing unapproved ever ships (§3.1, §4.3, §4.4).
+   in its authoritative source, in sizes where needed, and nothing unapproved ever
+   ships (§3.1, §4.3, §4.4). Shared site prose is centralized; each post owns its
+   metadata and body.
 2. **Nothing the owner likes today may change noticeably.** The default site and
-   all sixteen active skins must survive the rewrite indistinguishably to the
+   all fifteen active skins (sixteen themes total) must survive the rewrite indistinguishably to the
    owner, on every page, at every screen size, in every behavior (§3.2).
 
 Then five new structural themes get built on the engine, each a separate
@@ -35,8 +41,10 @@ themes migrated before any new one.
 ### Non-goals (for the engine work)
 
 - Not blending the five references into one theme. Five themes, five references.
-- Not implementing case studies (§7), not moving blog posts out of Markdown (§7).
-- Not a cleanup pass on legacy libraries beyond what the migration forces (§7).
+- Not implementing case studies yet (§7). Existing posts keep Markdown for parity;
+  their shared rendering contract must also accommodate future component-based posts.
+- No discretionary replacement of working libraries (§7); refactors needed for
+  the clean architecture are included (§3.4).
 - Not a visual redesign of the default theme. Parity, not improvement.
 
 ---
@@ -46,8 +54,8 @@ themes migrated before any new one.
 Static site, no build step, GitHub Pages serving `main:/` (legacy mode), CNAME
 `www.dawsonamf.com`, public repo `dawsonamf/personal-website`. Conventions in
 `CLAUDE.md`. Theme architecture is documented in the HTML comment at the top of
-`docs/theme-explorations.html`; that comment is accurate and worth reading in
-full before designing the new engine. The owner delegates code to agents and
+`docs/theme-explorations.html`; read it alongside Spec 1's research errata (§17)
+and current contracts, which correct its stale claims. The owner delegates code to agents and
 did not personally verify this model of the current state; it was verified by
 reading the files listed here, and the owner agreed with it.
 
@@ -62,7 +70,7 @@ styles with `id`, `label`, `polarity`, five colour roles, `tokens`, `fonts`,
 `data-style` on `<html>`, appends `css/themes/theme-base.css` + the skin sheet).
 `js/theme-cycler.js` (mega-menu picker in the nav, palette toy that randomizes
 the five roles, session-only persistence; switching a style navigates to
-`/?style=<id>`; reload returns to default). Sixteen active skins in `ORDER`:
+`/?style=<id>`; reload returns to default). Sixteen active themes in `ORDER`:
 default, brutalist, marquee, blueprint, field-notes, doodle, grid ("Swiss Grid"),
 miami-deco, bauhaus, chinoiserie ("Porcelain"), gallery, banknote, neo-pop,
 broadsheet, studio, wheatpaste ("Street Poster"). Four skin sheets exist but are
@@ -112,15 +120,19 @@ global, Playwright's Chromium already cached, Google Chrome installed.
   nav labels, section titles, typing-masthead lines, project and post blurbs,
   button and CTA labels, footer credit, 404 text, theme names in the picker,
   CSS ticker strings, chips/tags, captions. Code identifiers are not prose.
-- **All prose lives in one file**, organized in sections the owner can read, with
-  each field carrying **sizes** (§4.2) so the same content fits differently sized
-  slots across theme structures. Sizes are per field on every entry: a featured
+- **One authoritative source per content item.** Shared site/theme prose lives in
+  one YAML file. Each post owns its title, date, description, tags and body in its
+  own source; listings, home rails, page metadata and sitemap derive from it. No
+  duplicated post metadata in the site YAML. Shared prose is organized in sections
+  the owner can read, with each field carrying **sizes** (§4.2) so the same
+  content fits differently sized slots across theme structures. Sizes are per field on every entry: a featured
   project's description has its own sizes, each job's bullets have their own,
   and so on. A theme requests per slot, by size, never by theme name.
 - **Nothing the owner has not approved ever ships.** Agents may draft prose, but
-  drafts are visibly marked, live in the same file, and block the production
-  build until cleared (§4.4). This is a standing rule to be written into the
-  project `CLAUDE.md`, plus a cheap lint if it is cheap.
+  drafts are visibly marked in their owning source. Unapproved shared or published
+  post metadata blocks production; whole unpublished post drafts are excluded from
+  production output and may coexist with published content (§4.4). This standing
+  rule belongs in the project `CLAUDE.md`, plus a cheap lint if it is cheap.
 - Alt text and aria-labels are not something the owner wants to review one by
   one, but they must be built from strings the owner has already approved (an
   entry's `xs` title, a sized caption) or be an approved field. No free text.
@@ -132,7 +144,7 @@ global, Playwright's Chromium already cached, Google Chrome installed.
 
 ### 3.2 Parity
 
-- The default theme and all sixteen active skins must be **unchanged to the
+- The default theme and all fifteen active skins must be **unchanged to the
   owner's eye**: across screen sizes, on all pages, in all behaviors. Output need
   not be byte-identical if the owner would not notice. This is a strong
   requirement and not a place for shortcuts.
@@ -160,6 +172,28 @@ global, Playwright's Chromium already cached, Google Chrome installed.
   helpers, delete indirection rather than wrap it, feature logic behind its own
   module. Construction must be **componentized** so agents building themes have
   a straightforward time.
+- **Spec 1 finishes the architecture of the migrated site.** Pages, content,
+  theme registration, assets, behavior, build and deploy must form one coherent
+  system. Retained behavior code has an explicit owner and documented inputs,
+  dependencies and lifecycle. Any refactoring needed to establish those
+  boundaries belongs in Spec 1 and cannot be deferred as later cleanup.
+- **Adding a theme is a supported authoring workflow.** Routine skins and
+  structural themes are added through theme-owned files, typed registration,
+  and approved prose, using the documented extension points. They must not
+  require changes to unrelated themes, canonical behavior, or scattered
+  theme-specific branches in shared code. New capabilities may extend a shared
+  contract deliberately when a consumer needs them.
+- **Prove that workflow before declaring Spec 1 done.** A representative
+  structural-theme fixture must exercise its own layout and assets, canonical
+  fallback pages, prose access, routing, the picker and mobile behavior through
+  the public authoring contract. The fixture is test-only; it does not implement
+  one of the five production themes. Record the checks and the files needed to
+  add it alongside the authoring guide.
+- **Finish the transition.** Remove superseded implementations, duplicate
+  sources of truth and temporary migration scaffolding. Required legacy-URL
+  shims, inactive skins and standalone subsites remain intentional, documented
+  parts of the repo. Update the repo and theme-authoring docs to match the
+  finished system.
 - A build step is acceptable if it is the better tool. Framework migration is
   acceptable. A massive rewrite is acceptable.
 - Software installs only with the owner's explicit per-install approval. No dev
@@ -171,6 +205,9 @@ global, Playwright's Chromium already cached, Google Chrome installed.
 
 - URLs may change as long as the new ones make sense; old URLs must keep
   working via redirects. Applies to theme paths, blog posts and subsites.
+  The settled Q2 publication decision explicitly withdraws unlisted draft post
+  pages such as Gemma; their old URLs may reach 404. External article URLs redirect
+  to their authoritative destination (§4.6).
 
 ### 3.6 Structural freedom for themes
 
@@ -227,17 +264,27 @@ sections (`# About`, `# Jobs`, ...). Prose fields are Markdown (links, emphasis,
 paragraphs) rendered to HTML at build. Theme labels, nav labels, typing lines,
 social labels, and theme-specific strings all live here. Existing site text
 migrates in as approved `l` (and existing `xs` labels), since it is already live.
+Post metadata lives with its post (§4.6), using the same sized-field and approval
+conventions where applicable.
 
 ### 4.4 Drafts
 
-A plain string is approved; a draft is structurally distinct (e.g.
-`{ draft: "text" }`) so a tree walk finds every one. Preview/dev builds render
-drafts visibly marked (red) by default, with a **toggle** that shows them as
-native prose so the owner can read a whole flow either way; the toggle persists
-across pages. The production build refuses to run while any draft exists.
-Standing `CLAUDE.md` rule: every new visitor-facing string enters the prose file
-as a draft; nothing ships until the owner clears it. Add a pre-push lint only if
-it is trivially cheap (it is: the same tree walk).
+A plain string is approved; an unapproved prose field is structurally distinct
+(`{ draft: "text" }`) so a shared walker can find it. This applies to the shared
+YAML and metadata in every publishable post source. Preview builds mark drafts
+red and offer the persistent native-prose toggle. Production rejects any such
+field in shared prose or a published/external listing record.
+
+Whole unpublished posts use `publication: draft`. They remain in source and may
+be previewed with visible draft marking and `noindex`, but production emits no
+page, listing card, sitemap entry, raw source or body for them. Keeping these
+drafts does not block an otherwise approved production build. New post bodies
+remain whole-document drafts until the owner approves publication.
+
+Verbatim subsites and existing per-post assets are grandfathered for this
+migration. New or changed UI strings use their owning approved content source;
+the museum-derived aria-label needs an approved template when next touched.
+The standing `CLAUDE.md` rule and optional pre-push check implement these rules.
 
 ### 4.5 URL model: theme in the path
 
@@ -254,15 +301,39 @@ Sitemap generated by the build. Code blocks must keep the highlight.js 11.9.0
 github-dark look for parity (do not switch to Shiki's colours); mermaid stays
 client-rendered.
 
+Each post source owns its metadata and body. Existing post title/date values win
+conflicts; missing descriptions and tags migrate verbatim from the existing
+listing. One description supplies cards and page metadata at the requested size.
+Markdown is the migration format because it preserves existing rendering and
+already supports per-post scripts/assets. Shared post layouts consume validated
+metadata plus a body slot; a future MDX/component adapter can supply that slot
+without duplicating metadata or rewriting theme layouts. Converting existing
+posts or building case studies is optional future work.
+
+Preserve the current ten listing entries and their order: eight local posts and
+two external autoencoder articles. The external records keep one local metadata
+source with `publication: external`; their archived Markdown bodies are not
+published. Unlisted Gemma stays a draft. Other planning drafts stay drafts, and
+the broken color-randomizer sitemap entry is removed. Old autoencoder URLs
+redirect to the external articles; the withdrawn Gemma URL reaches the 404.
+
 ### 4.7 Page coverage is per theme and first-class
 
 A theme declares which page types it owns (home, blog listing, post, plus any
 theme-only pages). Page types it does not own render the default layout in the
-theme's tokens (colours/fonts). Utility pages (privacy, 404, lexchat) always get
-tokens only. This fallback is a first-class concept, not a special case. The
-global theme picker must be reachable in every theme: the theme mounts the
-picker component somewhere in its own chrome, or the engine injects the
-floating fallback.
+theme's tokens (colours/fonts). Structural themes use canonical utility layouts
+with their tokens/fonts; existing skins keep their full skin styles on utility
+pages for parity. Every theme has a reachable picker, which may sit in its own
+menu; use the floating fallback if it mounts none. LexChat's iframe shell is the
+explicit page exception and gets no picker. Its current project CTA still links
+to `/lexchat/`, so the shell is retained.
+
+The palette randomizer is present and enabled in every theme's picker. A theme
+may use a very narrow randomization profile and derive additional color variables
+from the five shared roles. Internal modes persist for the session; they retain
+working palette support instead of hiding or disabling it. Preserve the existing
+skins' randomization behavior. Keep today's idle picker-font loading for those
+skins; further loading changes are delegated when needed by the architecture.
 
 ### 4.8 Subsites
 
@@ -271,7 +342,8 @@ Standalone pages group in source under `public/subsites/<person>/<page>/`
 with the old `/12years/` and `/embedded-swift-agent/` URLs redirecting. The
 folder name `public/` never appears in URLs; the owner did not want "public" in
 the name and this satisfies that. `lexchat/`, `privacy/` and `404` become Astro
-utility pages so they keep receiving tokens under every theme path.
+utility pages so they keep receiving theme styling under every theme path;
+LexChat remains exempt from the picker (§4.7).
 
 ### 4.9 Parity harness
 
@@ -289,9 +361,11 @@ utility pages so they keep receiving tokens under every theme path.
 
 ### 4.10 Deploy: GitHub Actions to Pages
 
-Free for this public repo. On push to `main`: `npm ci`, `astro build` (fails on
-drafts or missing sizes), publish `dist/`. `CNAME` and `.nojekyll` ride in
-`public/`. Pages source flips from legacy to Actions only at cutover, after
+Free for this public repo. On push to `main`: `npm ci`, `npm run build` (`astro check` then `astro build`;
+fails on type errors, unapproved publishable prose or missing requested sizes),
+publish `dist/`. `CNAME` and `.nojekyll` stay at the repo root for legacy rollback;
+the Actions deployment does not need them in `public/` (Spec 1 D18). Pages source
+flips from legacy to Actions only at cutover, after
 parity passes, with the owner's go-ahead (one `gh api` call or a settings
 click). The weekly `refresh-chart-data.yml` commits with `GITHUB_TOKEN`, which
 GitHub deliberately does not let trigger `push` workflows, so that workflow must
@@ -315,7 +389,9 @@ Fonts stay as links. Calendly stays the external widget. Package manager: npm.
 
 Architecture rewritten properly; behaviors reproduced with the same constants;
 harness and the owner's eyes are the referees. Refactor behavior logic freely
-where the output provably does not change.
+where the output provably does not change. Keeping working behavior code is
+acceptable when it meets §3.4's boundaries; isolating it correctly is a Spec 1
+deliverable.
 
 ---
 
@@ -439,9 +515,12 @@ four consumers behind it.
 - **Case studies**: a new section with more depth on personal and work
   projects, possibly a more dynamic post format with animations. The owner is
   not sure yet what they want; do nothing, but do not make it hard.
-- **Blog posts leaving Markdown** if per-section control or animation needs it.
+- **MDX/component-based posts and case studies** when per-section control or
+  animation needs them, using Spec 1's shared metadata/body rendering contract.
 - **Cleanup pass**: drop unused gsap 3.9.1 from the default, replace the jQuery
-  smooth-scroll easing, dedupe home/listing rendering. Only after parity lands.
+  smooth-scroll easing, and make optional library/runtime simplifications after
+  parity lands. Shared rendering and the architectural boundaries needed for
+  clean theme authoring are part of Spec 1 (§3.4).
 - Per-post OG images (now feasible), README, `.editorconfig`, and the rest of
   `docs/TODO.md`.
 
@@ -453,11 +532,14 @@ four consumers behind it.
    schema, sizes, drafts, theme engine (skin kind on the reproduced canonical
    DOM, structural kind with owned page types, tokens fallback), theme-in-path
    routing, prerendered posts, subsites and redirects, parity harness, deploy
-   workflow, `CLAUDE.md` prose rule. Existing default + sixteen skins migrated
+   workflow, `CLAUDE.md` prose rule. Existing default + fifteen skins migrated
    first and gated by the harness. Desk-check the engine design against every
    demand listed in §6 before building, so the first consumer does not force a
-   redesign. Land this on `main` at parity; it is independently valuable
-   (static posts, OG images, deploy).
+   redesign. Complete §3.4's architecture and authoring checks, including the
+   representative structural-theme fixture, before cutover. Land this on `main`
+   at parity with the repo architecture finished and the authoring workflow
+   documented and demonstrated; it is independently valuable (static posts,
+   OG images, deploy).
 2. **Specs 2-6: one per new theme.** Order is agent judgment (the owner: "do
    whatever can land first, existing themes first"). Recommended: **cream**
    (prototype exists, moderate engine demands), then **mono** (prototype
@@ -473,7 +555,11 @@ theme's prose arrives as drafts for the owner to clear.
 
 ---
 
-## 9. Deliberately undecided (for the spec authors)
+## 9. Choices delegated to the spec authors
+
+The list below records the original delegation. Spec 1 now resolves these choices;
+its §13 records all fourteen settled owner decisions and the judgments made under
+that delegation.
 
 - Exact YAML shape (nesting, entry ids, how sizes and nulls are written) and
   the zod schema; how "a theme requests a size for a slot" looks in a component.
@@ -495,7 +581,7 @@ theme's prose arrives as drafts for the owner to clear.
 ## 10. Glossary
 
 - **Theme**: a registry entry the picker can select. Two kinds: **skin** (CSS
-  and tokens on the reproduced canonical DOM; the sixteen existing ones) and
+  and tokens on the reproduced canonical DOM; today's default plus fifteen skins) and
   **structural** (owns its DOM, IA, libraries, and possibly extra pages).
 - **Canonical DOM**: today's markup for home, listing and post, reproduced by
   the default components exactly so skins keep working.

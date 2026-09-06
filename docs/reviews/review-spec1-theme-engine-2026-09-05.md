@@ -1,5 +1,7 @@
 # Spec 1 reviewed: the theme engine rewrite's migration spec (2026-09-05)
 
+> Archived review of the pre-decision spec. The live [Spec 1](../intents/2026-09-05-theme-engine-rewrite/spec-1-migration-engine-parity.md) now includes architectural completion criteria and settled Q1-Q14 owner decisions; the snapshots and findings below remain historical evidence.
+
 The owner's first review round on a spec rather than a diff, run by a Fable 5.1
 orchestrator on `docs/intents/2026-09-05-theme-engine-rewrite/spec-1-migration-engine-parity.md`
 against `main` @ `0f196d0`, in the order the owner set: one Fable finalizer;
