@@ -14,3 +14,15 @@
 scrap.txt
 resources/scrap.txt
 resources/temp.ipynb
+
+# Node / Astro build
+node_modules/
+/dist/
+/.astro/
+
+# Test output
+test-results/
+playwright-report/
+tests/fixtures/**/.tmp/
+tests/fixtures/**/dist/
+tests/fixtures/**/.astro/

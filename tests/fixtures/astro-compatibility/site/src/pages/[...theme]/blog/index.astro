@@ -1,0 +1,16 @@
+---
+export function getStaticPaths() {
+  return [{ params: { theme: undefined } }, { params: { theme: "brutalist" } }];
+}
+const { theme } = Astro.params;
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Blog listing</title>
+</head>
+<body>
+  <h1 id="listing">listing theme={theme ?? "default"}</h1>
+</body>
+</html>

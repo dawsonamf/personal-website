@@ -1,0 +1,17 @@
+---
+import { getCollection } from 'astro:content';
+import { renderBody } from '../../prose/markdown.ts';
+const entries = await getCollection('posts');
+const entry = entries[0]!;
+const html = renderBody(entry.body ?? '');
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Spike post</title>
+</head>
+<body>
+  <article class="post-body" set:html={html}></article>
+</body>
+</html>

@@ -1,6 +1,6 @@
 # S1-01 — Establish the pinned runtime and verify Astro compatibility
 
-**Status:** Unstarted · **Spec milestone:** T0 · **Scope:** one compatibility spike
+**Status:** Done with risks 2026-09-06 · **Spec milestone:** T0 · **Scope:** one compatibility spike
 
 **Depends on:** None
 
@@ -54,3 +54,28 @@ Distinguish tests actually run from unavailable environment capabilities. An act
 ## Agent handoff
 
 Record changed files, commands and exit results, and any interface adjustments in the completion report. Resolve implementation failures in scope; do not replace failed assertions with broader exclusions. Leave owner QA to the end of the complete migration.
+
+## Completion report
+
+Done with risks, 2026-09-06. Ran on Node v25.9.0 (Node 24 not installed, no version manager; `.nvmrc` = `24` is the CI contract). Astro 7.3.1 accepted Node 25 (`engines` `>=22.12.0`); every build passed.
+
+**Created:** `.nvmrc`, `package.json`, `package-lock.json` (lockfileVersion 3, 14 exact pins), `tsconfig.json` (extends `astro/tsconfigs/strict`, excludes `dist` and the spike fixtures), `astro.config.mjs` (Spec §3.2 minus the four later-ticket imports and the sitemap `filter`/`serialize`; each omission commented with its owner), `tests/build/astro-compatibility.test.ts` (13 subtests), `tests/fixtures/astro-compatibility/{site,variants}/` (one positive Astro project; negative cases are mutations built in temp copies under a gitignored `.tmp/`), `research/spike-findings.md` (T0 a-k, installs, deviations, downstream contracts).
+**Modified:** `.gitignore` (`node_modules/`, `/dist/`, `/.astro/`, test output, fixture `.tmp`/`dist`/`.astro`). No root `src/`. `CNAME`, `.nojekyll`, legacy site files and the baseline worktree untouched.
+
+**Installs (the two §14 commands, exit 0 each):** `npm install --save-exact astro@7.3.1 @astrojs/sitemap@3.7.4 js-yaml@4.3.0 marked@18.0.5 highlight.js@11.9.0 jquery@3.6.0 jquery-ui-dist@1.12.1 aos@2.3.1 vanilla-tilt@1.7.0 gsap@3.9.1 @fortawesome/fontawesome-free@6.5.1` and `PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 npm install --save-dev --save-exact @playwright/test@1.61.1 @astrojs/check@0.9.10 typescript@5.8.3`. `npm ci` reproduces. Browser cache unchanged before/after (no download).
+
+**Verification:** `node --version` v25.9.0; `npm --version` 11.12.1; `node --test --test-concurrency=1 tests/build/astro-compatibility.test.ts` and `npm run test:build`: tests 13, pass 13, fail 0, skipped 0, exit 0 (run by the builder, four reviewers and the orchestrator). `astro check` on a temp fixture copy: 0 errors, 0 warnings, 0 hints. `test:unit` and `test:parity` are defined but their suites do not exist yet; not claimed. Collision (e1 route, e2 duplicate `file()` entry id) and throwing-hook builds exit 1; the positive build exits 0; `dist/404.html` exists; `theme: undefined` emits `/` and `/blog/`. No listeners remain after runs (`lsof`/`pgrep` empty).
+
+**T0 results (details and commands in spike-findings.md):** (a) compiler accepted the ported home with zero repairs; the only DOM deltas are 15 dropped whitespace runs after `</script>` (the compiler drops them after every script, including the last before `</body>`) and the missing trailing newline, both count-asserted. (b) nothing injected on the ported page; an extracted stylesheet `<link>` lands as the last head node before `</head>`; a bundled module `<script>` stays in place in the body. (c) root and themed routes emitted. (d) `dist/404.html`. (e1) `[PrerenderRouteConflict]` exit 1; (e2) `[DuplicateContentEntrySlugError]` exit 1, gated by `prerenderConflictBehavior: 'error'` in both `file.js` and `glob.js` (default `'warn'` would only log). (f) throw in `astro:build:done` exits 1. (g) marked output; `glob()` needs `deferRender: true` or Sätteri renders every `.md` at sync (errors logged, not thrown). (h) meta-refresh stub with `noindex`. (i) `public/` byte-identical, `+esm` specifier untouched. (j) loopback python server + cached `chromium-1228`, ephemeral port, remote requests blocked. (k) default arrangement duplicates the accessor module (config side loaded by plain Node `import()`, page side bundled); fixed by a `resolveId` Vite plugin that externalizes the resolved `src/prose/index.ts` id as its absolute `file://` URL. No `globalThis`.
+
+**Interface adjustments / contracts for downstream:**
+- S1-08 must add `vite: { plugins: [externalization of src/prose/index.ts] }` to `astro.config.mjs` (§3.2 has no `vite` block; spec amendment recorded in spike-findings §k). The externalized module and everything on the config import path must be erasable TS with explicit `.ts` extensions and no `astro:*`/Vite-only imports.
+- S1-05/S1-08 REQUIRED: the pure accessor exports a module-scope touch counter and `checks.ts` asserts `touches > 0` before `assertNoUnwrittenSizes`; duplication (or a swallowed config `import()` failure) otherwise passes vacuously.
+- S1-02: baseline-vs-Astro dumps differ by the (a) rules above; the baseline env var is `PARITY_OLD_DIR`; ports 8781/8782 are untouched by this suite.
+- S1-07: `glob({ deferRender: true })`; `entry.body` stays raw; mermaid bodies are emitted unescaped, as today. S1-06/S1-07: marked 18 object-argument renderer signatures (fixture `markdown.ts` is typed with `RendererObject`).
+- S1-20 owns external-post redirect stubs; S1-22 verifies the two subsite redirects already present in the root config. Redirect stubs never reach `astro:build:done` `pages[]`.
+- S1-08: `astro check --root` does not scope to a fixture; the root `tsconfig.json` `**/*` include currently type-checks legacy JS with `checkJs` off.
+
+**Accepted risks:** Node 25 instead of 24 (environment; no observed 24-only dependency). `js-yaml@4.3.0` carries GHSA-5p4m-2wfm-xmqj (fixed in 4.3.2, outside the pin; build-time parsing of repo-owned YAML, exposure nil; pin unchanged, pin table flagged). `@types/node` is transitive only; the test file's typings depend on it (adding it is a new install needing approval; S1-08 decides). Eight `npm ls` "extraneous" rows are sharp wasm-fallback optionals plus one stray empty `node_modules/ajv-draft-04 2/` dir, all inside the lockfile or gitignored. Absolute home paths appear in spike-findings.md (username already public). Port allocation is TOCTOU on loopback (visible flake only).
+
+**Environment blocks:** none.

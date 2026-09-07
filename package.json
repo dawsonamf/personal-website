@@ -1,0 +1,30 @@
+{
+  "name": "dawsonamf-website",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "astro build",
+    "test:unit": "node --test tests/unit/*.test.ts",
+    "test:build": "node --test --test-concurrency=1 tests/build/*.test.ts",
+    "test:parity": "playwright test harness/parity.spec.ts",
+    "vendor": "node scripts/vendor.mjs"
+  },
+  "dependencies": {
+    "@astrojs/sitemap": "3.7.4",
+    "@fortawesome/fontawesome-free": "6.5.1",
+    "aos": "2.3.1",
+    "astro": "7.3.1",
+    "gsap": "3.9.1",
+    "highlight.js": "11.9.0",
+    "jquery": "3.6.0",
+    "jquery-ui-dist": "1.12.1",
+    "js-yaml": "4.3.0",
+    "marked": "18.0.5",
+    "vanilla-tilt": "1.7.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.10",
+    "@playwright/test": "1.61.1",
+    "typescript": "5.8.3"
+  }
+}

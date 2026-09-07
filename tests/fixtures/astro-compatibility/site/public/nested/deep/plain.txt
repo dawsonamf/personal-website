@@ -1,0 +1,2 @@
+verbatim fixture asset: no transform, no minify.
+	tab preserved, trailing spaces preserved   
