@@ -1,38 +1,83 @@
 # Refreshes the prebaked chart-data snapshots (NY Fed cohorts, Canaries/ADP,
 # FRED DFII10) used by blog/posts/ai-job-market.md. Weekly because the fastest
 # source publishes monthly; the Indeed postings series fetch live in the browser
-# and don't need this. Pushing the refreshed JSONs redeploys GitHub Pages.
-# Manual run: Actions tab -> "Refresh chart data" -> Run workflow.
+# and don't need this. The JSONs now live under public/blog/posts/assets/ (Astro
+# serves them at the same URLs).
+#
+# Pushing them no longer redeploys by itself: a push made with GITHUB_TOKEN never
+# triggers a `push` workflow, so a real data commit dispatches deploy.yml
+# explicitly (workflow_dispatch always creates a run).
+# Manual run: Actions tab -> "Refresh chart data" -> Run workflow. Ticking
+# "verify_dispatch" runs the token/permission check only: it dispatches deploy.yml
+# with deploy=false and touches no chart data.
 name: Refresh chart data
 
 on:
   schedule:
     - cron: "17 9 * * 1" # Mondays 09:17 UTC (off the hour; :00 crons get delayed)
   workflow_dispatch:
+    inputs:
+      verify_dispatch:
+        description: "Verification only: dispatch deploy.yml with deploy=false; do not regenerate, commit or push chart data"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
+  actions: write # `gh workflow run` = POST .../actions/workflows/{id}/dispatches
 
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
+      # Unconditional: `gh` infers the repository from the checked-out git remote.
       - uses: actions/checkout@v4
 
       # Stdlib-only script (xlsx/zip parsed by hand), so no pip installs.
+      # The `${{ }}` is required: a bare leading `!` is a YAML tag. On schedule
+      # runs `inputs` is empty, so `!null` is true and the normal path runs.
       - name: Rebuild data snapshots
+        if: ${{ !inputs.verify_dispatch }}
         run: python3 docs/prebake-cohort-data.py
 
       - name: Commit and push if changed
+        id: commit
+        if: ${{ !inputs.verify_dispatch }}
         run: |
-          git add blog/posts/assets/cohort-unemployment-data.json \
-                  blog/posts/assets/cohort-swe-age-data.json \
-                  blog/posts/assets/rate-data.json
+          git add public/blog/posts/assets/cohort-unemployment-data.json \
+                  public/blog/posts/assets/cohort-swe-age-data.json \
+                  public/blog/posts/assets/rate-data.json
           if git diff --cached --quiet; then
             echo "No data changes."
+            echo "changed=false" >> "$GITHUB_OUTPUT"
           else
             git -c user.name="github-actions[bot]" \
                 -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
               commit -m "Refresh chart data snapshots"
             git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      # GITHUB_TOKEN pushes never trigger `on: push`; workflow_dispatch always
+      # creates a run. `--ref main` is hardcoded on purpose, so a manual refresh
+      # run started on any other branch can never deploy that branch to
+      # production. `gh workflow run -F` sends a string, exactly like `-f`; what
+      # makes deploy.yml's guard safe is that its input is `type: boolean` and the
+      # `inputs` context preserves booleans as booleans (`github.event.inputs.*`
+      # is the stringy trap). GH_TOKEN being step-level only limits where the env
+      # var is set: the credential persisted by the checkout step
+      # (persist-credentials defaults to true) is unchanged pre-existing
+      # behavior, and is what the push above relies on.
+      - name: Redeploy Pages
+        if: steps.commit.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main -F deploy=true
+
+      # Proves the actions:write + GH_TOKEN path without making a fake data
+      # commit. deploy=false can never run deploy.yml's deploy job.
+      - name: Verify deploy dispatch (deploy=false)
+        if: ${{ inputs.verify_dispatch }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main -F deploy=false

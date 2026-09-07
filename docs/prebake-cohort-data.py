@@ -4,9 +4,9 @@
 Fetches sources that can't be fetched client-side (NY Fed is bot-blocked xlsx;
 Canaries is a zip; FRED has no CORS) and commits them as small static JSONs:
 
-  blog/posts/assets/cohort-unemployment-data.json   (NY Fed, monthly, % rates)
-  blog/posts/assets/cohort-swe-age-data.json        (Canaries/ADP, monthly, index)
-  blog/posts/assets/rate-data.json                  (FRED DFII10, monthly avg, %)
+  public/blog/posts/assets/cohort-unemployment-data.json  (NY Fed, monthly, % rates)
+  public/blog/posts/assets/cohort-swe-age-data.json       (Canaries/ADP, monthly, index)
+  public/blog/posts/assets/rate-data.json                 (FRED DFII10, monthly avg, %)
 
 Stdlib only (xlsx is a zip of XML — parsed by hand; no openpyxl). Rerun any
 time to refresh the snapshots:  python3 docs/prebake-cohort-data.py
@@ -24,7 +24,7 @@ from pathlib import Path
 from xml.etree import ElementTree
 
 REPO = Path(__file__).resolve().parent.parent
-OUT_DIR = REPO / "blog" / "posts" / "assets"
+OUT_DIR = REPO / "public" / "blog" / "posts" / "assets"
 
 UA = ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36")
