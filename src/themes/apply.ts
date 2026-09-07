@@ -1,0 +1,61 @@
+// One projection from theme to HTML (D33, §5.4), pure and DOM-free, with three
+// adapters: Shell.astro spreads `attrs` and writes `style`, ThemeAssets.astro maps
+// `links`, and the 404's bundled script assigns the same value at runtime (D27).
+// Because the 404 bundles it, this module must stay browser-bundleable: its only
+// runtime `src/` dependency is ./ramp.ts: no node:*, no astro, no prose, no
+// content, not even the registry. Page-level extras (`--prose-*` D14,
+// `--ticker-run`/`--ticker-dur` D35) are not theme projection: they arrive through
+// PageContext.styleExtras and are serialised by the same `declarations()` below.
+import { rampDeclarations } from './ramp.ts';
+import type { Colors, Theme, ThemeHtml } from './types.ts';
+
+/**
+ * Serialise `{ '--k': 'v' }` to `--k:v;--k2:v2;` in insertion order, the `<html style>`
+ * format the bootstrap's `style.setProperty` calls produce. Used here for a theme's
+ * tokens; S1-12's Shell reuses it for `PageContext.styleExtras`.
+ *
+ * Values are written verbatim, so the caller guarantees each one is a single complete
+ * CSS value with no bare `;`, no `}` and no unbalanced quote or paren. The registry's
+ * tokens are; S1-12 must guarantee it for `styleExtras` built from prose, `--ticker-run`
+ * above all. ramp.ts carries its own copy of this `prop:value;` format rather than
+ * calling here, because `rampDeclarations` must stay self-contained (D33).
+ */
+export function declarations(map: Readonly<Record<`--${string}`, string>>): string {
+  let out = '';
+  for (const [prop, value] of Object.entries(map)) out += prop + ':' + value + ';';
+  return out;
+}
+
+/**
+ * Project a theme onto `<html>`: `data-*` attributes, the ordered inline declarations
+ * (tokens, then the ramp) and the stylesheet hrefs (fonts, base, skin), mirroring
+ * theme-bootstrap.js:703-721. The default theme applies nothing but the ramp.
+ *
+ * `colors` overrides the theme's palette for the randomiser (the pre-paint path calls
+ * `rampDeclarations` alone with the saved colours).
+ */
+export function themeHtml(theme: Theme, colors: Colors = theme.colors): ThemeHtml {
+  const ramp = rampDeclarations(colors);
+  if (theme.id === 'default') return { attrs: {}, style: ramp, links: [] };
+
+  // Insertion order is the projected attribute order. The three legacy attributes are
+  // emitted only when set (`:704-706`); the two typing carriers (D32) likewise, and
+  // their absence means the legacy defaults 'cursor'/'char', which consumers apply.
+  const attrs: Record<string, string> = { 'data-style': theme.id };
+  if (theme.kind === 'skin') {
+    if (theme.flags?.still) attrs['data-still'] = '';
+    if (theme.flags?.tilt === false) attrs['data-no-tilt'] = '';
+    if (theme.typing) attrs['data-typing'] = theme.typing;
+    if (theme.typingDelete) attrs['data-typing-delete'] = theme.typingDelete;
+  }
+
+  return {
+    attrs,
+    style: declarations(theme.tokens ?? {}) + ramp,
+    links: [
+      ...(theme.fonts ?? []),
+      '/css/themes/theme-base.css',
+      ...(theme.kind === 'skin' && theme.css ? [theme.css] : []),
+    ],
+  };
+}

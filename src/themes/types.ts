@@ -49,3 +49,10 @@ export interface StructuralTheme extends ThemeBase {
 }
 
 export type Theme = SkinTheme | StructuralTheme;
+
+/** What `themeHtml()` in apply.ts projects onto `<html>`: attributes, inline declarations, stylesheet hrefs. */
+export interface ThemeHtml {
+  attrs: Record<string, string>;
+  style: string;
+  links: string[];
+}
