@@ -1,0 +1,5 @@
+{
+  "extends": "../../../tsconfig.json",
+  "include": ["size-map-access.ts", "unknown-path.ts"],
+  "exclude": []
+}
