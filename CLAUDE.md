@@ -64,3 +64,13 @@ docs/                      # AI-managed knowledge base + spikes
 Markdown files in `blog/posts/` with frontmatter (`title`, `date`, optional `scripts`/`styles` arrays).
 Rendered client-side by `blog/blog-post.js`, listed via `BLOG_POSTS` in `js/blog-data.js`.
 Per-post JS/CSS assets go in `blog/posts/assets/`. New posts also need a `sitemap.xml` entry.
+
+## Prose and post approval
+
+Applies to the Astro migration tree (`src/`, `astro.config.mjs`, `npm run build`), which is being built alongside the legacy static site described above; the legacy notes stay true for the deployed site until cutover, when this file is rewritten (Spec 1 §4.3).
+
+- Shared site/theme prose lives in `src/content/prose.yaml`; each post's metadata and body live in its own `src/content/posts/<id>.md`. Neither is mirrored anywhere else.
+- A plain string is approved. A new or rewritten prose field stays `{ draft: "..." }` until the owner approves it; a new or rewritten post stays `publication: draft` until the owner approves publication. Blog bodies are approved as whole documents.
+- Drafts are preview-only (`npm run dev` and `npm run build:preview`, both `PROSE_DRAFTS=allow`). Production (`npm run build`) fails on any draft field in shared prose or in `published`/`external` post metadata, and emits nothing for a whole draft post (no route, listing card, sitemap entry, raw source or body).
+- Text migrated verbatim from the live site is approved as-is and needs no owner review.
+- Grandfathered for migration parity only: the verbatim subsites and the existing per-post scripts/assets. New or changed UI strings anywhere go through the owning source and the draft flow above; the museum aria-label in `underviewed-art.js` gets an approved template the next time its text is touched.

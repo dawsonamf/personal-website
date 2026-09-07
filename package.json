@@ -3,7 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "astro build",
+    "dev": "PROSE_DRAFTS=allow astro dev",
+    "check": "astro check",
+    "prose:check": "node src/prose/check.ts",
+    "build": "npm run prose:check && npm run check && astro build",
+    "build:preview": "PROSE_DRAFTS=allow astro build",
     "test:unit": "node --test tests/unit/*.test.ts",
     "test:build": "node --test --test-concurrency=1 tests/build/*.test.ts",
     "test:parity": "playwright test harness/parity.spec.ts",

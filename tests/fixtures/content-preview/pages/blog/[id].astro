@@ -1,0 +1,36 @@
+---
+// S1-08 fixture post route. Production routes only published ids; whole drafts appear only
+// under PROSE_DRAFTS=allow, and external records never get a route. The title goes through
+// the post-side accessor, which proves post requests reach the same shared accumulators.
+import { publishedPostIds, readPostSources } from '../../build/posts.ts';
+import type { PostSource } from '../../build/posts.ts';
+import { createProseAccess } from '../../prose/index.ts';
+
+export function getStaticPaths() {
+  const sources = readPostSources();
+  const ids = new Set(publishedPostIds(sources));
+  if (process.env.PROSE_DRAFTS === 'allow') {
+    for (const source of sources) if (source.meta.publication === 'draft') ids.add(source.id);
+  }
+  return sources
+    .filter((source) => ids.has(source.id))
+    .map((source) => ({ params: { id: source.id }, props: { source } }));
+}
+
+const { source } = Astro.props as { source: PostSource };
+const draft = source.meta.publication === 'draft';
+// The /* SIZE */ marker is rewritten by case f; see the note in ../index.astro.
+const title = createProseAccess(source.meta, source.source).text('title', 's' /* SIZE */);
+---
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>{title}</title>
+    {draft && <meta name="robots" content="noindex" />}
+  </head>
+  <body>
+    {draft && <p class="post-draft-marker">Draft</p>}
+    <h1>{title}</h1>
+    <article set:html={source.body} />
+  </body>
+</html>

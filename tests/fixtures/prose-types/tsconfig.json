@@ -1,5 +1,10 @@
 {
   "extends": "../../../tsconfig.json",
-  "include": ["size-map-access.ts", "unknown-path.ts"],
+  "include": [
+    "bound-instance.ts",
+    "size-map-access.ts",
+    "unknown-path.ts",
+    "../../../src/prose/js-yaml.d.ts"
+  ],
   "exclude": []
 }

@@ -1,0 +1,56 @@
+---
+// The preview pill (D9): the draft field/post counts, the full source-qualified issue list
+// and the persistent "native prose" toggle. It gates itself on PROSE_DRAFTS=allow, so the
+// Shell cannot leak preview chrome into a production page, and its CSS/JS are is:inline, so
+// even a preview build injects no external asset.
+import type { DraftIssue } from '../../../prose/drafts.ts';
+
+interface Props {
+  issues: DraftIssue[];
+  /** Whole `publication: draft` posts. Their marker and noindex belong to the post page. */
+  draftPosts: number;
+}
+
+const { issues, draftPosts } = Astro.props;
+const preview = process.env.PROSE_DRAFTS === 'allow';
+---
+{preview && (
+  <aside id="prose-pill">
+    <p>{issues.length} draft field(s) · {draftPosts} draft post(s)</p>
+    <details>
+      <summary>Draft fields</summary>
+      <ul>{issues.map((issue) => <li>{issue.source}:{issue.path}</li>)}</ul>
+    </details>
+    <button type="button" id="prose-native" aria-pressed="false">Native prose</button>
+    <style is:inline>
+      #prose-pill { position: fixed; right: 12px; bottom: 12px; z-index: 2147483647; max-width: 22rem;
+        padding: 8px 10px; border: 1px solid #d00; border-radius: 6px; background: #fff; color: #111;
+        font: 12px/1.4 ui-monospace, Menlo, monospace; }
+      #prose-pill p { margin: 0 0 4px; font-weight: 700; }
+      #prose-pill ul { margin: 4px 0 0; padding-left: 1.2em; max-height: 12rem; overflow: auto; }
+      #prose-pill button { margin-top: 6px; font: inherit; }
+      .prose-draft { outline: 2px solid #d00; background: rgba(221,0,0,.12); } /* DRAFT_CLASS */
+      html[data-prose-native] .prose-draft { outline: none; background: none; } /* DRAFT_CLASS */
+    </style>
+    <script is:inline>
+      (function () {
+        // The pill sits at the tail of <body>, so a restored preference applies after first
+        // paint. Acceptable for preview chrome. Storage can throw, so every access is guarded.
+        var root = document.documentElement;
+        try { if (localStorage.getItem('prose.native') === '1') root.dataset.proseNative = ''; } catch (e) {}
+        var button = document.getElementById('prose-native');
+        if (!button) return;
+        var sync = function () {
+          button.setAttribute('aria-pressed', root.hasAttribute('data-prose-native') ? 'true' : 'false');
+        };
+        sync();
+        button.addEventListener('click', function () {
+          var on = !root.hasAttribute('data-prose-native');
+          if (on) root.dataset.proseNative = ''; else root.removeAttribute('data-prose-native');
+          try { localStorage.setItem('prose.native', on ? '1' : '0'); } catch (e) {}
+          sync();
+        });
+      })();
+    </script>
+  </aside>
+)}
