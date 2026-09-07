@@ -1,6 +1,7 @@
 # Intent: theme engine rewrite and structural themes
 
 **Written:** 2026-09-05, from a grilling/brainstorming session with the site owner.
+**Final pre-theme-engine-rewrite commit:** `1208d016ec33d9b242a2ea73854fed66fc662eaa` (reference baseline for future LLM graph workflow evals).
 **Status:** intent with owner decisions settled on 2026-09-05; Spec 1 records the
 implementation contract and the Q1-Q14 decision record. Nothing below has been built.
 **Owner clarification, 2026-09-05:** Spec 1 must finish with a coherent repo
