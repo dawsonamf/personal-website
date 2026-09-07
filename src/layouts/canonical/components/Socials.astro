@@ -1,0 +1,93 @@
+---
+// Canonical social chrome owner. Inputs: Theme and mount. Dependencies: href() and the bound
+// prose accessor. It emits static anchors; nav-behavior.js owns Calendly listeners at runtime.
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+
+interface Props {
+  theme: Theme;
+  mount: 'home' | 'blog' | 'contact';
+}
+
+const { theme, mount } = Astro.props;
+const items = prose.data.socials
+  .map((item, index) => ({
+    ...item,
+    label: prose.text(`socials.${index}.label`, 'xs'),
+    calendly: item.calendly === true,
+  }))
+  .filter((item) => item.label);
+const socialLabel = prose.text('nav.aria.social', 'xs');
+---
+{mount === 'home' && (
+  <div id="socials-list">
+    <span class="socials-menu-spacer"></span><br />
+    {items.map((item) => (
+      <a
+        href={item.calendly ? '#' : href(item.href!, theme.id)}
+        target={item.calendly ? undefined : '_blank'}
+        rel={item.calendly ? undefined : 'noopener noreferrer'}
+        class={`socials-item${item.calendly ? ' calendly-link' : ''}`}
+        aria-label={item.label}
+      ><i class={item.icon} aria-hidden="true"></i></a>
+    ))}
+    <br /><span class="socials-menu-spacer"></span>
+  </div>
+)}
+{mount === 'blog' && (
+  <div id="blog-socials-list">
+    <span class="socials-menu-spacer"></span><br />
+    {items.map((item) => (
+      <a
+        href={item.calendly ? '#' : href(item.href!, theme.id)}
+        target={item.calendly ? undefined : '_blank'}
+        rel={item.calendly ? undefined : 'noopener noreferrer'}
+        class={`socials-item${item.calendly ? ' calendly-link' : ''}`}
+        aria-label={item.label}
+      ><i class={item.icon} aria-hidden="true"></i></a>
+    ))}
+    <br /><span class="socials-menu-spacer"></span>
+  </div>
+)}
+{mount === 'contact' && (
+  <div class="quick-links">
+    <nav class="contact-menu" aria-label={socialLabel}>
+      <ul class="menu-list">
+        {items.map((item, index) => (
+          <>
+            <li>
+              <a
+                href={item.calendly ? '#' : href(item.href!, theme.id)}
+                target={item.calendly ? undefined : '_blank'}
+                rel={item.calendly ? undefined : 'noopener noreferrer'}
+                class={`socials-item${item.calendly ? ' calendly-link' : ''}`}
+                aria-label={item.label}
+              >
+                <i class={item.icon} aria-hidden="true"></i>
+              </a>
+            </li>
+            {index < items.length - 1 && <li><span class="socials-menu-spacer2"></span></li>}
+          </>
+        ))}
+      </ul>
+    </nav>
+    <nav class="contact-menu-mobile" aria-label={socialLabel}>
+      <ul class="menu-list">
+        {items.map((item) => (
+          <li>
+            <a
+              href={item.calendly ? '#' : href(item.href!, theme.id)}
+              target={item.calendly ? undefined : '_blank'}
+              rel={item.calendly ? undefined : 'noopener noreferrer'}
+              class={`socials-item${item.calendly ? ' calendly-link' : ''}`}
+              aria-label={item.label}
+            >
+              <i class={item.icon} aria-hidden="true"></i>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+)}

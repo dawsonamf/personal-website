@@ -1,0 +1,25 @@
+---
+// Canonical footer owner. Input variants are explicit so listing/post/privacy/home callers
+// request only the legacy blocks they contain. Dependency: the bound prose accessor. No runtime.
+import { prose } from '../../../prose/site.ts';
+
+interface Props {
+  variants: Array<'desktop' | 'mobile'>;
+  desktopClass?: 'blog-listing-footer' | 'blog-footer';
+}
+
+const { variants, desktopClass } = Astro.props;
+const credit = prose.text('site.footerCredit', 's');
+---
+{credit && variants.includes('desktop') && (
+  <footer class={`footer-container${desktopClass ? ` ${desktopClass}` : ''}`}>
+    <span class="footer-spacer"></span>
+    <p class="footer-text">{credit}</p>
+    <span class="footer-spacer"></span>
+  </footer>
+)}
+{credit && variants.includes('mobile') && (
+  <div class="footer-container-mobile">
+    <p class="footer-text-mobile">{credit}</p>
+  </div>
+)}
