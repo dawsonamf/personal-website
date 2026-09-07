@@ -1,0 +1,36 @@
+---
+// S1-12 acceptance fixture: a structural theme's OWNED home layout, the minimal authoring
+// example src/themes/README.md points at. It writes its own head, because a structural theme
+// owns it, brings its own stylesheet, and shares only Shell, ThemeAssets and PalettePrepaint.
+// The FAB needs theme-cycler.css and the Font Awesome sheet for its glyph.
+import Shell from '../../layouts/Shell.astro';
+import ThemeAssets from '../../layouts/ThemeAssets.astro';
+import PalettePrepaint from '../../layouts/canonical/components/PalettePrepaint.astro';
+import type { LayoutProps } from '../../layouts/types.ts';
+import { prose } from '../../prose/site.ts';
+import { href } from '../paths.ts';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+const label = prose.text('nav.blog', 'xs');
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{prose.text('meta.home.title', 's')}</title>
+    <link rel="canonical" href={composition.canonical}>
+    {composition.noindex && <meta name="robots" content="noindex">}
+    <link rel="stylesheet" href="/css/stub.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <PalettePrepaint />
+    <ThemeAssets theme={theme} composition={composition} />
+  </Fragment>
+
+  <main data-fixture="stub-home">
+    <h1 class="stub-heading">{label}</h1>
+    <a class="stub-link" href={href('/blog/', theme.id)}>{label}</a>
+  </main>
+</Shell>

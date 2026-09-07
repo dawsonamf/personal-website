@@ -1,0 +1,44 @@
+---
+// The canonical privacy page. S1-12 ships the head and the shell scaffold; S1-21 assembles the
+// body (logo header, content, both footer blocks, §6.3). Head order is privacy/index.html:4-18
+// (§6.2): no AOS, no Calendly, no OG, no canonical on the default page. The picker arrives as
+// a FAB, because this page has no nav (D12).
+import { prose } from '../../prose/site.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={prose.text('meta.privacy.title', 's')} suffix>
+      <meta name="description" content={prose.text('meta.privacy.description', 'm')}>
+      {composition.noindex && (
+        <Fragment>
+          <link rel="canonical" href={composition.canonical}>
+          <meta name="robots" content="noindex">
+        </Fragment>
+      )}
+    </Meta>
+
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/privacy/privacy-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+  </Fragment>
+
+  <div id="main-body">
+    {/* S1-21 fills the privacy body: logo header, policy content, both footer blocks. */}
+  </div>
+</Shell>

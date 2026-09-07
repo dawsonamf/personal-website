@@ -1,0 +1,162 @@
+---
+// The 404 (D27, §6.3). GitHub Pages serves this one file for every missing URL, so it is built
+// in the default theme with absolute paths throughout and applies a theme after parse from the
+// path segment or `?style=`. It carries no StyleQueryShim: its own script handles both.
+//
+// Head order is 404.html:4-40 (§6.2) plus the Font Awesome sheet the FAB's glyph needs (§15.3).
+// S1-21 finishes and validates the body.
+import { prose } from '../../prose/site.ts';
+import { declarations } from '../../themes/apply.ts';
+import { href } from '../../themes/paths.ts';
+import { THEMES } from '../../themes/registry.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+const home = href('/', theme.id);
+const credit = prose.text('site.footerCredit', 's');
+
+// The registry's appearance data, serialized at build (the ticket: no lazy layout functions in
+// the client graph). JSON.stringify drops a structural theme's function-valued `layouts`, which
+// is the point: nothing here can pull an .astro layout into the 404's bundle. The `<` escape is
+// a valid JSON escape and makes the island `</script`-safe.
+// S1-21 replaces declarations({}) with declarations(canonicalStyleExtras(t.id, { carousel: false })),
+// so the extras are validated at build and the runtime does no declaration work.
+const themes = JSON.stringify(
+  Object.fromEntries(THEMES.map((t) => [t.id, { theme: t, extras: declarations({}) }])),
+).replace(/</g, '\\u003c');
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={prose.text('meta.notFound.title', 's')} suffix>
+      <meta name="robots" content="noindex">
+    </Meta>
+
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <ThemeAssets theme={theme} composition={composition} />
+    <style is:inline>
+    .nf-container {
+      min-height: 65vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .nf-code {
+      color: var(--accent);
+      font-family: 'SF Mono', monospace;
+      font-size: 96px;
+      margin: 0;
+    }
+
+    .nf-text {
+      color: var(--text);
+      line-height: 1.5;
+      margin: 14px 0 28px;
+    }
+    </style>
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <script type="application/json" id="nf-themes" is:inline set:html={themes}></script>
+    <script>
+      // The runtime half of D27, and the only bundled script in the canonical family. It must
+      // run BEFORE /js/theme-cycler.js and do its work synchronously at its own execution, not
+      // from a DOMContentLoaded callback, which fires after every deferred script has run.
+      // Nothing here may reach a layout, a node: builtin, prose or the post sources.
+      import { themeHtml } from '../../themes/apply.ts';
+      import { resolveNotFoundTheme } from '../../themes/not-found.ts';
+      import type { Colors, Theme } from '../../themes/types.ts';
+
+      // The island, not the registry: importing registry.ts would pull assertRegistry and every
+      // structural theme's `layouts: { home: () => import('./x.astro') }` into this bundle.
+      const data: Record<string, { theme: Theme; extras: string }> = JSON.parse(
+        document.getElementById('nf-themes')!.textContent!,
+      );
+      const id = resolveNotFoundTheme(location.pathname, location.search, Object.keys(data));
+      const entry = id && id !== 'default' ? data[id] : undefined;
+
+      if (entry) {
+        // The saved palette, under the same rule as the pre-paint script and the picker: a
+        // record only applies to the theme it was drawn under.
+        let colors: Colors | undefined;
+        try {
+          const saved = JSON.parse(sessionStorage.getItem('dawson-theme-cycler') || 'null');
+          const values = saved && saved.style === entry.theme.id ? saved.colors : null;
+          if (
+            Array.isArray(values) && values.length === 5
+            && values.every((value) => typeof value === 'string' && /^#[0-9a-f]{6}$/i.test(value))
+          ) {
+            colors = { text: values[0], bg: values[1], primary: values[2], secondary: values[3], accent: values[4] };
+          }
+        } catch {}
+
+        const html = themeHtml(entry.theme, colors);
+        const root = document.documentElement;
+        for (const [name, value] of Object.entries(html.attrs)) root.setAttribute(name, value);
+        root.style.cssText = html.style + entry.extras;
+
+        for (const link of html.links) {
+          const sheet = document.createElement('link');
+          sheet.rel = 'stylesheet';
+          sheet.href = link;
+          sheet.setAttribute('data-style-asset', '1');
+          document.head.appendChild(sheet);
+        }
+
+        // Move the dock's current-row marker. Presentation only: the picker runtime locates
+        // rows by data-id and every row already carries its own data-profile.
+        const row = document.querySelector(`#tc-presets a[data-id="${entry.theme.id}"]`)?.closest('li');
+        if (row) {
+          const previous = document.querySelector('#tc-presets li.tc-row-sel');
+          if (previous) {
+            previous.classList.remove('tc-row-sel');
+            previous.querySelector('a[data-id]')?.classList.remove('tc-sel');
+            previous.querySelector('a[data-id]')?.removeAttribute('aria-current');
+            previous.querySelector('button[data-id]')?.classList.remove('tc-sel');
+            previous.querySelector('button[data-id]')?.setAttribute('aria-pressed', 'false');
+          }
+          row.classList.add('tc-row-sel');
+          row.querySelector('a[data-id]')?.classList.add('tc-sel');
+          row.querySelector('a[data-id]')?.setAttribute('aria-current', 'true');
+          row.querySelector('button[data-id]')?.classList.add('tc-sel');
+          row.querySelector('button[data-id]')?.setAttribute('aria-pressed', 'true');
+        }
+      }
+    </script>
+  </Fragment>
+
+  <div id="main-body">
+    <div class="header-menu-container">
+      <a class="name-logo name-logo-visible" href={home}>{prose.text('site.logo', 'xs')}</a>
+    </div>
+
+    <div class="nf-container">
+      <h1 class="nf-code">{prose.text('notFound.code', 'xs')}</h1>
+      <p class="nf-text">{prose.text('notFound.message', 's')}</p>
+      <a class="text-link" href={home}>{prose.text('notFound.back', 'xs')}</a>
+    </div>
+
+    <footer class="footer-container">
+      <span class="footer-spacer"></span>
+      <p class="footer-text">
+        {credit}
+      </p>
+      <span class="footer-spacer"></span>
+    </footer>
+
+    <div class="footer-container-mobile">
+      <p class="footer-text-mobile">
+        {credit}
+      </p>
+    </div>
+  </div>
+</Shell>

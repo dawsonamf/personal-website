@@ -1,0 +1,39 @@
+---
+// LexChat: the full-viewport iframe and nothing else, as lexchat/index.html (§6.3). Its
+// composition is the picker-free one (Q4), so the Shell emits no dock, scrim, trigger, FAB or
+// cycler script here. Head order is lexchat/index.html:4-11 (§6.2): no icon font, no OG, no
+// canonical on the default page.
+import { prose } from '../../prose/site.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={prose.text('meta.lexchat.title', 's')}>
+      {composition.noindex && (
+        <Fragment>
+          <link rel="canonical" href={composition.canonical}>
+          <meta name="robots" content="noindex">
+        </Fragment>
+      )}
+    </Meta>
+
+    <link rel="stylesheet" href="/lexchat/lexchat-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+  </Fragment>
+
+  <iframe
+    class="lexchat-iframe"
+    src="https://dawsonamf-lexchat.hf.space"></iframe>
+</Shell>

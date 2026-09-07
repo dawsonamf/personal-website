@@ -9,20 +9,28 @@
 import { rampDeclarations } from './ramp.ts';
 import type { Colors, Theme, ThemeHtml } from './types.ts';
 
+/** The shared skin rules every non-default theme loads, and the link ThemeAssets classifies as `base`. */
+export const THEME_BASE_CSS = '/css/themes/theme-base.css';
+
 /**
  * Serialise `{ '--k': 'v' }` to `--k:v;--k2:v2;` in insertion order, the `<html style>`
  * format the bootstrap's `style.setProperty` calls produce. Used here for a theme's
  * tokens; S1-12's Shell reuses it for `PageContext.styleExtras`.
  *
- * Values are written verbatim, so the caller guarantees each one is a single complete
- * CSS value with no bare `;`, no `}` and no unbalanced quote or paren. The registry's
- * tokens are; S1-12 must guarantee it for `styleExtras` built from prose, `--ticker-run`
- * above all. ramp.ts carries its own copy of this `prop:value;` format rather than
- * calling here, because `rampDeclarations` must stay self-contained (D33).
+ * Values are still written verbatim, so quoting and escaping a prose string into one
+ * complete CSS value (balanced quotes and parens, `--ticker-run` above all) remains the
+ * producer's job: S1-16's `canonicalStyleExtras`. The guard below only makes a break-out
+ * impossible, by rejecting the two characters that would end the declaration or the rule.
+ * ramp.ts carries its own copy of this `prop:value;` format rather than calling here,
+ * because `rampDeclarations` must stay self-contained (D33).
  */
 export function declarations(map: Readonly<Record<`--${string}`, string>>): string {
   let out = '';
-  for (const [prop, value] of Object.entries(map)) out += prop + ':' + value + ';';
+  for (const [prop, value] of Object.entries(map)) {
+    // A bare `;` appends arbitrary declarations; braces never belong in a declaration value.
+    if (/[;{}]/.test(value)) throw new Error(`declarations: ${prop} value contains ";", "{" or "}"`);
+    out += prop + ':' + value + ';';
+  }
   return out;
 }
 
@@ -54,7 +62,7 @@ export function themeHtml(theme: Theme, colors: Colors = theme.colors): ThemeHtm
     style: declarations(theme.tokens ?? {}) + ramp,
     links: [
       ...(theme.fonts ?? []),
-      '/css/themes/theme-base.css',
+      THEME_BASE_CSS,
       ...(theme.kind === 'skin' && theme.css ? [theme.css] : []),
     ],
   };

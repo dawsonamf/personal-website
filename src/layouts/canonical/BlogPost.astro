@@ -1,0 +1,50 @@
+---
+// The canonical blog post. S1-12 ships the head and the shell scaffold; S1-19 owns the route
+// (`[...theme]/blog/[id].astro`), the post title, the gained canonical/OG tags (§15.4) and the
+// body. Head order is blog/post.html:4-19 (§6.2): no AOS, no Calendly, and the skin sheet
+// precedes github-dark.min.css because the bootstrap appended it there.
+import { prose } from '../../prose/site.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import ThemePicker from './components/ThemePicker.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+// S1-19 supplies the post title, description and OG tags from the post's own metadata; this
+// placeholder keeps the spine renderable until that route exists. It takes no suffix: the
+// placeholder is already the site name, and `<Meta suffix>` would print it twice.
+const title = prose.text('site.name', 'xs');
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={title}>
+      <meta name="description" content={prose.text('meta.post.description', 'm')}>
+      <link rel="canonical" href={composition.canonical}>
+      {composition.noindex && <meta name="robots" content="noindex">}
+    </Meta>
+
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/blog/blog-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+    <link rel="stylesheet" href="/vendor/highlight.js/github-dark.min.css">
+    {/* S1-19 adds the post OG tags and, on a post with a diagram, the mermaid script + initialize block (D35). */}
+  </Fragment>
+
+  <div id="main-body" class="blog-post-page">
+    {/* Placeholder trigger mount (D30) until S1-14's Nav replaces this element. */}
+    <nav><ul><ThemePicker /></ul></nav>
+    {/* S1-19 fills the post body around this slot. */}
+    <slot />
+  </div>
+</Shell>

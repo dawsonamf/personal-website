@@ -1,0 +1,54 @@
+---
+// The canonical blog listing. S1-12 ships the head and the shell scaffold; S1-18 assembles the
+// body. Head order is blog/index.html:4-37 (§6.2): the home head plus blog-listing-styles.css
+// before theme-cycler.css.
+import { prose } from '../../prose/site.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import ThemePicker from './components/ThemePicker.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+const title = prose.text('meta.blog.title', 's');
+const suffixed = `${title} | ${prose.text('site.titleSuffix', 'xs')}`; // og:title carries the full title
+const ogImage = new URL('/resources/og-avatar.jpg', import.meta.env.SITE).href;
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={title} suffix>
+      <meta name="description" content={prose.text('meta.blog.description', 'm')}>
+      <link rel="canonical" href={composition.canonical}>
+      {composition.noindex && <meta name="robots" content="noindex">}
+    </Meta>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content={suffixed}>
+    <meta property="og:description" content={prose.text('meta.blog.ogDescription', 's')}>
+    <meta property="og:url" content={composition.canonical}>
+    <meta property="og:image" content={ogImage}>
+    <meta name="twitter:card" content="summary">
+
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/vendor/aos/aos.css">
+    <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/css/featured-carousel.css">
+    <link rel="stylesheet" href="/blog/blog-listing-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+  </Fragment>
+
+  <div id="main-body">
+    {/* Placeholder trigger mount (D30) until S1-14's Nav replaces this element. */}
+    <nav><ul><ThemePicker /></ul></nav>
+    {/* S1-18 fills the listing body: masthead, intro, selected works, post cards, footer. */}
+  </div>
+</Shell>

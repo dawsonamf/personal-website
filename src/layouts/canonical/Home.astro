@@ -1,0 +1,53 @@
+---
+// The canonical home page. S1-12 ships the head and the shell scaffold; S1-17 assembles the
+// body from S1-14 to S1-16's components. Head order is index.html:4-42 (§6.2), with the CDN
+// stylesheets served from /vendor/ (D5) and the §8 behavior scripts left to S1-14+.
+import { prose } from '../../prose/site.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import ThemePicker from './components/ThemePicker.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+const title = prose.text('meta.home.title', 's');
+// The absolute og:image URL, built from `site` in astro.config.mjs (D39 bans the literal domain).
+const ogImage = new URL('/resources/og-avatar.jpg', import.meta.env.SITE).href;
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={title}>
+      <meta name="description" content={prose.text('meta.home.description', 'm')}>
+      <link rel="canonical" href={composition.canonical}>
+      {composition.noindex && <meta name="robots" content="noindex">}
+    </Meta>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={prose.text('meta.home.ogDescription', 's')}>
+    <meta property="og:url" content={composition.canonical}>
+    <meta property="og:image" content={ogImage}>
+    <meta name="twitter:card" content="summary">
+
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/vendor/aos/aos.css">
+    <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/css/featured-carousel.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+  </Fragment>
+
+  <div id="main-body">
+    {/* Placeholder trigger mount (D30) until S1-14's Nav replaces this element. */}
+    <nav><ul><ThemePicker /></ul></nav>
+    {/* S1-17 fills the home body: hero, about, skills, jobs, carousel, blog rail, contact, footer. */}
+  </div>
+</Shell>
