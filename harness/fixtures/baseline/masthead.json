@@ -1,0 +1,474 @@
+{
+  "baselineSha": "0f196d094ad64383ec58df5472fc12d403f846b3",
+  "source": {
+    "home": "js/script.js",
+    "blog": "blog/blog-listing.js"
+  },
+  "method": "The startTypingSequence({...}) argument is sliced out of the frozen baseline source between its literal markers and evaluated in node:vm; each missing identifier is resolved on ReferenceError to its `const <name> = <number>` value in the same file, or to a marker naming the callback. Terminals are simulated in Node: type appends, delete drops trailing characters, other steps no-op.",
+  "home": {
+    "elementId": "typing-text",
+    "typingDelay": 75,
+    "deleteDelay": 40,
+    "sequences": [
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hi,\nI'm Dawson,\nweb developer."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 14
+          },
+          {
+            "action": "type",
+            "text": "iOS developer."
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 14
+          },
+          {
+            "action": "type",
+            "text": "ML engineer."
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 12
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hi,\nI'm Dawson,\nweb developer.",
+          "Hi,\nI'm Dawson,\niOS developer.",
+          "Hi,\nI'm Dawson,\nML engineer.",
+          "Hi,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hi,\nI'm Dawson,\nfull stack engineer."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1000
+          },
+          {
+            "action": "delete",
+            "count": 20
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hi,\nI'm Dawson,\nfull stack engineer.",
+          "Hi,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hey,\nI'm Dawson,\nsoftware engineer."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          }
+        ],
+        "terminals": [
+          "Hey,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hi,\nI'm Dawson,\nsoftware engineer."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          }
+        ],
+        "terminals": [
+          "Hi,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hey,\nI'm Dawson,\nbuilder."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 8
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hey,\nI'm Dawson,\nbuilder.",
+          "Hey,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hi,\nI'm Dawson,\nbuilder."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 8
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hi,\nI'm Dawson,\nbuilder.",
+          "Hi,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hey,\nI'm Dawson,\nbuilder."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 8
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hey,\nI'm Dawson,\nbuilder.",
+          "Hey,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hi,\nI'm Dawson,\nbuilder."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 8
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hi,\nI'm Dawson,\nbuilder.",
+          "Hi,\nI'm Dawson,\nsoftware engineer."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Hey,\nI'm Dawson,\nagentic engineer."
+          },
+          {
+            "action": "callback",
+            "fn": "startAnimations"
+          },
+          {
+            "action": "pause",
+            "duration": 1500
+          },
+          {
+            "action": "delete",
+            "count": 17
+          },
+          {
+            "action": "type",
+            "text": "software engineer."
+          }
+        ],
+        "terminals": [
+          "Hey,\nI'm Dawson,\nagentic engineer.",
+          "Hey,\nI'm Dawson,\nsoftware engineer."
+        ]
+      }
+    ],
+    "onNewlineCount": {
+      "count": 2,
+      "callback": "fadeInSubText"
+    }
+  },
+  "blog": {
+    "elementId": "blog-typing-text",
+    "typingDelay": 75,
+    "deleteDelay": 40,
+    "sequences": [
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Cool things I've built."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 23
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Cool things I've built.",
+          "Blog."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Things I find interesting."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 26
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Things I find interesting.",
+          "Blog."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Late night rabbit holes."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 24
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Late night rabbit holes.",
+          "Blog."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Rabbit holes."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 13
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Rabbit holes.",
+          "Blog."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Things I've built."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 18
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Things I've built.",
+          "Blog."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Random projects."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 16
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Random projects.",
+          "Blog."
+        ]
+      },
+      {
+        "steps": [
+          {
+            "action": "type",
+            "text": "Side quests."
+          },
+          {
+            "action": "callback",
+            "fn": "onBlogTypingComplete"
+          },
+          {
+            "action": "pause",
+            "duration": 800
+          },
+          {
+            "action": "delete",
+            "count": 12
+          },
+          {
+            "action": "type",
+            "text": "Blog."
+          }
+        ],
+        "terminals": [
+          "Side quests.",
+          "Blog."
+        ]
+      }
+    ]
+  }
+}

@@ -23,6 +23,7 @@ node_modules/
 # Test output
 test-results/
 playwright-report/
+harness/__parity__/
 tests/fixtures/**/.tmp/
 tests/fixtures/**/dist/
 tests/fixtures/**/.astro/
