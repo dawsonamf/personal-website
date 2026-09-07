@@ -1,0 +1,887 @@
+.tc-hidden { display: none !important; }
+
+/* Nav dropdown mode. js/nav-config.js renders a Theme trigger into each nav
+   menu (text + caret on desktop, palette icon in the mobile quick-links row)
+   and js/theme-cycler.js parks the dock under whichever trigger opened it.
+   The triggers also carry .menu-item / .socials-item, so the per-style menu
+   skins restyle them with no extra rules. */
+
+.tc-nav-item {
+  position: relative;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.tc-nav-trigger {
+  background: none;
+  border: none;
+  margin: 0;
+  padding: 0;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tc-nav-caret {
+  font-size: 9px;
+  opacity: 0.8;
+  transition: transform 0.25s ease-in-out;
+}
+
+/* Skins that underline menu items on hover (gallery) set text-decoration on
+   the trigger button; it propagates through the inline-flex box into the
+   caret's glyph and paints in the caret's local frame — so the open-state
+   rotate(180deg) below flips that line segment on top of the chevron.
+   Decoration propagation skips atomic inline-level boxes, so blockifying
+   the glyph pseudo stops the line at the label text. Same font, same
+   baseline alignment: the glyph itself doesn't move in any skin. */
+.tc-nav-caret::before {
+  display: inline-block;
+}
+
+.tc-nav-item.tc-open .tc-nav-caret {
+  transform: rotate(180deg);
+}
+
+.tc-dock.tc-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  bottom: auto;
+  left: auto;
+  /* Hangs below the nav, so it gets less room than the bottom-anchored FAB
+     dock before the styles list has to scroll. */
+  max-height: calc(100vh - 160px);
+}
+
+/* Re-runs on every open (display: none -> block restarts it). Still skins
+   switch it off in themes/theme-base.css. */
+@media (prefers-reduced-motion: no-preference) {
+  .tc-dock.tc-dropdown {
+    animation: tc-drop 0.18s ease-out;
+  }
+}
+
+@keyframes tc-drop {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.tc-dock {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 9999;
+  width: 268px;
+  max-width: calc(100vw - 40px);
+  padding: 14px;
+  background: var(--text10);
+  color: var(--text);
+  border-radius: var(--border-radius);
+  /* Defaults to sans-serif (the --font-body default); skins' body type
+     carries into the panel so it reads native to each style. */
+  font-family: var(--font-body, sans-serif);
+  font-size: 13px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 14px 40px rgba(0,0,0,0.3);
+  /* Column layout so the styles list can scroll on short viewports while
+     the header and action rows stay put. */
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 40px);
+}
+
+/* Floating mode: the dock detaches to document.body when opened from the
+   moving menu so its own backdrop-filter actually works (the moving menu
+   has backdrop-filter: blur(20px), and nested backdrop filters don't
+   compose). JS sets top/right inline from the trigger's rect; we just need
+   position: fixed and to clear the .tc-dropdown defaults. */
+.tc-dock.tc-dropdown.tc-floating {
+  position: fixed;
+  top: auto;
+  right: auto;
+}
+
+.tc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  flex-shrink: 0;
+}
+
+.tc-title {
+  font-size: 11px;
+  color: var(--text50);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.tc-close {
+  background: none;
+  border: none;
+  color: var(--text50);
+  cursor: pointer;
+  font-size: 15px;
+  padding: 2px 4px;
+  margin: -2px -4px -2px 0;
+  line-height: 1;
+  transition: color 0.25s ease-in-out;
+}
+.tc-close:hover { color: var(--text); }
+
+/* Action rows: one card-styled button per line (Shuffle, Reset, and the
+   Advanced reveal). They wear the active theme's heading face + primary
+   color on the theme bg, so they read as command cards that pair visually
+   with the preset wordmark cards below. */
+.tc-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+.tc-action {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--bg);
+  color: var(--primary);
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  cursor: pointer;
+  font-family: var(--font-heading, inherit);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  text-align: left;
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.tc-action i {
+  font-size: 12px;
+  width: 14px;
+  text-align: center;
+  color: var(--accent);
+}
+.tc-action:hover {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+
+.tc-action .tc-action-caret {
+  margin-left: auto;
+  width: auto;
+  font-size: 10px;
+  color: var(--text50);
+  transition: transform 0.25s ease-in-out;
+}
+.tc-action.tc-open .tc-action-caret { transform: rotate(180deg); }
+
+/* Styles list: 2-col grid of wordmark cards. Each card wears its theme's
+   palette as CSS vars (--tc-row-*), so randomized palettes don't repaint
+   them. Scrolls when the viewport runs short. */
+.tc-presets {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--text20);
+  overflow-y: auto;
+  min-height: 110px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text25) transparent;
+}
+.tc-presets button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  min-height: 78px;
+  padding: 14px 10px;
+  background: var(--tc-row-bg);
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--tc-row-text) 14%, transparent);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.tc-presets button:hover {
+  transform: translateY(-1px);
+  border-color: var(--tc-row-accent);
+}
+.tc-presets button.tc-sel {
+  border-color: var(--tc-row-accent);
+  box-shadow: 0 0 0 1px var(--tc-row-accent);
+}
+.tc-wm-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--tc-row-heading, inherit);
+  color: var(--tc-row-primary);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+.tc-wm-rule {
+  width: 20px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--tc-row-accent);
+}
+
+.tc-advanced {
+  border-top: 1px solid var(--text20);
+  padding-top: 12px;
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+
+.tc-group { margin-bottom: 12px; }
+.tc-group:last-child { margin-bottom: 0; }
+
+.tc-group-label {
+  display: block;
+  font-family: var(--font-heading, inherit);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.tc-schemes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.tc-schemes button {
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--text) 14%, transparent);
+  background: var(--bg);
+  color: var(--primary);
+  cursor: pointer;
+  font-family: var(--font-heading, inherit);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+  transition: 0.2s ease-in-out;
+}
+.tc-schemes button:hover { border-color: var(--accent); }
+.tc-schemes button.tc-sel {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.tc-roles {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 5px;
+}
+
+.tc-role {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--text5);
+  min-width: 0;
+}
+
+/* The swatch is the <label> that wraps the colour input (renderRoles), so it
+   is both the painted colour and the picker's hit target. position: relative
+   is what the input positions against — the row deliberately is NOT the
+   containing block any more, so the input can never reach under the lock. */
+.tc-sw {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  border: 1px solid var(--text20);
+  cursor: pointer;
+}
+
+/* A <label for> pointing at the same input: clicking the caption still opens
+   the picker, and it supplies the input's accessible name. */
+.tc-role-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.tc-lk {
+  background: none;
+  border: none;
+  color: var(--text50);
+  cursor: pointer;
+  padding: 4px;
+  margin: -4px;
+  font-size: 11px;
+  line-height: 1;
+  transition: color 0.25s ease-in-out;
+  flex-shrink: 0;
+}
+.tc-lk:hover { color: var(--text); }
+.tc-lk.tc-on { color: var(--accent); }
+
+/* Fills its swatch label exactly, in every layout, with no magic numbers.
+   width/height are load-bearing: an <input type="color"> is a replaced
+   element, so `inset: 0` alone could never stretch it — with width: auto it
+   rendered at its intrinsic ~50x27 and only top/left applied, which left an
+   invisible picker target hanging out of the corner of every role while the
+   rest of the row only worked because the row itself was the label. */
+.tc-sw input[type="color"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  /* Invisible but still focusable, and still the element that opens the
+     native picker; the swatch label paints the colour behind it. */
+  opacity: 0;
+  cursor: pointer;
+}
+
+
+/* ============================================================================
+   MEGA PANEL
+   The Theme menu opens as a wide panel that grows out of the nav pill: the
+   box starts at the pill's own width and animates out to its full measure
+   while its height opens from 0. Layout is a flat list of styles, a palette
+   column, and a preview card that follows whatever style you point at.
+
+   WHY THE PANEL LIVES ON <body>, ALWAYS:
+   an element with backdrop-filter becomes the containing block for its
+   fixed/absolutely positioned descendants. .moving-menu carries
+   backdrop-filter: blur(20px) (css/styles.css) and marquee's plate did too,
+   so a panel rendered inside the pill collapses to the pill's ~500px no
+   matter what width is set on it — the width simply resolves against the
+   wrong box. Parenting to <body> sidesteps that, and also escapes
+   #main-body's overflow: hidden. js/theme-cycler.js positions it from the
+   pill's own rect, so it still reads as hanging off the menu.
+
+   Skins keep styling .tc-dock (background/border/shadow) as before; only the
+   geometry is overridden here, so all 20 skins theme this panel unchanged.
+   ============================================================================ */
+
+.tc-dock.tc-mega {
+  position: fixed;
+  right: auto;
+  bottom: auto;
+  z-index: 9999;
+  padding: 0;
+  /* Opaque, always. .tc-scrim already blurs and dims the page behind, so a
+     translucent panel would read as a veil over a veil, and the base
+     .tc-dock's var(--text10) + blur(12px) is a floating-FAB treatment, not a
+     menu one. Written at (0,2,0) so a skin's [data-style="x"] .tc-dock (same
+     weight, loaded later) still wins if a style genuinely wants otherwise. */
+  background: var(--bg);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  /* Height reveal: the panel grows rather than pops. */
+  display: grid;
+  grid-template-rows: 0fr;
+  overflow: hidden;
+  max-height: none;
+  /* Seeded by JS from the pill's rect, so the box starts exactly as wide as
+     the menu it came from and widens to its measure. */
+  width: var(--tc-mega-w, 520px);
+  max-width: calc(100vw - 20px);
+  opacity: 0;
+  transition: grid-template-rows 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+              width 0.42s cubic-bezier(0.22, 0.61, 0.36, 1),
+              opacity 0.2s ease;
+}
+
+.tc-dock.tc-mega.tc-mega-open {
+  grid-template-rows: 1fr;
+  width: var(--tc-mega-target, 940px);
+  opacity: 1;
+}
+
+.tc-mega-clip { overflow: hidden; min-height: 0; }
+
+.tc-mega-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 26px;
+  padding: 22px 24px 26px;
+}
+
+.tc-mega-head {
+  margin: 0 0 11px;
+  font-family: var(--font-body, sans-serif);
+  font-size: 10.5px;
+  font-weight: 650;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text50);
+}
+
+.tc-mega-styles {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The styles list and the advanced editor are stacked in the same box, both
+   absolutely positioned so NEITHER contributes height. Without this the
+   column sizes to whichever is showing, and since the editor's height moves
+   with each skin's type, toggling Advanced grew the panel by up to 33px in
+   some skins — the downward expansion this layout exists to avoid. The box
+   itself is sized by the flex row (the preview card is the tallest item), so
+   the panel is one height in both states, in every skin. If a skin's type
+   does run the editor past the bottom, the box scrolls; the panel doesn't. */
+.tc-mega-swap {
+  position: relative;
+  flex: 1 1 auto;
+  /* A floor, not the measure: the flex row is sized by the preview card
+     (~212px), and both faces of this box come in under it — the styles list
+     at six rows, the editor at a scheme band over one row of colour chips.
+     Whichever is showing simply sits in the top of the box and the slack
+     reads as air, so no skin ever puts a scrollbar inside a menu. */
+  min-height: 210px;
+}
+.tc-mega-swap > * {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text25) transparent;
+}
+
+/* Flat list, registry order, flowing DOWN each column. Overrides the 2-up
+   card grid the compact dock uses. */
+/* Three columns, not four: the styles column measures 439px, and at four
+   columns "Street Poster" (129px in marquee's uppercase menu face) ellipsed.
+   Three gives 137px a column, which clears the longest label in every skin,
+   and 6 rows uses the height the preview card sets anyway. */
+.tc-mega #tc-presets {
+  display: block;
+  columns: 3;
+  column-gap: 14px;
+  margin: 0;
+  padding: 0;
+  border-top: 0;
+  list-style: none;
+  overflow: visible;
+  min-height: 0;
+}
+
+/* The current-style dot hangs in a fixed 13px gutter on the ROW, not on the
+   link. Skins set their own padding on .menu-item at (0,2,0) — brutalist's
+   4px 6px, for one — which would eat an indent declared on the link and
+   leave the dot sitting on top of the label. The row is untouched by skins,
+   so the gutter is the same width in all of them. */
+.tc-mega #tc-presets li {
+  break-inside: avoid;
+  position: relative;
+  padding-left: 13px;
+}
+.tc-mega #tc-presets li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 5px;
+  height: 5px;
+  margin-top: -2.5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+.tc-mega #tc-presets li.tc-row-sel::before { opacity: 1; }
+
+/* Each row is an <a>, not a <button>, on purpose: .tc-presets button (and
+   twelve skins' [data-style="x"] .tc-presets button) style every button in
+   this <ul> as a wordmark card, so a button here would have to fight that
+   cascade at (0,3,0) and would end up outranking the skins' own type rules
+   too. An anchor simply never matches those selectors. It also gives the row
+   a real href, so middle-click and "open in new tab" work.
+
+   The rows carry .menu-item as well, which is how the nav triggers already
+   pick up per-style treatment (see the note at the top of this file): each
+   skin's .menu-item / .menu-item:hover rules land on them at (0,2,0) and
+   supply the theme's own type and hover language. Nothing here declares
+   color, background or font, so those skin rules are never blocked. */
+.tc-row-link {
+  display: block;
+  position: relative;
+  /* Hugs its label so a skin's hover treatment (brutalist's inverted block,
+     marquee's growing underline) sizes to the text rather than to the whole
+     column; capped so a long name still ellipses instead of spilling. */
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 0;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+
+/* (0,3,0): skins set .menu-item font-weight at (0,2,0) and load later. */
+.tc-dock.tc-mega .tc-row-link.tc-sel { font-weight: 700; }
+
+/* The wordmark card is the narrow-screen half of each row; it keeps the base
+   .tc-presets button styling (and each skin's) untouched, so it only needs
+   hiding while the panel is wide. */
+.tc-dock.tc-mega .tc-row-card { display: none; }
+
+/* Palette column */
+.tc-mega-side {
+  flex: 0 0 152px;
+  border-left: 1px solid var(--text20);
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+}
+.tc-mega-side .tc-actions { gap: 0; }
+
+/* Palette actions read as the same kind of thing as the style rows: plain
+   text links in the theme's own menu voice, no icon, no card. Only layout
+   and the card reset are declared, so each skin's .menu-item rules (0,2,0,
+   loaded after this file) own type, color and hover exactly as they do for
+   the rows above. In particular there is no background-COLOR left behind for
+   marquee's background-image underline to sit on. */
+.tc-mega-side .tc-action {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  gap: 0;
+  padding: 5px 0;
+  background: none;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  text-align: left;
+  cursor: pointer;
+  /* Mirrors the base .menu-item colour. Without it the unskinned default
+     theme shows these in --primary — .tc-action sets that at (0,1,0), which
+     ties .menu-item and wins on order — while the style rows beside them
+     stay --text50. Skinned themes never saw it, because their
+     [data-style="x"] .menu-item lands at (0,2,0) and loads later; this rule
+     is (0,2,0) too, so they still win and still own the colour. */
+  color: var(--text50);
+}
+.tc-mega-side .tc-action:hover {
+  transform: none;
+  border-color: transparent;
+}
+
+/* Second line under an action. currentColor so it tracks whatever the skin's
+   hover does to the label, and the type properties are declared rather than
+   inherited so uppercase/tracking skins don't shout it. */
+.tc-action-sub {
+  display: block;
+  margin-top: 1px;
+  font-family: var(--font-body, sans-serif);
+  font-size: 10.5px;
+  font-weight: 400;
+  font-style: normal;
+  line-height: 1.3;
+  letter-spacing: 0;
+  text-transform: none;
+  color: color-mix(in srgb, currentColor 55%, transparent);
+}
+
+/* Buttons need their UA font killed, but at a weight the skins outrank:
+   (0,1,1) here loses to every [data-style="x"] .menu-item at (0,2,0). */
+.tc-mega button { font: inherit; }
+
+/* Advanced replaces the styles list in the left column rather than growing
+   the panel downward, so it sits flush where the list was.
+
+   The two groups sit side by side, not stacked: the column is ~490px wide,
+   and stacking them made the editor taller than the style list, which put
+   the height change back — the panel would have jumped ~50px on every
+   toggle. Side by side it comes in under the list's height, so the swap
+   leaves the panel exactly where it was. */
+.tc-mega-styles .tc-advanced {
+  border-top: 0;
+  margin-top: 0;
+  padding-top: 0;
+}
+.tc-mega .tc-advanced .tc-group { margin-bottom: 18px; }
+.tc-mega .tc-advanced .tc-group:last-child { margin-bottom: 0; }
+.tc-mega .tc-advanced .tc-group-roles { flex: 1 1 auto; min-width: 0; }
+
+/* Group labels take the panel's own head voice — the same micro-caps as the
+   STYLES and PALETTE heads two inches away. The compact dock sets them in the
+   skin's heading face at --primary, which inside this box read as a third
+   kind of title competing with the two real ones. */
+.tc-mega .tc-advanced .tc-group-label {
+  font-family: var(--font-body, sans-serif);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  /* A step under the ADVANCED head directly above it in both size and
+     weight — same voice, one rung down, so the head still reads as the
+     head of the column rather than as a third peer. */
+  color: var(--text45);
+  margin-bottom: 9px;
+}
+
+/* Schemes run as a band across the full column rather than a side stack:
+   in a 132px column they fell into six stacked rows, which pushed the
+   editor past the box in half the skins and put a scrollbar in a menu.
+   They read as filter pills, not as buttons: hairline at rest, ink-filled
+   when chosen. --text rather than --accent for the selected fill, because
+   the accent is one of the five colours being edited right below and a chip
+   that repaints itself while you drag a swatch reads as a bug. */
+.tc-mega .tc-advanced .tc-group-schemes .tc-schemes { max-width: 100%; gap: 6px; }
+.tc-mega .tc-schemes button {
+  padding: 6px 12px;
+  font-family: var(--font-body, sans-serif);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: var(--text70);
+  background: none;
+  border-color: var(--text20);
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out,
+              border-color 0.2s ease-in-out;
+}
+.tc-mega .tc-schemes button:hover {
+  color: var(--text);
+  border-color: var(--text45);
+}
+.tc-mega .tc-schemes button.tc-sel {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+
+/* Colours: one tall chip per role, five across the column. The old shape was
+   a 3-up grid of little rows — a 16px swatch, a name, a lock — which spent
+   most of its width on the label and showed almost none of the colour it was
+   there to edit. Here the colour IS the control — the swatch is the <label>
+   that wraps the <input type="color"> — and the name and lock drop under it
+   as a caption. Five across also comes in shorter than the 3-up's two
+   rows, which is height the fixed-size swap box gives back as air. */
+.tc-mega .tc-roles {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+.tc-mega .tc-role {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 5px;
+  padding: 0;
+  background: none;
+  cursor: pointer;
+}
+/* flex: 0 0 100% is what puts the caption on its own line. A wrapper element
+   would be cleaner markup and worse everything else: renderRoles() writes the
+   same flat .tc-sw / .tc-role-name / .tc-lk list the compact dock uses and
+   that every skin's .tc-role rules already match. It is also why the lock is
+   separated from the picker by making the swatch and the name each a <label>,
+   rather than by boxing the pair up — a wrapper here would hand the name and
+   lock their own line box and this wrap would stop working. */
+.tc-mega .tc-sw {
+  flex: 0 0 100%;
+  width: auto;
+  height: 46px;
+  margin-bottom: 7px;
+  border-radius: 6px;
+  border: 1px solid color-mix(in srgb, var(--text) 18%, transparent);
+  transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+.tc-mega .tc-role:hover .tc-sw {
+  transform: translateY(-1px);
+  border-color: var(--accent);
+}
+/* flex: 0 1 auto, not 1 1 auto: given the free space, the name pushes its own
+   lock to the far right of the tile, where it sits against the NEXT tile's
+   label and reads as belonging to it. Hugging the name keeps the pair
+   together and leaves the slack between tiles, where it separates them. */
+.tc-mega .tc-role-name {
+  flex: 0 1 auto;
+  font-family: var(--font-body, sans-serif);
+  font-weight: 500;
+  font-size: 10.5px;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text50);
+  transition: color 0.2s ease-in-out;
+}
+.tc-mega .tc-role:hover .tc-role-name { color: var(--text); }
+.tc-mega .tc-lk {
+  font-size: 10px;
+  padding: 3px;
+  margin: -3px;
+}
+
+/* Preview card: same wordmark language as the compact dock's preset cards,
+   at display size. JS repaints the --tc-pv-* vars on hover/focus. */
+.tc-preview {
+  flex: 0 0 196px;
+  align-self: stretch;
+  min-height: 176px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  padding: 18px 14px;
+  border-radius: 10px;
+  background: var(--tc-pv-bg, var(--secondary));
+  border: 1px solid color-mix(in srgb, var(--tc-pv-text, var(--text)) 15%, transparent);
+  transition: background-color 0.28s ease-in-out, border-color 0.28s ease-in-out;
+}
+.tc-preview-name {
+  font-family: var(--tc-pv-heading, var(--font-heading, inherit));
+  color: var(--tc-pv-primary, var(--primary));
+  font-weight: 700;
+  font-size: 26px;
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  text-align: center;
+  transition: color 0.28s ease-in-out;
+}
+.tc-preview-rule {
+  width: 34px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--tc-pv-accent, var(--accent));
+  transition: background-color 0.28s ease-in-out;
+}
+.tc-preview-meta {
+  font-family: var(--font-body, sans-serif);
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--tc-pv-text, var(--text)) 45%, transparent);
+}
+
+/* Staggered entry — index written to --i by js/theme-cycler.js. */
+.tc-mega .tc-stagger {
+  opacity: 0;
+  transform: translateY(7px);
+  transition: opacity 0.26s ease-out, transform 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition-delay: 0ms;
+}
+.tc-mega.tc-mega-open .tc-stagger {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(90ms + var(--i, 0) * 14ms);
+}
+
+/* The page behind: blurs and dims while the panel is open, so the menu owns
+   the moment without being a modal. */
+.tc-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  opacity: 0;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--bg) 42%, transparent);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  transition: opacity 0.34s ease-in-out;
+}
+.tc-scrim.tc-on { opacity: 1; }
+
+/* ...except the menu you opened it from. That pill is the thing being
+   pointed at, so it stays above the veil while everything else drops behind
+   it. js/theme-cycler.js adds this to whichever pill the trigger sits in and
+   removes it on close, so normal browsing keeps the menus' natural layer.
+   .static-menu / .static-menu-mobile are flex items of .header-menu-container,
+   so a z-index takes effect on them at position: static (Flexbox 5.4);
+   .moving-menu is already fixed. Neither has a stacking-context ancestor
+   between it and the root (#main-body is position: relative, z-index: auto),
+   so 10000 really does clear .tc-scrim's 9998. */
+.moving-menu.tc-lift,
+.static-menu.tc-lift,
+.static-menu-mobile.tc-lift {
+  z-index: 10000;
+}
+
+/* ---- Narrow: there is no mega menu on a phone -----------------------------
+   No hover means the preview card has nothing to drive it, and there is no
+   room for three columns. The panel becomes the sheet the compact dock
+   already was: palette actions first, then the 2-up wordmark grid. */
+@media (max-width: 1100px) {
+  .tc-dock.tc-mega,
+  .tc-dock.tc-mega.tc-mega-open {
+    width: calc(100vw - 20px);
+    max-width: calc(100vw - 20px);
+  }
+  .tc-mega-inner {
+    flex-direction: column;
+    gap: 14px;
+    padding: 14px;
+    max-height: min(72vh, 460px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tc-preview { display: none; }
+  .tc-mega-side {
+    order: -1;
+    flex: none;
+    border-left: 0;
+    border-bottom: 1px solid var(--text20);
+    padding-left: 0;
+    padding-bottom: 12px;
+  }
+  .tc-mega #tc-presets {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+    columns: auto;
+  }
+  .tc-dock.tc-mega .tc-row-link { display: none; }
+  /* width: 100% is load-bearing. A <button>'s auto width is fit-content, not
+     stretch, and the row <li> that the two shapes now share sits between the
+     card and the grid — so the card no longer gets the grid item's stretch
+     it used to size by, and collapses to its label. */
+  .tc-dock.tc-mega .tc-row-card { display: flex; width: 100%; }
+  /* Cards carry their own selected state; no gutter needed. */
+  .tc-mega #tc-presets li { padding-left: 0; }
+  .tc-mega #tc-presets li::before { display: none; }
+  /* Full-width rows: a fit-content link is a poor tap target on a phone. */
+  .tc-mega-side .tc-actions { gap: 2px; }
+  .tc-mega-side .tc-action { width: 100%; padding: 8px 0; }
+  /* The sheet scrolls as a whole here, so the swap box goes back to being
+     ordinary flow — an absolutely positioned list inside a scrolling sheet
+     would clip instead of extending it. */
+  .tc-mega-swap { position: static; min-height: 0; }
+  .tc-mega-swap > * { position: static; overflow: visible; }
+  .tc-mega .tc-roles { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tc-mega .tc-sw { height: 40px; }
+  .tc-mega.tc-mega-open .tc-stagger { transition-delay: calc(50ms + var(--i, 0) * 8ms); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-dock.tc-mega,
+  .tc-mega .tc-stagger,
+  .tc-scrim,
+  .tc-preview { transition-duration: 0.01ms !important; }
+}

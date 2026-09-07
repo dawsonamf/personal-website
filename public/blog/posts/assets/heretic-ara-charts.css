@@ -1,0 +1,18 @@
+#pareto-chart,
+#ara-objectives-chart,
+#kl-explainer-chart {
+  width: 100%;
+  margin: 1.5em 0 0.25em 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.chart-caption {
+  text-align: center;
+  /* Resolves to the same #a2a2a3 at the default palette; follows the
+     active style / palette toy elsewhere. */
+  color: var(--neutral-gray);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0.25em 0 2em 0;
+}

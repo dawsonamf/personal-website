@@ -1,0 +1,241 @@
+#job-market-chart {
+  position: relative; /* anchors the .jm-drag-tip date popup */
+  width: 100%;
+  height: 520px;
+  margin: 0.9em 0 1em;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+/* ---- toolbar: one row above the chart — range presets, then series ----
+   Styled after the "Where I've Worked" menu (css/styles.css .menu / .highlight):
+   slate 13px tabs, navy hover, navy-dark + accent when selected, and a sliding
+   glowing accent bar on a navy rail. */
+.jm-toolbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin: 1.6em 0 0;
+}
+
+/* Tab strips (view mode + time range) */
+.jm-tabs {
+  position: relative;
+  display: inline-flex;
+  border-bottom: 2px solid var(--jobs-menu-navy);
+}
+
+.jm-tabs button {
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1;
+  padding: 11px 14px;
+  border: none;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  background: transparent;
+  color: var(--jobs-menu-slate);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.jm-tabs button:hover {
+  background: var(--jobs-menu-navy);
+}
+
+.jm-tabs button.is-active {
+  background: var(--jobs-menu-navy-dark);
+  color: var(--accent);
+}
+
+/* Sliding underline — same recipe as the jobs menu highlight bar */
+.jm-hl {
+  position: absolute;
+  bottom: -2px;
+  height: 2px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transition: left 0.3s, width 0.3s, opacity 0.3s;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* Series checkboxes — the box carries series identity when checked */
+.jm-series {
+  display: inline-flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  padding-bottom: 2px;
+}
+
+.jm-check {
+  font-size: 13px;
+  line-height: 1;
+  padding: 10px 12px;
+  border-radius: 6px;
+  color: var(--jobs-menu-slate);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  user-select: none;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.jm-check input {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  border-radius: 4px;
+  border: 1.5px solid var(--jobs-menu-slate);
+  background: transparent;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: background-color 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Checkmark, drawn in the panel color so it reads on any series fill */
+.jm-check input::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  transform: scale(0);
+  transition: transform 0.15s ease;
+  clip-path: polygon(14% 46%, 0 62%, 38% 100%, 100% 18%, 84% 4%, 38% 68%);
+  background: var(--secondary);
+}
+
+.jm-check input:checked::after {
+  transform: scale(1);
+}
+
+.jm-check:has(input:checked) {
+  color: var(--text);
+}
+
+.jm-check[data-series="swe"] input:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+/* All Jobs wears the accent's hue-wheel complement (mirrors theme.context in
+   job-market-chart.js); the plain-gray line is the fallback for browsers
+   without CSS relative colors */
+.jm-check[data-series="all"] input:checked {
+  background: var(--neutral-gray);
+  background: hsl(from var(--accent) calc(h + 180) s l);
+  border-color: var(--neutral-gray);
+  border-color: hsl(from var(--accent) calc(h + 180) s l);
+}
+
+/* Not a series — the marker-lines toggle fills with the muted menu slate */
+.jm-check[data-flag="events"] input:checked {
+  background: var(--jobs-menu-slate);
+  border-color: var(--jobs-menu-slate);
+}
+
+/* The y2 rate overlay toggle — chip matches the overlay line's mid-gray
+   (blend of neutral gray toward text ink, mirroring theme.rate in the JS) */
+.jm-check[data-flag="rate"] input:checked {
+  background: color-mix(in srgb, var(--neutral-gray) 45%, var(--text));
+  border-color: color-mix(in srgb, var(--neutral-gray) 45%, var(--text));
+}
+
+/* ---- below the chart: caption left, live stat right (metr pattern) ---- */
+.jm-bottom-row {
+  position: relative;
+  margin: -0.25em 0 2em;
+}
+
+.jm-caption {
+  font-size: 14px;
+  color: var(--text50);
+  font-style: italic;
+  line-height: 1.55;
+  margin: 0;
+  padding-right: 250px;
+}
+
+#jm-stat {
+  position: absolute;
+  right: 0;
+  top: 0;
+  font-family: 'SF Mono', monospace;
+  font-size: 12px;
+  color: var(--text50);
+  text-align: right;
+  line-height: 1.7;
+  white-space: nowrap;
+}
+
+/* Short line-keys: the colored mark carries series identity */
+.jm-key {
+  display: inline-block;
+  width: 14px;
+  height: 2px;
+  border-radius: 1px;
+  vertical-align: middle;
+  margin-right: 7px;
+}
+
+.jm-key-swe { background: var(--accent); }
+.jm-key-all { background: var(--neutral-gray); background: hsl(from var(--accent) calc(h + 180) s l); }
+
+.jm-val {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.jm-asof {
+  opacity: 0.65;
+}
+
+/* Date tip that rides a rangeslider edge grabber while it's being dragged
+   (created/positioned by job-market-chart.js) */
+.jm-drag-tip {
+  display: none;
+  position: absolute;
+  z-index: 5;
+  padding: 5px 8px;
+  border-radius: 6px;
+  background: var(--secondary);
+  border: 1px solid var(--jobs-menu-navy);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+  color: var(--text);
+  font-family: 'SF Mono', monospace;
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Only the edge grabbers drag the window slider; the middle is inert (its
+   mousedown is swallowed in job-market-chart.js), so don't advertise a grab. */
+#job-market-chart .rangeslider-slidebox,
+#job-market-chart .rangeslider-mask-min,
+#job-market-chart .rangeslider-mask-max,
+#job-market-chart .rangeslider-rangeplot,
+#job-market-chart .rangeslider-bg {
+  cursor: default !important;
+}
+@media screen and (max-width: 1100px) {
+  #job-market-chart {
+    height: 420px;
+  }
+
+  .jm-caption {
+    padding-right: 0;
+  }
+
+  #jm-stat {
+    position: static;
+    display: block;
+    text-align: left;
+    margin-top: 10px;
+  }
+}

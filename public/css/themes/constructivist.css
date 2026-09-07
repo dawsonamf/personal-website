@@ -1,0 +1,1163 @@
+/* Constructivist: red wedge agitprop × the 1924 advertising shout — the
+   merge of tiles 06 (El Lissitzky's wedge) and 06·B (Rodchenko's poster).
+   One red, one black, unbleached paper. From 06: condensed Anton caps,
+   the red wedge driving through every section divider, square red bullet
+   markers, the manifesto list, radius 0. From 06·B: the black disc bracing
+   the hero (and reprised as the name-logo), raked diagonal ray fields,
+   red made SCARCE — the accent role is ink, and red appears only as the
+   active state and the word being sold (typed accent words, links, the
+   jobs redline, active dot/pill, CTAs, the № plates, the wedges).
+   Headlines shout slightly off-axis: the masthead and section titles sit
+   at about -1.2°, the № plates at -4°, the strapline bar at -1.6° — three
+   rotations total, everything else stays square. Jobs read as the
+   five-year plan (CSS-counter indices in red mono), the carousel plates as
+   posters with red corner wedges, blog cards as broadsides, the footer as
+   the print credit.
+
+   Line/shadow stance: FLAT — no shadows anywhere; posters are one pass of
+   ink. Every line, ray, and fill derives from the five roles and their
+   alpha ramps (no literal colors in this sheet), so the palette toy keeps
+   working. Hovers are hard cuts: ink overprints red, red marks arrival.
+
+   Typing: the registry sets typing: 'word' AND typingDelete: 'word' —
+   slogans stamp onto the sheet a word at a time, no caret, and dead ones
+   drop off the press the same way, a whole word per beat (never the
+   char-by-char backspace). The .tw / .tw-out animations below slam each
+   word in from above-scale and slam it back off (theme-base.css lands
+   glyphs instantly under prefers-reduced-motion).
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. The code-block ground, tilt pins, and
+   mobile fixes come from css/themes/theme-base.css via flags.tilt. No
+   still flag: AOS fade-ups stay as the agit entrances, and the cursor
+   follower stays — with the accent role set to ink, the dot-and-ring
+   reads as Rodchenko's black disc roaming the sheet.
+
+   Anton and IBM Plex Mono carry display and labels; Anton ships a single
+   400, so every place the site bolds heading-font text is pinned back to
+   400 below (a synthesized Anton bold smears). Inter 400/500/700 is body. */
+
+
+/* ---- Foundations: two inks on unbleached paper ---------------------------- */
+
+[data-style="constructivist"] ::selection {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* Page scrollbar: ink thumb in a paper track; red while gripped — an
+   active state, the one place red is allowed to move. ([data-style] sits
+   on <html>, so these select the root scrollbar.) */
+[data-style="constructivist"] {
+  scrollbar-color: var(--text) var(--bg);
+}
+
+[data-style="constructivist"]::-webkit-scrollbar {
+  width: 13px;
+  height: 13px;
+}
+
+[data-style="constructivist"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 2px solid var(--text);
+}
+
+[data-style="constructivist"]::-webkit-scrollbar-thumb {
+  background: var(--text);
+  border: 2px solid var(--bg);
+}
+
+[data-style="constructivist"]::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* A whisper of the ray field across the whole sheet: hairlines raked at
+   the poster diagonal, quiet enough to read as paper grain. */
+[data-style="constructivist"] #main-body {
+  background-image: repeating-linear-gradient(115deg,
+    var(--text5) 0, var(--text5) 1px, transparent 1px, transparent 64px);
+}
+
+/* Anton registers one 400 weight, see header note. */
+[data-style="constructivist"] h1,
+[data-style="constructivist"] h2,
+[data-style="constructivist"] h3,
+[data-style="constructivist"] h4 {
+  font-weight: 400;
+  letter-spacing: 0.01em;
+}
+
+/* Links: red is the word being sold; hover overprints it in ink. The
+   default's animated underline is retired — the block does the work.
+   No font-weight here: links inside Anton headings must not synthesize. */
+[data-style="constructivist"] .text-link {
+  color: var(--primary);
+  transition: none;
+}
+
+[data-style="constructivist"] .text-link::before {
+  display: none;
+}
+
+[data-style="constructivist"] .text-link:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+/* Square focus, poster ink. */
+[data-style="constructivist"] :focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+  border-radius: 0;
+}
+
+/* Poster density: tighter than the default app air. */
+[data-style="constructivist"] .section-spacer {
+  height: 7em;
+}
+
+
+/* ---- Chrome: ruled nav, the disc logo, print-credit footer ----------------- */
+
+[data-style="constructivist"] .moving-menu,
+[data-style="constructivist"] .static-menu {
+  background-color: var(--bg);
+  border: 2px solid var(--text);
+  border-top: 5px solid var(--primary);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list — invisible on the default pill, obvious on a hard frame. */
+[data-style="constructivist"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="constructivist"] .menu-item {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text70);
+  transition: none;
+}
+
+[data-style="constructivist"] .menu-item:hover {
+  color: var(--primary);
+  transition: none;
+}
+
+/* Item separators become ink ticks. */
+[data-style="constructivist"] .menu-spacer {
+  border-color: var(--text);
+  border-left-width: 1px;
+  border-right-width: 1px;
+}
+
+/* The logo is Rodchenko's black disc with the glyph reversed out of it.
+   Hover sells it: the disc goes red. No lift — posters don't levitate. */
+[data-style="constructivist"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  border-radius: 50%;
+  background-color: var(--text);
+  color: var(--bg);
+  border: none;
+  transition: none;
+}
+
+[data-style="constructivist"] .name-logo:hover {
+  transform: none;
+  background-color: var(--primary);
+  color: var(--bg);
+  transition: none;
+}
+
+/* Footer: the print credit — a closing rule with a red lead-in segment,
+   set in letterspaced mono like the press line on a poster's hem. */
+[data-style="constructivist"] .footer-container {
+  position: relative;
+  border-top: 2px solid var(--text);
+  margin: 0 10px;
+  padding: 16px 0 10px;
+}
+
+[data-style="constructivist"] .footer-container::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: 0;
+  width: 120px;
+  height: 8px;
+  background: var(--primary);
+}
+
+[data-style="constructivist"] .footer-spacer {
+  display: none;
+}
+
+[data-style="constructivist"] .footer-text,
+[data-style="constructivist"] .footer-text-mobile {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+
+/* ---- Hero: the poster ------------------------------------------------------ */
+
+/* Anton condensed caps shout just off-axis. ~0.5em per cap glyph keeps the
+   longest typed line ("FULL STACK ENGINEER.") near 600px at the 60px cap —
+   inside the ~795px column even with the tilt's wider bounding box. */
+[data-style="constructivist"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(48px, 4.6vw, 60px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  transform: rotate(-1.2deg);
+  transform-origin: left bottom;
+}
+
+/* Red is reserved for the words being sold. */
+[data-style="constructivist"] #typing-text .typing-accent {
+  color: var(--primary);
+}
+
+/* Word-stamp reveal (registry typing: 'word'): each word slams in from
+   over-scale like one press pass; deleted words drop off the form. */
+[data-style="constructivist"] #typing-text .tw,
+[data-style="constructivist"] #blog-typing-text .tw {
+  display: inline-block;
+  animation: constructivist-stamp-in 0.16s cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+[data-style="constructivist"] #typing-text .tw-out,
+[data-style="constructivist"] #blog-typing-text .tw-out {
+  animation: constructivist-stamp-out 0.26s steps(2, jump-end) both;
+}
+
+@keyframes constructivist-stamp-in {
+  0%   { opacity: 0; transform: scale(1.5); }
+  60%  { opacity: 1; transform: scale(0.97); }
+  100% { opacity: 1; transform: none; }
+}
+
+@keyframes constructivist-stamp-out {
+  to { opacity: 0; transform: translateY(7px) rotate(2deg); }
+}
+
+/* The composition's brace: a faint great ring and a solid ink disc behind
+   the masthead (z-index -1 keeps them under the type). Anchored to main —
+   the page ground — NOT the hero container: the container slides in
+   (translateX) with the type, and a backdrop shouldn't ride that slide.
+   main's box coincides with the container's layout box, so offsets
+   transfer; the old #typing-left lefts gain its 305px column offset (20px
+   pad + 225px portrait + 60px pad), and the em tops resolve identically
+   (both inherit the body size). :has(> #typing-container) scopes the brace
+   to the home masthead so it can't surface on blog/privacy pages. */
+[data-style="constructivist"] main:has(> #typing-container) {
+  position: relative;
+}
+
+[data-style="constructivist"] main:has(> #typing-container)::before {
+  content: '';
+  position: absolute;
+  top: 1.4em;
+  left: 601px;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  border: 26px solid var(--text10);
+  z-index: -1;
+  pointer-events: none;
+}
+
+[data-style="constructivist"] main:has(> #typing-container)::after {
+  content: '';
+  position: absolute;
+  top: 2.1em;
+  left: 573px;
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: var(--text);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* The brace arrives with the page chrome: js/script.js stamps
+   hero-extras-in on <html> when the first slogan lands and the rest of the
+   hero fades in — until then the slogans stamp onto a bare sheet. */
+[data-style="constructivist"] main:has(> #typing-container)::before,
+[data-style="constructivist"] main:has(> #typing-container)::after {
+  opacity: 0;
+  transition: opacity 0.8s ease-out;
+}
+
+[data-style="constructivist"].hero-extras-in main:has(> #typing-container)::before,
+[data-style="constructivist"].hero-extras-in main:has(> #typing-container)::after {
+  opacity: 1;
+}
+
+/* The strapline is the red banner, pasted on at the poster angle. */
+[data-style="constructivist"] #sub-text {
+  display: inline-block;
+  background-color: var(--primary);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  transform: rotate(-1.6deg);
+  transform-origin: left center;
+}
+
+/* The portrait prints in red ink — Rodchenko shot his subjects and inked
+   them into the poster — and develops to color on hover. (A tilt target:
+   theme-base pins its transforms, so filter is the whole hover.)
+   height: auto — the base 225×400 box is exactly the 450×800 photo's
+   ratio, but border-box borders steal from the content box on both axes
+   unevenly, which would squish the photo; auto lets the content height
+   follow the photo's true ratio inside the 225px column instead. */
+[data-style="constructivist"] #typing-image {
+  box-sizing: border-box;
+  height: auto;
+  border: 2px solid var(--text);
+  filter: grayscale(1) sepia(0.4) hue-rotate(-28deg) saturate(1.7) contrast(1.05);
+  transition: filter 0.25s ease-in-out;
+}
+
+[data-style="constructivist"] #typing-image:hover {
+  filter: none;
+}
+
+/* Socials: ink glyphs that snap red in place — no lift. */
+[data-style="constructivist"] #socials-list .socials-menu-spacer,
+[data-style="constructivist"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--text40);
+}
+
+[data-style="constructivist"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="constructivist"] .socials-item i {
+  transition: none;
+}
+
+[data-style="constructivist"] .socials-item:hover i {
+  color: var(--primary);
+  transform: none;
+}
+
+
+/* ---- Section headers: slogans + the red wedge -------------------------------
+   Each section opens with a shouted Anton title at the poster angle, its
+   number stamped on a crooked red plate, and the spacer line driving off
+   the right edge as the wedge itself. */
+
+[data-style="constructivist"] .section-header-wrapper {
+  margin: 10px 10px 34px;
+}
+
+[data-style="constructivist"] .section-header {
+  margin: 0;
+  padding: 4px 0;
+  font-size: clamp(38px, 4.6vw, 58px);
+  line-height: 1.04;
+  text-transform: uppercase;
+  color: var(--text);
+  transform: rotate(-1.2deg);
+  transform-origin: left bottom;
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every title ink. */
+[data-style="constructivist"] #about-section-header,
+[data-style="constructivist"] #jobs-header,
+[data-style="constructivist"] #project-header,
+[data-style="constructivist"] #blog-header,
+[data-style="constructivist"] #contact-section-header,
+[data-style="constructivist"] .blog-section-header {
+  color: var(--text);
+}
+
+/* The № plate: the section number reversed out of a small red block,
+   stamped a few degrees off true. */
+[data-style="constructivist"] .sec-num {
+  display: inline-block;
+  background: var(--primary);
+  color: var(--bg);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 0.34em;
+  letter-spacing: 0.12em;
+  padding: 0.3em 0.55em;
+  margin-right: 0.6em;
+  transform: rotate(-4deg) translateY(-0.2em);
+  vertical-align: middle;
+}
+
+/* The wedge: the divider line thickens into the red wedge and drives to a
+   point at the page edge (margin-right: 0 unwinds the default sheet's 10px
+   so the tip meets the wrapper edge, in line with the footer rule). The
+   margin-left is the lead-in: the default sheet's margin-left: auto
+   resolves to 0 once flex-grow has soaked up the free space, and the
+   title's side padding is zeroed above, so without it the wedge sat flush
+   against the last glyph.
+
+   The translateY seats the wedge on the title's cap band (Anton is
+   all-caps display type — center on cap height, not x-height). The math,
+   at the 58px clamp ceiling: the h2 box is 4px + 1.04 x 58 + 4px = 68.3px,
+   so flex centers the 16px wedge at 34.2px. Anton's metrics (UPM 2048:
+   hhea ascent 2079, descent 547, cap 1462 → 1.015 / 0.267 / 0.714em) put
+   the baseline at 4 + half-leading (1.04 − 1.282)/2 x 58 + 58.9 = 55.9px
+   and the cap-band center at 55.9 − 41.4/2 = 35.2px — so flex centering
+   alone is only ~1px high. What read "low" was the -1.2° title rotation
+   about left-bottom lifting the meeting end of the type by
+   width x sin(1.2°) ~ 4–12px across the five titles (~7px mid), plus the
+   flat-bottom taper carrying the wedge's ink ~2px below its box center:
+   (35.2 − 7) − (34.2 + 2) ~ −8px. */
+[data-style="constructivist"] .section-header-spacer {
+  background-color: var(--primary);
+  height: 16px;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+  margin-left: 20px;
+  margin-right: 0;
+  transform: translateY(-8px);
+}
+
+
+/* ---- About / Skills: the manifesto ------------------------------------------ */
+
+[data-style="constructivist"] .card-style {
+  position: relative;
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  padding: 26px;
+}
+
+/* A red corner wedge pinned over the frame's top-right — the panel is a
+   placard, marked. */
+[data-style="constructivist"] .card-style::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 36px;
+  height: 36px;
+  background: var(--primary);
+  clip-path: polygon(0 0, 100% 0, 100% 100%);
+  pointer-events: none;
+}
+
+/* "About Me" / "Skills" set as stencil heads over a heavy rule. */
+[data-style="constructivist"] .card-title,
+[data-style="constructivist"] .about-header,
+[data-style="constructivist"] .skills-header {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 17px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text);
+  border-bottom: 3px solid var(--text);
+  padding-bottom: 10px;
+  margin: 0 0 18px;
+}
+
+/* The three departments muster behind square red markers (tile 06's
+   bullet grammar). */
+[data-style="constructivist"] .skills-section-header {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+[data-style="constructivist"] .skills-section-header::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  background: var(--primary);
+  margin-right: 10px;
+}
+
+[data-style="constructivist"] .about-text,
+[data-style="constructivist"] .skills-text,
+[data-style="constructivist"] .contact-text {
+  font-size: 15.5px;
+  line-height: 1.62;
+}
+
+[data-style="constructivist"] .skills-text {
+  border-bottom: 1px solid var(--text25);
+}
+
+[data-style="constructivist"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: the five-year plan ------------------------------------------ */
+
+[data-style="constructivist"] .nav-container {
+  border-left: 3px solid var(--text);
+}
+
+/* Plan entries take CSS-counter indices in red mono — the numbered list is
+   the navigation design. line-height is pinned in px: script.js measures
+   the selected item's height at load to size the highlight bar, and Inter
+   arrives after that measure. */
+[data-style="constructivist"] .menu {
+  counter-reset: plan;
+}
+
+[data-style="constructivist"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 12.5px;
+  line-height: 17px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text60);
+  border-radius: 0;
+  padding: 13px 16px;
+  transition: none;
+}
+
+/* The long agency names set wider than the 225px rail in shouted caps and
+   bled past it into the dossier (.nav-container pins white-space: nowrap).
+   Let them wrap on the wide sheet — the redline measures each row, so a
+   two-line entry just runs taller. Mobile keeps nowrap: the rail is a
+   horizontal scroller there. */
+@media (min-width: 1101px) {
+  [data-style="constructivist"] .menu li {
+    white-space: normal;
+  }
+}
+
+[data-style="constructivist"] .menu li::before {
+  counter-increment: plan;
+  content: counter(plan, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--primary);
+  margin-right: 9px;
+}
+
+[data-style="constructivist"] .menu li:hover {
+  background: var(--text5);
+  color: var(--text);
+}
+
+/* The selected entry is the ink block; its index reverses out with it. */
+[data-style="constructivist"] .menu li.selected {
+  background: var(--text);
+  color: var(--bg);
+}
+
+[data-style="constructivist"] .menu li.selected::before {
+  color: var(--bg);
+}
+
+/* The redline. JS writes geometry and transition inline on every move,
+   hence the !importants; the slide itself stays — banners move. */
+[data-style="constructivist"] .highlight {
+  background: var(--primary);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="constructivist"] .highlight {
+    width: 10px !important;
+  }
+}
+
+/* The dossier panel: a placard with a raked ray band across its top. */
+[data-style="constructivist"] .job-content {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  padding: 26px;
+  background-image: repeating-linear-gradient(115deg,
+    var(--text15) 0, var(--text15) 2px, transparent 2px, transparent 16px);
+  background-size: 100% 12px;
+  background-repeat: no-repeat;
+}
+
+[data-style="constructivist"] .job-title {
+  color: var(--text);
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+/* Dates as the print credit, in the working red. */
+[data-style="constructivist"] .job-dates {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+[data-style="constructivist"] .job-bullets {
+  list-style-type: square;
+  font-size: 15.5px;
+  line-height: 1.6;
+}
+
+[data-style="constructivist"] .job-bullets li::marker {
+  color: var(--primary);
+}
+
+/* Panel changes hard-cut. script.js drives the swap with timeouts (not
+   animationend), so killing these animations is safe. */
+[data-style="constructivist"] .job-in-right {
+  transform: none;
+  animation: none;
+}
+
+[data-style="constructivist"] .job-out-right {
+  transform: none;
+  transition: none;
+}
+
+
+/* ---- Selected Works: poster plates -------------------------------------------- */
+
+/* Each plate is a poster in a hard frame — the frame alone does the work;
+   the impression carries no corner marks. */
+[data-style="constructivist"] .fc-style-floating .fc-card-image {
+  position: relative;
+  box-sizing: border-box;
+  border: 2px solid var(--text);
+  background-color: var(--secondary);
+}
+
+[data-style="constructivist"] .fc-style-floating .fc-card-image img {
+  filter: contrast(1.06) saturate(1.05);
+}
+
+[data-style="constructivist"] .fc-card-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 1.12;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+[data-style="constructivist"] .fc-card-desc {
+  color: var(--text);
+}
+
+/* CTA: the red slab in an ink frame; hover overprints it ink. */
+[data-style="constructivist"] .fc-card-cta {
+  background-color: var(--primary);
+  color: var(--bg);
+  border: 2px solid var(--text);
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 13px 20px;
+  transition: none;
+}
+
+[data-style="constructivist"] .fc-card-cta:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="constructivist"] .fc-card-cta i {
+  transition: none;
+}
+
+[data-style="constructivist"] .fc-card-cta:hover i {
+  transform: none;
+}
+
+/* Dots as ink-ruled squares; arrival is red. */
+[data-style="constructivist"] .fc-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 0;
+  border: 2px solid var(--text);
+  background-color: transparent;
+  opacity: 1;
+  transition: none;
+}
+
+[data-style="constructivist"] .fc-dot:hover {
+  background-color: var(--text30);
+  opacity: 1;
+}
+
+[data-style="constructivist"] .fc-dot.active {
+  background-color: var(--primary);
+  transform: none;
+}
+
+
+/* ---- Blog: broadsides ----------------------------------------------------------- */
+
+[data-style="constructivist"] .blog-card {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  padding: 24px;
+  transition: none;
+}
+
+[data-style="constructivist"] .blog-card:hover {
+  background-color: var(--bg);
+}
+
+[data-style="constructivist"] .blog-card-title {
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 1.22;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+[data-style="constructivist"] .blog-card:hover .blog-card-title {
+  color: var(--primary);
+}
+
+[data-style="constructivist"] .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text50);
+}
+
+[data-style="constructivist"] .blog-card-excerpt {
+  color: var(--text);
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="constructivist"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="constructivist"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--bg);
+}
+
+[data-style="constructivist"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text50);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold the blanket heading
+   rule can't reach; it shouts at the same angle as the home masthead. */
+[data-style="constructivist"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(44px, 4.4vw, 56px);
+  line-height: 1.05;
+  text-transform: uppercase;
+  transform: rotate(-1.2deg);
+  transform-origin: left bottom;
+}
+
+[data-style="constructivist"] [id^="blog-sub-text"] {
+  color: var(--text80);
+  line-height: 1.6;
+}
+
+/* Filters: ink-ruled chips; the active one is sold in red. */
+[data-style="constructivist"] .filter-pill {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+  border-radius: 0;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: none;
+}
+
+[data-style="constructivist"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="constructivist"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--text);
+  color: var(--bg);
+}
+
+/* Post page: shouted headline, red-wedge crossheads. */
+[data-style="constructivist"] .blog-post-title {
+  color: var(--text);
+  font-weight: 400;
+  font-size: clamp(34px, 4.6vw, 46px);
+  line-height: 1.08;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+[data-style="constructivist"] .blog-post-content h2 {
+  color: var(--text);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-left: 12px solid var(--primary);
+  padding-left: 14px;
+}
+
+[data-style="constructivist"] .blog-post-content h3 {
+  color: var(--text);
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+[data-style="constructivist"] .blog-post-content blockquote {
+  border-left: 4px solid var(--text);
+  background: var(--text5);
+  color: var(--text80);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="constructivist"] .blog-post-content pre {
+  border: 2px solid var(--text);
+}
+
+/* Inline code: stamped ink chips (the higher-specificity pre rule in
+   theme-base unwinds this for fenced blocks). */
+[data-style="constructivist"] .blog-post-content code {
+  background-color: var(--text);
+  color: var(--bg);
+  border-radius: 0;
+}
+
+[data-style="constructivist"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+}
+
+[data-style="constructivist"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 2px solid var(--text);
+}
+
+[data-style="constructivist"] .blog-post-content hr {
+  border: none;
+  height: 10px;
+  background: var(--primary);
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="constructivist"] #metr-chart {
+  border: 2px solid var(--text);
+}
+
+/* The heretic-ARA charts radius is a literal 10px in their post CSS. */
+[data-style="constructivist"] #pareto-chart,
+[data-style="constructivist"] #ara-objectives-chart,
+[data-style="constructivist"] #kl-explainer-chart {
+  border-radius: 0;
+}
+
+
+/* ---- Contact: the announcement ---------------------------------------------------- */
+
+/* The placard braces on its own disc — a great ring rolling out of the
+   lower corner. isolation gives the panel a stacking context so the
+   negative-z pseudo stays above the panel ground but under the copy. */
+[data-style="constructivist"] .contact-view-left {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--secondary);
+  border: 2px solid var(--text);
+}
+
+[data-style="constructivist"] .contact-view-left::before {
+  content: '';
+  position: absolute;
+  right: -70px;
+  bottom: -70px;
+  width: 230px;
+  height: 230px;
+  border-radius: 50%;
+  border: 26px solid var(--text10);
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* The map prints in the red ink and develops to color on hover. */
+[data-style="constructivist"] .contact-image-wrapper {
+  box-sizing: border-box;
+  border: 2px solid var(--text);
+}
+
+[data-style="constructivist"] .contact-image {
+  filter: grayscale(1) sepia(0.4) hue-rotate(-28deg) saturate(1.7) contrast(1.05);
+  transition: filter 0.25s ease-in-out;
+}
+
+[data-style="constructivist"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): ruled chips ----------------- */
+
+[data-style="constructivist"] .pill {
+  background-color: var(--secondary);
+  border: 1.5px solid var(--text);
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+}
+
+
+/* ---- Privacy + 404 ------------------------------------------------------------------ */
+
+[data-style="constructivist"] .privacy-header {
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+[data-style="constructivist"] .privacy-header-spacer {
+  background-color: var(--primary);
+  height: 14px;
+  clip-path: polygon(0 0, 0 100%, 100% 100%);
+  transform: none;
+}
+
+[data-style="constructivist"] .privacy-content h2 {
+  color: var(--text);
+  font-weight: 400;
+  text-transform: uppercase;
+  border-left: 12px solid var(--primary);
+  padding-left: 14px;
+}
+
+[data-style="constructivist"] .nf-code {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--primary);
+}
+
+[data-style="constructivist"] .nf-text {
+  color: var(--text);
+}
+
+
+/* ---- Cycler dock: a placard ---------------------------------------------------------- */
+
+[data-style="constructivist"] .tc-dock {
+  background: var(--bg);
+  border: 2px solid var(--text);
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+[data-style="constructivist"] .tc-toggle {
+  border-radius: 0;
+  border: 2px solid var(--text);
+  color: var(--text);
+  transition: none;
+}
+
+[data-style="constructivist"] .tc-toggle:hover {
+  background-color: var(--text);
+  color: var(--bg);
+  transform: none;
+}
+
+[data-style="constructivist"] .tc-action,
+[data-style="constructivist"] .tc-presets button,
+[data-style="constructivist"] .tc-schemes button {
+  border-radius: 0;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) ------------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Rotations stand down on the small sheet; Anton caps re-cap so the
+     longest typed line clears a ~335px column on a 375px screen. */
+  [data-style="constructivist"] #typing-text {
+    font-size: 27px;
+    line-height: 1.1;
+    transform: none;
+  }
+
+  [data-style="constructivist"] #blog-typing-text {
+    font-size: 30px;
+    transform: none;
+  }
+
+  [data-style="constructivist"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.18em;
+    padding: 4px 8px;
+    transform: none;
+  }
+
+  /* The hero brace would crowd the 125px mobile hero. */
+  [data-style="constructivist"] main:has(> #typing-container)::before,
+  [data-style="constructivist"] main:has(> #typing-container)::after {
+    display: none;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers; the
+     shouted display needs to wrap. The grid pins the red plate as a fixed
+     first column so a squeezed header can never drop its title below the
+     plate, and wrapped title lines stay flush after it (the text run after
+     .sec-num is one anonymous grid item). */
+  [data-style="constructivist"] .section-header {
+    white-space: normal;
+    font-size: clamp(24px, 7vw, 32px);
+    transform: none;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: baseline;
+  }
+
+  /* A constant lead-in on the small sheet. The default mobile sheet pins
+     the spacer to width: 73% (its flex basis); whenever a title's
+     single-line width plus that basis overflowed the row, flex shrank the
+     h2 below its own line, the title wrapped (white-space: normal above),
+     and the wedge then abutted the h2's assigned box — not its glyphs — so
+     the text-to-wedge gap varied section to section (and short titles got
+     the wedge flush at 0). flex-basis 0 hands the wedge only what's left
+     after the title takes its full line (every title fits one line from
+     320px up), margin-left makes the clearance the same 12px in all five
+     sections, and the min-width floor keeps a stub of wedge alive if one
+     ever doesn't fit. No title rotation down here, so the cap-band
+     correction is just the taper's optical drop (~1px at the ~26px
+     display). */
+  [data-style="constructivist"] .section-header-spacer {
+    height: 10px;
+    flex: 1 1 0px;
+    min-width: 32px;
+    margin-left: 12px;
+    transform: translateY(-1px);
+  }
+
+  [data-style="constructivist"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="constructivist"] .static-menu-mobile .menu-item {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  [data-style="constructivist"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover with background:inherit + accent
+     text — accent is ink here, which would vanish on the ink disc. Hold
+     the disc, and make the tap state the red sell. */
+  [data-style="constructivist"] .name-logo:hover {
+    background-color: var(--text);
+    color: var(--bg);
+  }
+
+  [data-style="constructivist"] .name-logo:active {
+    background-color: var(--primary);
+    color: var(--bg);
+  }
+
+  /* The mobile sheet re-cards these surfaces on --text10; keep them
+     paper placards. */
+  [data-style="constructivist"] .double-view-left,
+  [data-style="constructivist"] .double-view-right {
+    background-color: var(--secondary);
+    border: 2px solid var(--text);
+  }
+
+  [data-style="constructivist"] .menu-scroll-wrapper {
+    border-bottom: 3px solid var(--text);
+  }
+
+  [data-style="constructivist"] .highlight {
+    height: 4px !important;
+  }
+
+  [data-style="constructivist"] .blog-card {
+    background-color: var(--secondary);
+    border: 2px solid var(--text);
+  }
+
+  [data-style="constructivist"] .contact-view-left {
+    background-color: var(--secondary);
+  }
+
+  /* Framed plates need a real gutter on the small sheet. */
+  [data-style="constructivist"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="constructivist"] .blog-post-title {
+    font-size: clamp(26px, 7vw, 32px);
+  }
+
+  [data-style="constructivist"] .footer-container-mobile {
+    position: relative;
+    border-top: 2px solid var(--text);
+    padding-top: 12px;
+  }
+
+  [data-style="constructivist"] .footer-container-mobile::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 0;
+    width: 90px;
+    height: 8px;
+    background: var(--primary);
+  }
+
+  [data-style="constructivist"] .footer-text-mobile {
+    color: var(--text60);
+  }
+}

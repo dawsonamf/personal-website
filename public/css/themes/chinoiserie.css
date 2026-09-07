@@ -1,0 +1,911 @@
+/* Chinoiserie: blue-and-white export porcelain. Glaze-white ground, cobalt
+   ink everywhere (the text role is itself a deep cobalt), white porcelain
+   panels with scalloped rims, lattice dividers drawn from crossed hairlines,
+   plate medallions for the portrait and carousel, and a single gilt thread
+   (--accent) reserved for small-caps labels and hairlines. Marcellus carries
+   display (an engraved roman, single 400 weight — every bolded heading spot
+   is pinned back to 400 below or it smears), EB Garamond carries body.
+
+   Line/shadow stance: every blue derives from --primary/--text and their
+   alpha ramps; gold only ever appears as var(--accent). The only literals
+   are the soft cobalt-ink shadows (rgba(34,51,92,…)) under raised porcelain.
+
+   Scoped Layer-2 skin. Scoping rules and JS contracts: see
+   docs/THEMES.md. The code-block ground, tilt pins, and mobile
+   fixes come from css/themes/theme-base.css via flags.tilt. No still flag:
+   AOS entrances and the cursor follower stay (its accent dot reads as gilt). */
+
+
+/* ---- Foundations: cobalt on glaze ----------------------------------------- */
+
+[data-style="chinoiserie"] ::selection {
+  background: var(--primary);
+  color: var(--secondary);
+}
+
+/* Thin cobalt scrollbar on the glaze. ([data-style] sits on <html>, so
+   these select the root scrollbar.) */
+[data-style="chinoiserie"] {
+  scrollbar-color: var(--primary) var(--bg);
+  scrollbar-width: thin;
+}
+
+[data-style="chinoiserie"]::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+[data-style="chinoiserie"]::-webkit-scrollbar-track {
+  background: var(--bg);
+  border-left: 1px solid var(--primary20);
+}
+
+[data-style="chinoiserie"]::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border: 2px solid var(--bg);
+}
+
+/* Marcellus registers at 400 only; synthesized bold smears the engraving. */
+[data-style="chinoiserie"] h1,
+[data-style="chinoiserie"] h2,
+[data-style="chinoiserie"] h3,
+[data-style="chinoiserie"] h4 {
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+
+/* Links: cobalt at weight; the default animated underline already draws in
+   --accent, so the hover thread comes up gold for free. */
+[data-style="chinoiserie"] .text-link {
+  color: var(--primary);
+  font-weight: 500;
+}
+
+[data-style="chinoiserie"] .text-link:hover {
+  color: var(--primary);
+}
+
+[data-style="chinoiserie"] .section-spacer {
+  height: 7.5em;
+}
+
+
+/* ---- Chrome: porcelain nav, plate-medallion logo, gilt colophon ------------ */
+
+[data-style="chinoiserie"] .moving-menu,
+[data-style="chinoiserie"] .static-menu {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary40);
+  box-shadow: 0 8px 22px rgba(34, 51, 92, 0.08);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The header row is a stretch flexbox whose height comes from the logo's
+   margin box (~67px), so the static menu stretches ~11px past its 3.5em
+   list — invisible on the default pill, obvious on a rimmed dish. */
+[data-style="chinoiserie"] .static-menu {
+  align-self: flex-start;
+}
+
+[data-style="chinoiserie"] .menu-item {
+  font-family: var(--font-heading);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text70);
+}
+
+[data-style="chinoiserie"] .menu-item:hover {
+  color: var(--primary);
+}
+
+[data-style="chinoiserie"] .menu-spacer {
+  border-color: var(--primary30);
+}
+
+/* The logo is a small plate: white well, cobalt rim, an inner ring painted
+   with inset shadows (they follow the curve). */
+[data-style="chinoiserie"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  border-radius: 50%;
+  background-color: var(--secondary);
+  color: var(--primary);
+  border: 1.5px solid var(--primary);
+  box-shadow: inset 0 0 0 3px var(--secondary), inset 0 0 0 4px var(--primary50);
+}
+
+[data-style="chinoiserie"] .name-logo:hover {
+  transform: none;
+  background-color: var(--primary);
+  color: var(--secondary);
+  box-shadow: inset 0 0 0 3px var(--primary), inset 0 0 0 4px var(--secondary80);
+}
+
+/* Footer: a gilt hairline over a quiet cobalt colophon. */
+[data-style="chinoiserie"] .footer-container {
+  border-top: 1px solid var(--accent60);
+  margin: 0 10px;
+  padding: 18px 0 12px;
+}
+
+[data-style="chinoiserie"] .footer-spacer {
+  display: none;
+}
+
+[data-style="chinoiserie"] .footer-text,
+[data-style="chinoiserie"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+/* ---- Hero: painted masthead + cameo portrait -------------------------------- */
+
+/* Marcellus at masthead scale. The longest typed line ("full stack
+   engineer.") must clear the ~795px column at the cap: 20 glyphs at 64px
+   with the slight tracking run ≈ 720px. */
+[data-style="chinoiserie"] #typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(52px, 4.5vw, 64px);
+  line-height: 1.18;
+  letter-spacing: 0.04em;
+}
+
+/* Cursorless masthead: the registry sets typing: 'letter' — each glyph
+   blooms in like cobalt soaking into wet glaze (a soft blur settling
+   sharp), and lifts back off under .tw-out. */
+[data-style="chinoiserie"] #typing-text .tw,
+[data-style="chinoiserie"] #blog-typing-text .tw {
+  animation: chinoiserie-glaze-in 0.45s ease-out backwards;
+}
+
+[data-style="chinoiserie"] #typing-text .tw-out,
+[data-style="chinoiserie"] #blog-typing-text .tw-out {
+  animation: chinoiserie-glaze-out 0.28s ease-in forwards;
+}
+
+@keyframes chinoiserie-glaze-in {
+  0%   { opacity: 0; filter: blur(4px); }
+  60%  { opacity: 1; filter: blur(1px); }
+  100% { opacity: 1; filter: none; }
+}
+
+@keyframes chinoiserie-glaze-out {
+  from { opacity: 1; filter: none; }
+  to   { opacity: 0; filter: blur(4px); }
+}
+
+/* Typed accent words stay cobalt — gold is a thread, not a headline. */
+[data-style="chinoiserie"] #typing-text .typing-accent {
+  color: var(--primary);
+}
+
+/* The strapline is the gilt thread: letterspaced gold caps. */
+[data-style="chinoiserie"] #sub-text {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Socials: cobalt glyphs, gilt on hover (the gentle default lift stays). */
+[data-style="chinoiserie"] #socials-list .socials-menu-spacer,
+[data-style="chinoiserie"] #blog-socials-list .socials-menu-spacer {
+  border-color: var(--primary30);
+}
+
+[data-style="chinoiserie"] .socials-item {
+  color: var(--text);
+}
+
+[data-style="chinoiserie"] .socials-item:hover i {
+  color: var(--accent);
+}
+
+/* The portrait becomes a cameo: an oval well in a white matte with a cobalt
+   rim and a dashed inner ring (outline follows the curve). Stays clickable.
+   height: auto — the base 225×400 box is exactly the 450×800 photo's
+   ratio, but the border-box matte steals from the content box on both
+   axes unevenly, which would squish the portrait; auto lets the content
+   height follow the photo's true ratio inside the 225px column instead. */
+[data-style="chinoiserie"] #typing-image {
+  box-sizing: border-box;
+  height: auto;
+  padding: 9px;
+  background-color: var(--secondary);
+  border: 1px solid var(--primary);
+  border-radius: 999px;
+  outline: 1.5px dashed var(--primary40);
+  outline-offset: -7px;
+  box-shadow: 0 14px 30px rgba(34, 51, 92, 0.12);
+  filter: saturate(0.85);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="chinoiserie"] #typing-image:hover {
+  filter: none;
+}
+
+
+/* ---- Section headers: gilt kicker, cobalt title, lattice rule ---------------- */
+
+[data-style="chinoiserie"] .section-header-wrapper {
+  margin: 10px 10px 40px;
+}
+
+[data-style="chinoiserie"] .section-header {
+  margin: 0;
+  padding: 0 0 6px;
+  font-weight: 400;
+  font-size: clamp(36px, 4vw, 52px);
+  line-height: 1.12;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+/* The per-section ID rules (#jobs-header etc.) set accent at ID specificity;
+   match them to keep every title cobalt. */
+[data-style="chinoiserie"] #about-section-header,
+[data-style="chinoiserie"] #jobs-header,
+[data-style="chinoiserie"] #project-header,
+[data-style="chinoiserie"] #blog-header,
+[data-style="chinoiserie"] #contact-section-header,
+[data-style="chinoiserie"] .blog-section-header {
+  color: var(--primary);
+}
+
+/* The spacer line becomes the lattice band: crossed cobalt hairlines
+   between two rules, the tile's divider. The block kicker above the title
+   pulls the wrapper's centering high, so the band drops (kicker line + its
+   8px margin − the 6px title padding)/2 ≈ 8px to sit level with the title,
+   and takes a real gap from the words (this skin zeroes the h2's side
+   padding, which supplied the default site's gap). */
+[data-style="chinoiserie"] .section-header-spacer {
+  height: 12px;
+  margin-left: 20px;
+  background-color: transparent;
+  background-image:
+    repeating-linear-gradient(45deg, var(--primary45) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(-45deg, var(--primary45) 0 1px, transparent 1px 8px);
+  border-top: 1px solid var(--primary45);
+  border-bottom: 1px solid var(--primary45);
+  transform: translateY(8px);
+}
+
+/* The folio number is the gilt thread over the title. */
+[data-style="chinoiserie"] .sec-num {
+  display: block;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 8px;
+}
+
+
+/* ---- Porcelain panels: about / skills, jobs dossier, contact -----------------
+   The shared surface grammar: a white well with a cobalt rim, a soft
+   cobalt-ink shadow, and a scalloped rim strip across the top (transparent
+   bites cut from a cobalt band by radial-gradient, the tile's technique).
+   The strip is a ::before pulled to the panel edges, so the padding is
+   normalized here and re-pinned in the mobile block. */
+
+[data-style="chinoiserie"] .card-style,
+[data-style="chinoiserie"] .job-content,
+[data-style="chinoiserie"] .contact-view-left {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary45);
+  padding: 26px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(34, 51, 92, 0.07);
+}
+
+[data-style="chinoiserie"] .card-style::before,
+[data-style="chinoiserie"] .job-content::before,
+[data-style="chinoiserie"] .contact-view-left::before {
+  content: '';
+  display: block;
+  flex-shrink: 0;
+  /* .job-content.showing aligns its column flex-start, which would crush
+     this empty strip to zero width; stretch pins it full-bleed. */
+  align-self: stretch;
+  height: 14px;
+  margin: -26px -26px 18px;
+  background-image: radial-gradient(circle at 10px -5px, transparent 11px, var(--primary75) 12px);
+  background-size: 20px 14px;
+}
+
+/* "About Me" / "Skills" become the gilt small-caps thread. */
+[data-style="chinoiserie"] .card-title,
+[data-style="chinoiserie"] .about-header,
+[data-style="chinoiserie"] .skills-header {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 16px;
+}
+
+[data-style="chinoiserie"] .skills-section-header {
+  font-family: var(--font-heading);
+  color: var(--primary);
+  font-size: 20px;
+}
+
+/* Garamond runs small: body sizes come up a step. */
+[data-style="chinoiserie"] .about-text,
+[data-style="chinoiserie"] .skills-text,
+[data-style="chinoiserie"] .contact-text {
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+[data-style="chinoiserie"] .skills-text {
+  border-bottom: 1px solid var(--primary20);
+}
+
+[data-style="chinoiserie"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: painter's index + dossier ------------------------------------ */
+
+[data-style="chinoiserie"] .nav-container {
+  border-left: 1px solid var(--primary30);
+}
+
+/* line-height is pinned in px: script.js measures the selected item's
+   height at load to size the highlight bar, and Garamond arrives after
+   that measure. */
+[data-style="chinoiserie"] .menu li {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 19px;
+  letter-spacing: 0.02em;
+  color: var(--jobs-menu-slate);
+  border-radius: 0;
+}
+
+[data-style="chinoiserie"] .menu li:hover {
+  background: var(--primary5);
+}
+
+[data-style="chinoiserie"] .menu li.selected {
+  background: var(--secondary);
+  color: var(--primary);
+}
+
+/* The marker is the single gilt line. JS writes geometry inline on every
+   move, hence the !importants. */
+[data-style="chinoiserie"] .highlight {
+  background: var(--accent);
+  box-shadow: none;
+  border-radius: 0 !important;
+}
+
+@media (min-width: 1101px) {
+  [data-style="chinoiserie"] .highlight {
+    width: 3px !important;
+  }
+}
+
+[data-style="chinoiserie"] .job-title {
+  color: var(--primary);
+  font-size: 25px;
+  line-height: 1.25;
+}
+
+/* Dates join the gilt small-caps thread. */
+[data-style="chinoiserie"] .job-dates {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Lattice diamonds as list markers. */
+[data-style="chinoiserie"] .job-bullets {
+  list-style-type: "◆  ";
+  font-size: 16.5px;
+  line-height: 1.65;
+}
+
+[data-style="chinoiserie"] .job-bullets li::marker {
+  color: var(--primary45);
+  font-size: 0.8em;
+}
+
+/* Panel changes settle like a glaze coat, no slide. script.js drives the
+   swap with timeouts (not animationend), so retiming these is safe. */
+[data-style="chinoiserie"] .job-in-right {
+  transform: none;
+  animation-name: chinoiserie-job-fade-in;
+  animation-duration: 0.4s;
+}
+
+[data-style="chinoiserie"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+@keyframes chinoiserie-job-fade-in {
+  from { opacity: 0; transform: none; }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: plate medallions -------------------------------------------- */
+
+/* Each plate: white matte, cobalt rim, dashed inner ring on an overlay
+   (imgs can't carry pseudos), soft porcelain shadow. box-sizing keeps the
+   matte inside the 510px plate. */
+[data-style="chinoiserie"] .fc-style-floating .fc-card-image {
+  position: relative;
+  box-sizing: border-box;
+  padding: 10px;
+  background-color: var(--secondary);
+  border: 1px solid var(--primary);
+  border-radius: 26px;
+  box-shadow: 0 14px 30px rgba(34, 51, 92, 0.12);
+}
+
+[data-style="chinoiserie"] .fc-style-floating .fc-card-image::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1.5px dashed var(--primary40);
+  border-radius: 21px;
+  pointer-events: none;
+}
+
+[data-style="chinoiserie"] .fc-style-floating .fc-card-image img {
+  border-radius: 17px;
+  filter: saturate(0.88);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="chinoiserie"] .fc-card:hover .fc-card-image img {
+  filter: none;
+}
+
+[data-style="chinoiserie"] .fc-card-title {
+  color: var(--primary);
+  font-weight: 400;
+  font-size: 26px;
+}
+
+[data-style="chinoiserie"] .fc-card-desc {
+  color: var(--text);
+  font-size: 16.5px;
+}
+
+/* CTA: a porcelain button — cobalt rim pill that fills cobalt on hover.
+   Letter-spacing trails its 0.18em after the last glyph, so the right pad
+   gives that back to keep the label optically centered in the rim. */
+[data-style="chinoiserie"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--primary);
+  border: 1px solid var(--primary50);
+  border-radius: 999px;
+  padding: 10px calc(20px - 0.18em) 10px 20px;
+  background-color: var(--secondary);
+}
+
+[data-style="chinoiserie"] .fc-card-cta:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary);
+  transform: none;
+}
+
+/* Dots as tiny plates: cobalt rims, the active one filled. */
+[data-style="chinoiserie"] .fc-dot {
+  width: 10px;
+  height: 10px;
+  border: 1px solid var(--primary);
+  background-color: transparent;
+  opacity: 0.55;
+}
+
+[data-style="chinoiserie"] .fc-dot:hover {
+  opacity: 1;
+}
+
+[data-style="chinoiserie"] .fc-dot.active {
+  background-color: var(--primary);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Blog: porcelain tiles ---------------------------------------------------------- */
+
+/* Teasers are white tiles with a cobalt rim; hovering raises the offset
+   double ring (the tile's card treatment) instead of changing fill. */
+[data-style="chinoiserie"] .blog-card {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary40);
+  box-shadow: 0 0 0 3px transparent, 0 0 0 4px transparent;
+  transition: box-shadow 0.3s ease-in-out, border-color 0.3s ease-in-out;
+}
+
+[data-style="chinoiserie"] .blog-card:hover {
+  background-color: var(--secondary);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--secondary), 0 0 0 4px var(--primary45);
+}
+
+[data-style="chinoiserie"] .blog-card-title {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  color: var(--primary);
+  font-size: 20px;
+}
+
+[data-style="chinoiserie"] .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+[data-style="chinoiserie"] .blog-card-excerpt {
+  color: var(--text);
+  font-size: 16px;
+}
+
+/* Listing page: the grid's higher-specificity card rules need matching. */
+[data-style="chinoiserie"] .blog-listing-grid .blog-card {
+  background-color: var(--secondary);
+}
+
+[data-style="chinoiserie"] .blog-listing-grid .blog-card:hover {
+  background-color: var(--secondary);
+}
+
+[data-style="chinoiserie"] .blog-listing-grid .blog-card .blog-card-title {
+  color: var(--primary);
+  font-weight: 400;
+}
+
+[data-style="chinoiserie"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold; pin Marcellus 400. */
+[data-style="chinoiserie"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(52px, 4.5vw, 64px);
+  line-height: 1.18;
+  letter-spacing: 0.04em;
+}
+
+[data-style="chinoiserie"] [id^="blog-sub-text"] {
+  color: var(--text80);
+  font-size: 17px;
+  line-height: 1.65;
+}
+
+/* The listing carousel heading rides the heading token; pin its weight. */
+[data-style="chinoiserie"] .fc-expand-title {
+  font-weight: 400;
+  color: var(--primary);
+}
+
+/* Filters: porcelain chips, cobalt-filled when active. */
+[data-style="chinoiserie"] .filter-pill {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary40);
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+[data-style="chinoiserie"] .filter-pill:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="chinoiserie"] .filter-pill.active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--secondary);
+}
+
+/* Post page: engraved title under the gilt meta thread. */
+[data-style="chinoiserie"] .blog-post-header {
+  border-bottom: 1px solid var(--accent60);
+  padding-bottom: 18px;
+  margin-bottom: 36px;
+}
+
+[data-style="chinoiserie"] .blog-post-title {
+  color: var(--primary);
+  font-weight: 400;
+  font-size: clamp(34px, 4.4vw, 44px);
+  line-height: 1.2;
+}
+
+[data-style="chinoiserie"] .blog-post-content {
+  font-size: 18px;
+  line-height: 1.8;
+}
+
+/* Crossheads close on a gilt hairline. */
+[data-style="chinoiserie"] .blog-post-content h2 {
+  color: var(--primary);
+  border-bottom: 1px solid var(--accent60);
+  padding-bottom: 6px;
+}
+
+[data-style="chinoiserie"] .blog-post-content h3 {
+  color: var(--primary);
+}
+
+[data-style="chinoiserie"] .blog-post-content blockquote {
+  border-left: 2px solid var(--accent);
+  font-style: italic;
+  color: var(--text80);
+}
+
+/* Section breaks print as lattice bands. */
+[data-style="chinoiserie"] .blog-post-content hr {
+  border: none;
+  height: 10px;
+  background-image:
+    repeating-linear-gradient(45deg, var(--primary35) 0 1px, transparent 1px 8px),
+    repeating-linear-gradient(-45deg, var(--primary35) 0 1px, transparent 1px 8px);
+  border-top: 1px solid var(--primary35);
+  border-bottom: 1px solid var(--primary35);
+}
+
+/* Code blocks: the shared dark-ground pin lives in theme-base.css. */
+[data-style="chinoiserie"] .blog-post-content pre {
+  border: 1px solid var(--primary30);
+}
+
+/* Inline code: a pale cobalt wash (the higher-specificity pre rule unwinds
+   this for fenced blocks). */
+[data-style="chinoiserie"] .blog-post-content code {
+  background-color: var(--primary10);
+  color: var(--text);
+}
+
+[data-style="chinoiserie"] .blog-post-content .mermaid {
+  background-color: var(--secondary);
+  border: 1px solid var(--primary30);
+}
+
+[data-style="chinoiserie"] .blog-post-content img.blog-image {
+  box-sizing: border-box;
+  border: 1px solid var(--primary40);
+}
+
+/* The METR dashboard reads the palette at draw time (posts/metr-chart.js). */
+[data-style="chinoiserie"] #metr-chart {
+  border: 1px solid var(--primary30);
+}
+
+
+/* ---- Contact: the inquiries plate ----------------------------------------------------- */
+
+/* The map sits in a plate well: cobalt rim, dashed white inner ring drawn
+   on an overlay (the img is absolutely positioned inside), muted glaze
+   until hovered. */
+[data-style="chinoiserie"] .contact-image-wrapper {
+  border: 1px solid var(--primary);
+  box-shadow: 0 14px 30px rgba(34, 51, 92, 0.12);
+}
+
+[data-style="chinoiserie"] .contact-image-wrapper::after {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1.5px dashed var(--secondary80);
+  border-radius: calc(var(--border-radius) - 6px);
+  pointer-events: none;
+}
+
+[data-style="chinoiserie"] .contact-image {
+  filter: saturate(0.8);
+  transition: filter 0.35s ease-in-out;
+}
+
+[data-style="chinoiserie"] .contact-image-wrapper:hover .contact-image {
+  filter: none;
+}
+
+
+/* ---- Pills everywhere (tech tags, post meta, privacy): rim chips ----------------------- */
+
+[data-style="chinoiserie"] .pill {
+  background-color: var(--primary5);
+  border: 1px solid var(--primary25);
+  color: var(--primary);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  /* 3/5, not 4/4: Garamond reserves a tall ascent for accents (asc 1.007
+     against caps 0.65), so these mixed-case tags sit ~1px below the rim
+     chip's center in a symmetric box; the bottom pad takes the
+     difference. (The uppercase CTA/filter labels sit higher in the same
+     em box — caps-only Δ is ~0.35px — and keep symmetric pads.) */
+  padding: 3px 13px 5px;
+}
+
+
+/* ---- Cycler dock: a porcelain dish ------------------------------------------------------ */
+
+[data-style="chinoiserie"] .tc-dock {
+  background: var(--secondary);
+  border: 1px solid var(--primary40);
+  box-shadow: 0 14px 36px rgba(34, 51, 92, 0.14);
+  backdrop-filter: none;
+}
+
+[data-style="chinoiserie"] .tc-toggle {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+[data-style="chinoiserie"] .tc-toggle:hover {
+  background-color: var(--primary);
+  color: var(--secondary);
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) --------------------------------------------------- */
+
+@media screen and (max-width: 1100px) {
+  /* Masthead scale on the small sheet (the mobile ID rule pins 34px). */
+  [data-style="chinoiserie"] #typing-text {
+    font-size: clamp(30px, 8.5vw, 36px);
+  }
+
+  [data-style="chinoiserie"] #sub-text {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+  }
+
+  [data-style="chinoiserie"] #blog-typing-text {
+    font-size: clamp(30px, 8.5vw, 36px);
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers. */
+  [data-style="chinoiserie"] .section-header {
+    white-space: normal;
+    font-size: clamp(26px, 7.5vw, 32px);
+  }
+
+  [data-style="chinoiserie"] .sec-num {
+    font-size: 11px;
+    margin-bottom: 6px;
+  }
+
+  [data-style="chinoiserie"] .section-header-spacer {
+    height: 9px;
+    margin-left: 14px;
+    transform: translateY(6px);
+  }
+
+  [data-style="chinoiserie"] .section-spacer {
+    height: 5em;
+  }
+
+  [data-style="chinoiserie"] .static-menu-mobile .menu-item {
+    font-family: var(--font-heading);
+    font-size: 11px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  [data-style="chinoiserie"] .static-menu-mobile .socials-item {
+    color: var(--text);
+  }
+
+  /* Mobile neutralizes the logo's hover (sticky-hover on touch); keep the
+     plate at rest and make the tap state the cobalt fill. */
+  [data-style="chinoiserie"] .name-logo:hover {
+    background-color: var(--secondary);
+    color: var(--primary);
+    box-shadow: inset 0 0 0 3px var(--secondary), inset 0 0 0 4px var(--primary50);
+  }
+
+  [data-style="chinoiserie"] .name-logo:active {
+    background-color: var(--primary);
+    color: var(--secondary);
+  }
+
+  /* The mobile sheet re-cards these surfaces on --text10; keep them
+     porcelain, and re-pin the scallop strip to the 20px mobile padding. */
+  [data-style="chinoiserie"] .double-view-left,
+  [data-style="chinoiserie"] .double-view-right {
+    background-color: var(--secondary);
+    border: 1px solid var(--primary45);
+  }
+
+  [data-style="chinoiserie"] .card-style,
+  [data-style="chinoiserie"] .job-content,
+  [data-style="chinoiserie"] .contact-view-left {
+    padding: 20px;
+  }
+
+  [data-style="chinoiserie"] .card-style::before,
+  [data-style="chinoiserie"] .job-content::before,
+  [data-style="chinoiserie"] .contact-view-left::before {
+    margin: -20px -20px 14px;
+  }
+
+  [data-style="chinoiserie"] .menu-scroll-wrapper {
+    border-bottom: 1px solid var(--primary30);
+  }
+
+  [data-style="chinoiserie"] .highlight {
+    height: 3px !important;
+  }
+
+  [data-style="chinoiserie"] .blog-card {
+    background-color: var(--secondary);
+    border: 1px solid var(--primary40);
+  }
+
+  /* Plates with mattes need a real gutter between cards on the small sheet. */
+  [data-style="chinoiserie"] .featured-carousel-track {
+    gap: 24px;
+  }
+
+  [data-style="chinoiserie"] .fc-style-floating .fc-card-image {
+    padding: 8px;
+  }
+
+  [data-style="chinoiserie"] .blog-post-title {
+    font-size: clamp(26px, 7.5vw, 32px);
+  }
+
+  [data-style="chinoiserie"] .blog-post-content {
+    font-size: 17px;
+  }
+
+  [data-style="chinoiserie"] .footer-container-mobile {
+    border-top: 1px solid var(--accent60);
+    padding-top: 12px;
+  }
+
+  [data-style="chinoiserie"] .footer-text-mobile {
+    color: var(--text60);
+  }
+}

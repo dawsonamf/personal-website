@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EmbeddedSwiftAgent — a coding agent in your browser</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/css/xterm.min.css">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --window-bg: #1c2128;
+      --titlebar: #2d333b;
+      --field-bg: #0d1117;
+      --border: #30363d;
+      --text: #e6edf3;
+      --dim: #8b949e;
+      --label: #adbac7;
+      --accent: #58a6ff;
+      --red: #f85149;
+      --green: #238636;
+      --green-hover: #2ea043;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(1200px 700px at 50% -5%, #171d26, #0b0e13 65%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    }
+    body { display: flex; align-items: center; justify-content: center; }
+
+    /* The floating mac window — hosts the setup form first, then the running
+       agent. Starts flex-centered; the window manager script pins it to fixed
+       coordinates the first time you drag, resize, or zoom it. */
+    #window {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      width: min(760px, 94vw);
+      height: min(600px, 86vh);
+      background: var(--window-bg);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      box-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.7);
+      overflow: hidden;
+    }
+    /* Applied only for the zoom (maximize/restore) animation. */
+    #window.zooming {
+      transition: left 0.2s ease, top 0.2s ease, width 0.2s ease,
+                  height 0.2s ease, border-radius 0.2s ease;
+    }
+
+    .titlebar {
+      position: relative;
+      flex: 0 0 40px;
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      background: var(--titlebar);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #window.maximized .titlebar { cursor: default; }
+    .lights { display: flex; gap: 8px; }
+    .light {
+      position: relative;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      appearance: none;
+    }
+    .light.red { background: #ff5f57; }
+    .light.yellow { background: #febc2e; }
+    .light.green { background: #28c840; }
+    button.light { cursor: pointer; }
+    /* macOS-style glyphs, revealed when hovering the light cluster. Yellow is
+       decorative only, so it gets no glyph. */
+    .light::after {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      font-weight: 700;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.55);
+      opacity: 0;
+    }
+    .lights:hover .light::after { opacity: 1; }
+    .light.red::after { content: "\00d7"; }
+    .light.green::after { content: "\2922"; font-size: 8px; }
+    #window.maximized .light.green::after { content: "\2921"; }
+
+    /* Invisible corner grips for resizing. */
+    .resize-handle {
+      position: absolute;
+      z-index: 10;
+      width: 14px;
+      height: 14px;
+      touch-action: none;
+    }
+    .resize-handle.nw { top: 0; left: 0; cursor: nwse-resize; }
+    .resize-handle.ne { top: 0; right: 0; cursor: nesw-resize; }
+    .resize-handle.sw { bottom: 0; left: 0; cursor: nesw-resize; }
+    .resize-handle.se { bottom: 0; right: 0; cursor: nwse-resize; }
+    #window.maximized .resize-handle { display: none; }
+    .title {
+      position: absolute;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--dim);
+      pointer-events: none;
+    }
+
+    /* The body always holds the terminal (kept at a definite size so xterm
+       fits); the setup panel sits on top of it until you hit Start. */
+    .window-body { position: relative; flex: 1; min-height: 0; }
+
+    #terminal-wrap { position: absolute; inset: 0; padding: 10px; background: var(--bg); }
+    #terminal { width: 100%; height: 100%; }
+
+    #setup {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      background: var(--window-bg);
+      transition: opacity 0.25s ease;
+    }
+    #setup.hidden { opacity: 0; pointer-events: none; }
+
+    .fields {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 24px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      justify-content: center;
+      overflow: auto;
+    }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .label-row { display: flex; align-items: center; font-size: 12px; color: var(--label); }
+    .req-star { color: var(--red); margin-left: 5px; font-weight: 700; }
+
+    .fields input, .fields select {
+      width: 100%;
+      padding: 9px 10px;
+      font: inherit;
+      font-size: 13px;
+      color: var(--text);
+      background: var(--field-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    #openrouter-key, #model, #exa-key {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    }
+    .fields input:focus, .fields select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.15);
+    }
+
+    #jspi-note {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #ff7b72;
+      background: rgba(248, 81, 73, 0.1);
+      border: 1px solid rgba(248, 81, 73, 0.3);
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+
+    .setup-footer {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .setup-footer .note { font-size: 11px; color: var(--dim); }
+
+    #start {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 7px 18px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    #start:hover:not(:disabled) { background: var(--green-hover); }
+    #start:disabled { background: #21262d; color: #6e7681; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+  <div id="window">
+    <div class="titlebar">
+      <div class="lights">
+        <button class="light red" type="button" id="light-back" aria-label="Go back"></button>
+        <span class="light yellow"></span>
+        <button class="light green" type="button" id="light-zoom" aria-label="Zoom"></button>
+      </div>
+      <div class="title">EmbeddedSwiftAgent</div>
+    </div>
+
+    <div class="resize-handle nw"></div>
+    <div class="resize-handle ne"></div>
+    <div class="resize-handle sw"></div>
+    <div class="resize-handle se"></div>
+
+    <div class="window-body">
+      <div id="terminal-wrap"><div id="terminal"></div></div>
+
+      <form id="setup" autocomplete="off">
+        <div class="fields">
+          <label class="field">
+            <span class="label-row">OpenRouter API key <span class="req-star">*</span></span>
+            <input id="openrouter-key" type="password" placeholder="sk-or-..." autocomplete="off" autofocus>
+          </label>
+
+          <label class="field">
+            <span class="label-row">Model <span class="req-star">*</span></span>
+            <input id="model" type="text" value="anthropic/claude-haiku-4.5" autocomplete="off">
+          </label>
+
+          <label class="field">
+            <span class="label-row">Reasoning effort</span>
+            <select id="effort">
+              <option value="">none</option>
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high" selected>high</option>
+              <option value="max">max</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span class="label-row">Exa API key</span>
+            <input id="exa-key" type="password" placeholder="for web search" autocomplete="off">
+          </label>
+
+          <div id="jspi-note" hidden></div>
+        </div>
+
+        <div class="setup-footer">
+          <span class="note">Keys stay in this browser.</span>
+          <button id="start" type="submit" disabled>Start</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/xterm@6.0.0/lib/xterm.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@xterm/addon-fit@0.11.0/lib/addon-fit.min.js"></script>
+  <script>
+    // Window manager: drag by the titlebar, resize from the corners, red
+    // light = back, green light = zoom (maximize/restore). Kept separate from
+    // the module script so the chrome works even if the agent fails to load.
+    (() => {
+      const win = document.getElementById("window");
+      const titlebar = win.querySelector(".titlebar");
+      const MIN_W = 380, MIN_H = 300;
+      let maximized = false;
+      let restoreRect = null;
+
+      const clamp = (v, lo, hi) => Math.min(Math.max(v, lo), hi);
+
+      // The window starts flex-centered by the body; before the first move or
+      // resize, freeze it at its current spot as a fixed-position element.
+      function pin() {
+        if (win.style.position === "fixed") return;
+        const r = win.getBoundingClientRect();
+        Object.assign(win.style, {
+          position: "fixed",
+          left: r.left + "px",
+          top: r.top + "px",
+          width: r.width + "px",
+          height: r.height + "px",
+        });
+      }
+
+      function setRect(l, t, w, h) {
+        win.style.left = l + "px";
+        win.style.top = t + "px";
+        win.style.width = w + "px";
+        win.style.height = h + "px";
+      }
+
+      // Drag to move — clamped so the titlebar always stays reachable.
+      titlebar.addEventListener("pointerdown", (e) => {
+        if (maximized || e.button !== 0 || e.target.closest(".light")) return;
+        pin();
+        e.preventDefault();
+        titlebar.style.cursor = "grabbing";
+        const startX = e.clientX, startY = e.clientY;
+        const startL = parseFloat(win.style.left);
+        const startT = parseFloat(win.style.top);
+        titlebar.setPointerCapture(e.pointerId);
+        const move = (ev) => {
+          win.style.left = clamp(startL + ev.clientX - startX,
+            80 - win.offsetWidth, innerWidth - 80) + "px";
+          win.style.top = clamp(startT + ev.clientY - startY,
+            0, innerHeight - 40) + "px";
+        };
+        const up = () => {
+          titlebar.style.cursor = "";
+          titlebar.removeEventListener("pointermove", move);
+          titlebar.removeEventListener("pointerup", up);
+          titlebar.removeEventListener("pointercancel", up);
+        };
+        titlebar.addEventListener("pointermove", move);
+        titlebar.addEventListener("pointerup", up);
+        titlebar.addEventListener("pointercancel", up);
+      });
+
+      // Corner grips: the opposite corner stays anchored while you drag.
+      for (const handle of win.querySelectorAll(".resize-handle")) {
+        const grabW = handle.classList.contains("nw") || handle.classList.contains("sw");
+        const grabN = handle.classList.contains("nw") || handle.classList.contains("ne");
+        handle.addEventListener("pointerdown", (e) => {
+          if (e.button !== 0) return;
+          pin();
+          e.preventDefault();
+          const startX = e.clientX, startY = e.clientY;
+          const s = {
+            l: parseFloat(win.style.left), t: parseFloat(win.style.top),
+            w: parseFloat(win.style.width), h: parseFloat(win.style.height),
+          };
+          const right = s.l + s.w, bottom = s.t + s.h;
+          handle.setPointerCapture(e.pointerId);
+          const move = (ev) => {
+            const dx = ev.clientX - startX, dy = ev.clientY - startY;
+            let { l, t, w, h } = s;
+            if (grabW) { w = clamp(s.w - dx, MIN_W, right); l = right - w; }
+            else { w = clamp(s.w + dx, MIN_W, innerWidth - s.l); }
+            if (grabN) { h = clamp(s.h - dy, MIN_H, bottom); t = bottom - h; }
+            else { h = clamp(s.h + dy, MIN_H, innerHeight - s.t); }
+            setRect(l, t, w, h);
+          };
+          const up = () => {
+            handle.removeEventListener("pointermove", move);
+            handle.removeEventListener("pointerup", up);
+            handle.removeEventListener("pointercancel", up);
+          };
+          handle.addEventListener("pointermove", move);
+          handle.addEventListener("pointerup", up);
+          handle.addEventListener("pointercancel", up);
+        });
+      }
+
+      // Green light: zoom to fill the page, or shrink back to the prior rect.
+      function toggleZoom() {
+        pin();
+        win.classList.add("zooming");
+        if (!maximized) {
+          restoreRect = {
+            left: win.style.left, top: win.style.top,
+            width: win.style.width, height: win.style.height,
+          };
+          setRect(0, 0, innerWidth, innerHeight);
+          win.style.borderRadius = "0";
+        } else {
+          Object.assign(win.style, restoreRect);
+          win.style.borderRadius = "";
+        }
+        maximized = !maximized;
+        win.classList.toggle("maximized", maximized);
+        setTimeout(() => win.classList.remove("zooming"), 260);
+      }
+      document.getElementById("light-zoom").addEventListener("click", toggleZoom);
+      titlebar.addEventListener("dblclick", (e) => {
+        if (!e.target.closest(".light")) toggleZoom();
+      });
+
+      // While maximized, track viewport size changes.
+      addEventListener("resize", () => {
+        if (maximized) setRect(0, 0, innerWidth, innerHeight);
+      });
+
+      // Red light: back to wherever you came from.
+      document.getElementById("light-back").addEventListener("click", () => {
+        if (history.length > 1) history.back();
+        else location.href = "/";
+      });
+    })();
+  </script>
+  <script type="module">
+    import { bootAgent, jspiSupported } from "./agent.js";
+
+    const term = new Terminal({
+      convertEol: true,
+      cursorBlink: true,
+      fontSize: 13,
+      scrollback: 5000,
+      theme: {
+        background: "#0d1117",
+        foreground: "#e6edf3",
+        cursor: "#58a6ff",
+      },
+    });
+    const fit = new FitAddon.FitAddon();
+    term.loadAddon(fit);
+    term.open(document.getElementById("terminal"));
+    fit.fit();
+    addEventListener("resize", () => fit.fit());
+    // Refit whenever the window itself is resized or zoomed.
+    new ResizeObserver(() => fit.fit()).observe(document.getElementById("window"));
+
+    const $ = (id) => document.getElementById(id);
+    const setup = $("setup");
+    const startBtn = $("start");
+
+    // Persist each field to localStorage and restore it on load.
+    const fields = {
+      "openrouter-key": "esa_openrouter_key",
+      "model": "esa_model",
+      "effort": "esa_effort",
+      "exa-key": "esa_exa_key",
+    };
+    for (const [id, key] of Object.entries(fields)) {
+      const el = $(id);
+      const saved = localStorage.getItem(key);
+      if (saved) el.value = saved;
+      const save = () => {
+        localStorage.setItem(key, el.value);
+        validate();
+      };
+      el.addEventListener("input", save);
+      el.addEventListener("change", save);
+    }
+
+    // JSPI is required for the synchronous Swift loop to "block" on fetch.
+    const jspiOK = jspiSupported();
+    if (!jspiOK) {
+      const note = $("jspi-note");
+      note.hidden = false;
+      note.textContent =
+        "This demo needs WebAssembly JSPI — open it in Chrome or Edge 137+ " +
+        "(Firefox: enable javascript.options.wasm_js_promise_integration; " +
+        "Safari: Technology Preview).";
+    }
+
+    // Start is clickable only when the required (*) fields are filled.
+    function validate() {
+      startBtn.disabled = !(
+        jspiOK &&
+        $("openrouter-key").value.trim() &&
+        $("model").value.trim()
+      );
+    }
+    validate();
+    $("openrouter-key").focus();
+
+    async function start() {
+      if (startBtn.disabled) return;
+      // Fade the setup form away; the agent runs in the same window's terminal.
+      setup.classList.add("hidden");
+      setTimeout(() => { setup.style.display = "none"; }, 250);
+      fit.fit();
+      term.focus();
+
+      // Optional system prompt: if a system-context.md sits beside this page,
+      // its contents ride in as the SYSTEM_PROMPT env var and become the
+      // agent's system message. Missing file = no system prompt, as before.
+      let systemContext = "";
+      try {
+        const ctxResp = await fetch("embedded-swift-agent-context.md");
+        if (ctxResp.ok) systemContext = (await ctxResp.text()).trim();
+      } catch (_) { /* offline or missing — run without extra context */ }
+
+      try {
+        await bootAgent({
+          term,
+          wasmUrl: "EmbeddedSwiftAgent.wasm",
+          env: {
+            OPENROUTER_API_KEY: $("openrouter-key").value.trim(),
+            EXA_API_KEY: $("exa-key").value.trim(),
+            MODEL: $("model").value.trim(),
+            REASONING_EFFORT: $("effort").value,
+            SYSTEM_PROMPT: systemContext,
+          },
+        });
+      } catch (e) {
+        term.write(`\r\n\x1b[31m[boot failed: ${e}]\x1b[0m\r\n`);
+        console.error(e);
+      }
+    }
+
+    // Hitting Enter in any field submits the form and starts the agent.
+    $("setup").addEventListener("submit", (e) => {
+      e.preventDefault();
+      start();
+    });
+  </script>
+</body>
+</html>
