@@ -24,11 +24,15 @@ const serve = (port: number, directory: string, url: string) => ({
 // oldDir() (which is the baseline SHA pin) must not run for them either.
 const parity = process.env.PARITY_MODE !== undefined;
 const OLD_ROOT = parity ? oldDir() : '';
+const ROOT = import.meta.dirname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // regex-escaped repo root
 
 export default defineConfig({
   testDir: '.',
-  testMatch: ['tests/browser/**/*.spec.ts', 'harness/parity.spec.ts', 'harness/theme-authoring.spec.ts'],
-  testIgnore: ['**/node_modules/**', 'dist/**', 'tests/fixtures/**', 'harness/__parity__/**'],
+  // Anchored to this checkout's absolute path: string globs are matched as `**/<glob>` against
+  // absolute paths, so nested checkouts (agent worktrees under the gitignored .claude/) would be
+  // collected too, each importing its own @playwright/test. A `**/.claude/**` ignore is no fix:
+  // it drops everything when this checkout itself lives under .claude/.
+  testMatch: new RegExp('^' + ROOT + '/(tests/browser/.+\\.spec\\.ts|harness/(parity|theme-authoring)\\.spec\\.ts)$'),
   fullyParallel: true,
   retries: 0,
   timeout: 90_000,
