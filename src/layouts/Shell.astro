@@ -42,6 +42,9 @@ const style = html.style + declarations(page.styleExtras ?? {});
 
 <body>
 <slot />
+{/* This comment serializes the composition decision so the build check can validate the tail
+    without importing compose.ts or inferring intent from the markup it is checking. */}
+<Fragment set:html={`<!--picker-mount:${picker.mount}-->`} />
 {picker.mount !== 'none' && (
   <Fragment>
     <ThemeDock theme={theme} page={page} />

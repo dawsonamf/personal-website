@@ -10,12 +10,16 @@
 // tsconfig.json excludes this directory, so import it with an explicit `.ts` path and keep the
 // file to syntax Node's type stripping can erase.
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, rmdirSync, rmSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, rmdirSync, rmSync, symlinkSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 
 export const repoRoot = resolve(import.meta.dirname, '..', '..', '..');
 export const fixtureRoot = join(repoRoot, 'tests', 'fixtures', 'composition');
-export const tmpRoot = join(fixtureRoot, '.tmp');
+// Large fixture copies can be routed off an iCloud-synced checkout. Existing callers keep the
+// original ignored location unless they opt in; cleanup still removes only the child it created.
+export const tmpRoot = process.env.TEST_BUILD_OUT_DIR
+  ? resolve(process.env.TEST_BUILD_OUT_DIR)
+  : join(fixtureRoot, '.tmp');
 
 /** One Astro build of the real tree, with margin. */
 export const BUILD_MS = 180_000;
@@ -45,6 +49,18 @@ export function buildSite(prefix: string, overlay?: (dir: string) => void): { di
   mkdirSync(tmpRoot, { recursive: true });
   const dir = mkdtempSync(join(tmpRoot, prefix));
   try {
+    // An external scratch root cannot discover the repository's installed packages by walking
+    // parent directories. Keep node_modules itself local so Vite's `.vite` cache is worker-owned,
+    // then link each installed top-level package; this installs and copies nothing.
+    if (process.env.TEST_BUILD_OUT_DIR && !existsSync(join(dir, 'node_modules'))) {
+      const installed = join(repoRoot, 'node_modules');
+      const local = join(dir, 'node_modules');
+      mkdirSync(local);
+      for (const entry of readdirSync(installed, { withFileTypes: true })) {
+        if (entry.name === '.vite' || entry.name === '.cache') continue;
+        symlinkSync(join(installed, entry.name), join(local, entry.name), entry.isDirectory() ? 'dir' : 'file');
+      }
+    }
     cpSync(join(repoRoot, 'src'), join(dir, 'src'), { recursive: true });
     cpSync(join(repoRoot, 'astro.config.mjs'), join(dir, 'astro.config.mjs'));
     for (const rel of PUBLIC_SUBSET) {
@@ -60,6 +76,9 @@ export function buildSite(prefix: string, overlay?: (dir: string) => void): { di
       encoding: 'utf8',
       timeout: BUILD_MS,
       env,
+      // Keep Astro's default .astro cache inside this copy. Parallel browser workers otherwise
+      // share the checkout cache and can remove one another's hashed prerender chunks.
+      cwd: dir,
     });
     if (run.error) throw run.error;
     if (run.status !== 0) throw new Error(`astro build failed (${run.status}):\n${run.stdout}\n${run.stderr}`);

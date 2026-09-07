@@ -27,8 +27,11 @@ const title = createProseAccess(source.meta, source.source).text('title', 's' /*
     <meta charset="utf-8" />
     <title>{title}</title>
     {draft && <meta name="robots" content="noindex" />}
+    <!--theme-assets-->
   </head>
   <body>
+    <!-- Minimal prose fixture: intentionally picker-free, but still a valid engine page. -->
+    <!--picker-mount:none-->
     {draft && <p class="post-draft-marker">Draft</p>}
     <h1>{title}</h1>
     <article set:html={source.body} />

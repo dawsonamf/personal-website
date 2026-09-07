@@ -3,6 +3,7 @@
  * checkout rather than hand-listed. Consumers: harness/parity.spec.ts, playwright.config.ts.
  */
 import { localPostIds, oldPath, themeOrder } from './baseline.ts';
+import type { MigratedAdapter } from './migrated.ts';
 
 export type PageType = 'home' | 'blog' | 'post' | 'privacy' | 'notFound' | 'lexchat';
 
@@ -37,17 +38,37 @@ export interface UrlPair {
   newPath: string;
 }
 
-/** themeOrder() × {home, blog, the three matrix posts, privacy, 404, lexchat} = 16 × 8. */
-export function urlPairs(): UrlPair[] {
-  if (parityMode() === 'old-new') throw new Error('old-new URL mapping arrives with S1-13');
-  const local = localPostIds();
-  for (const id of MATRIX_POSTS) {
+type AdapterLoader = () => Promise<{ createMigratedAdapter(): MigratedAdapter }>;
+
+/** The isolation boundary: old-old returns before the dynamic import expression is evaluated. */
+export async function loadMigratedAdapter(
+  mode: ParityMode,
+  loader: AdapterLoader = () => import('./migrated.ts'),
+): Promise<MigratedAdapter | null> {
+  return mode === 'old-new' ? (await loader()).createMigratedAdapter() : null;
+}
+
+/** theme source × {home, blog, the three matrix posts, privacy, 404, lexchat} = 16 × 8. */
+export async function urlPairs(adapter?: MigratedAdapter | null): Promise<UrlPair[]> {
+  const mode = parityMode();
+  const migrated = adapter === undefined ? await loadMigratedAdapter(mode) : adapter;
+  const legacyThemes = themeOrder();
+  const themes = migrated?.themeIds ?? legacyThemes;
+  const local = migrated?.publishedPostIds ?? localPostIds();
+  if (migrated && JSON.stringify(themes) !== JSON.stringify(legacyThemes)) {
+    throw new Error(`Theme order differs between baseline and migrated registry:\nold ${legacyThemes.join(', ')}\nnew ${themes.join(', ')}`);
+  }
+  const matrixPosts = migrated?.matrixPosts ?? [...MATRIX_POSTS];
+  if (migrated && JSON.stringify(matrixPosts) !== JSON.stringify(MATRIX_POSTS)) {
+    throw new Error(`Migrated matrix posts differ from §9: ${matrixPosts.join(', ')}`);
+  }
+  for (const id of matrixPosts) {
     if (!local.includes(id)) throw new Error(`Matrix post ${id} is not a local post: ${local.join(', ')}`);
   }
   const pages = PAGE_TYPES.flatMap((page): Array<{ page: PageType; postId?: string }> =>
-    page === 'post' ? MATRIX_POSTS.map((postId) => ({ page, postId })) : [{ page }],
+    page === 'post' ? matrixPosts.map((postId) => ({ page, postId })) : [{ page }],
   );
-  return themeOrder().flatMap((theme) =>
+  return themes.flatMap((theme) =>
     pages.map(({ page, postId }) => {
       const old = oldPath(page, theme, postId);
       return {
@@ -56,7 +77,7 @@ export function urlPairs(): UrlPair[] {
         ...(postId ? { postId } : {}),
         pageId: postId ? `post-${postId}` : page,
         oldPath: old,
-        newPath: old,
+        newPath: migrated ? migrated.newPath(page, theme, postId) : old,
       };
     }),
   );

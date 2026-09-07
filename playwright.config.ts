@@ -25,6 +25,7 @@ const serve = (port: number, directory: string, url: string) => ({
 const parity = process.env.PARITY_MODE !== undefined;
 const OLD_ROOT = parity ? oldDir() : '';
 const ROOT = import.meta.dirname.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // regex-escaped repo root
+const PARITY_ROOT = resolve(process.env.PARITY_OUT_DIR ?? resolve(import.meta.dirname, 'harness/__parity__'));
 
 export default defineConfig({
   testDir: '.',
@@ -46,11 +47,11 @@ export default defineConfig({
       scale: 'css',
     },
   },
-  outputDir: 'harness/__parity__/test-results',
+  outputDir: resolve(PARITY_ROOT, 'test-results'),
   // No {platform}: both sides are captured on the same machine in the same run, and the
   // references are regenerated from OLD every time.
-  snapshotPathTemplate: 'harness/__parity__/snapshots/{projectName}/{arg}{ext}',
-  reporter: [['html', { open: 'never', outputFolder: 'harness/__parity__/report' }], ['list']],
+  snapshotPathTemplate: resolve(PARITY_ROOT, 'snapshots/{projectName}/{arg}{ext}'),
+  reporter: [['html', { open: 'never', outputFolder: resolve(PARITY_ROOT, 'report') }], ['list']],
   use: {
     colorScheme: 'light',
     // 1.61.1 has no top-level `reducedMotion` use-option; it lives under contextOptions.

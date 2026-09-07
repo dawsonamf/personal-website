@@ -19,14 +19,18 @@ import {
 } from './determinism.ts';
 import { INTERACTIONS, refreshAos, statesFor } from './interactions.ts';
 import type { Interaction, InteractionContext, ProjectName, StateName } from './interactions.ts';
+import { paletteEvidenceForComparison } from './palette.ts';
+import { exceptionRectangles, postHeadIssues, screenshotWithExceptionRectangles, styleSampleForComparison } from './exceptions.ts';
 import { normalizeHtml } from './normalize.ts';
-import { disallowedScripts } from './scripts.ts';
+import { rawScriptSources, recordScriptRequests, scriptOrderIssues } from './scripts.ts';
 import { ROLE_TOKENS, sentinels, SETTLE_TIMEOUT_MS } from './sentinels.ts';
 import { afterInteraction, settle } from './settle.ts';
-import { NEW_ORIGIN, OLD_ORIGIN, parityMode, urlPairs } from './urls.ts';
-import type { PageType } from './urls.ts';
+import { loadMigratedAdapter, NEW_ORIGIN, OLD_ORIGIN, parityMode, urlPairs } from './urls.ts';
+import type { PageType, UrlPair } from './urls.ts';
 
-const pairs = urlPairs();
+const MODE = parityMode();
+const migrated = await loadMigratedAdapter(MODE);
+const pairs = await urlPairs(migrated);
 const matrix = pairs.flatMap((pair) => statesFor(pair).map((state) => ({ pair, state })));
 
 /**
@@ -98,9 +102,10 @@ const SENTINEL_PROPS = ['color', 'background-color', 'font-family', 'font-size',
 const RAMP_STEPS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95];
 const RAMP_PROPS: string[] = ROLE_TOKENS.flatMap((role) => [role, ...RAMP_STEPS.map((a) => `${role}${a}`)]);
 
-const DUMP_ROOT = resolve(import.meta.dirname, '__parity__/dumps');
+const PARITY_ROOT = resolve(process.env.PARITY_OUT_DIR ?? resolve(import.meta.dirname, '__parity__'));
+const DUMP_ROOT = resolve(PARITY_ROOT, 'dumps');
 /** Must stay `snapshotPathTemplate` in playwright.config.ts; the test below asserts they agree. */
-const SNAPSHOT_ROOT = resolve(import.meta.dirname, '__parity__/snapshots');
+const SNAPSHOT_ROOT = resolve(PARITY_ROOT, 'snapshots');
 const FIXTURE_DIR = resolve(import.meta.dirname, 'fixtures/baseline');
 /** The three attributes the bootstrap sets on `<html>` (`theme-bootstrap.js:704-706`). */
 const BOOTSTRAP_ATTRS = ['data-style', 'data-still', 'data-no-tilt'];
@@ -298,7 +303,8 @@ interface SideCapture {
   determinism: { seed: number; draws: number };
   sample: Record<string, string>;
   counts: Record<string, number>;
-  scripts: string[];
+  rawScripts: string[];
+  resourceScripts: string[];
   masthead: string | null;
   network: NetworkInventory;
   png: Buffer;
@@ -320,6 +326,7 @@ async function captureSide(
   const network: NetworkInventory = { responses: [], failed: [] };
   page.on('response', (r) => network.responses.push({ url: r.url(), status: r.status(), resourceType: r.request().resourceType() }));
   page.on('requestfailed', (r) => network.failed.push({ url: r.url(), errorText: r.failure()?.errorText ?? 'unknown' }));
+  const scriptRequests = recordScriptRequests(page);
 
   // Before goto, so the seeded Math.random is in place before the first site script draws from it.
   const seed = seedForPage(pageType, opts.mastheadIndex);
@@ -382,14 +389,8 @@ async function captureSide(
     },
     { selectors: spec.selectors, roles: [...ROLE_TOKENS], props: SENTINEL_PROPS },
   );
-  const scripts = await page.evaluate(() =>
-    [...document.scripts]
-      .filter((s) => s.src)
-      .map((s) => {
-        const resolved = new URL(s.getAttribute('src') ?? '', document.baseURI);
-        return resolved.origin === location.origin ? resolved.pathname : resolved.href;
-      }),
-  );
+  const resourceScripts = scriptRequests.snapshot(url);
+  scriptRequests.dispose();
   const mastheadText = spec.masthead ? await page.locator(spec.masthead).textContent() : null;
   const png = await page.screenshot({
     animations: 'disabled',
@@ -405,7 +406,8 @@ async function captureSide(
     determinism,
     sample,
     counts,
-    scripts,
+    rawScripts: rawScriptSources(responseBody, url),
+    resourceScripts,
     masthead: mastheadText,
     // A copy, not the live arrays: `@state:palette`'s `after` hook navigates this same page twice
     // more, and the requests those cancel are not part of the capture that was just compared.
@@ -414,6 +416,7 @@ async function captureSide(
   };
 }
 
+
 function writeDumps(dir: string, side: 'old' | 'new', capture: SideCapture, lines: string[]): Record<string, string> {
   mkdirSync(dir, { recursive: true });
   const files: Record<string, string> = {
@@ -421,7 +424,7 @@ function writeDumps(dir: string, side: 'old' | 'new', capture: SideCapture, line
     [`${side}.dom.txt`]: lines.join('\n'),
     [`${side}.styles.json`]: JSON.stringify({ sample: capture.sample, counts: capture.counts }, null, 2),
     [`${side}.network.json`]: JSON.stringify(capture.network, null, 2),
-    [`${side}.scripts.json`]: JSON.stringify(capture.scripts, null, 2),
+    [`${side}.scripts.json`]: JSON.stringify({ raw: capture.rawScripts, resources: capture.resourceScripts }, null, 2),
     [`${side}.determinism.json`]: JSON.stringify(capture.determinism, null, 2),
   };
   const paths: Record<string, string> = {};
@@ -455,6 +458,60 @@ const badResponses = (network: NetworkInventory): Array<[number, string]> =>
 const badFailures = (network: NetworkInventory): NetworkInventory['failed'] =>
   network.failed.filter((f) => !ABORT_HOSTS.has(new URL(f.url).hostname));
 
+/** Fields removed by §15 are still asserted on NEW from their owning source and route contract. */
+async function assertMigratedContracts(page: Page, pair: UrlPair): Promise<void> {
+  if (!migrated) return;
+  if (pair.page === 'post' && pair.postId) {
+    const expected = migrated.postMetadata[pair.postId];
+    if (!expected) throw new Error(`no migrated metadata for ${pair.postId}`);
+    const actual = await page.evaluate(() => ({
+      titles: [...document.querySelectorAll('title')].map((node) => node.textContent ?? ''),
+      descriptions: [...document.querySelectorAll('meta[name="description"]')].map((node) => node.getAttribute('content')),
+      canonicals: [...document.querySelectorAll('link[rel="canonical"]')].map((node) => node.getAttribute('href')),
+      openGraph: [...document.querySelectorAll('meta[property^="og:"]')]
+        .map((node) => [node.getAttribute('property'), node.getAttribute('content')] as [string | null, string | null]),
+      twitter: [...document.querySelectorAll('meta[name^="twitter:"]')]
+        .map((node) => [node.getAttribute('name'), node.getAttribute('content')] as [string | null, string | null]),
+      jsonLd: [...document.querySelectorAll('script[type="application/ld+json"]')]
+        .map((node) => JSON.parse(node.textContent ?? 'null') as unknown),
+      heading: document.getElementById('post-title')?.textContent?.trim() ?? null,
+    }));
+    expect.soft(postHeadIssues(actual, expected), `${pair.postId}: authoritative post metadata`).toEqual([]);
+  }
+
+  if (pair.page === 'home' || pair.page === 'blog') {
+    for (const [id, expected] of Object.entries(migrated.changedCards)) {
+      const actual = await page.evaluate((postId) => {
+        const card = [...document.querySelectorAll<HTMLAnchorElement>('a.blog-card')]
+          .find((anchor) => anchor.href.includes(postId));
+        return card ? {
+          title: card.querySelector('.blog-card-title')?.textContent?.trim() ?? null,
+          date: card.querySelector('.blog-card-date')?.textContent?.trim() ?? null,
+        } : null;
+      }, id);
+      expect.soft(actual, `${pair.page}: ${id} card matches its post source`).toEqual(expected);
+    }
+  }
+
+  if (pair.page !== 'notFound') {
+    const route = pair.page === 'home' ? '/'
+      : pair.page === 'blog' ? '/blog/'
+      : pair.page === 'post' ? `/blog/${pair.postId}/`
+      : pair.page === 'privacy' ? '/privacy/'
+      : '/lexchat/';
+    const expectedCanonical = `https://www.dawsonamf.com${route}`;
+    const actual = await page.evaluate(() => ({
+      canonicals: [...document.querySelectorAll('link[rel="canonical"]')].map((node) => node.getAttribute('href')),
+      robots: [...document.querySelectorAll('meta[name="robots"]')].map((node) => node.getAttribute('content')),
+    }));
+    const hasDefaultCanonical = pair.page === 'home' || pair.page === 'blog' || pair.page === 'post';
+    expect.soft(actual.canonicals, `${pair.page}: route canonical`).toEqual(
+      pair.theme !== 'default' || hasDefaultCanonical ? [expectedCanonical] : [],
+    );
+    expect.soft(actual.robots, `${pair.page}: themed noindex`).toEqual(pair.theme === 'default' ? [] : ['noindex']);
+  }
+}
+
 for (const { pair, state } of matrix) {
   const interaction = state.name === 'settled' ? undefined : INTERACTIONS[state.name];
   // `@only:` is what the two comparison projects filter on in playwright.config.ts, so a state one
@@ -472,7 +529,7 @@ for (const { pair, state } of matrix) {
     // is relaxed and no wait is lengthened.
     if (interaction) test.slow();
     const spec = sentinels[pair.page];
-    const mode = parityMode();
+    const mode = MODE;
     const dumpDir = resolve(DUMP_ROOT, testInfo.project.name, pair.theme, pair.pageId, state.name);
     const project = testInfo.project.name as ProjectName;
     const context = (side: 'old' | 'new', origin: string): InteractionContext => ({
@@ -481,6 +538,7 @@ for (const { pair, state } of matrix) {
       project,
       origin,
       side,
+      mode,
       deadline: Date.now() + SETTLE_TIMEOUT_MS,
       evidence: {},
     });
@@ -495,113 +553,111 @@ for (const { pair, state } of matrix) {
     let oldEvidencePath = '';
     try {
       oldCapture = await captureSide(old.page, OLD_ORIGIN + pair.oldPath, pair.page, { ...sideOpts, ctx: oldCtx });
-      // Written **before** the `after` hook, and the evidence in the `finally` below: a hard
-      // `expect` inside `after` (the palette persistence assertions — exactly the three S1-13
-      // flips) would otherwise leave this side with no `old.*` files at all, and the record it had
-      // collected up to the throw is the half that says which assertion moved.
-      oldNorm = normalizeHtml(oldCapture.html, { mode, side: 'old' });
-      oldPaths = writeDumps(dumpDir, 'old', oldCapture, oldNorm.lines);
-      if (interaction?.after) {
-        oldCtx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
-        await interaction.after(old.page, oldCtx);
+      oldNorm = normalizeHtml(oldCapture.html, {
+        mode, side: 'old', page: pair.page, theme: pair.theme, postId: pair.postId, adapter: migrated ?? undefined,
+      });
+      oldEvidencePath = writeEvidence(dumpDir, 'old', state.name, oldCtx.evidence);
+
+      const next = await openSide(browser, testInfo);
+      try {
+        const newCapture = await captureSide(next.page, NEW_ORIGIN + pair.newPath, pair.page, {
+          ...sideOpts,
+          ctx: newCtx,
+        });
+        const newNorm = normalizeHtml(newCapture.html, {
+          mode, side: 'new', page: pair.page, theme: pair.theme, postId: pair.postId, adapter: migrated ?? undefined,
+        });
+
+        // §15 visible exceptions are measured once on NEW, then rendered as the same bounded
+        // page-coordinate rectangles on both captures. Closed fullscreen scrims never enter this.
+        const rectangles = mode === 'old-new' ? await exceptionRectangles(old.page, next.page, pair.page, pair.theme) : [];
+        oldCapture.png = await screenshotWithExceptionRectangles(
+          old.page, spec.mask, rectangles, spec.fullPage,
+        );
+        newCapture.png = await screenshotWithExceptionRectangles(
+          next.page, spec.mask, rectangles, spec.fullPage,
+        );
+
+        oldPaths = writeDumps(dumpDir, 'old', oldCapture, oldNorm.lines);
+        const newPaths = writeDumps(dumpDir, 'new', newCapture, newNorm.lines);
+        writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
+        const oldLines = oldNorm.lines;
+        const newLines = newNorm.lines;
+
+        testInfo.annotations.push({
+          type: 'astro-guards',
+          description: `old ${JSON.stringify(oldNorm.guards)} new ${JSON.stringify(newNorm.guards)}`,
+        });
+
+        expect.soft(badResponses(oldCapture.network), 'old side 4xx/5xx').toEqual([]);
+        expect.soft(badResponses(newCapture.network), 'new side 4xx/5xx').toEqual([]);
+        expect.soft(badFailures(oldCapture.network), 'old side request failures').toEqual([]);
+        expect.soft(badFailures(newCapture.network), 'new side request failures').toEqual([]);
+
+        const newSide = mode === 'old-new' ? 'new' : 'old';
+        expect.soft(scriptOrderIssues(pair.page, 'old', 'raw', oldCapture.rawScripts, pair.postId, true), 'old raw script order').toEqual([]);
+        expect.soft(scriptOrderIssues(pair.page, 'old', 'loaded', oldCapture.resourceScripts, pair.postId, true), 'old resource script order').toEqual([]);
+        expect.soft(scriptOrderIssues(pair.page, newSide, 'raw', newCapture.rawScripts, pair.postId, true, migrated ?? undefined), 'new raw script order').toEqual([]);
+        expect.soft(scriptOrderIssues(pair.page, newSide, 'loaded', newCapture.resourceScripts, pair.postId, true, migrated ?? undefined), 'new resource script order').toEqual([]);
+
+        const oneEach = Object.fromEntries(spec.selectors.map((selector) => [selector, 1]));
+        expect.soft(oldCapture.counts, 'old side sentinel match counts').toEqual(oneEach);
+        expect.soft(newCapture.counts, 'new side sentinel match counts').toEqual(oneEach);
+
+        if (newLines.join('\n') !== oldLines.join('\n')) {
+          await testInfo.attach('old.dom.txt', { path: oldPaths['old.dom.txt']!, contentType: 'text/plain' });
+          await testInfo.attach('new.dom.txt', { path: newPaths['new.dom.txt']!, contentType: 'text/plain' });
+        }
+        expect.soft(newLines, 'normalised DOM').toEqual(oldLines);
+
+        expect.soft(
+          styleSampleForComparison(newCapture.sample, { mode, side: 'new' }),
+          'computed-style sample',
+        ).toEqual(styleSampleForComparison(oldCapture.sample, { mode, side: 'old' }));
+
+        await assertMigratedContracts(next.page, pair);
+        expect.soft(newCapture.determinism.draws, 'seeded Math.random draw count').toEqual(
+          oldCapture.determinism.draws,
+        );
+        if (spec.masthead) expect.soft(newCapture.masthead, 'masthead text').toEqual(oldCapture.masthead);
+
+        const snapshotPath = testInfo.snapshotPath.bind(testInfo) as unknown as SnapshotPathWithKind;
+        const referencePath = snapshotPath(pair.theme, pair.pageId, `${state.name}.png`, { kind: 'screenshot' });
+        expect(referencePath, 'screenshot reference path').toBe(
+          resolve(SNAPSHOT_ROOT, testInfo.project.name, pair.theme, pair.pageId, `${state.name}.png`),
+        );
+        mkdirSync(dirname(referencePath), { recursive: true });
+        writeFileSync(referencePath, oldCapture.png);
+        expect(newCapture.png).toMatchSnapshot([pair.theme, pair.pageId, `${state.name}.png`], {
+          maxDiffPixelRatio: 0.001,
+          threshold: 0.2,
+        });
+
+        let newEvidencePath = '';
+        try {
+          if (interaction?.after) {
+            oldCtx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
+            await interaction.after(old.page, oldCtx);
+            newCtx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
+            await interaction.after(next.page, newCtx);
+          }
+        } finally {
+          oldEvidencePath = writeEvidence(dumpDir, 'old', state.name, oldCtx.evidence);
+          newEvidencePath = writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
+        }
+        const oldEvidence = state.name === 'palette' ? paletteEvidenceForComparison(oldCtx.evidence, mode) : oldCtx.evidence;
+        const newEvidence = state.name === 'palette' ? paletteEvidenceForComparison(newCtx.evidence, mode) : newCtx.evidence;
+        if (JSON.stringify(newEvidence) !== JSON.stringify(oldEvidence)) {
+          await testInfo.attach('old.interaction.json', { path: oldEvidencePath, contentType: 'application/json' });
+          await testInfo.attach('new.interaction.json', { path: newEvidencePath, contentType: 'application/json' });
+        }
+        expect.soft(newEvidence, `@state:${state.name} evidence`).toEqual(oldEvidence);
+      } finally {
+        await next.context.close();
       }
     } finally {
       await old.context.close();
-      oldEvidencePath = writeEvidence(dumpDir, 'old', state.name, oldCtx.evidence);
-    }
-    if (!oldCapture || !oldNorm) throw new Error('the old side produced no capture');
-
-    const next = await openSide(browser, testInfo);
-    try {
-      const newCapture = await captureSide(next.page, NEW_ORIGIN + pair.newPath, pair.page, {
-        ...sideOpts,
-        ctx: newCtx,
-      });
-      const newNorm = normalizeHtml(newCapture.html, { mode, side: 'new' });
-      const newPaths = writeDumps(dumpDir, 'new', newCapture, newNorm.lines);
-      // Written now as well as after the `after` hook, so a DOM or screenshot failure still leaves
-      // both sides' evidence on disk to compare.
-      writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
-      const oldLines = oldNorm.lines;
-      const newLines = newNorm.lines;
-
-      // Normaliser step 3: the Astro guard counts are reported, never asserted (the canonical
-      // family should emit none, and old-old emits none on either side by construction).
-      testInfo.annotations.push({
-        type: 'astro-guards',
-        description: `old ${JSON.stringify(oldNorm.guards)} new ${JSON.stringify(newNorm.guards)}`,
-      });
-
-      // 4. no 4xx/5xx and no connection failure on either side (the aborted API hosts are
-      //    inventory, not failures)
-      expect.soft(badResponses(oldCapture.network), 'old side 4xx/5xx').toEqual([]);
-      expect.soft(badResponses(newCapture.network), 'new side 4xx/5xx').toEqual([]);
-      expect.soft(badFailures(oldCapture.network), 'old side request failures').toEqual([]);
-      expect.soft(badFailures(newCapture.network), 'new side request failures').toEqual([]);
-
-      // 5. no <script src> outside the page type's allow-list
-      expect.soft(disallowedScripts(pair.page, oldCapture.scripts), 'old side script allow-list').toEqual([]);
-      expect.soft(disallowedScripts(pair.page, newCapture.scripts), 'new side script allow-list').toEqual([]);
-
-      // every sentinel resolves to exactly one element on both sides
-      const oneEach = Object.fromEntries(spec.selectors.map((s) => [s, 1]));
-      expect.soft(oldCapture.counts, 'old side sentinel match counts').toEqual(oneEach);
-      expect.soft(newCapture.counts, 'new side sentinel match counts').toEqual(oneEach);
-
-      // 1. normalised DOM
-      if (newLines.join('\n') !== oldLines.join('\n')) {
-        await testInfo.attach('old.dom.txt', { path: oldPaths['old.dom.txt']!, contentType: 'text/plain' });
-        await testInfo.attach('new.dom.txt', { path: newPaths['new.dom.txt']!, contentType: 'text/plain' });
-      }
-      expect.soft(newLines, 'normalised DOM').toEqual(oldLines);
-
-      // 3. computed-style sample
-      expect.soft(newCapture.sample, 'computed-style sample').toEqual(oldCapture.sample);
-
-      // The seeded `Math.random` served the same number of draws on both sides. Dumped since S1-02
-      // as the pick's evidence; asserted here, because a side that drew a different number of times
-      // took a different path through the page even where the DOM happened to land the same.
-      expect.soft(newCapture.determinism.draws, 'seeded Math.random draw count').toEqual(
-        oldCapture.determinism.draws,
-      );
-
-      // the masked masthead, asserted as text instead
-      if (spec.masthead) expect.soft(newCapture.masthead, 'masthead text').toEqual(oldCapture.masthead);
-
-      // 2. screenshot. OLD writes the reference every run; NEW is only ever compared against it.
-      const snapshotPath = testInfo.snapshotPath.bind(testInfo) as unknown as SnapshotPathWithKind;
-      const referencePath = snapshotPath(pair.theme, pair.pageId, `${state.name}.png`, { kind: 'screenshot' });
-      // A reference written anywhere else would be regenerated from NEW on the next run, which is
-      // exactly what "NEW never generates the accepted old baseline" forbids.
-      expect(referencePath, 'screenshot reference path').toBe(
-        resolve(SNAPSHOT_ROOT, testInfo.project.name, pair.theme, pair.pageId, `${state.name}.png`),
-      );
-      mkdirSync(dirname(referencePath), { recursive: true });
-      writeFileSync(referencePath, oldCapture.png);
-      await expect(next.page).toHaveScreenshot([pair.theme, pair.pageId, `${state.name}.png`], {
-        fullPage: spec.fullPage,
-        mask: spec.mask.map((s) => next.page.locator(s)),
-      });
-
-      // The state's own end-condition evidence, last because a navigating state's `after` hook
-      // moves the page off the capture it just took. Rewritten in a `finally` for the same reason
-      // the old side's is: a throwing `after` must still leave the record it got as far as.
-      let newEvidencePath = '';
-      try {
-        if (interaction?.after) {
-          newCtx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
-          await interaction.after(next.page, newCtx);
-        }
-      } finally {
-        newEvidencePath = writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
-      }
-      if (JSON.stringify(newCtx.evidence) !== JSON.stringify(oldCtx.evidence)) {
-        await testInfo.attach('old.interaction.json', { path: oldEvidencePath, contentType: 'application/json' });
-        await testInfo.attach('new.interaction.json', { path: newEvidencePath, contentType: 'application/json' });
-      }
-      expect.soft(newCtx.evidence, `@state:${state.name} evidence`).toEqual(oldCtx.evidence);
-    } finally {
-      await next.context.close();
+      writeEvidence(dumpDir, 'old', state.name, oldCtx.evidence);
     }
   });
 }

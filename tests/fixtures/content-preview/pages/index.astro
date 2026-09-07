@@ -17,8 +17,11 @@ const tech = prose.list('projects.0.tech', 'xs');
   <head>
     <meta charset="utf-8" />
     <title>{prose.text('meta.home.title', 's')}</title>
+    <!--theme-assets-->
   </head>
   <body>
+    <!-- Minimal prose fixture: intentionally picker-free, but still a valid engine page. -->
+    <!--picker-mount:none-->
     <h1>{prose.text('home.about.title', 'xs')}</h1>
     <div class="about-text"><Fragment set:html={about.join('<br><br>')} /></div>
     <ul class="bullets">{bullets.map((item) => <li set:html={item} />)}</ul>

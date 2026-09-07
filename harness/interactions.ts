@@ -26,8 +26,9 @@ import {
 } from './determinism.ts';
 import { holdSteady, pollUntil, ROLE_TOKENS, SETTLE_TIMEOUT_MS } from './sentinels.ts';
 import { afterInteraction, settle } from './settle.ts';
+import { firstPaint, recordFirstPaint, reloadOutcome } from './palette.ts';
 import { urlPairs } from './urls.ts';
-import type { PageType, UrlPair } from './urls.ts';
+import type { PageType, ParityMode, UrlPair } from './urls.ts';
 
 export type ProjectName = 'desktop-1440' | 'mobile-390';
 
@@ -57,6 +58,7 @@ export interface InteractionContext {
    * `dist`. `@state:palette` is the one hook that needs it.
    */
   side: 'old' | 'new';
+  mode: ParityMode;
   /** Reset by the caller at each hook, so a hook's waits get a full settle budget of their own. */
   deadline: number;
   /** Written to `<side>.interaction.json` and compared `toEqual` across the two sides. */
@@ -284,45 +286,6 @@ function readRoles(page: Page): Promise<Record<string, string>> {
   );
 }
 
-/**
- * Record the inline roles and the session key at `readyState === 'interactive'` — after the
- * blocking `js/theme-bootstrap.js` has painted the palette onto `<html>` and before the deferred
- * `js/theme-cycler.js` runs, which is what "first paint" means for D4's pre-paint override.
- */
-async function recordFirstPaint(page: Page, key: string): Promise<void> {
-  await page.addInitScript({
-    content: [
-      '(() => {',
-      `  const roles = ${JSON.stringify(ROLE_TOKENS)};`,
-      `  const key = ${JSON.stringify(key)};`,
-      '  window.__parityFirstPaint = null;',
-      '  document.addEventListener("readystatechange", () => {',
-      '    if (document.readyState !== "interactive" || window.__parityFirstPaint) return;',
-      '    const style = document.documentElement.style;',
-      '    const out = {};',
-      '    roles.forEach((r) => { out[r] = style.getPropertyValue(r); });',
-      '    let storage = null;',
-      '    try { storage = sessionStorage.getItem(key); } catch (e) {}',
-      '    window.__parityFirstPaint = { roles: out, storage: storage };',
-      '  });',
-      '})();',
-    ].join('\n'),
-  });
-}
-
-interface FirstPaint {
-  roles: Record<string, string>;
-  storage: string | null;
-}
-
-async function firstPaint(page: Page): Promise<FirstPaint> {
-  const shot = await page.evaluate(
-    () => (window as unknown as { __parityFirstPaint?: FirstPaint | null }).__parityFirstPaint ?? null,
-  );
-  if (!shot) throw new Error('no readystatechange="interactive" snapshot was recorded on this load');
-  return shot;
-}
-
 /** One landing after a navigation or a reload: what the bootstrap painted and what settled. */
 async function landing(page: Page, pageType: PageType, key: string) {
   await settle(page, pageType);
@@ -343,8 +306,8 @@ let mastheadFixture: MastheadFixture | null = null;
  * The next page of the same theme in `urlPairs()` order, wrapping after the last one. The palette
  * state navigates to it to prove the saved palette survives a navigation (§15 item 2 / D4).
  */
-export function nextPair(pair: UrlPair): UrlPair {
-  const sameTheme = (allPairs ??= urlPairs()).filter((p) => p.theme === pair.theme);
+export async function nextPair(pair: UrlPair): Promise<UrlPair> {
+  const sameTheme = (allPairs ??= await urlPairs()).filter((p) => p.theme === pair.theme);
   const i = sameTheme.findIndex((p) => p.pageId === pair.pageId);
   if (i < 0) throw new Error(`nextPair: ${pair.theme}/${pair.pageId} is not in the matrix`);
   return sameTheme[(i + 1) % sameTheme.length]!;
@@ -933,9 +896,9 @@ export const INTERACTIONS: Record<Exclude<StateName, 'settled'>, Interaction> = 
       const key = storageKey();
       const base = ctx.evidence.base as Record<string, string>;
       const shuffled = ctx.evidence.shuffled as Record<string, string>;
-      const next = nextPair(ctx.pair);
+      const next = await nextPair(ctx.pair);
 
-      await recordFirstPaint(page, key);
+      await recordFirstPaint(page, key, ROLE_TOKENS);
       // The destination is a different page type, so it draws its own masthead: give it the seed
       // the settled matrix loads it under, or its readiness predicate would be asserting a
       // sequence this page's seed never picks.
@@ -963,12 +926,16 @@ export const INTERACTIONS: Record<Exclude<StateName, 'settled'>, Interaction> = 
         'the saved colors are the shuffled ones',
       ).toEqual(ROLE_TOKENS.map((r) => shuffled[r]));
 
-      // >>> S1-13 FLIPS THE NEXT THREE ASSERTIONS <<<
-      // D11 gives the migrated engine a palette that *survives* a reload. Until then the baseline
-      // clears the key before first paint, so the reloaded page comes back on the theme's own base.
-      expect(reload.firstPaintStorage, 'the reload cleared the session key before first paint').toBe(null);
-      expect(reload.firstPaint, 'so first paint is the theme base again').toEqual(base);
-      expect(reload.settled, 'and the cycler re-applies the theme base').toEqual(base);
+      if (reloadOutcome(ctx.mode, ctx.side) === 'persist') {
+        expect(JSON.parse(reload.firstPaintStorage ?? 'null')?.colors, 'the migrated reload keeps the saved colors before paint')
+          .toEqual(ROLE_TOKENS.map((role) => shuffled[role]));
+        expect(reload.firstPaint, 'the migrated reload paints the saved palette first').toEqual(shuffled);
+        expect(reload.settled, 'the migrated runtime leaves the saved palette in place').toEqual(shuffled);
+      } else {
+        expect(reload.firstPaintStorage, 'the legacy reload clears the session key before paint').toBe(null);
+        expect(reload.firstPaint, 'the legacy reload paints the theme base').toEqual(base);
+        expect(reload.settled, 'the legacy runtime re-applies the theme base').toEqual(base);
+      }
     },
   },
 };

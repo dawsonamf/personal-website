@@ -17,14 +17,17 @@
  */
 import { test as base, expect } from '@playwright/test';
 import type { Locator, Page } from '@playwright/test';
-import { readFileSync, statSync } from 'node:fs';
+import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs';
 import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
-import { extname, join, normalize } from 'node:path';
+import { dirname, extname, join, normalize } from 'node:path';
 
 import { rampDeclarations } from '../../src/themes/ramp.ts';
 import { THEMES } from '../../src/themes/registry.ts';
 import type { SkinTheme } from '../../src/themes/types.ts';
+import { firstPaint, recordFirstPaint } from '../../harness/palette.ts';
+import { exceptionRectangles, screenshotWithExceptionRectangles } from '../../harness/exceptions.ts';
+import { recordScriptRequests, scriptOrderIssues } from '../../harness/scripts.ts';
 import { buildSite, cleanup } from '../fixtures/composition/build.ts';
 
 declare global {
@@ -42,6 +45,7 @@ const SEED_COLORS = ['#123456', '#abcdef', '#0f1e2d', '#fedcba', '#778899'];
 
 /** A second palette for the same theme, so a reload cannot pass by repainting the first. */
 const SECOND_COLORS = ['#111213', '#141516', '#171819', '#1a1b1c', '#1d1e1f'];
+const ROLE_TOKENS = ['--text', '--bg', '--primary', '--secondary', '--accent'] as const;
 
 /** `rampDeclarations` as prop -> value pairs: what `getPropertyValue` returns for a custom property. */
 const rampMap = (colors: string[]) => {
@@ -212,13 +216,19 @@ const rowState = (page: Page, id: string) =>
 
 // ---- a. the saved palette, before first paint -------------------------------
 
-test('a: a saved palette is on the document before first paint and survives a reload', async ({ page, site }) => {
+test('a: the shared observer proves a saved palette survives navigation and reload before paint', async ({ page, site }) => {
+  await recordFirstPaint(page, 'dawson-theme-cycler', ROLE_TOKENS);
   await instrument(page, seedRecord('brutalist'));
 
   await page.goto(`${site}/brutalist/`);
   await assertPrePaint(page);
+  expect((await firstPaint(page)).roles).toEqual(Object.fromEntries(ROLE_TOKENS.map((role, i) => [role, SEED_COLORS[i]])));
   await booted(page);
   expect(await textVar(page)).toBe(SEED_COLORS[0]); // the runtime keeps what the pre-paint wrote
+
+  await page.goto(`${site}/brutalist/blog/`);
+  expect((await firstPaint(page)).roles).toEqual(Object.fromEntries(ROLE_TOKENS.map((role, i) => [role, SEED_COLORS[i]])));
+  await booted(page);
 
   // Replace the record with a second palette under the same theme. The init script seeds only
   // when nothing is stored, so what the reload paints can only have come from storage.
@@ -229,6 +239,7 @@ test('a: a saved palette is on the document before first paint and survives a re
 
   await page.reload();
   await assertPrePaint(page, SECOND_COLORS[0]);
+  expect((await firstPaint(page)).roles).toEqual(Object.fromEntries(ROLE_TOKENS.map((role, i) => [role, SECOND_COLORS[i]])));
   await booted(page);
   expect(await textVar(page)).toBe(SECOND_COLORS[0]);
 });
@@ -363,5 +374,88 @@ test('d: LexChat carries no picker markup and no picker runtime', async ({ page,
       .locator('script[src]')
       .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('src') ?? ''));
     expect(scripts.filter((src) => src.includes('theme-cycler.js'))).toEqual([]);
+  }
+});
+
+// ---- S1-13 harness boundary probes ------------------------------------------------------------
+
+test('S1-13 masks the same bounded visible picker rectangle on privacy and 404', async ({ browser }, testInfo) => {
+  for (const pageType of ['privacy', 'notFound'] as const) {
+    const context = await browser.newContext({ viewport: { width: 320, height: 200 } });
+    const oldPage = await context.newPage();
+    const newPage = await context.newPage();
+    try {
+      const base = '<meta name="viewport" content="width=device-width"><style>html,body{margin:0;width:100%;height:100%;background:white}</style><main style="width:20px;height:20px;background:black"></main>';
+      await oldPage.setContent(base);
+      await newPage.setContent(`${base}<button class="tc-fab" style="position:fixed;right:16px;bottom:16px;width:48px;height:48px;background:red">T</button><div id="tc-scrim" style="position:fixed;inset:0;opacity:0"></div>`);
+      const rectangles = await exceptionRectangles(oldPage, newPage, pageType, 'default');
+      expect(rectangles).toEqual([{ x: 256, y: 136, width: 48, height: 48 }]);
+      const oldPng = await screenshotWithExceptionRectangles(oldPage, [], rectangles, false);
+      const newPng = await screenshotWithExceptionRectangles(newPage, [], rectangles, false);
+      const name = `s1-13-${pageType}-mask.png`;
+      const reference = testInfo.snapshotPath(name, { kind: 'screenshot' });
+      mkdirSync(dirname(reference), { recursive: true });
+      writeFileSync(reference, oldPng);
+      expect(newPng).toMatchSnapshot(name, { maxDiffPixels: 0, threshold: 0 });
+
+      await newPage.evaluate(() => {
+        const unrelated = document.createElement('div');
+        unrelated.style.cssText = 'position:fixed;left:0;bottom:0;width:24px;height:24px;background:blue';
+        document.body.append(unrelated);
+      });
+      const changed = await screenshotWithExceptionRectangles(newPage, [], rectangles, false);
+      expect(changed).not.toEqual(oldPng);
+    } finally {
+      await context.close();
+    }
+  }
+});
+
+test('S1-13 changed-card mask is the bounded union of asymmetric OLD and NEW wrapping', async ({ browser }, testInfo) => {
+  const context = await browser.newContext({ viewport: { width: 500, height: 300 } });
+  const oldPage = await context.newPage();
+  const newPage = await context.newPage();
+  const cards = (side: 'old' | 'new') => `
+    <meta name="viewport" content="width=device-width"><style>html,body{margin:0;background:white}.blog-card{position:absolute;width:180px;height:110px;color:black}.blog-card-title{position:absolute;left:0;top:0;margin:0;width:${side === 'old' ? 70 : 160}px;font:16px Arial}.blog-card-date{position:absolute;left:0;top:80px;margin:0;font:12px Arial}</style>
+    <a class="blog-card" style="left:20px;top:20px" href="${side === 'old' ? 'post.html?id=helm' : '/blog/helm/'}"><span class="blog-card-title">${side === 'old' ? 'A substantially longer old Helm title' : 'New Helm'}</span><span class="blog-card-date">March 2026</span></a>
+    <a class="blog-card" style="left:250px;top:20px" href="${side === 'old' ? 'post.html?id=metr-doubling' : '/blog/metr-doubling/'}"><span class="blog-card-title">${side === 'old' ? 'Old METR' : 'A substantially longer new METR title'}</span><span class="blog-card-date">February 2026</span></a>`;
+  try {
+    await oldPage.setContent(cards('old'));
+    await newPage.setContent(cards('new'));
+    const rectangles = await exceptionRectangles(oldPage, newPage, 'blog', 'default');
+    expect(rectangles).toHaveLength(2);
+    expect(rectangles[0]!.height).toBeGreaterThan(80);
+    expect(rectangles[1]!.width).toBeGreaterThan(150);
+    const oldPng = await screenshotWithExceptionRectangles(oldPage, [], rectangles, false);
+    const newPng = await screenshotWithExceptionRectangles(newPage, [], rectangles, false);
+    const name = 's1-13-changed-card-union.png';
+    const reference = testInfo.snapshotPath(name, { kind: 'screenshot' });
+    mkdirSync(dirname(reference), { recursive: true });
+    writeFileSync(reference, oldPng);
+    expect(newPng).toMatchSnapshot(name, { maxDiffPixels: 0, threshold: 0 });
+  } finally {
+    await context.close();
+  }
+});
+
+test('S1-13 records an unlisted dynamic module and a loaded-then-removed script', async ({ page, site }) => {
+  await page.route(`${site}/script-probe/`, (route) => route.fulfill({
+    contentType: 'text/html',
+    body: '<script type="module">import("/unlisted-module.js").then(()=>window.moduleLoaded=true)</script><script src="/removed.js" onload="window.removedLoaded=true;this.remove()"></script>',
+  }));
+  await page.route(`${site}/unlisted-module.js`, (route) => route.fulfill({ contentType: 'text/javascript', body: 'export const loaded = true;' }));
+  await page.route(`${site}/removed.js`, (route) => route.fulfill({ contentType: 'text/javascript', body: 'window.removedExecuted=true;' }));
+  const requests = recordScriptRequests(page);
+  try {
+    await page.goto(`${site}/script-probe/`, { waitUntil: 'load' });
+    await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { moduleLoaded?: boolean }).moduleLoaded))).toBe(true);
+    await expect.poll(() => page.evaluate(() => Boolean((window as unknown as { removedLoaded?: boolean }).removedLoaded))).toBe(true);
+    expect(await page.locator('script[src]').count()).toBe(0);
+    const actual = requests.snapshot(`${site}/script-probe/`);
+    expect([...actual].sort()).toEqual(['/removed.js', '/unlisted-module.js']);
+    expect(scriptOrderIssues('lexchat', 'old', 'loaded', actual).join('\n')).toMatch(/not allowed.*removed|removed.*not allowed/);
+    expect(scriptOrderIssues('lexchat', 'old', 'loaded', actual).join('\n')).toMatch(/not allowed.*unlisted|unlisted.*not allowed/);
+  } finally {
+    requests.dispose();
   }
 });

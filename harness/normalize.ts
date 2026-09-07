@@ -4,10 +4,17 @@
  * Consumers: harness/parity.spec.ts, tests/unit/parity-normalize.test.ts.
  */
 import type { ParityMode } from './urls.ts';
+import type { PageType } from './urls.ts';
+import type { MigratedAdapter } from './migrated.ts';
+import { applyDomExceptions } from './exceptions.ts';
 
 export interface NormalizeOptions {
   mode: ParityMode;
   side: 'old' | 'new';
+  page?: PageType;
+  theme?: string;
+  postId?: string;
+  adapter?: MigratedAdapter;
 }
 
 const VOID = new Set([
@@ -153,9 +160,27 @@ export function normalizeHtml(
         continue;
       }
       let value = rewrite(rawValue);
+      const target = (el === 'a' || el === 'link') && lower === 'href' ? 'href'
+        : (el === 'img' || el === 'iframe') && lower === 'src' ? 'src'
+        : undefined;
+      const canonical = el === 'link' && lower === 'href'
+        && attrs.some(([attrName, attrValue]) => attrName.toLowerCase() === 'rel' && attrValue === 'canonical');
+      if (target && !canonical && opts.mode === 'old-new' && opts.side === 'old') {
+        if (!opts.adapter || !opts.page || !opts.theme) {
+          throw new Error('normalizeHtml: old-new old-side mapping needs adapter, page and theme');
+        }
+        value = opts.adapter.mapOldUrl(value, {
+          page: opts.page,
+          theme: opts.theme,
+          ...(opts.postId ? { postId: opts.postId } : {}),
+          tag: el as 'a' | 'link' | 'img' | 'iframe',
+          attr: target,
+        });
+      }
       if (el === 'html' && lower === 'style') {
         // Step 7: `<html style>` is a declaration map, so build-time additions cannot fail on order.
         value = parseDeclarations(value)
+          .filter(([prop]) => !(opts.mode === 'old-new' && opts.side === 'new' && prop.startsWith('--prose-')))
           .sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))
           .map(([prop, val]) => `${prop}:${val}`)
           .join('; ');
@@ -222,11 +247,9 @@ export function normalizeHtml(
   }
   while (stack.length) closeTag(stack[stack.length - 1]!);
 
-  // S1-13 hook: steps 6 and 8 (the old→new URL map and the §15 exception table) attach here.
-  // They are the only side-aware rules, so they run on `opts.side` under `opts.mode === 'old-new'`
-  // and rewrite `lines` before it is returned. In old-old nothing side-specific may run: `--prose-*`,
-  // URLs and metadata are compared verbatim.
-  void opts;
+  const normalized = opts.mode === 'old-new' && opts.page && opts.theme
+    ? applyDomExceptions(lines, { page: opts.page, side: opts.side, theme: opts.theme })
+    : lines;
 
-  return { lines, guards: { astroAttrs, astroHashes } };
+  return { lines: normalized, guards: { astroAttrs, astroHashes } };
 }
