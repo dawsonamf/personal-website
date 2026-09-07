@@ -885,3 +885,81 @@
   .tc-scrim,
   .tc-preview { transition-duration: 0.01ms !important; }
 }
+
+/* ---- Utility FAB (S1-11, D12) ---------------------------------------------
+   The picker trigger for pages with no nav to hang it in: privacy and the 404.
+   Same contract as a nav mount, a .tc-nav-item holding a .tc-nav-trigger, so
+   /js/theme-cycler.js wires it with no special case; it only reads data-corner
+   to decide which way the dock opens. The button inherits nothing from
+   .menu-item / .socials-item: it is its own shape, painted from the palette
+   tokens so every theme gets it for free. */
+
+.tc-fab {
+  position: fixed;
+  z-index: 9997;              /* under .tc-scrim's 9998 until it is the lifted pill */
+}
+
+.tc-fab[data-corner="br"] {
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  right: calc(16px + env(safe-area-inset-right));
+}
+.tc-fab[data-corner="bl"] {
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  left: calc(16px + env(safe-area-inset-left));
+}
+.tc-fab[data-corner="tr"] {
+  top: calc(16px + env(safe-area-inset-top));
+  right: calc(16px + env(safe-area-inset-right));
+}
+.tc-fab[data-corner="tl"] {
+  top: calc(16px + env(safe-area-inset-top));
+  left: calc(16px + env(safe-area-inset-left));
+}
+
+/* Rides above the veil while its panel is open, exactly as the nav pills do. */
+.tc-fab.tc-lift { z-index: 10000; }
+
+.tc-fab-btn {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: 50%;
+  border: 1px solid var(--primary);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 6px 20px var(--text20);
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.tc-fab-btn:hover {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+.tc-fab-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* A FAB has no nav bar above it to leave room, and it can sit in a bottom corner
+   with the panel growing upward, so the panel caps its own height rather than
+   trusting the trigger's position. The narrow override keeps the phone sheet the
+   size it already is under a nav mount. */
+.tc-dock.tc-mega.tc-from-fab .tc-mega-inner {
+  max-height: calc(100vh - 180px);
+  overflow-y: auto;
+}
+
+@media (max-width: 1100px) {
+  .tc-dock.tc-mega.tc-from-fab .tc-mega-inner { max-height: min(72vh, 460px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tc-fab-btn { transition-duration: 0.01ms !important; }
+}

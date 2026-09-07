@@ -5,6 +5,7 @@
     "dist",
     "tests/fixtures/astro-compatibility",
     "tests/fixtures/content-preview",
+    "tests/fixtures/picker",
     "tests/fixtures/prose-types"
   ]
 }

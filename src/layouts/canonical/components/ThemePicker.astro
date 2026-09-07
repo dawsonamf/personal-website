@@ -1,0 +1,26 @@
+---
+// S1-11: the nav-mounted picker trigger (D30). The build-time twin of the two variants
+// js/nav-config.js:98-105 rendered, a text button with a caret in the desktop menus and an
+// icon-only button in the mobile quick-links row, now that the nav is emitted at build and
+// the `Theme` item is no longer pushed in by a runtime feature flag (§5.5).
+//
+// A mount is a `.tc-nav-item` element containing a `button.tc-nav-trigger`: /js/theme-cycler.js
+// binds click on the button and hover on the item, and never creates either.
+//
+// Interface adjustment: the ticket states the props as `{ className?: string }`. `icon?: string`
+// is added here to reproduce the legacy mobile icon-only trigger (js/nav-config.js:98-105),
+// which the nav needs and no other prop expresses.
+import { prose } from '../../../prose/site.ts';
+
+interface Props {
+  /** Extra class on the <li>, for a menu that needs to address its own copy. */
+  className?: string;
+  /** Font Awesome classes. With one, the trigger is the icon-only .socials-item variant. */
+  icon?: string;
+}
+
+const { className, icon } = Astro.props;
+// Label and aria-label are the same string, as in the legacy nav config.
+const label = prose.text('nav.theme', 'xs');
+---
+<li class={`tc-nav-item${className ? ' ' + className : ''}`}><button type="button" class={`${icon ? 'socials-item' : 'menu-item'} tc-nav-trigger`} aria-label={label} aria-haspopup="true" aria-expanded="false" aria-controls="tc-dock">{icon ? <i class={icon} aria-hidden="true"></i> : <Fragment>{label}<i class="fa-solid fa-chevron-down tc-nav-caret" aria-hidden="true"></i></Fragment>}</button></li>
