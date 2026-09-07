@@ -1,7 +1,7 @@
 /**
- * Spec 1 §9 checks 1-5 plus the settled screenshot, over the 16 × 8 URL matrix in two viewport
- * projects, and the three fixture capture/integrity tests. Old-vs-old today; S1-13 points 8782 at
- * `dist` and turns on the old-new normaliser. S1-03 adds the interaction states.
+ * Spec 1 §9 checks 1-5 plus a screenshot, over the 16 × 8 URL matrix × its interaction states in
+ * two viewport projects, and the three fixture capture/integrity tests. Old-vs-old today; S1-13
+ * points 8782 at `dist` and turns on the old-new normaliser.
  * Entry point: `npm run test:parity`.
  */
 import { expect, test } from '@playwright/test';
@@ -9,14 +9,44 @@ import type { Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { BASELINE_SHA, content, masthead, oldPath, themeOrder } from './baseline.ts';
+import {
+  canonicalizeCursorFollower,
+  canonicalizeGeneratedIds,
+  installDeterminism,
+  randomDraws,
+  recordMastheadHistory,
+  seedForPage,
+} from './determinism.ts';
+import { INTERACTIONS, refreshAos, statesFor } from './interactions.ts';
+import type { Interaction, InteractionContext, ProjectName, StateName } from './interactions.ts';
 import { normalizeHtml } from './normalize.ts';
 import { disallowedScripts } from './scripts.ts';
-import { sentinels } from './sentinels.ts';
-import { settle } from './settle.ts';
+import { ROLE_TOKENS, sentinels, SETTLE_TIMEOUT_MS } from './sentinels.ts';
+import { afterInteraction, settle } from './settle.ts';
 import { NEW_ORIGIN, OLD_ORIGIN, parityMode, urlPairs } from './urls.ts';
 import type { PageType } from './urls.ts';
 
 const pairs = urlPairs();
+const matrix = pairs.flatMap((pair) => statesFor(pair).map((state) => ({ pair, state })));
+
+/**
+ * The applicability table of §9's "states apply where the element exists", restated as counts so a
+ * registry edit that quietly drops a state fails collection instead of reporting a smaller green
+ * run. 16 themes × the pages that carry each state's element.
+ */
+const EXPECTED_STATE_COUNTS: Record<StateName, number> = {
+  settled: 128, // every pair
+  'masthead-0': 16, // home, mobile only
+  'jobs-tab-2': 16, // home
+  'carousel-dot-3': 32, // home + listing
+  'carousel-wheel': 32, // home + listing
+  'sticky-nav': 80, // home + listing + 3 posts
+  'smooth-scroll-contact': 16, // home, desktop only
+  'picker-open': 80, // home + listing + 3 posts
+  'filter-swift': 16, // listing
+  palette: 80, // home + listing + 3 posts
+};
+
 {
   // Collection-time matrix-shape guard: a wrong matrix must stop the run, not report 0 failures.
   const themes = new Set(pairs.map((p) => p.theme));
@@ -26,6 +56,21 @@ const pairs = urlPairs();
     throw new Error(
       `parity matrix shape: ${pairs.length} pairs / ${themes.size} themes / ${ids.size} unique ids / ` +
         `per-theme ${[...perTheme].join(',')}; expected 128 / 16 / 128 / 8`,
+    );
+  }
+  const counts = Object.fromEntries(Object.keys(EXPECTED_STATE_COUNTS).map((n) => [n, 0])) as Record<
+    StateName,
+    number
+  >;
+  for (const { state } of matrix) counts[state.name] += 1;
+  const wrong = Object.entries(EXPECTED_STATE_COUNTS).filter(([n, want]) => counts[n as StateName] !== want);
+  const total = Object.values(EXPECTED_STATE_COUNTS).reduce((a, b) => a + b, 0);
+  if (wrong.length || matrix.length !== total) {
+    throw new Error(
+      `parity state matrix: ${matrix.length} declared, expected ${total}` +
+        (wrong.length ?
+          `; ${wrong.map(([n, want]) => `${n} ${counts[n as StateName]} (expected ${want})`).join(', ')}`
+        : ''),
     );
   }
 }
@@ -49,10 +94,9 @@ const ABORT_HOSTS = new Set([
   'dawsonamf-lexchat.hf.space',
 ]);
 
-const ROLE_TOKENS = ['--text', '--bg', '--primary', '--secondary', '--accent'];
 const SENTINEL_PROPS = ['color', 'background-color', 'font-family', 'font-size', 'line-height', 'border-radius'];
 const RAMP_STEPS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95];
-const RAMP_PROPS = ROLE_TOKENS.flatMap((role) => [role, ...RAMP_STEPS.map((a) => `${role}${a}`)]);
+const RAMP_PROPS: string[] = ROLE_TOKENS.flatMap((role) => [role, ...RAMP_STEPS.map((a) => `${role}${a}`)]);
 
 const DUMP_ROOT = resolve(import.meta.dirname, '__parity__/dumps');
 /** Must stay `snapshotPathTemplate` in playwright.config.ts; the test below asserts they agree. */
@@ -91,10 +135,141 @@ async function abortApis(context: BrowserContext): Promise<void> {
   );
 }
 
+/**
+ * An ordering fence, not a wait for content. A post page's body arrives through
+ * `blog/blog-post.js:145` `fetch('posts/<id>.md')`, and everything downstream of it appends to a
+ * document the theme cycler is also appending to: the per-post stylesheet goes to `<head>` (`:133`)
+ * where `loadAllFonts` is adding fourteen font links, and mermaid's `div.mermaidTooltip` goes to
+ * `<body>` (`:172`) where the cycler has already put `#tc-dock` and `#tc-scrim`. Which append lands
+ * first is a plain race between two async chains, and both orders were observed across the matrix
+ * — a difference in DOM *position*, which no readiness predicate can settle after the fact.
+ *
+ * Holding the markdown until the cycler is certainly finished puts the post's nodes last, always,
+ * on both sides. Nothing is excluded from the comparison: the order is pinned, not normalised.
+ *
+ * The hold is a **condition**, not a stopwatch: the response waits on the requesting page for
+ * `readyState === 'complete'` and then for one `requestIdleCallback(…, {timeout: 2600})` queued
+ * *after* `load`. That is the same fence `settle()` step 2a relies on — the cycler queues
+ * `loadAllFonts` with `requestIdleCallback({timeout: 2500})` at `theme-cycler.js:761-762`, before
+ * `load`, so an idle callback queued after `load` can only run behind it. A `fetch()` is not a
+ * document sub-resource, so it cannot itself hold `load` back and the fence cannot deadlock.
+ */
+/**
+ * The mirror-image ordering fence, for the other end of `<head>`.
+ *
+ * `js/theme-bootstrap.js:715-720` appends the skin's two sheets — `theme-base.css` and the
+ * `[data-style="…"]` sheet — with `document.createElement('link')`. A script-created `<link>` is
+ * not a *script-blocking style sheet* (only a parser-created one is), so those two sheets race
+ * every script below them, including the parser-blocking
+ * `cdnjs…/vanilla-tilt/1.7.0/vanilla-tilt.min.js` at `blog/index.html:30` / `index.html:34` and
+ * everything the parser reaches after it. Both orders happen: a same-origin sheet off a saturated
+ * single-threaded `http.server` against a cross-origin CDN script on a warm connection is a
+ * genuine coin flip, and the two sides flip independently.
+ *
+ * VanillaTilt freezes a layout measurement at construction and can never revise it. 1.7.0's
+ * `prepareGlare()` writes `.js-tilt-glare-inner`'s `width`/`height` as `${2 * offsetWidth}px`, and
+ * the only other writer — `updateGlareSize()`, the `resize` handler — emits the same number
+ * **with no unit**, which the CSSOM rejects; so the constructor's number is the one that stays in
+ * the DOM for the life of the page, and no wait, event or quiesce can move it afterwards. Whether
+ * the skin sheet had applied when `featured-carousel.js:193` ran therefore decides it for good,
+ * and most skins change `.fc-card-image`'s border box: `wheatpaste.css:544` puts a `4px` border on
+ * the `content-box` 510px image of `featured-carousel.css:270`, so the glare is `1020px` if the
+ * sheet lost and `1036px` if it won. Measured on `wheatpaste/blog @desktop-1440`: three of seven
+ * states captured `1036px` against `1020px` with identical state evidence, and the four that
+ * agreed — `settled` included — agreed only because both sides happened to lose together.
+ *
+ * Only three of the sixteen matrix themes construct a tilt at all; the other thirteen set
+ * `flags: { tilt: false }` in the registry, so no glare element exists to size. Of those three,
+ * `default` appends no skin sheet and so has nothing to race, `miami-deco.css:445` neutralises the
+ * race with `box-sizing: border-box` (510px either way), and `wheatpaste` is the one left exposed.
+ * The fence is still written as a choke point rather than a wheatpaste special case: it is what
+ * keeps any skin that turns tilt back on from reopening this, and it covers `blog-post.js:188`'s
+ * `glare: true` on `.blog-image`, which today is safe only incidentally because the markdown fence
+ * already holds that construction until well after `load`.
+ *
+ * Holding the tilt library until the skin sheets have applied pins the winner. One fence covers
+ * every case because it is a choke point rather than a list: nothing on the site can construct a
+ * tilt before `VanillaTilt` exists, so the home carousel, the listing carousel and all sixteen
+ * skins are settled by the same hold. It also pins the side a real visitor lands on — a
+ * same-origin sheet requested from a blocking `<head>` script beats a cross-origin CDN script that
+ * still owes DNS, TCP and TLS — which is the side the migrated build is always on, since Astro
+ * emits the skin sheet as a parser-inserted `<link>` that blocks scripts outright.
+ *
+ * The hold is a **condition**, not a stopwatch: every same-origin `link[data-style-asset]` has a
+ * non-null `.sheet`, which is exactly "loaded, parsed and applied to layout". `__ACTIVE_STYLE`
+ * (`theme-bootstrap.js:700`, set for *every* style, `default` included) is what says the bootstrap
+ * has run at all, so a request the preload scanner issued ahead of it cannot read the not-yet-
+ * appended set as "nothing to wait for". `default` appends no sheets and is released on the first
+ * tick. The 5 s bound is the bail-out for a sheet that 404s, never the mechanism — that sheet
+ * fails `badResponses` moments later with its URL. Cross-origin sheets (the skin's Google Fonts
+ * entries) are left out: `.sheet` is readable for them, but they are `settle()` step 2b's job and
+ * an outage there must not turn into a five-second hold on every request.
+ */
+async function fenceStyleAssets(context: BrowserContext): Promise<void> {
+  await context.route('**/vanilla-tilt*.js', async (route) => {
+    await route
+      .request()
+      .frame()
+      .page()
+      .evaluate(
+        () =>
+          new Promise<void>((resolve) => {
+            const started = Date.now();
+            const pending = (): boolean => {
+              // The bootstrap has not run yet, so the sheets it appends are not in the DOM to look
+              // for. Not "nothing to wait for" — the opposite.
+              if (!('__ACTIVE_STYLE' in window)) return true;
+              return [...document.querySelectorAll<HTMLLinkElement>('link[data-style-asset]')]
+                .filter((l) => new URL(l.href, location.href).origin === location.origin)
+                .some((l) => !l.sheet);
+            };
+            const tick = (): void => {
+              if (!pending() || Date.now() - started > 5000) resolve();
+              else setTimeout(tick, 10);
+            };
+            tick();
+          }),
+      )
+      // Same as the markdown fence: the page went away under us, so there is no order left to pin.
+      .catch(() => {});
+    await route.continue();
+  });
+}
+
+async function fencePostMarkdown(context: BrowserContext): Promise<void> {
+  await context.route('**/blog/posts/*.md', async (route) => {
+    await route
+      .request()
+      .frame()
+      .page()
+      .evaluate(
+        () =>
+          new Promise<void>((resolve) => {
+            const idle = (): void => {
+              if ('requestIdleCallback' in window) requestIdleCallback(() => resolve(), { timeout: 2600 });
+              else setTimeout(resolve, 2600);
+            };
+            if (document.readyState === 'complete') idle();
+            else window.addEventListener('load', idle, { once: true });
+          }),
+      )
+      // The page navigated away or closed under us (`@state:palette` moves off the post it
+      // captured); there is no longer an append order to pin, so let the response through.
+      .catch(() => {});
+    await route.continue();
+  });
+}
+
 /** A fresh context per side, with §9's pointer guard asserted on every context that is compared. */
 async function openSide(browser: Browser, testInfo: TestInfo): Promise<{ context: BrowserContext; page: Page }> {
   const opts = contextOptions(testInfo);
   const context = await browser.newContext(opts);
+  // Playwright runs the most recently registered route first, so the abort list is registered last
+  // and wins: an aborted host can never be fenced and then fetched. (No pattern overlaps today —
+  // the abort list is APIs and the LexChat host, the fences are a same-origin markdown path and
+  // the tilt library's CDN file — and this ordering is what keeps that true when either grows.)
+  await fencePostMarkdown(context);
+  await fenceStyleAssets(context);
   await abortApis(context);
   const page = await context.newPage();
   // A failing guard here would otherwise leak the context: it runs before the caller's finally.
@@ -119,6 +294,8 @@ interface NetworkInventory {
 interface SideCapture {
   responseBody: string;
   html: string;
+  /** §9's seeded `Math.random` and the draw count it served, dumped as the pick's evidence. */
+  determinism: { seed: number; draws: number };
   sample: Record<string, string>;
   counts: Record<string, number>;
   scripts: string[];
@@ -127,17 +304,56 @@ interface SideCapture {
   png: Buffer;
 }
 
-async function captureSide(page: Page, url: string, pageType: PageType): Promise<SideCapture> {
+/**
+ * One side, loaded and settled, then driven into the state under test before anything is read.
+ * `install` lands before `goto` (it registers an init script), `run` after `settle()`, and the
+ * shared `afterInteraction()` tail closes out whatever the interaction started.
+ */
+async function captureSide(
+  page: Page,
+  url: string,
+  pageType: PageType,
+  opts: { mastheadIndex?: number; interaction?: Interaction; ctx?: InteractionContext } = {},
+): Promise<SideCapture> {
   const spec = sentinels[pageType];
+  const { interaction, ctx } = opts;
   const network: NetworkInventory = { responses: [], failed: [] };
   page.on('response', (r) => network.responses.push({ url: r.url(), status: r.status(), resourceType: r.request().resourceType() }));
   page.on('requestfailed', (r) => network.failed.push({ url: r.url(), errorText: r.failure()?.errorText ?? 'unknown' }));
 
+  // Before goto, so the seeded Math.random is in place before the first site script draws from it.
+  const seed = seedForPage(pageType, opts.mastheadIndex);
+  await installDeterminism(page, seed);
+  // Also before goto: `mastheadReady` asserts the *path* the engine took, not just where it
+  // stopped, because five of the nine home sequences and all seven listing ones share a final
+  // line. Without the recorder the pinned index would go unchecked on every page but one.
+  if (pageType === 'home' || pageType === 'blog') await recordMastheadHistory(page);
+  if (interaction?.install && ctx) await interaction.install(page, ctx);
   const response = await page.goto(url, { waitUntil: 'load' });
   const responseBody = response ? await response.text() : '';
-  await settle(page, pageType);
+  await settle(page, pageType, { mastheadIndex: opts.mastheadIndex });
+  const determinism = { seed, draws: await randomDraws(page) };
 
-  const html = await page.evaluate(() => document.documentElement.outerHTML);
+  // The state's own end condition, then the shared tail. Each gets a full settle budget: an
+  // interaction that legitimately takes seconds must not eat the budget of the wait after it.
+  if (interaction && ctx) {
+    // Before any gesture, at the settled position `settle()` has already proven identical on both
+    // sides: hand AOS a cache recomputed from that layout, so what it decides during the gesture is
+    // a function of the layout rather than of when its offsets happened to be cached.
+    await refreshAos(page);
+    await afterInteraction(page, pageType, Date.now() + SETTLE_TIMEOUT_MS, { quiesce: false });
+    if (interaction.run) {
+      ctx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
+      await interaction.run(page, ctx);
+    }
+    await afterInteraction(page, pageType, Date.now() + SETTLE_TIMEOUT_MS, { quiesce: interaction.quiesce });
+  }
+
+  // Both sides, every mode: mermaid names itself from Date.now(), which no seed can pin and which
+  // is not a migration difference. Plotly gets no rule — the seed above makes its ids equal.
+  const html = canonicalizeCursorFollower(
+    canonicalizeGeneratedIds(await page.evaluate(() => document.documentElement.outerHTML)),
+  );
   const { sample, counts } = await page.evaluate(
     ({ selectors, roles, props }) => {
       const root = document.documentElement;
@@ -164,7 +380,7 @@ async function captureSide(page: Page, url: string, pageType: PageType): Promise
       }
       return { sample, counts };
     },
-    { selectors: spec.selectors, roles: ROLE_TOKENS, props: SENTINEL_PROPS },
+    { selectors: spec.selectors, roles: [...ROLE_TOKENS], props: SENTINEL_PROPS },
   );
   const scripts = await page.evaluate(() =>
     [...document.scripts]
@@ -183,7 +399,19 @@ async function captureSide(page: Page, url: string, pageType: PageType): Promise
     mask: spec.mask.map((s) => page.locator(s)),
   });
 
-  return { responseBody, html, sample, counts, scripts, masthead: mastheadText, network, png };
+  return {
+    responseBody,
+    html,
+    determinism,
+    sample,
+    counts,
+    scripts,
+    masthead: mastheadText,
+    // A copy, not the live arrays: `@state:palette`'s `after` hook navigates this same page twice
+    // more, and the requests those cancel are not part of the capture that was just compared.
+    network: { responses: [...network.responses], failed: [...network.failed] },
+    png,
+  };
 }
 
 function writeDumps(dir: string, side: 'old' | 'new', capture: SideCapture, lines: string[]): Record<string, string> {
@@ -194,6 +422,7 @@ function writeDumps(dir: string, side: 'old' | 'new', capture: SideCapture, line
     [`${side}.styles.json`]: JSON.stringify({ sample: capture.sample, counts: capture.counts }, null, 2),
     [`${side}.network.json`]: JSON.stringify(capture.network, null, 2),
     [`${side}.scripts.json`]: JSON.stringify(capture.scripts, null, 2),
+    [`${side}.determinism.json`]: JSON.stringify(capture.determinism, null, 2),
   };
   const paths: Record<string, string> = {};
   for (const [name, body] of Object.entries(files)) {
@@ -205,6 +434,20 @@ function writeDumps(dir: string, side: 'old' | 'new', capture: SideCapture, line
   return paths;
 }
 
+/**
+ * The state's own evidence, per side, compared `toEqual` across the two. Written after the state's
+ * `after` hook so a navigating state's whole record lands in one file.
+ */
+function writeEvidence(dir: string, side: 'old' | 'new', state: StateName, evidence: Record<string, unknown>): string {
+  mkdirSync(dir, { recursive: true });
+  const body = JSON.stringify(evidence, null, 2);
+  const path = resolve(dir, `${side}.interaction.json`);
+  writeFileSync(path, body);
+  // §9 asks for the palette record by name, and S1-13 reads it as the before-and-after.
+  if (state === 'palette') writeFileSync(resolve(dir, `${side}.palette.json`), body);
+  return path;
+}
+
 const badResponses = (network: NetworkInventory): Array<[number, string]> =>
   network.responses.filter((r) => r.status >= 400).map((r) => [r.status, r.url] as [number, string]);
 
@@ -212,28 +455,73 @@ const badResponses = (network: NetworkInventory): Array<[number, string]> =>
 const badFailures = (network: NetworkInventory): NetworkInventory['failed'] =>
   network.failed.filter((f) => !ABORT_HOSTS.has(new URL(f.url).hostname));
 
-for (const pair of pairs) {
-  const title = `@theme:${pair.theme} @page:${pair.page}${pair.postId ? ` @post:${pair.postId}` : ''} @state:settled`;
+for (const { pair, state } of matrix) {
+  const interaction = state.name === 'settled' ? undefined : INTERACTIONS[state.name];
+  // `@only:` is what the two comparison projects filter on in playwright.config.ts, so a state one
+  // viewport cannot reach is never collected there — no runtime skip anywhere in the suite.
+  const title =
+    `@theme:${pair.theme} @page:${pair.page}${pair.postId ? ` @post:${pair.postId}` : ''} ` +
+    `@state:${state.name}${state.only ? ` @only:${state.only}` : ''}`;
+
   test(title, async ({ browser }, testInfo) => {
+    // An interaction state runs `settle()`, then the state's own end condition, then the shared
+    // tail — three separately bounded phases, on each of two sides. Each phase keeps its own 15 s
+    // `pollUntil` deadline, so a genuine hang still fails in seconds with the outstanding detail;
+    // the default 90 s *test* budget is simply too tight for six of them plus two page loads, and
+    // one `sticky-nav` crossed it under full-matrix contention. Nothing else changes: no assertion
+    // is relaxed and no wait is lengthened.
+    if (interaction) test.slow();
     const spec = sentinels[pair.page];
     const mode = parityMode();
-    const dumpDir = resolve(DUMP_ROOT, testInfo.project.name, pair.theme, pair.pageId, 'settled');
+    const dumpDir = resolve(DUMP_ROOT, testInfo.project.name, pair.theme, pair.pageId, state.name);
+    const project = testInfo.project.name as ProjectName;
+    const context = (side: 'old' | 'new', origin: string): InteractionContext => ({
+      pair,
+      pageType: pair.page,
+      project,
+      origin,
+      side,
+      deadline: Date.now() + SETTLE_TIMEOUT_MS,
+      evidence: {},
+    });
+    const oldCtx = context('old', OLD_ORIGIN);
+    const newCtx = context('new', NEW_ORIGIN);
+    const sideOpts = { mastheadIndex: interaction?.mastheadIndex, interaction };
 
     const old = await openSide(browser, testInfo);
-    let oldCapture: SideCapture;
+    let oldCapture: SideCapture | null = null;
+    let oldNorm: ReturnType<typeof normalizeHtml> | null = null;
+    let oldPaths: Record<string, string> = {};
+    let oldEvidencePath = '';
     try {
-      oldCapture = await captureSide(old.page, OLD_ORIGIN + pair.oldPath, pair.page);
+      oldCapture = await captureSide(old.page, OLD_ORIGIN + pair.oldPath, pair.page, { ...sideOpts, ctx: oldCtx });
+      // Written **before** the `after` hook, and the evidence in the `finally` below: a hard
+      // `expect` inside `after` (the palette persistence assertions — exactly the three S1-13
+      // flips) would otherwise leave this side with no `old.*` files at all, and the record it had
+      // collected up to the throw is the half that says which assertion moved.
+      oldNorm = normalizeHtml(oldCapture.html, { mode, side: 'old' });
+      oldPaths = writeDumps(dumpDir, 'old', oldCapture, oldNorm.lines);
+      if (interaction?.after) {
+        oldCtx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
+        await interaction.after(old.page, oldCtx);
+      }
     } finally {
       await old.context.close();
+      oldEvidencePath = writeEvidence(dumpDir, 'old', state.name, oldCtx.evidence);
     }
-    const oldNorm = normalizeHtml(oldCapture.html, { mode, side: 'old' });
-    const oldPaths = writeDumps(dumpDir, 'old', oldCapture, oldNorm.lines);
+    if (!oldCapture || !oldNorm) throw new Error('the old side produced no capture');
 
     const next = await openSide(browser, testInfo);
     try {
-      const newCapture = await captureSide(next.page, NEW_ORIGIN + pair.newPath, pair.page);
+      const newCapture = await captureSide(next.page, NEW_ORIGIN + pair.newPath, pair.page, {
+        ...sideOpts,
+        ctx: newCtx,
+      });
       const newNorm = normalizeHtml(newCapture.html, { mode, side: 'new' });
       const newPaths = writeDumps(dumpDir, 'new', newCapture, newNorm.lines);
+      // Written now as well as after the `after` hook, so a DOM or screenshot failure still leaves
+      // both sides' evidence on disk to compare.
+      writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
       const oldLines = oldNorm.lines;
       const newLines = newNorm.lines;
 
@@ -270,23 +558,48 @@ for (const pair of pairs) {
       // 3. computed-style sample
       expect.soft(newCapture.sample, 'computed-style sample').toEqual(oldCapture.sample);
 
+      // The seeded `Math.random` served the same number of draws on both sides. Dumped since S1-02
+      // as the pick's evidence; asserted here, because a side that drew a different number of times
+      // took a different path through the page even where the DOM happened to land the same.
+      expect.soft(newCapture.determinism.draws, 'seeded Math.random draw count').toEqual(
+        oldCapture.determinism.draws,
+      );
+
       // the masked masthead, asserted as text instead
       if (spec.masthead) expect.soft(newCapture.masthead, 'masthead text').toEqual(oldCapture.masthead);
 
       // 2. screenshot. OLD writes the reference every run; NEW is only ever compared against it.
       const snapshotPath = testInfo.snapshotPath.bind(testInfo) as unknown as SnapshotPathWithKind;
-      const referencePath = snapshotPath(pair.theme, pair.pageId, 'settled.png', { kind: 'screenshot' });
+      const referencePath = snapshotPath(pair.theme, pair.pageId, `${state.name}.png`, { kind: 'screenshot' });
       // A reference written anywhere else would be regenerated from NEW on the next run, which is
       // exactly what "NEW never generates the accepted old baseline" forbids.
       expect(referencePath, 'screenshot reference path').toBe(
-        resolve(SNAPSHOT_ROOT, testInfo.project.name, pair.theme, pair.pageId, 'settled.png'),
+        resolve(SNAPSHOT_ROOT, testInfo.project.name, pair.theme, pair.pageId, `${state.name}.png`),
       );
       mkdirSync(dirname(referencePath), { recursive: true });
       writeFileSync(referencePath, oldCapture.png);
-      await expect(next.page).toHaveScreenshot([pair.theme, pair.pageId, 'settled.png'], {
+      await expect(next.page).toHaveScreenshot([pair.theme, pair.pageId, `${state.name}.png`], {
         fullPage: spec.fullPage,
         mask: spec.mask.map((s) => next.page.locator(s)),
       });
+
+      // The state's own end-condition evidence, last because a navigating state's `after` hook
+      // moves the page off the capture it just took. Rewritten in a `finally` for the same reason
+      // the old side's is: a throwing `after` must still leave the record it got as far as.
+      let newEvidencePath = '';
+      try {
+        if (interaction?.after) {
+          newCtx.deadline = Date.now() + SETTLE_TIMEOUT_MS;
+          await interaction.after(next.page, newCtx);
+        }
+      } finally {
+        newEvidencePath = writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
+      }
+      if (JSON.stringify(newCtx.evidence) !== JSON.stringify(oldCtx.evidence)) {
+        await testInfo.attach('old.interaction.json', { path: oldEvidencePath, contentType: 'application/json' });
+        await testInfo.attach('new.interaction.json', { path: newEvidencePath, contentType: 'application/json' });
+      }
+      expect.soft(newCtx.evidence, `@state:${state.name} evidence`).toEqual(oldCtx.evidence);
     } finally {
       await next.context.close();
     }
@@ -364,7 +677,7 @@ test('@capture:theme-html', async ({ browser }, testInfo) => {
     const props = new Map(entry.style);
     expect(RAMP_PROPS.filter((p) => !props.has(p)), `${id}: missing ramp properties`).toEqual([]);
     for (const role of ROLE_TOKENS) expect(props.get(role), `${id} ${role}`).toMatch(/^#[0-9a-f]{6}$/i);
-    for (const step of RAMP_PROPS.filter((p) => !ROLE_TOKENS.includes(p))) {
+    for (const step of RAMP_PROPS.filter((p) => !(ROLE_TOKENS as readonly string[]).includes(p))) {
       expect(props.get(step), `${id} ${step}`).toMatch(/^hsla\(/);
     }
     // §5.4: the declarations that are not ramp are the registry's tokens, in registry order.

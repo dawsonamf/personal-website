@@ -59,15 +59,18 @@ export default defineConfig({
     trace: 'retain-on-failure',
   },
   projects: [
+    // The `@only:<project>` tag (harness/interactions.ts) marks a state only one viewport can
+    // reach; each project excludes the other's, so such a state is never collected here rather
+    // than skipped at runtime.
     {
       name: 'desktop-1440',
       use: { viewport: { width: 1440, height: 900 } },
-      grepInvert: /@capture:/,
+      grepInvert: /@capture:|@only:mobile-390/,
     },
     {
       name: 'mobile-390',
       use: { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true },
-      grepInvert: /@capture:/,
+      grepInvert: /@capture:|@only:desktop-1440/,
     },
     {
       // Fixture capture and integrity are viewport-independent, so they run once here instead of
