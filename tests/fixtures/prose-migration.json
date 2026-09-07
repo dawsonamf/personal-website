@@ -1,0 +1,672 @@
+{
+  "note": "Frozen parity oracle for S1-06, produced mechanically from the baseline checkout (main @ 0f196d0). Every fragment is the RENDERED DOM of its source page, i.e. the baseline HTML with its <!-- --> comments stripped: commented-out markup does not reach the page, so it is not migrated prose (index.html:172 holds one such dead job bullet). entries[] compare accessor output against that fragment; titles/urls/picker cover the head, the URL conversion table and js/theme-cycler.js. Regenerate only from the legacy source, never by hand.",
+  "entries": [
+    {
+      "path": "site.logo",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:57",
+      "expected": "D"
+    },
+    {
+      "path": "site.footerCredit",
+      "size": "s",
+      "method": "text",
+      "source": "index.html:304-306",
+      "expected": "Designed and built by Dawson Metzger-Fleetwood"
+    },
+    {
+      "path": "nav.aria.main",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:49",
+      "expected": "Main navigation"
+    },
+    {
+      "path": "nav.aria.quick",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:61",
+      "expected": "Quick links"
+    },
+    {
+      "path": "nav.aria.social",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:280",
+      "expected": "Social links"
+    },
+    {
+      "path": "home.heroAlt",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:75",
+      "expected": "Dawson Metzger-Fleetwood"
+    },
+    {
+      "path": "home.contact.mapAlt",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:294",
+      "expected": "Map"
+    },
+    {
+      "path": "home.seeAllPosts",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:254",
+      "expected": "See all posts"
+    },
+    {
+      "path": "home.sections.about",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:97",
+      "expected": "About"
+    },
+    {
+      "path": "home.sections.jobs",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:144",
+      "expected": "Where I've Worked"
+    },
+    {
+      "path": "home.sections.projects",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:218",
+      "expected": "Selected Works"
+    },
+    {
+      "path": "home.sections.blog",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:243",
+      "expected": "Blog"
+    },
+    {
+      "path": "home.sections.contact",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:264",
+      "expected": "Contact"
+    },
+    {
+      "path": "home.about.title",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:102-102",
+      "expected": "About Me"
+    },
+    {
+      "path": "home.about.body",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "index.html:103-112",
+      "expected": [
+        "I’m Dawson Metzger-Fleetwood, a software engineer with dual degrees in Finance and Computer Science (Machine Learning specialization) from the University of Maryland.",
+        "I've been a professional developer since 2019. Most of my work revolves around web, iOS, and visionOS development, but my professional experience also includes building ML pipelines, automating business processes, contributing to open source, and developing agentic workflows, MCP servers, and CLI tools. I also co-founded Visual Language Associates, a startup in the cued language and interpretation space. I love building cool things both at work and in my free time, and I’m passionate about solving real world problems with technology.",
+        "When I’m not coding, I’m dedicated to fitness and continuously pushing myself as a natural bodybuilder. I also love learning - whether it be a random skill, a new language, or an RL algorithm optimization. Traveling is another big part of my life. I enjoy exploring new places, immersing myself in different cultures, and collecting experiences that shape who I am.",
+        "I’m currently a Software Engineer at About Objects, but am always open to interesting projects. If you’d like to connect, please don’t hesitate to reach out! <br>"
+      ],
+      "delta": "the legacy last paragraph ends with a trailing <br> (presentation, index.html:111); it is not stored"
+    },
+    {
+      "path": "home.skills.title",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:116-116",
+      "expected": "Skills"
+    },
+    {
+      "path": "home.skills.groups.0.name",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:117",
+      "expected": "Web"
+    },
+    {
+      "path": "home.skills.groups.0.body",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "index.html:117",
+      "expected": [
+        "I have professional experience engineering full-stack web applications and interactive websites. I've built modern backends with Node and Bun, as well as specialized sites with PHP and custom WordPress plugins. I've led full-scale, from-scratch overhauls of enterprise websites, built production grade frontends with React as well as vanilla HTML, CSS, and JavaScript, managed business critical production deployments, and built integrated web experiences featuring real-time data processing with WebSockets and libraries like Three.js. On the systems side, I've architected CI/CD pipelines with GitHub Actions and Docker, deployed secure multi-tenant serverless applications on AWS (Lambda, DynamoDB, Cognito), engineered backend platform systems including an OAuth 2.0/OIDC authorization server with PKCE and token introspection, integrated usage-based billing and payment systems, and hardened production infrastructure to safely run untrusted workloads with process isolation and network egress controls."
+      ]
+    },
+    {
+      "path": "home.skills.groups.1.name",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:121",
+      "expected": "iOS and visionOS"
+    },
+    {
+      "path": "home.skills.groups.1.body",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "index.html:121",
+      "expected": [
+        "I’ve worked extensively on iOS and visionOS projects, including advanced AR/VR development using RealityKit. I have experience with RealityKit’s entity-component-system architecture, coordinating SharePlay in 3D spaces, designing and debugging complex and highly customized view hierarchies in UIKit and SwiftUI, package management in Xcode, concurrency in Swift 6, and building ultra high performance, heapless programs. I’m comfortable across Apple's full development stack, from optimizing performance with Instruments, managing scenes in Reality Composer Pro, deploying CI/CD pipelines with Xcode Cloud and TestFlight, and training/using ML models with Create and Core ML."
+      ]
+    },
+    {
+      "path": "home.skills.groups.2.name",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:125",
+      "expected": "ML and RL"
+    },
+    {
+      "path": "home.skills.groups.2.body",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "index.html:125",
+      "expected": [
+        "Professionally, I've applied machine learning to both enterprise and government systems. I designed and built a real time computer vision pipeline that trains models capable of recognizing and tracking the orientation of 3D objects using LIDAR. I’ve also fine-tuned and deployed foundation models on H100 clusters to improve performance on proprietary domain-specific tasks. I've also built multimodal agentic pipelines that generate structured metadata, using LLM juries for consensus scoring and evaluation driven loops that iteratively optimize prompts.",
+        "Personally, my interest in ML extends much further. I built a transformer using only numpy, and have worked directly with embeddings, autoencoders, and more. I've had some exposure to deep reinforcement learning and loved it. I've read Reinforcement Learning: An Introduction by Sutton and Barto cover to cover and implemented some of the core algorithms: TD(λ), DQN and SARSA varieties, some policy gradients, off policy importance sampling, etc."
+      ]
+    },
+    {
+      "path": "home.contact.body",
+      "size": "m",
+      "method": "get",
+      "source": "index.html:271-277",
+      "expected": "<p>My inbox is always open. If you're interested in working together, have a question, or just want to say hi, feel free to reach out! Send me an email at <a href=\"mailto:dawsonamf@icloud.com\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-link\">dawsonamf@icloud.com</a>, or connect with me by selecting an option below. You can also <a href=\"#\" class=\"text-link calendly-link\"> schedule a call</a>.</p>",
+      "delta": "the legacy Calendly anchor wraps across lines so its text node starts with a space (index.html:275-276); Markdown emits none"
+    },
+    {
+      "path": "blog.intro.p1",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "blog/index.html:64-64",
+      "expected": [
+        "I like building things. While some projects become public, most never leave my machine, and the only people who hear about them are my friends and family. That's what this page is; an excuse to dive deep into something and get it out into the world."
+      ]
+    },
+    {
+      "path": "blog.intro.p2",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "blog/index.html:65-65",
+      "expected": [
+        "Writing about something is its own kind of project, and so is posting something publicly. It makes you commit to producing a real version of what's in your head, knowing someone might actually look at it. It forces a different kind of clarity than building alone does."
+      ]
+    },
+    {
+      "path": "blog.intro.p3",
+      "size": "l",
+      "method": "paragraphs",
+      "source": "blog/index.html:66-66",
+      "expected": [
+        "The topics jump around a lot, but if something kept me up late more than a few nights in a row, it might end up here."
+      ]
+    },
+    {
+      "path": "blog.sections.works",
+      "size": "xs",
+      "method": "text",
+      "source": "blog/index.html:76",
+      "expected": "Selected Works"
+    },
+    {
+      "path": "blog.sections.posts",
+      "size": "xs",
+      "method": "text",
+      "source": "blog/index.html:96",
+      "expected": "All Posts"
+    },
+    {
+      "path": "jobs.0.company",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:163",
+      "expected": "About Objects"
+    },
+    {
+      "path": "jobs.0.role",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:163",
+      "expected": "Software Engineer"
+    },
+    {
+      "path": "jobs.0.dates",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:163",
+      "expected": "July 2023 – Present"
+    },
+    {
+      "path": "jobs.0.bullets",
+      "size": "l",
+      "method": "list",
+      "source": "index.html:163",
+      "expected": [
+        "Worked extensively on a multi-platform (iPad, iPhone, and Vision Pro) event management platform for government clients, featuring real-time resource tracking and 3D visualizations with RealityKit. Featured in Apple’s enterprise showcase.",
+        "Scaled the platform from inception to being able to handle 10,000+ concurrent users, architected real time data sharing for collaboration across distributed command teams, and optimized rendering hierarchical data with a tree-based architecture that reduced latency by 80%.",
+        "Scaled a CI/CD pipeline with GitHub Actions and automated TestFlight builds as the team quadrupled in size. Mentoring interns and junior engineers.",
+        "Worked on several internal projects, including leading the overhaul of the company website with custom WordPress plugins and a PHP backend, building an MCP server to help PMs with Jira project administration, and building pipelines to automate billing processes.",
+        "Led development of a 3D ML object recognition pipeline, enabling rotation inference from 200 images. Supported an industrial oil drill manufacturer in analyzing drill bit component history and repairs.",
+        "Led About Object’s AI blog, writing articles on autoencoders, reinforcement learning, GNNs, and transformers."
+      ]
+    },
+    {
+      "path": "jobs.1.company",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:176",
+      "expected": "Johns Hopkins University"
+    },
+    {
+      "path": "jobs.1.role",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:176",
+      "expected": "Guest Lecturer"
+    },
+    {
+      "path": "jobs.1.dates",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:176",
+      "expected": "Spring 2024 – Present"
+    },
+    {
+      "path": "jobs.1.bullets",
+      "size": "l",
+      "method": "list",
+      "source": "index.html:176",
+      "expected": [
+        "Led the development of internal tools that helped interpreters more efficiently prepare for high stakes lectures and meetings, including a knowledge base prep portal that integrated various internal systems, a vocabulary practice app, a custom MCP server, and a skill pack for agents.",
+        "Presented to interpreters on statistical concepts to enhance research interpretation, covering topics from fundamentals to the central limit theorem and multiple linear regression.",
+        "Designed accessible training materials to make complex statistical ideas understandable for non-statisticians and provided insights on applying reasoning in cognitive science research."
+      ]
+    },
+    {
+      "path": "jobs.2.company",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:185",
+      "expected": "Visual Language Associates"
+    },
+    {
+      "path": "jobs.2.role",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:185",
+      "expected": "Technical Co-Founder"
+    },
+    {
+      "path": "jobs.2.dates",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:185",
+      "expected": "September 2019 - July 2023"
+    },
+    {
+      "path": "jobs.2.bullets",
+      "size": "l",
+      "method": "list",
+      "source": "index.html:185",
+      "expected": [
+        "Co-founder of an agency that provides signed language interpreting and cued language transliteration services, successfully securing contracts with the MD and VA state governments, and serving over two dozen clients in the DMV area with an average contract value of over $90,000.",
+        "Grew the business from founding to several million dollars in revenue.",
+        "Led the automation and integration of client payment, payroll, and scheduling software to streamline operations.",
+        "Responsible for coordinating scheduling with school officials and other interpreters and transliterators, as well as preparing and leading language and policy training sessions. Assisted with recruiting, onboarding, and sales.",
+        "Developed methodology to screen employees, clients, and contracts, as well as match clients with service providers.",
+        "In the early days, served directly as a cued language transliterator when needed, directly providing interpretation/transliteration services to consumers."
+      ]
+    },
+    {
+      "path": "jobs.3.company",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:197",
+      "expected": "Startup Shell"
+    },
+    {
+      "path": "jobs.3.role",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:197",
+      "expected": "Fellow"
+    },
+    {
+      "path": "jobs.3.dates",
+      "size": "xs",
+      "method": "text",
+      "source": "index.html:197",
+      "expected": "September 2022 – Present"
+    },
+    {
+      "path": "jobs.3.bullets",
+      "size": "l",
+      "method": "list",
+      "source": "index.html:197",
+      "expected": [
+        "Startup Shell is UMD’s student-run startup incubator, founding home of ventures collectively worth over $1 billion.",
+        "As a fellow, assisted with product development for a variety of ventures including a patient management platform for underfunded hospitals in Africa, a farmland valuation AI model, and a prompt engineering website with over 400,000 monthly visitors and a discord server with over 50,000 active members.",
+        "Mentor 3 students each semester on topics including career preparedness, leadership, product design, and system architecture."
+      ]
+    },
+    {
+      "path": "privacy.title",
+      "size": "xs",
+      "method": "text",
+      "source": "privacy/index.html:30-30",
+      "expected": "Privacy Policy"
+    },
+    {
+      "path": "privacy.updated",
+      "size": "xs",
+      "method": "text",
+      "source": "privacy/index.html:34-35",
+      "expected": "Updated January 10, 2026"
+    },
+    {
+      "path": "privacy.body",
+      "size": "l",
+      "method": "get",
+      "source": "privacy/index.html:38-111",
+      "expected": "<p>Dawson Metzger-Fleetwood (\"we\", \"us\", or \"our\") operates the website and various applications (collectively, the \"Service\"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our mobile applications (\"Applications\").</p> <p>By using our Applications or website, you agree to the collection and use of information in accordance with this policy.</p> <h2>1. Information Collection</h2> <h3>A. Information You Provide</h3> <p>We may collect information that you voluntarily provide to us when you use our Applications. This includes:</p> <ul> <li>Account information: If an Application requires you to create an account, we may collect your email address, name, or a unique user identifier (such as those provided by \"Sign in with Apple\"). This is used solely for authentication and account management.</li> </ul> <h3>B. Technical Metadata</h3> <p>To ensure the stability and security of our Applications, we may receive limited technical metadata. This includes information such as:</p> <ul> <li>Device model and operating system version.</li> <li>Aggregated, non-identifying information regarding Application performance and usage patterns to help us optimize the user experience.</li> </ul> <p>This data is used exclusively for diagnosing technical issues and optimizing Application performance. We do not use this data for tracking, advertising, or building user profiles.</p> <h3>C. Financial Data (FinanceKit)</h3> <p>For Applications utilizing FinanceKit, we adhere to a \"privacy-by-default\" architecture:</p> <ul> <li>All financial data accessed via FinanceKit is processed locally on your device.</li> <li>We do not transmit, store, or have access to your raw financial transactions or account balances on our external servers.</li> <li>Access to financial data is strictly controlled by system-level permissions which you can revoke at any time.</li> </ul> <h3>D. Device Permissions</h3> <p>Certain Applications may request access to specific features on your mobile device. These may include:</p> <ul> <li>Camera &amp; microphone, to capture photos, record videos, or record audio within the Application.</li> <li>Photo library, to save or upload images.</li> <li>Location services, to provide location-based features. We do not track your location in the background unless explicitly stated within the Application.</li> </ul> <p>Requests for access to these features will be presented by the operating system, and you may revoke these permissions at any time via your device settings.</p> <h2>2. Use of Information</h2> <p>We use the information collected for the following purposes:</p> <ul> <li>To provide and maintain the functionality of our Applications.</li> <li>To manage user accounts and authentication.</li> <li>To improve our Applications and perform technical troubleshooting.</li> <li>To comply with legal obligations.</li> </ul> <h2>3. Data Storage and Security</h2> <ul> <li>For many of our Applications, your data is stored locally on your device or synchronized via your personal iCloud account. We do not have access to data stored in your personal iCloud.</li> <li>In some cases, we may use third-party cloud services (such as AWS, Google Cloud, or Azure) to host backend services. We prioritize services that offer end-to-end encryption or robust data protection.</li> <li>We implement reasonable security measures to protect your information. However, no method of transmission over the internet or method of electronic storage is 100% secure.</li> </ul> <h2>4. Third-Party Services</h2> <p>We may employ third-party companies and individuals to facilitate our Service, provide the Service on our behalf, perform Service-related services, or assist us in analyzing how our Service is used.</p> <p>We do not sell your personal data to third parties, nor do we use third-party advertising networks.</p> <h2>5. Children's Privacy</h2> <p>Our Applications and website are not intended for use by children under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If we discover that a child under 13 has provided us with personal information, we will immediately delete this from our servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us.</p> <h2>6. Your Rights</h2> <p>Depending on your location, you may have certain rights regarding your personal data, such as the right to access, correct, or delete your data.</p> <ul> <li>If you have created an account within one of our Applications, you can request deletion of your account and associated data by contacting us.</li> <li>You can revoke Application permissions (Camera, Location, FinanceKit, etc.) at any time via your device settings.</li> </ul> <h2>7. Changes to This Privacy Policy</h2> <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.</p> <h2>8. Contact Information</h2> <p>If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at <a href=\"mailto:dawsonamf@icloud.com\" class=\"text-link\">dawsonamf@icloud.com</a>.</p>",
+      "delta": "D16 adds target=\"_blank\" rel=\"noopener noreferrer\" to the mailto link, which privacy/index.html:110 lacks"
+    },
+    {
+      "path": "notFound.code",
+      "size": "xs",
+      "method": "text",
+      "source": "404.html:50-50",
+      "expected": "404"
+    },
+    {
+      "path": "notFound.message",
+      "size": "s",
+      "method": "text",
+      "source": "404.html:51-51",
+      "expected": "This page doesn't exist, or it moved."
+    },
+    {
+      "path": "notFound.back",
+      "size": "xs",
+      "method": "text",
+      "source": "404.html:52",
+      "expected": "Back to the home page"
+    },
+    {
+      "path": "meta.home.description",
+      "size": "m",
+      "method": "text",
+      "source": "index.html:7",
+      "expected": "Dawson Metzger-Fleetwood is a software engineer working across web, iOS and visionOS, and ML/RL. Projects, blog, experience, and ways to get in touch."
+    },
+    {
+      "path": "meta.home.ogDescription",
+      "size": "s",
+      "method": "text",
+      "source": "index.html:13",
+      "expected": "Software engineer working across web, iOS and visionOS, and ML/RL."
+    },
+    {
+      "path": "meta.blog.description",
+      "size": "m",
+      "method": "text",
+      "source": "blog/index.html:7",
+      "expected": "Deep dives into projects by Dawson Metzger-Fleetwood — AI and ML, Swift, systems, and developer tools."
+    },
+    {
+      "path": "meta.blog.ogDescription",
+      "size": "s",
+      "method": "text",
+      "source": "blog/index.html:13",
+      "expected": "Deep dives into projects by Dawson Metzger-Fleetwood — AI and ML, Swift, systems, and developer tools."
+    },
+    {
+      "path": "meta.post.description",
+      "size": "m",
+      "method": "text",
+      "source": "blog/post.html:7",
+      "expected": "A blog post by Dawson Metzger-Fleetwood."
+    },
+    {
+      "path": "meta.privacy.description",
+      "size": "m",
+      "method": "text",
+      "source": "privacy/index.html:7",
+      "expected": "Privacy policy for the website and applications of Dawson Metzger-Fleetwood."
+    }
+  ],
+  "titles": {
+    "home": {
+      "path": "meta.home.title",
+      "legacy": "Dawson Metzger-Fleetwood",
+      "source": "index.html:6",
+      "suffix": false
+    },
+    "blog": {
+      "path": "meta.blog.title",
+      "legacy": "Blog | Dawson Metzger-Fleetwood",
+      "source": "blog/index.html:6",
+      "suffix": true
+    },
+    "privacy": {
+      "path": "meta.privacy.title",
+      "legacy": "Privacy Policy | Dawson Metzger-Fleetwood",
+      "source": "privacy/index.html:6",
+      "suffix": true
+    },
+    "notFound": {
+      "path": "meta.notFound.title",
+      "legacy": "404 | Dawson Metzger-Fleetwood",
+      "source": "404.html:6",
+      "suffix": true
+    },
+    "lexchat": {
+      "path": "meta.lexchat.title",
+      "legacy": "LexChat",
+      "source": "lexchat/index.html:6",
+      "suffix": false
+    }
+  },
+  "titleSuffix": "Dawson Metzger-Fleetwood",
+  "urls": [
+    {
+      "legacy": "../resources/KLvsRefusals.png",
+      "canonical": "/resources/KLvsRefusals.png",
+      "source": "js/blog-data.js (gemma4-heretic-ara.image)"
+    },
+    {
+      "legacy": "/embedded-swift-agent/",
+      "canonical": "/subsites/dawson/embedded-swift-agent/",
+      "source": "js/blog-data.js (embedded-swift-agent.url)"
+    },
+    {
+      "legacy": "../resources/EmbeddedSwiftAgent_CLIScreenshot.png",
+      "canonical": "/resources/EmbeddedSwiftAgent_CLIScreenshot.png",
+      "source": "js/blog-data.js (embedded-swift-agent.image)"
+    },
+    {
+      "legacy": "../blog/post.html?id=fly-on-my-laptop",
+      "canonical": "/blog/fly-on-my-laptop/",
+      "source": "js/blog-data.js (silicon-fly.url)"
+    },
+    {
+      "legacy": "../resources/Fly_Media.jpg",
+      "canonical": "/resources/Fly_Media.jpg",
+      "source": "js/blog-data.js (silicon-fly.image)"
+    },
+    {
+      "legacy": "../resources/Helm_All.png",
+      "canonical": "/resources/Helm_All.png",
+      "source": "js/blog-data.js (helm.image)"
+    },
+    {
+      "legacy": "../resources/Purple_Toolbelt_Image.jpg",
+      "canonical": "/resources/Purple_Toolbelt_Image.jpg",
+      "source": "js/blog-data.js (toolbelt.image)"
+    },
+    {
+      "legacy": "../resources/Amino_Media.png",
+      "canonical": "/resources/Amino_Media.png",
+      "source": "js/blog-data.js (amino-amigo.image)"
+    },
+    {
+      "legacy": "../resources/LexChat_Media.jpeg",
+      "canonical": "/resources/LexChat_Media.jpeg",
+      "source": "js/blog-data.js (lexchat.image)"
+    },
+    {
+      "legacy": "../resources/RL_Media.png",
+      "canonical": "/resources/RL_Media.png",
+      "source": "js/blog-data.js (deep-rl.image)"
+    },
+    {
+      "legacy": "https://www.dawsonamf.com/resources/contact.vcf",
+      "canonical": "/resources/contact.vcf",
+      "source": "js/nav-config.js (SOCIAL_LINKS)"
+    }
+  ],
+  "picker": [
+    {
+      "path": "picker.ariaLabel",
+      "expected": "Theme controls",
+      "source": "js/theme-cycler.js:514"
+    },
+    {
+      "path": "picker.styles",
+      "expected": "Styles",
+      "source": "js/theme-cycler.js:520"
+    },
+    {
+      "path": "picker.palette",
+      "expected": "Palette",
+      "source": "js/theme-cycler.js:540"
+    },
+    {
+      "path": "picker.advanced",
+      "expected": "Advanced",
+      "source": "js/theme-cycler.js:414"
+    },
+    {
+      "path": "picker.backToStyles",
+      "expected": "Back to styles",
+      "source": "js/theme-cycler.js:415"
+    },
+    {
+      "path": "picker.shuffle",
+      "expected": "Shuffle colors",
+      "source": "js/theme-cycler.js:542"
+    },
+    {
+      "path": "picker.shuffleSub",
+      "expected": "random palette",
+      "source": "js/theme-cycler.js:542"
+    },
+    {
+      "path": "picker.reset",
+      "expected": "Reset",
+      "source": "js/theme-cycler.js:543"
+    },
+    {
+      "path": "picker.resetSub",
+      "expected": "back to default",
+      "source": "js/theme-cycler.js:543"
+    },
+    {
+      "path": "picker.advancedSub",
+      "expected": "scheme & colors",
+      "source": "js/theme-cycler.js:416"
+    },
+    {
+      "path": "picker.doneEditing",
+      "expected": "done editing",
+      "source": "js/theme-cycler.js:416"
+    },
+    {
+      "path": "picker.scheme",
+      "expected": "Scheme",
+      "source": "js/theme-cycler.js:528"
+    },
+    {
+      "path": "picker.colors",
+      "expected": "Colors",
+      "source": "js/theme-cycler.js:532"
+    },
+    {
+      "path": "picker.current",
+      "expected": "current",
+      "source": "js/theme-cycler.js:319"
+    },
+    {
+      "path": "picker.preview",
+      "expected": "preview",
+      "source": "js/theme-cycler.js:316"
+    },
+    {
+      "path": "picker.roles.text",
+      "expected": "Text",
+      "source": "js/theme-cycler.js:158"
+    },
+    {
+      "path": "picker.roles.bg",
+      "expected": "Background",
+      "source": "js/theme-cycler.js:159"
+    },
+    {
+      "path": "picker.roles.primary",
+      "expected": "Primary",
+      "source": "js/theme-cycler.js:160"
+    },
+    {
+      "path": "picker.roles.secondary",
+      "expected": "Secondary",
+      "source": "js/theme-cycler.js:161"
+    },
+    {
+      "path": "picker.roles.accent",
+      "expected": "Accent",
+      "source": "js/theme-cycler.js:162"
+    },
+    {
+      "path": "picker.lock",
+      "expected": "Lock",
+      "source": "js/theme-cycler.js:462"
+    },
+    {
+      "path": "picker.unlock",
+      "expected": "Unlock",
+      "source": "js/theme-cycler.js:462"
+    },
+    {
+      "path": "picker.schemes.random",
+      "expected": "random",
+      "source": "js/theme-cycler.js:62"
+    },
+    {
+      "path": "picker.schemes.monochromatic",
+      "expected": "monochromatic",
+      "source": "js/theme-cycler.js:62"
+    },
+    {
+      "path": "picker.schemes.analogous",
+      "expected": "analogous",
+      "source": "js/theme-cycler.js:62"
+    },
+    {
+      "path": "picker.schemes.complementary",
+      "expected": "complementary",
+      "source": "js/theme-cycler.js:62"
+    },
+    {
+      "path": "picker.schemes.triadic",
+      "expected": "triadic",
+      "source": "js/theme-cycler.js:62"
+    },
+    {
+      "path": "picker.schemes.tetradic",
+      "expected": "tetradic",
+      "source": "js/theme-cycler.js:62"
+    }
+  ]
+}
