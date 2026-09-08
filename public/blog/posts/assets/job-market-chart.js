@@ -9,7 +9,7 @@
   const AGG_URL = 'https://raw.githubusercontent.com/hiring-lab/job_postings_tracker/master/US/aggregate_job_postings_US.csv';
   // Pre-baked FRED 10-year TIPS real yield, drawn as a dual-axis overlay on a
   // right-side y2 (same snapshot the cohort charts use).
-  const RATE_URL = 'posts/assets/rate-data.json';
+  const RATE_URL = '/blog/posts/assets/rate-data.json';
 
   // Monthly fallback snapshots (taken 2026-07-16), used only if the live fetch
   // fails. Regenerate from the CSVs rather than hand-editing; Indeed revises

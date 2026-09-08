@@ -639,7 +639,7 @@
       id: 'cohort-unemp-chart',
       statId: 'cu-stat',
       toolbar: '.jm-toolbar[data-chart="cu"] ',
-      dataUrl: 'posts/assets/cohort-unemployment-data.json',
+      dataUrl: '/blog/posts/assets/cohort-unemployment-data.json',
       series: [
         { key: 'grads', json: 'grads', name: 'Recent graduates', color: T => T.accent },
         { key: 'workers', json: 'all', name: 'All workers', color: T => rotSafe(T.accent, 180, T.label) },
@@ -654,13 +654,13 @@
       fmtVal: v => v.toFixed(1) + '%',
       uirev: 'cohort-unemp',
       initialMonths: 120,
-      overlay: { dataUrl: 'posts/assets/rate-data.json', json: 'dfii10', name: '10-year real rate' },
+      overlay: { dataUrl: '/blog/posts/assets/rate-data.json', json: 'dfii10', name: '10-year real rate' },
     }),
     makeCohortChart({
       id: 'cohort-swe-chart',
       statId: 'cs-stat',
       toolbar: '.jm-toolbar[data-chart="cs"] ',
-      dataUrl: 'posts/assets/cohort-swe-age-data.json',
+      dataUrl: '/blog/posts/assets/cohort-swe-age-data.json',
       series: [
         { key: 'g2225', json: 'g2225', name: '22-25', color: T => T.accent },
         { key: 'g2630', json: 'g2630', name: '26-30', color: T => rotSafe(T.accent, 36, blendSafe(T.accent, T.label, 0.2)) },
@@ -679,7 +679,7 @@
       fmtVal: v => v.toFixed(1),
       uirev: 'cohort-swe',
       initialMonths: null,
-      overlay: { dataUrl: 'posts/assets/rate-data.json', json: 'dfii10', name: '10-year real rate' },
+      overlay: { dataUrl: '/blog/posts/assets/rate-data.json', json: 'dfii10', name: '10-year real rate' },
     }),
     // The standalone rate strip, replaced by the dual-axis overlay above (its
     // HTML block in ai-job-market.md is commented out too). Kept for easy
@@ -688,7 +688,7 @@
     //   id: 'rate-chart',
     //   statId: 'rate-stat',
     //   toolbar: '.jm-toolbar[data-chart="rate"] ',
-    //   dataUrl: 'posts/assets/rate-data.json',
+    //   dataUrl: '/blog/posts/assets/rate-data.json',
     //   series: [
     //     { key: 'dfii10', json: 'dfii10', name: '10-year real rate', color: T => T.accent },
     //   ],

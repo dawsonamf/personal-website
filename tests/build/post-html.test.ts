@@ -12,6 +12,7 @@ import { after, before, describe, it } from 'node:test';
 
 import { load as loadYaml } from 'js-yaml';
 
+import { externalPostRedirects } from '../../src/build/post-output.ts';
 import { projectPostLinks, serializeJsonLd } from '../../src/posts/render.ts';
 import { THEME_IDS } from '../../src/themes/registry.ts';
 import { buildSite, cleanup } from '../fixtures/composition/build.ts';
@@ -162,10 +163,12 @@ describe('S1-19 production post raw HTML', () => {
     const html = filesUnder(dist).filter((path) => path.endsWith('.html'));
     const preservedExtras = [
       join('12years', 'index.html'),
+      ...Object.keys(externalPostRedirects()).map((route) => join(route.slice(1), 'index.html')),
+      join('blog', 'post.html'),
       join('embedded-swift-agent', 'index.html'),
       join('subsites', 'dawson', 'embedded-swift-agent', 'index.html'),
       join('subsites', 'elise', '12years', 'index.html'),
-    ];
+    ].sort();
     const routeHtml = html.filter((path) => !preservedExtras.includes(path));
     const postFiles = routeHtml.filter((path) => /(?:^|\/)blog\/[^/]+\/index\.html$/.test(path));
 
@@ -180,9 +183,11 @@ describe('S1-19 production post raw HTML', () => {
     }
   });
 
-  it('does not publish draft, external, or raw source bodies', () => {
-    for (const id of NON_LOCAL_IDS) {
-      assert.ok(!existsSync(join(dist, 'blog', id, 'index.html')), `${id}: no route`);
+  it('does not publish draft, external bodies, or raw source bodies', () => {
+    assert.ok(!existsSync(join(dist, 'blog', 'gemma4-heretic-ara', 'index.html')), 'draft has no route');
+    for (const id of ['autoencoders-1', 'autoencoders-2']) {
+      const stub = readFileSync(join(dist, 'blog', id, 'index.html'), 'utf8');
+      assert.ok(!stub.includes('class="blog-post-content"'), `${id}: redirect has no post body`);
     }
     assert.equal(
       filesUnder(dist).filter((path) => path.startsWith(`blog${process.platform === 'win32' ? '\\' : '/'}`) && path.endsWith('.md')).length,

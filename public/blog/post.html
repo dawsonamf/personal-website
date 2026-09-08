@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Blog</title>
+  <link rel="canonical" href="https://www.dawsonamf.com/blog/">
+  <meta http-equiv="refresh" content="0;url=/blog/">
+  <meta name="robots" content="noindex">
+  <script>
+    (function () {
+      'use strict';
+      var destinations = {"fly-on-my-laptop":"/blog/fly-on-my-laptop/","underviewed-art":"/blog/underviewed-art/","arena-freshness":"/blog/arena-freshness/","helm":"/blog/helm/","toolbelt":"/blog/toolbelt/","embedded-swift-agent":"/blog/embedded-swift-agent/","metr-doubling":"/blog/metr-doubling/","autoencoders-2":"https://www.aboutobjects.com/2024/04/01/autoencoders-part-2/","autoencoders-1":"https://www.aboutobjects.com/2024/01/05/autoencoders-part-1/","college-projects":"/blog/college-projects/"};
+      var localIds = new Set(["fly-on-my-laptop","underviewed-art","arena-freshness","helm","toolbelt","embedded-swift-agent","metr-doubling","college-projects"]);
+      var themeIds = new Set(["default","brutalist","marquee","blueprint","field-notes","doodle","grid","miami-deco","bauhaus","chinoiserie","gallery","banknote","neo-pop","broadsheet","studio","wheatpaste"]);
+      var params = new URLSearchParams(window.location.search);
+      var id = params.get('id');
+      var destination = Object.prototype.hasOwnProperty.call(destinations, id)
+        ? destinations[id]
+        : '/404.html';
+
+      if (localIds.has(id)) {
+        var style = params.get('style');
+        if (style && style !== 'default' && themeIds.has(style)) {
+          destination = '/' + style + destination;
+        }
+        destination += window.location.hash;
+      }
+
+      window.location.replace(destination);
+    })();
+  </script>
+</head>
+<body>
+  <p><a href="/blog/">Blog</a></p>
+</body>
+</html>

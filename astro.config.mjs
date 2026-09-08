@@ -3,8 +3,30 @@ import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import prose from './src/prose/integration.ts';
 import checks from './src/build/checks.ts';
-// S1-20 adds: import { THEME_IDS } from './src/themes/registry.ts';
-// S1-20 adds: import { postDates, publishedPostIds } from './src/build/posts.ts';
+import postOutput, { externalPostRedirects } from './src/build/post-output.ts';
+import { postDates, publishedPostIds } from './src/build/posts.ts';
+import { THEME_IDS } from './src/themes/registry.ts';
+
+const publicPostIds = new Set(publishedPostIds());
+const publicPostDates = postDates();
+
+function sitemapPath(page) {
+  return new URL(page).pathname;
+}
+
+function includeInSitemap(page) {
+  const pathname = sitemapPath(page);
+  if (THEME_IDS.some((id) => id !== 'default' && pathname.startsWith(`/${id}/`))) return false;
+  if (/^\/404(?:\.html|\/)$/.test(pathname) || pathname === '/blog/post.html') return false;
+  const post = /^\/blog\/([^/]+)\/$/.exec(pathname);
+  return !post || publicPostIds.has(post[1]);
+}
+
+function serializeSitemapItem(item) {
+  const post = /^\/blog\/([^/]+)\/$/.exec(sitemapPath(item.url));
+  const date = post && publicPostDates[post[1]];
+  return date ? { ...item, lastmod: date } : item;
+}
 
 // T0 item k (research/spike-findings.md §k; amends §3.2, which has no vite block).
 //
@@ -63,11 +85,16 @@ export default defineConfig({
   prerenderConflictBehavior: 'error',  // D2: duplicate prerendered URLs and duplicate entry ids (default is 'warn')
   build: { format: 'directory', inlineStylesheets: 'never' },
   markdown: { syntaxHighlight: false },// posts do not go through Astro's pipeline (D6)
-  redirects: {                         // S1-22 owns this block; static output: <meta http-equiv="refresh"> stubs, no status code
+  redirects: {                         // static output: <meta http-equiv="refresh"> stubs, no status code
     '/12years/': '/subsites/elise/12years/',
     '/embedded-swift-agent/': '/subsites/dawson/embedded-swift-agent/',   // settled Q3
+    ...externalPostRedirects(),
   },
   vite: { plugins: [externalizeSharedInstances] },
-  // S1-20 adds the sitemap filter/serialize options.
-  integrations: [prose(), checks(), sitemap()],
+  integrations: [
+    prose(),
+    postOutput(),
+    checks(),
+    sitemap({ filter: includeInSitemap, serialize: serializeSitemapItem }),
+  ],
 });
