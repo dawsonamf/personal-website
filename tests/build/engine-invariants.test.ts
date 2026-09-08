@@ -30,6 +30,12 @@ const enabled = (mount: 'nav' | 'fab' = 'nav') => `<!doctype html><html><head><!
 
 const pickerNone = '<!doctype html><html><head><!--theme-assets--></head><body><!--picker-mount:none--></body></html>';
 
+const navWithThreeTriggers = () => enabled('nav').replace(
+  '</body>',
+  '<li class="tc-nav-item"><button type="button" class="tc-nav-trigger" aria-haspopup="true" aria-controls="tc-dock" aria-expanded="false">Theme</button></li>'
+  + '<li class="tc-nav-item"><button type="button" class="tc-nav-trigger" aria-haspopup="true" aria-controls="tc-dock" aria-expanded="false">Theme</button></li></body>',
+);
+
 function expectInvariantFailure(html: string, pattern: RegExp): void {
   const fixture = page(html);
   assert.throws(() => checks.assertShellInvariants(fixture.pages, fixture.dir), pattern);
@@ -55,6 +61,19 @@ describe('pure emitted-page checks', () => {
     }
   });
 
+  it('accepts the three canonical nav triggers and still validates every sibling', () => {
+    const valid = navWithThreeTriggers();
+    const fixture = page(valid);
+    assert.doesNotThrow(() => checks.assertShellInvariants(fixture.pages, fixture.dir));
+    expectInvariantFailure(
+      valid.replace(
+        '<button type="button" class="tc-nav-trigger" aria-haspopup="true" aria-controls="tc-dock" aria-expanded="false">Theme</button></li></body>',
+        '<button type="button" class="tc-nav-trigger" aria-haspopup="true" aria-expanded="false">Theme</button></li></body>',
+      ),
+      /aria-controls/,
+    );
+  });
+
   it('reports missing and double ThemeAssets markers with the route', () => {
     expectInvariantFailure(enabled().replace('<!--theme-assets-->', ''), /\/: expected exactly one ThemeAssets marker, found 0/);
     expectInvariantFailure(enabled().replace('<!--theme-assets-->', '<!--theme-assets--><!--theme-assets-->'), /found 2/);
@@ -78,8 +97,10 @@ describe('pure emitted-page checks', () => {
     expectInvariantFailure(enabled().replace(' aria-controls="tc-dock"', ''), /aria-controls/);
     expectInvariantFailure(enabled().replace(' aria-expanded="false"', ''), /aria-expanded/);
     expectInvariantFailure(enabled().replace('class="tc-nav-item"', 'class="not-the-item"'), /nested.*tc-nav-item/);
-    expectInvariantFailure(enabled().replace('</body>', '<li class="tc-nav-item"><button class="tc-nav-trigger" aria-haspopup="true" aria-controls="tc-dock" aria-expanded="false"></button></li></body>'), /exactly one.*trigger.*found 2/);
+    expectInvariantFailure(enabled().replace(/<li class="tc-nav-item">[\s\S]*?<\/li>/, ''), /at least one.*trigger.*found 0/);
+    expectInvariantFailure(enabled('fab').replace('</body>', '<div class="tc-nav-item"><button class="tc-nav-trigger" aria-haspopup="true" aria-controls="tc-dock" aria-expanded="false"></button></div></body>'), /exactly one.*trigger.*found 2/);
     expectInvariantFailure(enabled('fab').replace(' tc-fab', ''), /fab.*tc-fab/);
+    expectInvariantFailure(enabled('fab').replace('</body>', '<div class="tc-fab"></div></body>'), /fab.*tc-fab.*found 2/);
     expectInvariantFailure(enabled('nav').replace('tc-nav-item', 'tc-nav-item tc-fab'), /nav.*tc-fab/);
   });
 

@@ -187,6 +187,18 @@ export function screenshotExceptionGroups(page: PageType, theme: string, side: '
 
 export interface MaskRectangle { x: number; y: number; width: number; height: number }
 
+interface ViewportAnchor { x: number; y: number; width: number; height: number }
+
+const viewportMatches = (actual: ViewportAnchor, expected: ViewportAnchor): boolean =>
+  isDeepStrictEqual(actual, expected);
+
+function pngDimensions(png: Buffer): { width: number; height: number } {
+  if (png.length < 24 || png[1] !== 0x50 || png[2] !== 0x4e || png[3] !== 0x47) {
+    throw new Error('screenshot capture did not return a PNG');
+  }
+  return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
+}
+
 /** Measure each accepted visible NEW addition as one bounded union rectangle. */
 async function measureGroups(page: Page, groups: string[][]): Promise<MaskRectangle[]> {
   if (!groups.length) return [];
@@ -240,31 +252,170 @@ export async function exceptionRectangles(
   });
 }
 
-/** Add identical page-coordinate rectangles to either side and mask only those boxes. */
+/** Add identical page-coordinate rectangles to either side and mask only their visible pixels. */
 export async function screenshotWithExceptionRectangles(
   page: Page,
   baseMasks: readonly string[],
   rectangles: readonly MaskRectangle[],
   fullPage: boolean,
 ): Promise<Buffer> {
-  await page.evaluate((boxes) => {
+  const addRectangles = (viewport?: ViewportAnchor) => page.evaluate(({ boxes, viewport }) => {
     for (const [index, box] of boxes.entries()) {
+      const left = viewport ? Math.max(box.x, viewport.x) : box.x;
+      const top = viewport ? Math.max(box.y, viewport.y) : box.y;
+      const right = viewport ? Math.min(box.x + box.width, viewport.x + viewport.width) : box.x + box.width;
+      const bottom = viewport ? Math.min(box.y + box.height, viewport.y + viewport.height) : box.y + box.height;
+      if (right <= left || bottom <= top) continue;
       const mask = document.createElement('div');
       mask.setAttribute('data-parity-exception-mask', String(index));
       Object.assign(mask.style, {
-        position: 'absolute', left: `${box.x}px`, top: `${box.y}px`, width: `${box.width}px`,
-        height: `${box.height}px`, pointerEvents: 'none', zIndex: '2147483647',
+        position: viewport ? 'fixed' : 'absolute',
+        left: `${left - (viewport?.x ?? 0)}px`, top: `${top - (viewport?.y ?? 0)}px`, width: `${right - left}px`,
+        height: `${bottom - top}px`, pointerEvents: 'none', zIndex: '2147483647',
       });
       document.body.append(mask);
     }
-  }, rectangles);
+  }, { boxes: rectangles, viewport });
+  const removeRectangles = () =>
+    page.locator('[data-parity-exception-mask]').evaluateAll((nodes) => nodes.forEach((node) => node.remove()));
+  const masks = [...baseMasks.map((selector) => page.locator(selector)), page.locator('[data-parity-exception-mask]')];
+
+  // Full-page references keep Playwright's established preparation and capture path unchanged.
+  if (fullPage) {
+    await addRectangles();
+    try {
+      return await page.screenshot({
+        animations: 'disabled', caret: 'hide', scale: 'css', fullPage: true, mask: masks,
+      });
+    } finally {
+      await removeRectangles();
+    }
+  }
+
+  const anchor = await page.evaluate(() => ({ x: scrollX, y: scrollY, width: innerWidth, height: innerHeight }));
+  let prepared: ViewportAnchor | undefined;
   try {
-    return await page.screenshot({
-      animations: 'disabled', caret: 'hide', scale: 'css', fullPage,
+    prepared = await page.evaluate(async (expected) => {
+    type CaptureState = {
+      cleanup: () => void;
+      scrolls: Array<{ x: number; y: number }>;
+    };
+    const captureWindow = window as typeof window & { __parityCaptureState?: CaptureState };
+    if (captureWindow.__parityCaptureState) throw new Error('screenshot capture preparation is already active');
+
+    const roots: Array<Document | ShadowRoot> = [];
+    const collect = (root: Document | ShadowRoot): void => {
+      roots.push(root);
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT);
+      do {
+        const shadow = (walker.currentNode as Element).shadowRoot;
+        if (shadow) collect(shadow);
+      } while (walker.nextNode());
+    };
+    collect(document);
+
+    // This is the narrow animation seam from Playwright 1.61.1's installed screenshotter:
+    // finite animations finish, infinite ones stay cancelled through the actual bitmap, and an
+    // animation that starts during capture receives the same treatment. Unlike the screenshotter,
+    // the harness can restore its intended live viewport after preparation and before painting.
+    const infinite = new Set<Animation>();
+    const listeners: Array<{ root: Document | ShadowRoot; listener: () => void }> = [];
+    const handle = (root: Document | ShadowRoot): void => {
+      for (const animation of root.getAnimations()) {
+        if (!animation.effect || animation.playbackRate === 0 || infinite.has(animation)) continue;
+        if (Number.isFinite(animation.effect.getComputedTiming().endTime)) {
+          try { animation.finish(); } catch { /* A non-finishable animation remains guarded below. */ }
+        } else {
+          try {
+            animation.cancel();
+            infinite.add(animation);
+          } catch { /* A non-cancellable animation remains guarded below. */ }
+        }
+      }
+    };
+    for (const root of roots) {
+      const listener = () => handle(root);
+      handle(root);
+      root.addEventListener('transitionrun', listener);
+      root.addEventListener('animationstart', listener);
+      listeners.push({ root, listener });
+    }
+
+    const scrolls: Array<{ x: number; y: number }> = [];
+    const onScroll = () => scrolls.push({ x: scrollX, y: scrollY });
+    captureWindow.__parityCaptureState = {
+      scrolls,
+      cleanup: () => {
+        for (const { root, listener } of listeners) {
+          root.removeEventListener('transitionrun', listener);
+          root.removeEventListener('animationstart', listener);
+        }
+        window.removeEventListener('scroll', onScroll);
+        for (const animation of infinite) {
+          try { animation.play(); } catch { /* Page cleanup still continues. */ }
+        }
+        delete captureWindow.__parityCaptureState;
+      },
+    };
+
+    // Let finish/cancel events and the layout they trigger run, then restore the exact viewport.
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    const priorBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    scrollTo(expected.x, expected.y);
+    document.documentElement.style.scrollBehavior = priorBehavior;
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    scrolls.length = 0;
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return { x: scrollX, y: scrollY, width: innerWidth, height: innerHeight };
+    }, anchor);
+    if (!prepared || !viewportMatches(prepared, anchor)) {
+      throw new Error(`screenshot preparation could not preserve the intended viewport: expected ${JSON.stringify(anchor)}, got ${JSON.stringify(prepared)}`);
+    }
+    await addRectangles(anchor);
+    const before = await page.evaluate(() => ({ x: scrollX, y: scrollY, width: innerWidth, height: innerHeight }));
+    if (!viewportMatches(before, anchor)) {
+      throw new Error(`screenshot masks changed the intended viewport: expected ${JSON.stringify(anchor)}, got ${JSON.stringify(before)}`);
+    }
+
+    const png = await page.screenshot({
+      animations: 'allow', caret: 'hide', scale: 'css', fullPage: false,
       mask: [...baseMasks.map((selector) => page.locator(selector)), page.locator('[data-parity-exception-mask]')],
     });
+    const painted = await page.evaluate(() => {
+      type CaptureState = { scrolls: Array<{ x: number; y: number }> };
+      const state = (window as typeof window & { __parityCaptureState?: CaptureState }).__parityCaptureState;
+      return {
+        viewport: { x: scrollX, y: scrollY, width: innerWidth, height: innerHeight },
+        scrolls: state ? [...state.scrolls] : [],
+      };
+    });
+    if (!viewportMatches(painted.viewport, anchor)
+      || painted.scrolls.some(({ x, y }) => x !== anchor.x || y !== anchor.y)) {
+      throw new Error(`screenshot capture moved the intended viewport: expected ${JSON.stringify(anchor)}, got ${JSON.stringify(painted)}`);
+    }
+    const dimensions = pngDimensions(png);
+    if (!isDeepStrictEqual(dimensions, { width: anchor.width, height: anchor.height })) {
+      throw new Error(`screenshot PNG dimensions differ from the intended viewport: expected ${anchor.width}x${anchor.height}, got ${dimensions.width}x${dimensions.height}`);
+    }
+    return png;
   } finally {
-    await page.locator('[data-parity-exception-mask]').evaluateAll((nodes) => nodes.forEach((node) => node.remove()));
+    await removeRectangles();
+    const restored = await page.evaluate(async (expected) => {
+      type CaptureState = { cleanup: () => void };
+      const captureWindow = window as typeof window & { __parityCaptureState?: CaptureState };
+      captureWindow.__parityCaptureState?.cleanup();
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      const priorBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = 'auto';
+      scrollTo(expected.x, expected.y);
+      document.documentElement.style.scrollBehavior = priorBehavior;
+      await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+      return { x: scrollX, y: scrollY, width: innerWidth, height: innerHeight };
+    }, anchor);
+    if (!viewportMatches(restored, anchor)) {
+      throw new Error(`screenshot cleanup could not restore the intended viewport: expected ${JSON.stringify(anchor)}, got ${JSON.stringify(restored)}`);
+    }
   }
 }
 

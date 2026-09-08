@@ -223,8 +223,36 @@ describe('authoritative migrated facts and palette outcomes', () => {
 
   it('compares shared palette evidence without hiding unrelated fields', () => {
     const evidence = { base: { a: 1 }, shuffled: { a: 2 }, navigate: { a: 2 }, reload: { a: 9 }, picker: { open: true }, extra: 'kept' };
-    assert.deepEqual(paletteEvidenceForComparison(evidence, 'old-new'), { base: { a: 1 }, shuffled: { a: 2 }, navigate: { a: 2 }, picker: { open: true }, extra: 'kept' });
-    assert.deepEqual(paletteEvidenceForComparison(evidence, 'old-old'), evidence);
+    assert.deepEqual(paletteEvidenceForComparison(evidence, 'old-new', 'old', 'brutalist'), { base: { a: 1 }, shuffled: { a: 2 }, navigate: { a: 2 }, picker: { open: true }, extra: 'kept' });
+    assert.deepEqual(paletteEvidenceForComparison(evidence, 'old-old', 'new', 'brutalist'), evidence);
+  });
+
+  it('asserts and removes only the migrated style carrier from the three shared storage records', () => {
+    const record = JSON.stringify({ style: 'brutalist', colors: ['#fff'], locks: [false], scheme: 'random', theme: 'dark' });
+    const expected = JSON.stringify({ colors: ['#fff'], locks: [false], scheme: 'random', theme: 'dark' });
+    const evidence = {
+      storageAfterShuffle: record,
+      navigate: { firstPaintStorage: record, storage: record, firstPaint: { '--text': '#fff' } },
+      reload: { intentionally: 'removed' },
+      extra: 'kept',
+    };
+    assert.deepEqual(paletteEvidenceForComparison(evidence, 'old-new', 'new', 'brutalist'), {
+      storageAfterShuffle: expected,
+      navigate: { firstPaintStorage: expected, storage: expected, firstPaint: { '--text': '#fff' } },
+      extra: 'kept',
+    });
+    assert.equal(evidence.storageAfterShuffle, record, 'raw evidence is unchanged');
+
+    for (const bad of [
+      '{',
+      JSON.stringify({ colors: ['#fff'] }),
+      JSON.stringify({ style: 'marquee', colors: ['#fff'] }),
+    ]) {
+      assert.throws(
+        () => paletteEvidenceForComparison({ ...evidence, storageAfterShuffle: bad }, 'old-new', 'new', 'brutalist'),
+        /storageAfterShuffle.*(?:malformed|missing.*style|expected style)/,
+      );
+    }
   });
 });
 

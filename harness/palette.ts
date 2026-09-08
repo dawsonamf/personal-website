@@ -9,14 +9,55 @@ export function reloadOutcome(mode: ParityMode, side: 'old' | 'new'): ReloadOutc
   return mode === 'old-new' && side === 'new' ? 'persist' : 'reset';
 }
 
-/** Reload is asserted per side; only that exact field is absent from old-new cross-side equality. */
+function withoutStyleCarrier(value: unknown, label: string, theme: string): string {
+  if (typeof value !== 'string') throw new Error(`${label}: missing palette storage record`);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    throw new Error(`${label}: malformed palette storage JSON`);
+  }
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error(`${label}: malformed palette storage record`);
+  }
+  const record = parsed as Record<string, unknown>;
+  if (!Object.hasOwn(record, 'style')) throw new Error(`${label}: missing migrated style carrier`);
+  if (record.style !== theme) {
+    throw new Error(`${label}: expected style ${JSON.stringify(theme)}, got ${JSON.stringify(record.style)}`);
+  }
+  const { style: _style, ...shared } = record;
+  return JSON.stringify(shared);
+}
+
+/**
+ * Reload is asserted per side and omitted from old-new cross-side equality. D11/§15.1–2 also add
+ * the saved palette's route theme to NEW. Assert that carrier in every shared storage snapshot,
+ * then remove only it so the remaining OLD/NEW record is still compared byte for byte.
+ */
 export function paletteEvidenceForComparison(
   evidence: Readonly<Record<string, unknown>>,
   mode: ParityMode,
+  side: 'old' | 'new' = 'old',
+  theme?: string,
 ): Record<string, unknown> {
   if (mode !== 'old-new') return { ...evidence };
   const { reload: _reload, ...shared } = evidence;
-  return shared;
+  if (side === 'old') return shared;
+  if (!theme) throw new Error('palette comparison: migrated side needs the expected theme');
+  const navigate = shared.navigate;
+  if (!navigate || typeof navigate !== 'object' || Array.isArray(navigate)) {
+    throw new Error('navigate: missing palette navigation evidence');
+  }
+  const navigation = navigate as Record<string, unknown>;
+  return {
+    ...shared,
+    storageAfterShuffle: withoutStyleCarrier(shared.storageAfterShuffle, 'storageAfterShuffle', theme),
+    navigate: {
+      ...navigation,
+      firstPaintStorage: withoutStyleCarrier(navigation.firstPaintStorage, 'navigate.firstPaintStorage', theme),
+      storage: withoutStyleCarrier(navigation.storage, 'navigate.storage', theme),
+    },
+  };
 }
 
 export interface FirstPaint {

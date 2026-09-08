@@ -1,14 +1,21 @@
 ---
-// The canonical home page. S1-12 ships the head and the shell scaffold; S1-17 assembles the
-// body from S1-14 to S1-16's components. Head order is index.html:4-42 (§6.2), with the CDN
-// stylesheets served from /vendor/ (D5) and the §8 behavior scripts left to S1-14+.
+// The complete canonical home. It owns the baseline page-level section wrappers, numbering
+// and head resource order; section components own their internal DOM and Shell owns the
+// picker dock/scrim/cycler tail.
 import { prose } from '../../prose/site.ts';
 import Shell from '../Shell.astro';
 import ThemeAssets from '../ThemeAssets.astro';
 import type { LayoutProps } from '../types.ts';
+import About from './components/About.astro';
+import BlogRail from './components/BlogRail.astro';
+import Contact from './components/Contact.astro';
+import FeaturedCarousel from './components/FeaturedCarousel.astro';
+import Footer from './components/Footer.astro';
+import Hero from './components/Hero.astro';
+import Jobs from './components/Jobs.astro';
+import Nav from './components/Nav.astro';
 import PalettePrepaint from './components/PalettePrepaint.astro';
 import StyleQueryShim from './components/StyleQueryShim.astro';
-import ThemePicker from './components/ThemePicker.astro';
 import Meta from './Meta.astro';
 
 type Props = LayoutProps;
@@ -17,6 +24,11 @@ const { theme, page, composition } = Astro.props;
 const title = prose.text('meta.home.title', 's');
 // The absolute og:image URL, built from `site` in astro.config.mjs (D39 bans the literal domain).
 const ogImage = new URL('/resources/og-avatar.jpg', import.meta.env.SITE).href;
+type SectionKey = 'about' | 'jobs' | 'projects' | 'blog' | 'contact';
+const sectionOrder: SectionKey[] = ['about', 'jobs', 'projects', 'blog', 'contact'];
+const sectionIndex = (key: SectionKey) => sectionOrder.indexOf(key);
+const sectionNumber = (key: SectionKey) => String(sectionIndex(key) + 1).padStart(2, '0');
+const projectsLabel = prose.text('home.sections.projects', 'xs');
 ---
 <Shell theme={theme} page={page} composition={composition}>
   <Fragment slot="head">
@@ -43,11 +55,51 @@ const ogImage = new URL('/resources/og-avatar.jpg', import.meta.env.SITE).href;
     <PalettePrepaint />
     <StyleQueryShim theme={theme} />
     <ThemeAssets theme={theme} composition={composition} />
+
+    <script is:inline defer src="/vendor/gsap/gsap.min.js"></script>
+    <script is:inline defer src="/vendor/jquery/jquery.min.js"></script>
+    <script is:inline defer src="/vendor/jquery-ui/jquery-ui.min.js"></script>
+    <script is:inline defer src="/vendor/aos/aos.js"></script>
+    <script is:inline src="/vendor/vanilla-tilt/vanilla-tilt.min.js"></script>
+    <script is:inline src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    <script is:inline defer src="/js/featured-carousel.js"></script>
+    <script is:inline defer src="/js/typing-engine.js"></script>
+    <script is:inline src="/js/anim-utils.js"></script>
+    <script is:inline defer src="/js/nav-behavior.js"></script>
+    <script is:inline defer src="/js/script.js"></script>
+    <script is:inline defer src="/js/cursor-follow.js"></script>
   </Fragment>
 
   <div id="main-body">
-    {/* Placeholder trigger mount (D30) until S1-14's Nav replaces this element. */}
-    <nav><ul><ThemePicker /></ul></nav>
-    {/* S1-17 fills the home body: hero, about, skills, jobs, carousel, blog rail, contact, footer. */}
+    <Nav theme={theme} page={page} />
+    <main>
+      <Hero theme={theme} page={page} />
+      <About theme={theme} page={page} sectionIndex={sectionIndex('about')} />
+      <Jobs theme={theme} page={page} sectionIndex={sectionIndex('jobs')} />
+
+      <div id="project-header-static"></div>
+      <section class="project-section-wrapper"
+        data-aos="fade-up"
+        data-aos-easing="ease-in-out"
+        data-aos-once="true">
+        <div class="section-header-wrapper" id="project-header-wrapper">
+          {projectsLabel && (
+            <>
+              <h2 class="section-header" id="project-header"><span class="sec-num">{sectionNumber('projects')}.</span>{projectsLabel}</h2>
+              <span class="section-header-spacer" id="project-header-spacer"></span>
+            </>
+          )}
+        </div>
+
+        <FeaturedCarousel theme={theme} page={page} />
+      </section>
+
+      <div class="section-spacer"></div>
+
+      <BlogRail theme={theme} page={page} sectionIndex={sectionIndex('blog')} />
+      <Contact theme={theme} page={page} sectionIndex={sectionIndex('contact')} />
+    </main>
+
+    <Footer variants={['desktop', 'mobile']} />
   </div>
 </Shell>

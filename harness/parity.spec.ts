@@ -392,13 +392,9 @@ async function captureSide(
   const resourceScripts = scriptRequests.snapshot(url);
   scriptRequests.dispose();
   const mastheadText = spec.masthead ? await page.locator(spec.masthead).textContent() : null;
-  const png = await page.screenshot({
-    animations: 'disabled',
-    caret: 'hide',
-    scale: 'css',
-    fullPage: spec.fullPage,
-    mask: spec.mask.map((s) => page.locator(s)),
-  });
+  // The exception-aware capture runs once both sides exist. Taking an earlier bitmap here would
+  // run Playwright's animation preparation before that helper records the live viewport.
+  const png = Buffer.alloc(0);
 
   return {
     responseBody,
@@ -645,8 +641,12 @@ for (const { pair, state } of matrix) {
           oldEvidencePath = writeEvidence(dumpDir, 'old', state.name, oldCtx.evidence);
           newEvidencePath = writeEvidence(dumpDir, 'new', state.name, newCtx.evidence);
         }
-        const oldEvidence = state.name === 'palette' ? paletteEvidenceForComparison(oldCtx.evidence, mode) : oldCtx.evidence;
-        const newEvidence = state.name === 'palette' ? paletteEvidenceForComparison(newCtx.evidence, mode) : newCtx.evidence;
+        const oldEvidence = state.name === 'palette'
+          ? paletteEvidenceForComparison(oldCtx.evidence, mode, 'old', pair.theme)
+          : oldCtx.evidence;
+        const newEvidence = state.name === 'palette'
+          ? paletteEvidenceForComparison(newCtx.evidence, mode, 'new', pair.theme)
+          : newCtx.evidence;
         if (JSON.stringify(newEvidence) !== JSON.stringify(oldEvidence)) {
           await testInfo.attach('old.interaction.json', { path: oldEvidencePath, contentType: 'application/json' });
           await testInfo.attach('new.interaction.json', { path: newEvidencePath, contentType: 'application/json' });

@@ -198,7 +198,12 @@ export function assertShellInvariants(pages: readonly BuiltPage[], dir: URL): vo
       if (docks.length !== 1) issue(`picker mount ${mount}: expected one #tc-dock, found ${docks.length}`);
       if (scrims.length !== 1) issue(`picker mount ${mount}: expected one #tc-scrim, found ${scrims.length}`);
       if (cyclers.length !== 1) issue(`picker mount ${mount}: expected one theme-cycler script, found ${cyclers.length}`);
-      if (triggers.length !== 1) issue(`picker mount ${mount}: expected exactly one valid nested trigger, found ${triggers.length}`);
+      if (mount === 'nav' && triggers.length < 1) {
+        issue(`picker mount nav: expected at least one valid nested trigger, found ${triggers.length}`);
+      }
+      if (mount === 'fab' && triggers.length !== 1) {
+        issue(`picker mount fab: expected exactly one valid nested trigger, found ${triggers.length}`);
+      }
       for (const trigger of triggers) {
         if (trigger.name !== 'button') issue('picker trigger must be a button.tc-nav-trigger');
         if (!trigger.parent || !hasClass(trigger.parent, 'tc-nav-item')) issue('picker trigger must be nested directly in .tc-nav-item');
