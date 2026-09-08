@@ -1,0 +1,22 @@
+---
+import Page from './Page.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { variant: 'home' }, props: { themeId: 'default' } },
+    { params: { variant: 'no-tilt' }, props: { themeId: 'brutalist' } },
+    {
+      params: { variant: 'reordered' },
+      props: { themeId: 'default', sectionOrder: ['contact', 'projects', 'blog', 'jobs', 'about'] },
+    },
+  ];
+}
+
+interface Props {
+  themeId: string;
+  sectionOrder?: Array<'about' | 'jobs' | 'projects' | 'blog' | 'contact'>;
+}
+
+const { themeId, sectionOrder } = Astro.props;
+---
+<Page themeId={themeId} sectionOrder={sectionOrder} />

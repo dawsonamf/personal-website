@@ -1,0 +1,40 @@
+---
+// Canonical About section owner. Inputs: Theme + PageContext, zero-based page-owned
+// sectionIndex and shared prose. The outer #about section remains here so Skills can emit
+// the direct right-hand card with no wrapper.
+import { prose } from '../../../prose/site.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+import Skills from './Skills.astro';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+  sectionIndex: number;
+}
+
+const { theme, page, sectionIndex } = Astro.props;
+const sectionKey = 'about';
+const sectionNumber = String(sectionIndex + 1).padStart(2, '0');
+const sectionLabel = prose.text(`home.sections.${sectionKey}`, 'xs');
+const title = prose.text('home.about.title', 'xs');
+const paragraphs = prose.paragraphs('home.about.body', 'l');
+const body = paragraphs.length ? `${paragraphs.join('<br><br>')}<br>` : '';
+---
+<div class="section-header-wrapper" id="about-header-wrapper" data-header-intro>
+  {sectionLabel && (
+    <>
+      <h2 class="section-header" id="about-section-header" style="visibility: hidden; opacity: 0;"><span class="sec-num">{sectionNumber}.</span>{sectionLabel}</h2>
+      <span class="section-header-spacer" id="about-header-spacer" style="visibility: hidden; opacity: 0;"></span>
+    </>
+  )}
+</div>
+<section class="double-view-container" id="about">
+  <div class="double-view-left card-style">
+    {title && <h3 class="card-title about-header">{title}</h3>}
+    {body && <p class="about-text"><Fragment set:html={body} /></p>}
+  </div>
+
+  <Skills theme={theme} page={page} />
+</section>
+<div class="section-spacer"></div>
