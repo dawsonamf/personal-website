@@ -128,7 +128,7 @@ test('(g) parseDeclarations survives function values and quoted font stacks', ()
 test('(h) oldPath is the bare path in the default theme and ?style= otherwise', () => {
   assert.deepEqual(
     PAGE_TYPES.map((p) => oldPath(p, 'default', 'toolbelt')),
-    ['/', '/blog/', '/blog/post.html?id=toolbelt', '/privacy/', '/404.html', '/lexchat/'],
+    ['/', '/blog/', '/blog/post.html?id=toolbelt'],
   );
   assert.deepEqual(
     PAGE_TYPES.map((p) => oldPath(p, 'brutalist', 'toolbelt')),
@@ -136,9 +136,6 @@ test('(h) oldPath is the bare path in the default theme and ?style= otherwise', 
       '/?style=brutalist',
       '/blog/?style=brutalist',
       '/blog/post.html?id=toolbelt&style=brutalist',
-      '/privacy/?style=brutalist',
-      '/404.html?style=brutalist',
-      '/lexchat/?style=brutalist',
     ],
   );
   assert.throws(() => oldPath('post', 'default'), /needs a postId/);

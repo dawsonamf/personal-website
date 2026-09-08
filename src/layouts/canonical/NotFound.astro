@@ -14,6 +14,7 @@ import ThemeAssets from '../ThemeAssets.astro';
 import type { LayoutProps } from '../types.ts';
 import PalettePrepaint from './components/PalettePrepaint.astro';
 import Meta from './Meta.astro';
+import { canonicalStyleExtras } from './presentation.ts';
 
 type Props = LayoutProps;
 
@@ -28,7 +29,25 @@ const credit = prose.text('site.footerCredit', 's');
 // S1-21 replaces declarations({}) with declarations(canonicalStyleExtras(t.id, { carousel: false })),
 // so the extras are validated at build and the runtime does no declaration work.
 const themes = JSON.stringify(
-  Object.fromEntries(THEMES.map((t) => [t.id, { theme: t, extras: declarations({}) }])),
+  Object.fromEntries(THEMES.map((t) => {
+    const theme = t.kind === 'structural'
+      ? {
+          kind: t.kind,
+          id: t.id,
+          polarity: t.polarity,
+          colors: t.colors,
+          tokens: t.tokens,
+          fonts: t.fonts,
+          random: t.random,
+        }
+      : t;
+    return [t.id, {
+    theme,
+    extras: declarations(canonicalStyleExtras(t.id, { carousel: false })),
+    // Structural utilities use their tokens and fonts without theme-base or owned CSS.
+    links: t.kind === 'structural' ? [...(t.fonts ?? [])] : undefined,
+  }];
+  })),
 ).replace(/</g, '\\u003c');
 ---
 <Shell theme={theme} page={page} composition={composition}>
@@ -78,7 +97,7 @@ const themes = JSON.stringify(
 
       // The island, not the registry: importing registry.ts would pull assertRegistry and every
       // structural theme's `layouts: { home: () => import('./x.astro') }` into this bundle.
-      const data: Record<string, { theme: Theme; extras: string }> = JSON.parse(
+      const data: Record<string, { theme: Theme; extras: string; links?: string[] }> = JSON.parse(
         document.getElementById('nf-themes')!.textContent!,
       );
       const id = resolveNotFoundTheme(location.pathname, location.search, Object.keys(data));
@@ -104,7 +123,7 @@ const themes = JSON.stringify(
         for (const [name, value] of Object.entries(html.attrs)) root.setAttribute(name, value);
         root.style.cssText = html.style + entry.extras;
 
-        for (const link of html.links) {
+        for (const link of entry.links ?? html.links) {
           const sheet = document.createElement('link');
           sheet.rel = 'stylesheet';
           sheet.href = link;

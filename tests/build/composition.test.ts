@@ -1,7 +1,7 @@
 // S1-12: §5.2's composition table, the structural fallback and the emitted route set.
 //
 // Three parts, in one file because they check one decision from three distances:
-//   a. composeFor() in process, over {default, a skin, a structural stub} x the six page types.
+//   a. composeFor() in process, over {default, a skin, a structural stub} x the five page types.
 //   b. A REAL build of an isolated copy whose src/themes/registry.ts is overlaid with a
 //      structural registration (the plan's "S1-24 fixture registration occurs in an isolated
 //      copy"): the stub reaches the routes, the dock, the prose schema and the 404 island
@@ -28,8 +28,8 @@ import { THEMES, THEME_IDS } from '../../src/themes/registry.ts';
 import type { LazyLayout, PageType, SkinTheme, StructuralTheme, Theme } from '../../src/themes/types.ts';
 import { BUILD_MS, buildSite, cleanup, fixtureRoot } from '../fixtures/composition/build.ts';
 
-const PAGE_TYPES: readonly PageType[] = ['home', 'blog', 'post', 'privacy', 'notFound', 'lexchat'];
-const ROUTE_TAILS = ['', 'blog/', 'privacy/', 'lexchat/'];
+const PAGE_TYPES: readonly PageType[] = ['home', 'blog', 'post', 'privacy', 'notFound'];
+const ROUTE_TAILS = ['', 'blog/', 'privacy/'];
 
 /** Emitted index.html files that are not theme routes: two redirect stubs, two public passthroughs. */
 const NON_ROUTE_PAGES = [
@@ -102,7 +102,6 @@ const skin = (id: string) => THEMES.find((entry) => entry.id === id) as SkinThem
 const SHIM = "var p=new URLSearchParams(location.search),q=p.get('style');";
 const PREPAINT = "sessionStorage.getItem('dawson-theme-cycler')";
 const CYCLER = '/js/theme-cycler.js';
-const PICKER_MARKUP = ['tc-dock', 'tc-scrim', 'tc-nav-trigger', 'tc-fab'];
 
 /**
  * §5.4's position, structurally: the pre-paint script sits after `/css/theme-cycler.css` and
@@ -148,13 +147,12 @@ function assertNotFoundRuntime(dist: string, ids: readonly string[]) {
 
   const island = /<script type="application\/json" id="nf-themes">(.*?)<\/script>/s.exec(html);
   assert.ok(island, 'the 404 carries its appearance island');
-  const data: Record<string, { theme: Theme; extras: string }> = JSON.parse(island[1]);
+  const data: Record<string, { theme: { id: string; kind: string }; extras: string; links?: string[] }> = JSON.parse(island[1]);
   assert.deepEqual(Object.keys(data), [...ids]);
   for (const [id, entry] of Object.entries(data)) {
     assert.equal(entry.theme.id, id, id);
-    assert.equal(entry.extras, '', `${id}: S1-21 fills the extras; they are empty until then`);
-    // JSON.stringify drops the function-valued layouts, which is what keeps them out of the bundle.
-    if (entry.theme.kind === 'structural') assert.deepEqual(entry.theme.layouts, {}, id);
+    if (id === 'marquee' || id === 'doodle') assert.notEqual(entry.extras, '', `${id}: CSS prose extras`);
+    assert.equal(Object.hasOwn(entry.theme, 'layouts'), false, `${id}: no layout metadata`);
   }
 }
 
@@ -179,7 +177,6 @@ describe('composeFor(): §5.2s table over the full page-type union', () => {
   const ALL_ASSETS = { fonts: true, base: true, skin: true };
   const NAV = { mount: 'nav' };
   const FAB = { mount: 'fab', corner: 'br' };
-  const NO_PICKER = { mount: 'none' };
 
   /** [assets, picker, owns the layout] per page type, one row per theme kind. */
   const table: Record<string, Record<PageType, [object, object, boolean]>> = {
@@ -189,7 +186,6 @@ describe('composeFor(): §5.2s table over the full page-type union', () => {
       post: [NO_ASSETS, NAV, false],
       privacy: [NO_ASSETS, FAB, false],
       notFound: [NO_ASSETS, FAB, false],
-      lexchat: [NO_ASSETS, NO_PICKER, false],
     },
     brutalist: {
       home: [ALL_ASSETS, NAV, false],
@@ -197,7 +193,6 @@ describe('composeFor(): §5.2s table over the full page-type union', () => {
       post: [ALL_ASSETS, NAV, false],
       privacy: [ALL_ASSETS, FAB, false],
       notFound: [ALL_ASSETS, FAB, false],
-      lexchat: [ALL_ASSETS, NO_PICKER, false],
     },
     stub: {
       home: [FONTS, FAB, true], // the one owned page type
@@ -205,7 +200,6 @@ describe('composeFor(): §5.2s table over the full page-type union', () => {
       post: [FONTS_BASE, NAV, false],
       privacy: [FONTS, FAB, false],
       notFound: [FONTS, FAB, false],
-      lexchat: [FONTS, NO_PICKER, false],
     },
   };
 
@@ -231,19 +225,15 @@ describe('composeFor(): §5.2s table over the full page-type union', () => {
     }
   }
 
-  it('the six canonical layouts are six distinct lazy imports', () => {
+  it('the five canonical layouts are five distinct lazy imports', () => {
     const layouts = PAGE_TYPES.map((type) => composeFor(dflt, type).layout);
     assert.equal(new Set(layouts).size, PAGE_TYPES.length);
   });
 
-  it('mount "none" appears on lexchat and nowhere else, for every registered theme', () => {
+  it('no current page composition disables the picker', () => {
     for (const theme of THEMES) {
       for (const type of PAGE_TYPES) {
-        assert.equal(
-          composeFor(theme, type).picker.mount === 'none',
-          type === 'lexchat',
-          `${theme.id} / ${type}`,
-        );
+        assert.notEqual(composeFor(theme, type).picker.mount, 'none', `${theme.id} / ${type}`);
       }
     }
   });
@@ -273,10 +263,10 @@ describe('a structural theme registered in an isolated copy', () => {
 
   after(() => cleanup(dir));
 
-  it('emits 17 x 4 route pages plus 404.html, with no /default/ and no double prefix', () => {
+  it('emits 17 x 3 route pages plus 404.html, with no /default/ and no double prefix', () => {
     const expected = routePages(ids);
     const actual = emittedPages(dist);
-    assert.equal(expected.length, 17 * 4);
+    assert.equal(expected.length, 17 * 3);
     assert.deepEqual(expected.filter((page) => !actual.includes(page)), []);
     assert.deepEqual(actual.filter((page) => !expected.includes(page)), NON_ROUTE_PAGES);
     assert.ok(existsSync(join(dist, '404.html')));
@@ -318,10 +308,6 @@ describe('a structural theme registered in an isolated copy', () => {
     assert.ok(privacy.includes('class="tc-nav-trigger tc-fab-btn"'));
     assert.equal(count(privacy, 'tc-nav-trigger'), 1);
 
-    const lexchat = read(dist, 'stub/lexchat/index.html');
-    assert.deepEqual(styleAssets(lexchat), [...stubFonts]);
-    assert.equal(markers(lexchat), 1);
-    for (const needle of [...PICKER_MARKUP, CYCLER]) assert.equal(count(lexchat, needle), 0, needle);
   });
 
   it('the owned pages assets reach no other page', () => {
@@ -376,10 +362,10 @@ describe('the production build', () => {
 
   after(() => cleanup(dir));
 
-  it('emits 16 x 4 route pages plus 404.html and nothing else route-shaped', () => {
+  it('emits 16 x 3 route pages plus 404.html and nothing else route-shaped', () => {
     const expected = routePages(THEME_IDS);
     const actual = emittedPages(dist);
-    assert.equal(expected.length, 64);
+    assert.equal(expected.length, 48);
     assert.deepEqual(expected.filter((page) => !actual.includes(page)), []);
     assert.deepEqual(actual.filter((page) => !expected.includes(page)), NON_ROUTE_PAGES);
     assert.ok(existsSync(join(dist, '404.html')));
@@ -408,13 +394,6 @@ describe('the production build', () => {
     assert.equal(count(privacy, 'rel="canonical"'), 0);
     assert.equal(count(privacy, 'name="robots"'), 0);
 
-    const themedLexchat = read(dist, 'grid/lexchat/index.html');
-    assert.ok(themedLexchat.includes(`<link rel="canonical" href="${SITE}/lexchat/">`));
-    assert.ok(themedLexchat.includes('<meta name="robots" content="noindex">'));
-
-    const lexchat = read(dist, 'lexchat/index.html');
-    assert.equal(count(lexchat, 'rel="canonical"'), 0);
-    assert.equal(count(lexchat, 'name="robots"'), 0);
   });
 
   it('emits fonts, theme-base and the skin sheet in order, and nothing on default routes', () => {
@@ -427,13 +406,6 @@ describe('the production build', () => {
       assert.deepEqual(styleAssets(read(dist, tail + 'index.html')), [], tail || '/');
     }
     assert.deepEqual(styleAssets(read(dist, '404.html')), []);
-  });
-
-  it('LexChat is the picker-free composition, themed or not', () => {
-    for (const page of ['lexchat/index.html', 'grid/lexchat/index.html']) {
-      const html = read(dist, page);
-      for (const needle of [...PICKER_MARKUP, CYCLER]) assert.equal(count(html, needle), 0, `${page}: ${needle}`);
-    }
   });
 
   it('privacy mounts the FAB and no other trigger', () => {
@@ -470,7 +442,7 @@ describe('the production build', () => {
     }
   });
 
-  it('the pre-paint script renders on every page, LexChat and the 404 included', () => {
+  it('the pre-paint script renders on every emitted engine page and the 404', () => {
     for (const page of [...routePages(THEME_IDS), '404.html']) {
       assert.equal(count(read(dist, page), PREPAINT), 1, page);
     }

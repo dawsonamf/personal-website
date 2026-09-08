@@ -149,6 +149,7 @@ describe('assertRegistry', () => {
 
   it('rejects a reserved id', () => {
     assert.throws(() => assertRegistry([THEMES[0], skin({ id: 'blog' })]), /reserved id "blog"/);
+    assert.throws(() => assertRegistry([THEMES[0], skin({ id: 'lexchat' })]), /reserved id "lexchat"/);
   });
 
   it('rejects an id that is not a clean URL segment', () => {
@@ -175,7 +176,7 @@ const role = { l: [0, 1], hueT: 0 } satisfies RoleProfile;
 ({ privacy: stubLayout }) satisfies StructuralTheme['layouts'];
 // @ts-expect-error a theme never owns the 404 page
 ({ notFound: stubLayout }) satisfies StructuralTheme['layouts'];
-// @ts-expect-error a theme never owns lexchat
+// @ts-expect-error retired page ids are not ownable layout keys
 ({ lexchat: stubLayout }) satisfies StructuralTheme['layouts'];
 
 ({

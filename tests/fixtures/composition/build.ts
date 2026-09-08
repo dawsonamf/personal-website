@@ -30,7 +30,6 @@ const PUBLIC_SUBSET = [
   'js',
   'blog',
   'privacy',
-  'lexchat',
   'subsites',
   'vendor/aos',
   'vendor/boxicons',

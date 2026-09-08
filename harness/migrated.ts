@@ -58,7 +58,6 @@ function basePath(page: PageType, postId?: string): string {
     : page === 'blog' ? '/blog/'
     : page === 'post' ? `/blog/${postId}/`
     : page === 'privacy' ? '/privacy/'
-    : page === 'lexchat' ? '/lexchat/'
     : '/404.html';
 }
 
@@ -72,10 +71,17 @@ const SIBLING_STYLES: Record<string, string> = {
   'blog-listing-styles.css': '/blog/blog-listing-styles.css',
   'blog-styles.css': '/blog/blog-styles.css',
   'privacy-styles.css': '/privacy/privacy-styles.css',
-  'lexchat-styles.css': '/lexchat/lexchat-styles.css',
 };
 
 function mapAuthored(value: string, context: OldUrlContext, vendor: Map<string, string>): { value: string; themed: boolean } {
+  if (
+    value === '/lexchat/'
+    && (context.page === 'home' || context.page === 'blog')
+    && context.tag === 'a'
+    && context.attr === 'href'
+  ) {
+    return { value: 'https://huggingface.co/spaces/dawsonamf/lexchat', themed: false };
+  }
   const vendorPath = vendor.get(value);
   if (vendorPath) return { value: vendorPath, themed: true };
   if (value.startsWith('#') || /^[a-z][a-z0-9+.-]*:/i.test(value) && !value.startsWith('https://www.dawsonamf.com')) {
@@ -110,7 +116,7 @@ function mapAuthored(value: string, context: OldUrlContext, vendor: Map<string, 
     else if (/^posts\/assets\/[^/]+\.css(?:[?#].*)?$/.test(path)) { path = '/blog/' + path; mapped = true; }
     else if (/^(?:\.\.\/){0,2}resources\//.test(path)) { path = '/' + path.replace(/^(?:\.\.\/){0,2}/, ''); mapped = true; }
     else if (path === '/embedded-swift-agent/') { path = '/subsites/dawson/embedded-swift-agent/'; mapped = true; }
-    else if (path === '/' || path === '/lexchat/') mapped = true;
+    else if (path === '/') mapped = true;
   }
   return mapped ? { value: path, themed: true } : { value, themed: false };
 }

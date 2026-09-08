@@ -6,6 +6,8 @@
 
 Assign one agent this ticket plus the [execution contract](../../../superpowers/plans/2026-09-05-spec-1-migration-engine.md). Read [Spec 1](../spec-1-migration-engine-parity.md) §1.1, §3.3, §8, D3/D18/D23/D32/D35/D38 and §17. Dependencies supply code and evidence; there is no owner review between tickets.
 
+**Owner amendment, 2026-09-08:** S1-21 retires all local LexChat engine pages and unused page assets, with no redirect. Retain its project card/image/approved description and exact external Hugging Face CTA. Privacy/404 require functional coverage; exact OLD/NEW visual and DOM equality is waived. Do not restore the former iframe assumptions. Remove only audited remaining legacy LexChat source/assets; retain the project content/image and every other active owner.
+
 ## Deliverable
 
 One final architecture remains in the repo, with no superseded rendering/content sources and working authoring documentation.

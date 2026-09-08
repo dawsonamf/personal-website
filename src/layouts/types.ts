@@ -16,7 +16,7 @@ export interface PageContext {
   styleExtras?: StyleExtras;
 }
 
-/** Where a page mounts the picker trigger (D30). `none` is LexChat's picker-free composition (Q4). */
+/** Where a page mounts the picker trigger (D30). `none` remains available for future picker-free layouts. */
 export type PickerMount =
   | { mount: 'nav' }
   | { mount: 'fab'; corner: 'br' | 'bl' | 'tr' | 'tl' }

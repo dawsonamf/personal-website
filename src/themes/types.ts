@@ -2,7 +2,7 @@
 // Labels are not here: they live in prose.yaml at `themes.<id>.label`.
 import type { AstroComponentFactory } from 'astro/runtime/server/index.js';
 
-export type PageType = 'home' | 'blog' | 'post' | 'privacy' | 'notFound' | 'lexchat'; // the full union compose() covers
+export type PageType = 'home' | 'blog' | 'post' | 'privacy' | 'notFound'; // the full union compose() covers
 export type OwnablePageType = 'home' | 'blog' | 'post'; // utility pages are never owned by a theme
 
 export type Colors = { text: string; bg: string; primary: string; secondary: string; accent: string };

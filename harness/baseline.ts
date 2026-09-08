@@ -208,7 +208,6 @@ export function oldPath(page: PageType, theme: string, postId?: string): string 
     : page === 'blog' ? '/blog/'
     : page === 'post' ? `/blog/post.html?id=${postId}`
     : page === 'privacy' ? '/privacy/'
-    : page === 'lexchat' ? '/lexchat/'
     : '/404.html';
   if (theme === 'default') return base;
   return `${base}${base.includes('?') ? '&' : '?'}style=${theme}`;

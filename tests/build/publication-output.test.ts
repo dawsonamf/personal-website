@@ -180,7 +180,6 @@ describe('S1-20 publication output', () => {
     const expected = new Set([
       'https://www.dawsonamf.com/',
       'https://www.dawsonamf.com/blog/',
-      'https://www.dawsonamf.com/lexchat/',
       'https://www.dawsonamf.com/privacy/',
       ...published.map((id) => `https://www.dawsonamf.com/blog/${id}/`),
     ]);

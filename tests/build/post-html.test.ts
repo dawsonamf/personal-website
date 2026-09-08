@@ -172,7 +172,7 @@ describe('S1-19 production post raw HTML', () => {
     const routeHtml = html.filter((path) => !preservedExtras.includes(path));
     const postFiles = routeHtml.filter((path) => /(?:^|\/)blog\/[^/]+\/index\.html$/.test(path));
 
-    assert.equal(routeHtml.length, 193, '192 page routes plus 404.html');
+    assert.equal(routeHtml.length, 177, '176 page routes plus 404.html');
     assert.deepEqual(html.filter((path) => !routeHtml.includes(path)), preservedExtras);
     assert.equal(postFiles.length, 128, 'eight local posts times sixteen themes');
     for (const theme of THEME_IDS) {

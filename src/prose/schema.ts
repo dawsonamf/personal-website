@@ -51,7 +51,6 @@ export const siteProseSchema = z.strictObject({
     post: z.strictObject({ description: sizedText }),
     privacy: z.strictObject({ title: sizedText, description: sizedText }),
     notFound: z.strictObject({ title: sizedText }),
-    lexchat: z.strictObject({ title: sizedText }),
   }),
 
   // Labels only: which items appear where, and their hrefs, are structure (Nav.astro).

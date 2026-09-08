@@ -1,5 +1,5 @@
 /**
- * Spec 1 §9 checks 1-5 plus a screenshot, over the 16 × 8 URL matrix × its interaction states in
+ * Spec 1 §9 checks 1-5 plus a screenshot, over the 16 × 5 retained parity matrix × its states in
  * two viewport projects, and the three fixture capture/integrity tests. Old-vs-old today; S1-13
  * points 8782 at `dist` and turns on the old-new normaliser.
  * Entry point: `npm run test:parity`.
@@ -42,7 +42,7 @@ const matrix = pairs.flatMap((pair) => statesFor(pair).map((state) => ({ pair, s
  * run. 16 themes × the pages that carry each state's element.
  */
 const EXPECTED_STATE_COUNTS: Record<StateName, number> = {
-  settled: 128, // every pair
+  settled: 80, // every retained pair
   'masthead-0': 16, // home, mobile only
   'jobs-tab-2': 16, // home
   'carousel-dot-3': 32, // home + listing
@@ -59,10 +59,10 @@ const EXPECTED_STATE_COUNTS: Record<StateName, number> = {
   const themes = new Set(pairs.map((p) => p.theme));
   const ids = new Set(pairs.map((p) => `${p.theme}/${p.pageId}`));
   const perTheme = new Set([...themes].map((t) => pairs.filter((p) => p.theme === t).length));
-  if (pairs.length !== 128 || themes.size !== 16 || ids.size !== 128 || perTheme.size !== 1 || !perTheme.has(8)) {
+  if (pairs.length !== 80 || themes.size !== 16 || ids.size !== 80 || perTheme.size !== 1 || !perTheme.has(5)) {
     throw new Error(
       `parity matrix shape: ${pairs.length} pairs / ${themes.size} themes / ${ids.size} unique ids / ` +
-        `per-theme ${[...perTheme].join(',')}; expected 128 / 16 / 128 / 8`,
+        `per-theme ${[...perTheme].join(',')}; expected 80 / 16 / 80 / 5`,
     );
   }
   const counts = Object.fromEntries(Object.keys(EXPECTED_STATE_COUNTS).map((n) => [n, 0])) as Record<
@@ -83,7 +83,7 @@ const EXPECTED_STATE_COUNTS: Record<StateName, number> = {
 }
 
 /**
- * §9's abort list: non-deterministic third-party APIs and the LexChat iframe host. The thirteen
+ * §9's abort list: non-deterministic third-party APIs. The retained entries
  * library CDNs and Google Fonts are deliberately absent: the old side needs them, and an outage
  * is a harness failure, not a regression.
  */
@@ -98,7 +98,6 @@ const ABORT_HOSTS = new Set([
   'media.getty.edu',
   'www.metmuseum.org',
   'raw.githubusercontent.com',
-  'dawsonamf-lexchat.hf.space',
 ]);
 
 const SENTINEL_PROPS = ['color', 'background-color', 'font-family', 'font-size', 'line-height', 'border-radius'];
@@ -274,7 +273,7 @@ async function openSide(browser: Browser, testInfo: TestInfo): Promise<{ context
   const context = await browser.newContext(opts);
   // Playwright runs the most recently registered route first, so the abort list is registered last
   // and wins: an aborted host can never be fenced and then fetched. (No pattern overlaps today —
-  // the abort list is APIs and the LexChat host, the fences are a same-origin markdown path and
+  // the abort list is APIs, the fences are a same-origin markdown path and
   // the tilt library's CDN file — and this ordering is what keeps that true when either grows.)
   await fencePostMarkdown(context);
   await fenceStyleAssets(context);
@@ -478,7 +477,7 @@ const badFailures = (network: NetworkInventory): NetworkInventory['failed'] =>
   network.failed.filter((f) => !ABORT_HOSTS.has(new URL(f.url).hostname));
 
 /** Fields removed by §15 are still asserted on NEW from their owning source and route contract. */
-async function assertMigratedContracts(page: Page, pair: UrlPair): Promise<void> {
+async function assertMigratedContracts(page: Page, pair: UrlPair, oldPage?: Page): Promise<void> {
   if (!migrated) return;
   if (pair.page === 'post' && pair.postId) {
     const expected = migrated.postMetadata[pair.postId];
@@ -510,6 +509,36 @@ async function assertMigratedContracts(page: Page, pair: UrlPair): Promise<void>
       }, id);
       expect.soft(actual, `${pair.page}: ${id} card matches its post source`).toEqual(expected);
     }
+
+    if (oldPage) {
+      const readLexChat = (candidate: Page) => candidate.evaluate(() => {
+        const cards = [...document.querySelectorAll<HTMLElement>('#featured-track > .fc-card')]
+          .filter((card) => card.querySelector('.fc-card-title')?.textContent?.trim() === 'LexChat');
+        const card = cards[0];
+        const cta = card?.querySelector<HTMLAnchorElement>('.fc-card-cta');
+        return {
+          count: cards.length,
+          title: card?.querySelector('.fc-card-title')?.textContent?.trim() ?? null,
+          label: cta?.textContent?.trim() ?? null,
+          href: cta?.getAttribute('href') ?? null,
+          target: cta?.getAttribute('target') ?? null,
+          rel: cta?.getAttribute('rel') ?? null,
+        };
+      });
+      const [oldLexChat, newLexChat] = await Promise.all([readLexChat(oldPage), readLexChat(page)]);
+      expect.soft(oldLexChat, `${pair.page}: OLD LexChat card contract`).toEqual({
+        count: 1,
+        title: 'LexChat',
+        label: 'Visit LexChat',
+        href: '/lexchat/',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+      });
+      expect.soft(newLexChat, `${pair.page}: NEW LexChat card contract`).toEqual({
+        ...oldLexChat,
+        href: 'https://huggingface.co/spaces/dawsonamf/lexchat',
+      });
+    }
   }
 
   if (pair.page !== 'notFound') {
@@ -517,7 +546,7 @@ async function assertMigratedContracts(page: Page, pair: UrlPair): Promise<void>
       : pair.page === 'blog' ? '/blog/'
       : pair.page === 'post' ? `/blog/${pair.postId}/`
       : pair.page === 'privacy' ? '/privacy/'
-      : '/lexchat/';
+      : '/404.html';
     const expectedCanonical = `https://www.dawsonamf.com${route}`;
     const actual = await page.evaluate(() => ({
       canonicals: [...document.querySelectorAll('link[rel="canonical"]')].map((node) => node.getAttribute('href')),
@@ -636,7 +665,7 @@ for (const { pair, state } of matrix) {
           'computed-style sample',
         ).toEqual(styleSampleForComparison(oldCapture.sample, { mode, side: 'old' }));
 
-        await assertMigratedContracts(next.page, pair);
+        await assertMigratedContracts(next.page, pair, old.page);
         expect.soft(oldCapture.determinism.removedLibraryDraws, 'OLD random phase offset').toBe(0);
         expect.soft(oldCapture.determinism.effectiveSeed, 'OLD effective random seed').toBe(oldCapture.determinism.seed);
         expect.soft(newCapture.determinism.seed, 'shared base random seed').toBe(oldCapture.determinism.seed);

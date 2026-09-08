@@ -41,7 +41,7 @@ Both standalone subsites work at their new paths, old entry URLs redirect, and p
 - [ ] Three anniversary and four embedded-agent files are byte-identical and their local dependencies resolve.
 - [ ] No docs, CLAUDE, raw post Markdown, draft bodies, CNAME or .nojekyll in dist.
 - [ ] Sitemap/robots use the new sitemap index; old sitemap.xml is not emitted.
-- [ ] LexChat remains separate, linked and picker-free.
+- [ ] LexChat remains a project linking directly to its approved Hugging Face destination; no local page or redirect is emitted (owner amendment 2026-09-08, S1-21).
 - [ ] Legacy root files are still available for S1-25's deliberate cleanup/rollback audit.
 
 ```bash

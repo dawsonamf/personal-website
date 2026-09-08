@@ -461,12 +461,6 @@
       "legacy": "404 | Dawson Metzger-Fleetwood",
       "source": "404.html:6",
       "suffix": true
-    },
-    "lexchat": {
-      "path": "meta.lexchat.title",
-      "legacy": "LexChat",
-      "source": "lexchat/index.html:6",
-      "suffix": false
     }
   },
   "titleSuffix": "Dawson Metzger-Fleetwood",

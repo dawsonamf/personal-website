@@ -78,10 +78,10 @@ describe('lazy migrated adapter and URL matrix facts', () => {
     }
   });
 
-  it('projects the six page forms without default or double prefixes', () => {
+  it('projects the retained parity page forms without default or double prefixes', () => {
     assert.deepEqual(
-      ['home', 'blog', 'post', 'privacy', 'notFound', 'lexchat'].map((page) => adapter.newPath(page as never, 'brutalist', 'toolbelt')),
-      ['/brutalist/', '/brutalist/blog/', '/brutalist/blog/toolbelt/', '/brutalist/privacy/', '/404.html?style=brutalist', '/brutalist/lexchat/'],
+      ['home', 'blog', 'post'].map((page) => adapter.newPath(page as never, 'brutalist', 'toolbelt')),
+      ['/brutalist/', '/brutalist/blog/', '/brutalist/blog/toolbelt/'],
     );
     assert.equal(adapter.newPath('post', 'default', 'toolbelt'), '/blog/toolbelt/');
     assert.throws(() => adapter.newPath('post', 'default'), /needs a postId/);
@@ -89,9 +89,27 @@ describe('lazy migrated adapter and URL matrix facts', () => {
 });
 
 describe('§9 old-side-only map then theme', () => {
+  it('maps only the retired LexChat carousel CTA to its external destination', () => {
+    const homeAnchor = { page: 'home', theme: 'brutalist', tag: 'a', attr: 'href' } as const;
+    assert.equal(
+      adapter.mapOldUrl('/lexchat/', homeAnchor),
+      'https://huggingface.co/spaces/dawsonamf/lexchat',
+    );
+    assert.equal(adapter.mapOldUrl('/lexchat/', { ...homeAnchor, page: 'blog' }), 'https://huggingface.co/spaces/dawsonamf/lexchat');
+    for (const context of [
+      { ...homeAnchor, page: 'post' as const },
+      { ...homeAnchor, tag: 'img' as const, attr: 'src' as const },
+      { ...homeAnchor, attr: 'src' as const },
+    ]) {
+      assert.notEqual(adapter.mapOldUrl('/lexchat/', context), 'https://huggingface.co/spaces/dawsonamf/lexchat');
+    }
+    assert.notEqual(adapter.mapOldUrl('/lexchat/?x=1', homeAnchor), 'https://huggingface.co/spaces/dawsonamf/lexchat');
+    assert.notEqual(adapter.mapOldUrl('/brutalist/lexchat/', homeAnchor), 'https://huggingface.co/spaces/dawsonamf/lexchat');
+  });
+
   it('maps authored navigation and static asset forms before applying the theme', () => {
-    const old = '<html><head><link rel="stylesheet" href="../css/styles.css"><link rel="stylesheet" href="blog-listing-styles.css"><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></head><body><a href="../index.html#contact">Home</a><a href="./">Blog</a><a href="post.html?id=toolbelt">Post</a><img src="../../resources/a.png"><iframe src="/lexchat/"></iframe></body></html>';
-    const migrated = '<html><head><link rel="stylesheet" href="/css/styles.css"><link rel="stylesheet" href="/blog/blog-listing-styles.css"><link rel="stylesheet" href="/vendor/aos/aos.css"></head><body><a href="/brutalist/#contact">Home</a><a href="/brutalist/blog/">Blog</a><a href="/brutalist/blog/toolbelt/">Post</a><img src="/resources/a.png"><iframe src="/brutalist/lexchat/"></iframe></body></html>';
+    const old = '<html><head><link rel="stylesheet" href="../css/styles.css"><link rel="stylesheet" href="blog-listing-styles.css"><link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"></head><body><a href="../index.html#contact">Home</a><a href="./">Blog</a><a href="post.html?id=toolbelt">Post</a><img src="../../resources/a.png"></body></html>';
+    const migrated = '<html><head><link rel="stylesheet" href="/css/styles.css"><link rel="stylesheet" href="/blog/blog-listing-styles.css"><link rel="stylesheet" href="/vendor/aos/aos.css"></head><body><a href="/brutalist/#contact">Home</a><a href="/brutalist/blog/">Blog</a><a href="/brutalist/blog/toolbelt/">Post</a><img src="/resources/a.png"></body></html>';
     assert.deepEqual(norm(old, oldNew('old', 'blog')), norm(migrated, oldNew('new', 'blog')));
   });
 
@@ -367,8 +385,6 @@ describe('raw and loaded script verification', () => {
     const migratedMetrResources = expectedScripts('post', 'new', 'loaded', 'metr-doubling', adapter);
     const migratedAssetsFirst = [...migratedMetrResources.slice(-3).reverse(), ...migratedMetrResources.slice(0, -3)];
     assert.deepEqual(scriptOrderIssues('post', 'new', 'loaded', migratedAssetsFirst, 'metr-doubling', true, adapter), []);
-    assert.deepEqual(scriptOrderIssues('lexchat', 'new', 'raw', [], undefined, false, adapter), []);
-    assert.match(scriptOrderIssues('lexchat', 'new', 'raw', ['/js/theme-cycler.js'], undefined, false, adapter).join('\n'), /not allowed/);
     const newHome = expectedScripts('home', 'new', 'raw', undefined, adapter);
     assert.ok(newHome.includes('/vendor/gsap/gsap.min.js'));
     assert.deepEqual(scriptOrderIssues('home', 'new', 'raw', newHome, undefined, true, adapter), []);

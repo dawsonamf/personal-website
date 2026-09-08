@@ -1,5 +1,38 @@
 # Spec 1: Astro migration, prose file, theme engine, parity harness, deploy
 
+**Owner utility acceptance amendment, 2026-09-08:** Privacy and 404 require readable,
+functional pages, approved Privacy text, correct links, safe 404 theme resolution,
+reachable pickers and utility asset isolation. The owner explicitly waived exact OLD/NEW
+Privacy/404 DOM and screenshot equality and will inspect their appearance during final
+migration QA. S1-21 uses focused unit/build/browser smoke checks and a light orchestrator
+spot-check, without the four-reviewer pipeline or utility parity matrix. S1-26 preserves
+this narrow functional acceptance; all other page parity remains unchanged. This supersedes
+contrary visual/DOM parity requirements for these two pages below, including §9 and §15.
+The intended exact-parity navigation cycle is Home → listing → Toolbelt → Embedded Swift
+Agent → METR → same-theme canonical Home. Privacy/404 are outside that comparison cycle;
+their functional smoke covers theme/palette navigation and reload, picker opening and links.
+This is the final tracked cycle, not a staged destination substitution. Keep actual document
+navigation, canonical route seeds, masks and tolerances unchanged. Earlier requirements to
+restore Privacy as METR's parity destination are superseded.
+
+**Owner amendment, 2026-09-08, effective S1-21:** LexChat is a retained project linking
+directly to the owner's Hugging Face destination. Retire its local engine page family and
+unused page assets, including all sixteen default/themed outputs. Create no local,
+themed or query compatibility redirect. Retain the project card, image and approved
+description. The direct target is `https://huggingface.co/spaces/dawsonamf/lexchat`,
+selected from the owner's public Space by root under the direct-Hugging-Face instruction
+(Hugging Face API returned exactly `dawsonamf/lexchat`; page HTTP 200, 2026-09-08).
+This records an existing-target selection, not a literal URL supplied by the owner.
+S1-25 removes only audited remaining legacy copies.
+This supersedes the retained-iframe requirements in D12/D29, Q4/Q9/Q14 and the old
+LexChat examples below. Production now expects **176 page routes plus 404.html**,
+eight published local posts and ten listing entries. Remaining page coverage has seven
+representative pages: Home, listing, three posts, Privacy and 404. S1-21 verifies the
+exact route/sitemap sets and discovered test counts. S1-24 tests remaining real pages
+and any supported general picker-free Shell contract without restoring LexChat or
+adding a fixture-specific API. S1-26 consumes the final S1-21 contract. Historical
+OLD source references remain evidence; they are not instructions to restore a page.
+
 **Status:** owner decisions Q1-Q14 settled 2026-09-05; architecture completion required; [28 execution tickets written](../../superpowers/plans/2026-09-05-spec-1-migration-engine.md). Review round 1 is historical evidence (see docs/reviews/).
 **Latest owner execution clarification, 2026-09-05:** no intermediate gates. Agents execute the
 ordered tickets, resolve implementation issues and perform automated verification. The owner
@@ -38,7 +71,7 @@ When this spec is done:
    drafts remain in source and are excluded from production output (§7).
 3. The theme engine is a typed registry with two kinds (`skin`, `structural`). The default theme and
    the 15 active skins (16 themes) are prerendered under `/`, `/<skin>/`, `/<skin>/blog/`,
-   `/<skin>/blog/<id>/`, `/<skin>/privacy/`, `/<skin>/lexchat/`. The `structural` kind ships as the
+   `/<skin>/blog/<id>/`, `/<skin>/privacy/`. The `structural` kind ships as the
    `kind` discriminant, `layouts`, the composition fallback and the authoring fixture (§5.3, D38).
    §11 shows where each remaining demand of the five future themes lands and by what mechanism.
 4. The parity harness proves the 16 themes are unchanged to the eye on every page type at 1440 and
@@ -97,7 +130,7 @@ These are acceptance criteria for Spec 1, alongside visual and behavioral parity
 | D9 | **Preview draft marking is shared across content owners.** Accessors mark unapproved fields as in §4.2; the Shell emits `DraftPill` only under `PROSE_DRAFTS=allow`, with the persistent native-prose toggle. A whole unpublished post carries a visible draft marker, contributes to the pill count and is `noindex`; its body never reaches production. | Q1/Q2 retain one approval flow while allowing unpublished posts to remain in source. Production has no preview pill or unpublished post output. |
 | D10 | **Two shared publication gates.** Drafts: validate the shared YAML and metadata for `published`/`external` post records with the same draft walker, reporting every source/path; production fails on any unapproved field. Whole `publication: draft` posts are excluded before routes, listings and sitemap are generated. Unwritten sizes: every accessor instance records source/path/size in the shared set, asserted by the checks integration (D39) at `astro:build:done`. `PROSE_DRAFTS=allow` enables marked previews. | Preserves the owner's approval rule while allowing unpublished drafts in the repo. Word budgets remain documented; missing requested sizes are fatal. |
 | D11 | **Theme switch keeps the current page** (`/blog/x/` → `/brutalist/blog/x/`). Today every switch lands on `/` (`theme-cycler.js:276`, `window.location.href = '/?style=' + …`). Palette-toy state persists for the session and survives reload (today a reload wipes the theme at `theme-bootstrap.js:687` and the toy at `:730-731`, both behind the reload detection at `:674-678`; the cycler's own `isReload()` is `theme-cycler.js:126-131`). `switchStyle` still clears toy state on every switch (`theme-cycler.js:275`), unchanged: a new theme has a new base palette. | Consistent with "reload keeps the theme" (intent §4.5). Listed in §15. |
-| D12 | **Build a picker FAB on privacy and 404. LexChat remains picker-free.** Today all three lack a picker; `theme-cycler.js:558-559` returns with no mount. `PickerFab` is new UI in T6. The LexChat project still links to `/lexchat/` (`js/blog-data.js:93`, also verified in the live JS on 2026-09-05); its iframe shell stays, with an explicit `picker: none` composition. | Q4 exempts LexChat and permits removing it only if the project already links directly to Hugging Face; that condition is false. |
+| D12 | **Build a picker FAB on privacy and 404.** Retire the local LexChat iframe family and unused page assets, with no redirect; its retained project links directly to the owner's Hugging Face destination. | Owner amendment 2026-09-08 supersedes the original Q4 retention decision. |
 | D13 | **Skins get their full sheet on every page type** (that is what a skin is; grid, banknote, gallery and neo-pop, plus the inactive constructivist, style `.privacy-*`/`.nf-*` today). "Tokens only" applies to structural themes' unowned page types and to utility pages under structural themes. | Parity for skins; intent §4.7 for structural. |
 | D14 | **CSS `content:` prose.** marquee's sheet reads `content: var(--ticker-run, "<literal>")` (`marquee.css:572`); `--ticker-run` is data (deduped project tech), now computed at build (D35) and emitted in `<html style>` on pages that render the carousel. The fallback literal, which renders on post/privacy/404/lexchat under marquee, moves to `prose.themes.marquee.ticker` (the unit string; the build repeats it 12 times, byte-equal to today's literal). doodle's `content: 'currently here \2713'` (`doodle.css:535`) moves to `themes.doodle.currentlyHere`. Both reach CSS as `--prose-<key>` custom properties on `<html>` under that theme; the sheets become `var(--ticker-run, var(--prose-ticker))` and `var(--prose-currently-here)`. Counters and glyphs (`FIG.`, `№`, `✷`, `■`, `·`, `/`, `(01)`) stay in CSS as decoration (§13 Q6). | Intent §3.1; these are the only two `content:` literals that are prose rather than labels or ornament (`blueprint.css:652`'s `"FIG. "` is a third word-bearing literal but is a counter label, Q6). `research/prose-and-url-inventory.md` §2.9's claim that `--ticker-run` is never assigned is wrong, see §17. |
 | D15 | **`<br><br>` paragraph separators** (about body, skills body 3, seven of the eight project descriptions; `deep-rl` is one paragraph) are stored as normal Markdown paragraphs; the canonical components call `prose.paragraphs(path, size)` and join with `<br><br>` inside one element (D37). Structural themes render the array as `<p>` elements. | Readable YAML, identical DOM for skins, and the join is a presentation choice in the component rather than a mode on the shared accessor (D17's principle). |
@@ -761,9 +794,9 @@ injected `<link>` at an undocumented position.
 
 ### 6.3 Utility pages
 
-`privacy`, `404` and `lexchat` become Astro pages that share the Shell (`<html>` and composition).
-Privacy/404 receive the end-of-body picker mount and FAB; LexChat receives none. There is no common
-header/footer utility layout, because the three pages do not share that chrome:
+`privacy` and `404` become Astro pages that share the Shell (`<html>` and composition).
+Both receive the end-of-body picker mount and FAB. There is no common header/footer utility
+layout, because the pages do not share all their chrome:
 
 - `Privacy.astro`: the `<div id="main-body">` wrapper, then logo header + content + **both** footer
   blocks (a desktop `<footer class="footer-container">` at `:113` and a mobile
@@ -773,10 +806,9 @@ header/footer utility layout, because the three pages do not share that chrome:
   block + **both** footer blocks (`:55` desktop, `:63` mobile), as `404.html:44-68`, with
   the `<style is:inline>` of §6.2. Root-absolute paths throughout; renders the default theme at build
   and applies a theme at runtime per D27.
-- `LexChat.astro`: the full-viewport `<iframe class="lexchat-iframe">`
-  (`https://dawsonamf-lexchat.hf.space`) and nothing else, as `lexchat/index.html` (19 lines, no logo,
-  no footer). Its project CTA still targets `/lexchat/` in both the repo and live JS; retain the
-  shell, theme tokens and URL, with `composition.picker.mount = 'none'` (Q4).
+- LexChat has no local engine page, theme variant, page asset or compatibility redirect.
+  Its retained project CTA is an external URL and never receives an engine theme prefix
+  (owner amendment 2026-09-08; deliberate difference §15.12).
 
 ### 6.4 Redirects and shims
 
@@ -977,7 +1009,7 @@ carries §15's allow-list; "harness green" in T4, T5, T6 and T8 means green unde
    script, and no cycler on LexChat; grep of built HTML; also the §3.3 lean guard for future themes).
 
 **Matrix:** 16 themes × pages {home, listing, `toolbelt` (2 mermaid + bash/json), `embedded-swift-agent`
-(9 swift + 1 c fence + image), `metr-doubling` (Plotly + js-yaml + assets), privacy, 404, lexchat}
+(9 swift + 1 c fence + image), `metr-doubling` (Plotly + js-yaml + assets), privacy, 404}
 × {desktop-1440, mobile-390} × states {settled; job tab 2 clicked; carousel dot 3 clicked; a
 `mouse.wheel` on the carousel track (the vertical wheel guard, which intent §4.9's "carousel scroll"
 asks for and a dot click does not exercise); sticky nav after scroll 800→500 and smooth-scroll to
@@ -1384,7 +1416,7 @@ The §9 step 8 exception table implements this list; anything not here must matc
    a themed link, so it keeps the theme instead of dropping to default.
 2. Palette-toy state survives reload and navigation, applied pre-paint as today (D11, Q12).
 3. Theme picker FAB plus the dock on privacy and 404 (D12, Q4), with the added Font Awesome
-   stylesheet on 404. LexChat stays picker-free and loads no redundant picker runtime.
+   stylesheet on 404. LexChat retirement is separately covered by item 12.
 4. Posts at `/blog/<id>/` with real `<title>`, description, canonical, OG and JSON-LD in the served
    HTML; no "Loading…" title; old URL redirects via a shim page that forwards `?style=`. Post
    metadata derives from each post source (Q1), so Helm/METR title/date differences are resolved.
@@ -1409,6 +1441,14 @@ The §9 step 8 exception table implements this list; anything not here must matc
     parse rather than pre-paint, so a brief default flash (D27). It is best-effort themed: its "Back
     to the home page" link and its dock rows point at default-theme URLs, because the page is
     rendered as default.
+12. **Owner-directed LexChat retirement, 2026-09-08.** Only the LexChat project's existing
+    `Visit LexChat` CTA changes from the OLD `/lexchat/` destination to the owner's exact
+    approved Hugging Face URL, with the external anchor attributes required by the existing
+    project contract. Assert both destinations and the intended attributes before narrowly
+    normalizing that identified CTA for comparison. Card image, title, description, ordering,
+    other anchors, screenshots and tolerances remain exact. Remove the obsolete LexChat
+    iframe matrix entries, and assert absence of every local/theme LexChat page, redirect,
+    unused page asset and sitemap entry. No blanket link or page-parity exclusion is allowed.
 
 Everything else, on every page, at both viewports, in every listed interaction, must match today's
 site to the harness's tolerances and to your eye.

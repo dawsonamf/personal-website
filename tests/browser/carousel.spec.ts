@@ -303,7 +303,14 @@ async function carouselSnapshot(page: Page): Promise<string> {
       }
       for (const name of ['href', 'src']) {
         const value = element.getAttribute(name);
-        if (value) element.setAttribute(name, normalizeUrl(value));
+        if (!value) continue;
+        const lexchatCta = name === 'href'
+          && element.closest('.fc-card')?.querySelector('.fc-card-title')?.textContent?.trim() === 'LexChat'
+          && value === '/lexchat/';
+        element.setAttribute(
+          name,
+          lexchatCta ? 'https://huggingface.co/spaces/dawsonamf/lexchat' : normalizeUrl(value),
+        );
       }
       const attrs = [...element.attributes]
         .map((attribute) => [attribute.name, attribute.value] as const)
@@ -365,6 +372,9 @@ test('@capture: raw HTML owns cards, dots, ticker/prose and inherited CTA output
   ]);
   const deepRl = homeRaw.slice(homeRaw.indexOf('>Deep RL</h3>'), homeRaw.indexOf('</div></div>', homeRaw.indexOf('>Deep RL</h3>')));
   expect(deepRl).not.toContain('fc-card-ctas');
+  const lexchat = homeRaw.slice(homeRaw.indexOf('>LexChat</h3>'), homeRaw.indexOf('</div></div>', homeRaw.indexOf('>LexChat</h3>')));
+  expect(lexchat).toContain('href="https://huggingface.co/spaces/dawsonamf/lexchat"');
+  expect(lexchat).toContain('target="_blank" rel="noopener noreferrer"');
 
   const marqueeCarousel = styleFromRawHtml(await (await request.get(`${origin}/marquee-home-static/`)).text());
   expect(marqueeCarousel).toContain('--prose-ticker:"');

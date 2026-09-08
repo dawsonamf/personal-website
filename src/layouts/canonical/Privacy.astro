@@ -4,18 +4,26 @@
 // (§6.2): no AOS, no Calendly, no OG, no canonical on the default page. The picker arrives as
 // a FAB, because this page has no nav (D12).
 import { prose } from '../../prose/site.ts';
+import { href } from '../../themes/paths.ts';
 import Shell from '../Shell.astro';
 import ThemeAssets from '../ThemeAssets.astro';
 import type { LayoutProps } from '../types.ts';
 import PalettePrepaint from './components/PalettePrepaint.astro';
 import StyleQueryShim from './components/StyleQueryShim.astro';
 import Meta from './Meta.astro';
+import { canonicalStyleExtras } from './presentation.ts';
 
 type Props = LayoutProps;
 
 const { theme, page, composition } = Astro.props;
+const home = href('/', theme.id);
+const credit = prose.text('site.footerCredit', 's');
+const shellPage = {
+  ...page,
+  styleExtras: canonicalStyleExtras(theme.id, { carousel: false }),
+};
 ---
-<Shell theme={theme} page={page} composition={composition}>
+<Shell theme={theme} page={shellPage} composition={composition}>
   <Fragment slot="head">
     <Meta title={prose.text('meta.privacy.title', 's')} suffix>
       <meta name="description" content={prose.text('meta.privacy.description', 'm')}>
@@ -39,6 +47,31 @@ const { theme, page, composition } = Astro.props;
   </Fragment>
 
   <div id="main-body">
-    {/* S1-21 fills the privacy body: logo header, policy content, both footer blocks. */}
+    <div class="header-menu-container">
+      <a class="name-logo name-logo-visible" href={home}>{prose.text('site.logo', 'xs')}</a>
+    </div>
+
+    <div class="privacy-container">
+      <header class="privacy-header-wrapper">
+        <h1 class="privacy-header">{prose.text('privacy.title', 'xs')}</h1>
+        <span class="privacy-header-spacer"></span>
+      </header>
+
+      <div class="privacy-meta">
+        <span class="pill">{prose.text('privacy.updated', 'xs')}</span>
+      </div>
+
+      <div class="privacy-content" set:html={prose.get('privacy.body', 'l')}></div>
+
+      <footer class="footer-container">
+        <span class="footer-spacer"></span>
+        <p class="footer-text">{credit}</p>
+        <span class="footer-spacer"></span>
+      </footer>
+
+      <div class="footer-container-mobile">
+        <p class="footer-text-mobile">{credit}</p>
+      </div>
+    </div>
   </div>
 </Shell>

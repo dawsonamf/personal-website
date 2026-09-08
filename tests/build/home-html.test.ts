@@ -119,16 +119,16 @@ describe('S1-17 production home raw HTML', () => {
     );
   });
 
-  it('stages the complete current 65-page route surface and all 16 homes', () => {
+  it('stages the complete current 49-page non-post route surface and all 16 homes', () => {
     const routeFiles = [
       ...THEME_IDS.flatMap((id) => {
         const prefix = id === 'default' ? '' : `${id}/`;
-        return ['', 'blog/', 'privacy/', 'lexchat/'].map((tail) => `${prefix}${tail}index.html`);
+        return ['', 'blog/', 'privacy/'].map((tail) => `${prefix}${tail}index.html`);
       }),
       '404.html',
     ];
-    assert.equal(routeFiles.length, 65);
-    assert.equal(new Set(routeFiles).size, 65);
+    assert.equal(routeFiles.length, 49);
+    assert.equal(new Set(routeFiles).size, 49);
     for (const rel of routeFiles) assert.ok(existsSync(join(dist, rel)), `dist/${rel}`);
     assert.equal(homes.size, 16);
   });

@@ -44,13 +44,12 @@ const legacy = (relative: string) => {
  *  missing literal rather than the whole file. */
 const contains = (relative: string, literal: string) =>
   assert.ok(legacy(relative).includes(literal), `${relative} no longer contains ${JSON.stringify(literal)}`);
-/** The six pages the shared prose is migrated from. */
+/** The retained pages the shared prose is migrated from. */
 const LEGACY_PAGES = [
   'index.html',
   '404.html',
   'blog/index.html',
   'blog/post.html',
-  'lexchat/index.html',
   'privacy/index.html',
 ];
 
@@ -365,10 +364,10 @@ describe('sizes (§4.1, rule E)', () => {
   });
 
   it('covers every field: the walk sees one size map per prose field', () => {
-    // site 4, meta 11, nav 11, socials 6, home 18, jobs 16, projects 25 (16 + 9 CTA labels),
+    // site 4, meta 10, nav 11, socials 6, home 18, jobs 16, projects 25 (16 + 9 CTA labels),
     // post 2, carousel 1, blog 5, picker 28, themes 18, privacy 3, notFound 3. The exact
     // number is the guard against a field silently disappearing.
-    assert.equal(collectSizeMaps(parsed).length, 151);
+    assert.equal(collectSizeMaps(parsed).length, 150);
   });
 
   it('keeps every chip list an xs string list', () => {
@@ -487,7 +486,7 @@ describe('live parity with the legacy JavaScript', () => {
     assert.equal(email?.href, `mailto:${parsed.site.email}`, 'site.email');
   });
 
-  it('keeps the eight projects verbatim, in order', () => {
+  it('keeps the eight projects and the owner-directed LexChat destination, in order', () => {
     assert.deepStrictEqual(parsed.projects.map((p) => p.id), legacyProjects.map((p) => p.id));
     assert.ok(parsed.projects.some((p) => p.id === 'gemma4-heretic-ara'), 'the Gemma card stays');
 
@@ -516,6 +515,9 @@ describe('live parity with the legacy JavaScript', () => {
           ? { label: item.ctaLabel2, href: convert(item.url2), external: !!item.external2 }
           : null,
       ].filter((cta) => cta !== null);
+      if (item.id === 'lexchat' && expectedCtas[0]) {
+        expectedCtas[0].href = 'https://huggingface.co/spaces/dawsonamf/lexchat';
+      }
       assert.deepStrictEqual(
         stored.ctas.map((cta, i) => ({
           label: loose.text(`projects.${index}.ctas.${i}.label`, 'xs'),
@@ -526,6 +528,13 @@ describe('live parity with the legacy JavaScript', () => {
         `${at} ctas`,
       );
     }
+
+    const lexchat = parsed.projects.find((project) => project.id === 'lexchat');
+    assert.deepStrictEqual(lexchat?.ctas, [{
+      label: { xs: 'Visit LexChat' },
+      href: 'https://huggingface.co/spaces/dawsonamf/lexchat',
+      external: true,
+    }]);
   });
 
   it("preserves the Embedded Swift second-link fallback and Deep RL's absent CTAs", () => {

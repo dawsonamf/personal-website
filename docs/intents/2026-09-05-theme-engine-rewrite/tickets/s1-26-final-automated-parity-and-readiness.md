@@ -6,6 +6,8 @@
 
 Assign one agent this ticket plus the [execution contract](../../../superpowers/plans/2026-09-05-spec-1-migration-engine.md). Read [Spec 1](../spec-1-migration-engine-parity.md) §1.1, §9, §15 and T8, subject to the no-intermediate-owner-QA clarification. Dependencies supply code and evidence; there is no owner review between tickets.
 
+**Owner amendment, 2026-09-08:** S1-21 retires all local LexChat engine pages and unused page assets, with no redirect. Retain its project card/image/approved description and exact external Hugging Face CTA. Privacy/404 require functional coverage; exact OLD/NEW visual and DOM equality is waived. Do not restore the former iframe assumptions. Use the final S1-21 route/sitemap contract: 176 page routes + 404.html, seven representative pages (five with exact parity, plus functional Privacy/404), and no LexChat pages or redirects. Assert the narrow approved external CTA difference; retain exact parity for all other pages.
+
 ## Deliverable
 
 The final implementation has a clean production build, complete architecture evidence and a passing full parity/resource/behavior matrix. This ticket does not wait for owner QA.
@@ -20,14 +22,15 @@ The final implementation has a clean production build, complete architecture evi
 
 ## Interfaces
 
-- Use the existing full 16-theme order, 8-page matrix, 2 viewports and applicable §9 states.
+- Use the existing full 16-theme order, 7-page coverage (exact parity on Home/listing/three posts; functional Privacy/404), 2 viewports and applicable §9 states.
+- The final exact-parity cycle is Home → listing → Toolbelt → Embedded Swift Agent → METR → same-theme canonical Home. Privacy/404 use separate functional theme/palette navigation/reload, picker and link smoke. This owner-approved 2026-09-08 contract supersedes earlier instructions to restore Privacy as METR's parity destination; it is not a stage substitution. Preserve actual document navigation, canonical route seeds and existing masks/tolerances.
 - Owner's final QA remains outside the dependency graph. Architecture evidence is recorded by agents; it is not labeled owner-approved.
 - Deployment consumes only `npm run build` output. Preview/fixture output is never a deploy artifact.
 
 ## Work
 
 - [ ] Run all unit/build/component-browser tests against the final tree, including negative content fixtures and structural authoring isolation.
-- [ ] Build production cleanly and verify 192 page routes + 404, eight local posts, ten listing entries, approved redirects and sitemap exclusions.
+- [ ] Build production cleanly and verify 176 page routes + 404, eight local posts, ten listing entries, approved redirects and sitemap exclusions.
 - [ ] Generate visual baselines from OLD, then compare NEW. Never accept new screenshots as the old reference.
 - [ ] Run the full parity matrix: job, carousel dot/wheel, sticky/contact scrolling, picker/filter, active palette navigation and reload first paint.
 - [ ] Run reduced-motion checks and a crawl of all local published post links/assets beyond the three visual representatives.
@@ -37,7 +40,7 @@ The final implementation has a clean production build, complete architecture evi
 
 ## Acceptance and verification
 
-- [ ] Full DOM/screenshot/token comparisons pass under only the specified exceptions.
+- [ ] DOM/screenshot/token comparisons for Home/listing/three posts pass under only the specified exceptions; Privacy/404 pass functional acceptance under the owner waiver.
 - [ ] No page references unlisted scripts; no theme-owned heavy resource leaks; no unexpected 4xx/5xx.
 - [ ] All §1.1 criteria have evidence, including fixture addition file list and cleanup audit.
 - [ ] Build contains neither unapproved publishable prose, draft bodies nor fixture assets.

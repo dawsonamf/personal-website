@@ -6,6 +6,8 @@
 
 Assign one agent this ticket plus the [execution contract](../../../superpowers/plans/2026-09-05-spec-1-migration-engine.md). Read [Spec 1](../spec-1-migration-engine-parity.md) §1.1, §5.3, §11 and D3/D25/D26/D38. Dependencies supply code and evidence; there is no owner review between tickets.
 
+**Owner amendment, 2026-09-08:** S1-21 retires all local LexChat engine pages and unused page assets, with no redirect. Retain its project card/image/approved description and exact external Hugging Face CTA. Privacy/404 require functional coverage; exact OLD/NEW visual and DOM equality is waived. Do not restore the former iframe assumptions. Exercise the remaining real pages and any still-supported general picker-free composition contract without a fixture-specific API.
+
 ## Deliverable
 
 A representative test-only structural theme demonstrates the documented extension points, with distinct owned DOM and working canonical fallback, without any production fixture leakage.
@@ -29,7 +31,7 @@ A representative test-only structural theme demonstrates the documented extensio
 
 - [ ] Write the skin/structural authoring steps in the guide; follow those exact steps to assemble the fixture from existing approved prose.
 - [ ] Give the owned home a genuinely different responsive DOM and root sizing. Use href for navigation and the five palette roles for effective visible color changes.
-- [ ] Test owned home, fallback listing/post, privacy, 404 and LexChat at 1440 and 390, then resize both directions without a boot-time breakpoint flag.
+- [ ] Test owned home, fallback listing/post, privacy and 404 at 1440 and 390, then resize both directions without a boot-time breakpoint flag.
 - [ ] Assert owned root CSS/script/assets never load or affect default/fallback pages. Owned home must load no canonical behavior or canonical-only libraries.
 - [ ] Test mouse/touch picker opening, current-page switching, always-enabled randomizer, declared profile, navigation/reload first-paint restoration and the structural storage namespace rule.
 - [ ] Run ordinary prose, routes and Shell checks against the fixture; compare actual file changes with the allowed authoring manifest.

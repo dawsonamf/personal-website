@@ -91,7 +91,6 @@ describe('href() : everything else is themed', () => {
     ['/blog/', '/doodle/blog/'],
     ['/blog/toolbelt/?a=1#h', '/doodle/blog/toolbelt/?a=1#h'],
     ['/privacy/', '/doodle/privacy/'],
-    ['/lexchat/', '/doodle/lexchat/'],
   ];
   for (const [path, themed] of cases) {
     it(`${path} → ${themed}`, () => assert.equal(href(path, 'doodle'), themed));
@@ -109,4 +108,3 @@ describe('themeParams()', () => {
     assert.deepEqual(params.map((p) => p.theme ?? 'default'), THEME_IDS);
   });
 });
-

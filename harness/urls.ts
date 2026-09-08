@@ -5,9 +5,12 @@
 import { localPostIds, oldPath, themeOrder } from './baseline.ts';
 import type { MigratedAdapter } from './migrated.ts';
 
+// `lexchat` remains in the vocabulary only so historical, untracked harness evidence can typecheck;
+// it is absent from PAGE_TYPES and therefore cannot enter a parity run.
 export type PageType = 'home' | 'blog' | 'post' | 'privacy' | 'notFound' | 'lexchat';
 
-export const PAGE_TYPES: readonly PageType[] = ['home', 'blog', 'post', 'privacy', 'notFound', 'lexchat'];
+// Owner-directed S1-21 waiver: utilities have focused functional smoke, not OLD/NEW parity.
+export const PAGE_TYPES: readonly PageType[] = ['home', 'blog', 'post'];
 
 /** The three post pages §9 puts in the matrix (mermaid+bash/json, swift+c+image, Plotly+js-yaml). */
 export const MATRIX_POSTS = ['toolbelt', 'embedded-swift-agent', 'metr-doubling'] as const;
@@ -48,7 +51,7 @@ export async function loadMigratedAdapter(
   return mode === 'old-new' ? (await loader()).createMigratedAdapter() : null;
 }
 
-/** theme source × {home, blog, the three matrix posts, privacy, 404, lexchat} = 16 × 8. */
+/** theme source × {home, blog, the three matrix posts} = 16 × 5. */
 export async function urlPairs(adapter?: MigratedAdapter | null): Promise<UrlPair[]> {
   const mode = parityMode();
   const migrated = adapter === undefined ? await loadMigratedAdapter(mode) : adapter;

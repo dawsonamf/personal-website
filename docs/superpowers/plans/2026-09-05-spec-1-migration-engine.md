@@ -20,6 +20,8 @@ This replaces earlier staged owner-review and manual-sign-off timing in Spec 1 Â
 
 Actual tool permissions, missing credentials or unavailable services can still be concrete environment constraints. Report those precisely and continue unaffected work; do not turn them into a routine owner approval process. Writing this backlog performs no installs, commits, pushes or deployments.
 
+**Owner amendment, 2026-09-08:** S1-21 retires the local LexChat engine family and unused page assets, with no compatibility redirect, while retaining its project card/image/approved description and linking directly to the owner-approved Hugging Face URL. Privacy/404 acceptance is functional: exact OLD/NEW visual/DOM parity is waived. Use focused tests and a light orchestrator spot-check for S1-21, without the four-reviewer pipeline or full utility matrix. S1-26 preserves this waiver and all other page parity. S1-25 removes audited remaining legacy LexChat copies only.
+
 ## Global constraints
 
 Every ticket includes these requirements:
@@ -33,8 +35,8 @@ Every ticket includes these requirements:
 - Preserve canonical DOM, constants and asymmetric resource order. Existing canonical mobile breakpoint remains **1100px**. Structural CSS owns its breakpoint and must survive resize.
 - No visual redesign, five production structural themes, new case studies, MDX dependency, Astro image pipeline or optional library cleanup in this backlog.
 - No browser theme globals or runtime registry except 404's complete appearance data. All other runtime inputs are owned DOM data/JSON islands. Structural owned pages load no canonical behavior or canonical-only libraries.
-- Every picker supports randomization. Theme switches preserve the page and clear the old toy palette; navigation/reload retain the active palette before paint. LexChat remains picker-free.
-- Exactly **192 page routes plus 404.html**, with explicit additional redirect stubs. Eight published local posts; ten listing entries. Production excludes fixtures, docs, CLAUDE, raw post sources and draft/archived external bodies.
+- Every picker supports randomization. Theme switches preserve the page and clear the old toy palette; navigation/reload retain the active palette before paint. LexChat is an external project link, with no local page or redirect (owner amendment 2026-09-08).
+- Exactly **176 page routes plus 404.html**, with explicit additional redirect stubs. Eight published local posts; ten listing entries. Production excludes fixtures, docs, CLAUDE, raw post sources and draft/archived external bodies.
 - Preserve root `CNAME` and `.nojekyll` for rollback; do not copy them into public.
 - Test runners may start/stop their own localhost servers; do not start a persistent dev server.
 
@@ -87,7 +89,7 @@ Numeric order is a valid serial execution order. For parallel work, start a tick
 | [S1-18](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-18-blog-listing.md) | Build the blog listing and retain its filter/typing behavior | S1-17 | T5 |
 | [S1-19](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-19-static-blog-posts.md) | Render published posts at build time with metadata/body-slot layouts | S1-17 | T5 |
 | [S1-20](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-20-post-redirects-sitemap-and-asset-paths.md) | Generate legacy post redirects, sitemap and stable asset URLs | S1-18, S1-19 | T5 |
-| [S1-21](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-21-utility-pages-and-themed-404.md) | Complete privacy, themed 404 and picker-free LexChat | S1-17 | T6 |
+| [S1-21](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-21-utility-pages-and-themed-404.md) | Complete functional Privacy/404 and retire local LexChat | S1-17 | T6 |
 | [S1-22](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-22-subsites-redirects-and-public-boundary.md) | Relocate verbatim subsites and finish public URL boundaries | S1-20, S1-21 | T6 |
 | [S1-23](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-23-deployment-workflow-preparation.md) | Prepare Actions deployment and chart-refresh integration | S1-09 | T7 preparation |
 | [S1-24](../../intents/2026-09-05-theme-engine-rewrite/tickets/s1-24-structural-authoring-proof.md) | Prove structural theme authoring through an isolated fixture | S1-22 | T8 |

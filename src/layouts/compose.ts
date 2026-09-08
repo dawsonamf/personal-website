@@ -20,15 +20,13 @@ const canonical: Record<PageType, LazyLayout> = {
   post: () => import('./canonical/BlogPost.astro'),
   privacy: () => import('./canonical/Privacy.astro'),
   notFound: () => import('./canonical/NotFound.astro'),
-  lexchat: () => import('./canonical/LexChat.astro'),
 };
 
 const OWNABLE: readonly OwnablePageType[] = ['home', 'blog', 'post'];
 const isOwnable = (type: PageType): type is OwnablePageType => (OWNABLE as readonly string[]).includes(type);
 
-/** The mount every composition but a structural theme's own page uses: no picker on LexChat, a FAB where there is no nav. */
+/** The mount every canonical composition uses: a FAB where there is no nav. */
 function mountFor(type: PageType): PickerMount {
-  if (type === 'lexchat') return { mount: 'none' }; // Q4: LexChat is the picker-free composition
   if (type === 'privacy' || type === 'notFound') return { mount: 'fab', corner: 'br' }; // D12: no nav to mount in
   return { mount: 'nav' };
 }

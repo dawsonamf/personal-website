@@ -329,9 +329,14 @@ theme-only pages). Page types it does not own render the default layout in the
 theme's tokens (colours/fonts). Structural themes use canonical utility layouts
 with their tokens/fonts; existing skins keep their full skin styles on utility
 pages for parity. Every theme has a reachable picker, which may sit in its own
-menu; use the floating fallback if it mounts none. LexChat's iframe shell is the
-explicit page exception and gets no picker. Its current project CTA still links
-to `/lexchat/`, so the shell is retained.
+menu; use the floating fallback if it mounts none.
+
+**Owner amendment, 2026-09-08:** Retain the LexChat project card, image and approved
+description, linking directly to the owner's Hugging Face destination. Remove its
+local iframe page family and unused assets, with no compatibility redirect. The direct
+external destination is `https://huggingface.co/spaces/dawsonamf/lexchat`, selected by
+root from the owner's public Space under this instruction (2026-09-08).
+This supersedes the original retained picker-free LexChat shell decision.
 
 The palette randomizer is present and enabled in every theme's picker. A theme
 may use a very narrow randomization profile and derive additional color variables
@@ -346,9 +351,9 @@ Standalone pages group in source under `public/subsites/<person>/<page>/`
 (e.g. `public/subsites/elise/12years/`), served at `/subsites/elise/12years/`
 with the old `/12years/` and `/embedded-swift-agent/` URLs redirecting. The
 folder name `public/` never appears in URLs; the owner did not want "public" in
-the name and this satisfies that. `lexchat/`, `privacy/` and `404` become Astro
-utility pages so they keep receiving theme styling under every theme path;
-LexChat remains exempt from the picker (§4.7).
+the name and this satisfies that. `privacy/` and `404` become Astro utility pages so
+they keep receiving theme styling under every theme path. LexChat is an external
+project link under the 2026-09-08 owner amendment (§4.7), with no local redirect.
 
 ### 4.9 Parity harness
 

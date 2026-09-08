@@ -5,7 +5,6 @@
  *   a. the saved palette is on the document before first paint and survives a reload
  *   b. `?style=` on a default route navigates to the themed same page, query and hash intact
  *   c. the 404 resolves its theme from the path, then the query, and keeps default-theme links
- *   d. LexChat stays picker-free
  *
  * Server: one in-process node:http static server bound to 127.0.0.1 on an ephemeral port and
  * closed in the worker teardown, never a persistent listener. It answers with GitHub Pages
@@ -22,7 +21,6 @@ import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { dirname, extname, join, normalize } from 'node:path';
 
-import { rampDeclarations } from '../../src/themes/ramp.ts';
 import { THEMES } from '../../src/themes/registry.ts';
 import type { SkinTheme } from '../../src/themes/types.ts';
 import { firstPaint, recordFirstPaint } from '../../harness/palette.ts';
@@ -47,17 +45,6 @@ const SEED_COLORS = ['#123456', '#abcdef', '#0f1e2d', '#fedcba', '#778899'];
 const SECOND_COLORS = ['#111213', '#141516', '#171819', '#1a1b1c', '#1d1e1f'];
 const ROLE_TOKENS = ['--text', '--bg', '--primary', '--secondary', '--accent'] as const;
 
-/** `rampDeclarations` as prop -> value pairs: what `getPropertyValue` returns for a custom property. */
-const rampMap = (colors: string[]) => {
-  const [text, bg, primary, secondary, accent] = colors;
-  const declarations = rampDeclarations({ text, bg, primary, secondary, accent }).split(';').filter(Boolean);
-  return Object.fromEntries(
-    declarations.map((declaration) => {
-      const colon = declaration.indexOf(':');
-      return [declaration.slice(0, colon), declaration.slice(colon + 1)];
-    }),
-  );
-};
 const seedRecord = (style: string) => ({
   style,
   colors: SEED_COLORS,
@@ -244,26 +231,6 @@ test('a: the shared observer proves a saved palette survives navigation and relo
   expect(await textVar(page)).toBe(SECOND_COLORS[0]);
 });
 
-test('a: the pre-paint script alone restores the palette on picker-free LexChat', async ({ page, site }) => {
-  await instrument(page, seedRecord('brutalist'));
-
-  await page.goto(`${site}/brutalist/lexchat/`);
-  await assertPrePaint(page);
-  // Nothing else could have done it: this composition loads no picker runtime.
-  expect(await page.locator('script[src*="theme-cycler.js"]').count()).toBe(0);
-
-  // The whole ramp, not just --text: the pre-paint script inlines its own copy of
-  // rampDeclarations, so every one of the 100 properties has to match the build's output.
-  const expected = rampMap(SEED_COLORS);
-  expect(Object.keys(expected)).toHaveLength(100);
-  const applied = await page.evaluate(
-    (props) =>
-      Object.fromEntries(props.map((prop) => [prop, document.documentElement.style.getPropertyValue(prop)])),
-    Object.keys(expected),
-  );
-  expect(applied).toEqual(expected);
-});
-
 test('a: a record drawn under another theme is ignored', async ({ page, site }) => {
   await instrument(page, seedRecord('grid'));
 
@@ -362,21 +329,6 @@ test('c: the 404 applies the saved palette of the theme it resolved', async ({ p
   expect(await textVar(page)).toBe(SEED_COLORS[0]);
 });
 
-// ---- d. LexChat is picker-free ---------------------------------------------
-
-test('d: LexChat carries no picker markup and no picker runtime', async ({ page, site }) => {
-  for (const path of ['/lexchat/', '/grid/lexchat/']) {
-    await page.goto(`${site}${path}`);
-    for (const selector of ['#tc-dock', '#tc-scrim', '.tc-nav-trigger', '.tc-fab']) {
-      expect(await page.locator(selector).count(), `${path} ${selector}`).toBe(0);
-    }
-    const scripts = await page
-      .locator('script[src]')
-      .evaluateAll((nodes) => nodes.map((node) => node.getAttribute('src') ?? ''));
-    expect(scripts.filter((src) => src.includes('theme-cycler.js'))).toEqual([]);
-  }
-});
-
 // ---- S1-13 harness boundary probes ------------------------------------------------------------
 
 test('S1-13 masks the same bounded visible picker rectangle on privacy and 404', async ({ browser }, testInfo) => {
@@ -453,8 +405,8 @@ test('S1-13 records an unlisted dynamic module and a loaded-then-removed script'
     expect(await page.locator('script[src]').count()).toBe(0);
     const actual = requests.snapshot(`${site}/script-probe/`);
     expect([...actual].sort()).toEqual(['/removed.js', '/unlisted-module.js']);
-    expect(scriptOrderIssues('lexchat', 'old', 'loaded', actual).join('\n')).toMatch(/not allowed.*removed|removed.*not allowed/);
-    expect(scriptOrderIssues('lexchat', 'old', 'loaded', actual).join('\n')).toMatch(/not allowed.*unlisted|unlisted.*not allowed/);
+    expect(scriptOrderIssues('privacy', 'old', 'loaded', actual).join('\n')).toMatch(/not allowed.*removed|removed.*not allowed/);
+    expect(scriptOrderIssues('privacy', 'old', 'loaded', actual).join('\n')).toMatch(/not allowed.*unlisted|unlisted.*not allowed/);
   } finally {
     requests.dispose();
   }

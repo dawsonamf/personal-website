@@ -398,7 +398,7 @@ export async function postAssetsSettled(page: Page, pageType: PageType, deadline
   );
 }
 
-export const sentinels: Record<PageType, SentinelSpec> = {
+const activeSentinels: Record<Exclude<PageType, 'lexchat'>, SentinelSpec> = {
   home: {
     selectors: [
       'html',
@@ -568,38 +568,11 @@ export const sentinels: Record<PageType, SentinelSpec> = {
       );
     },
   },
-  lexchat: {
-    // The whole page is one <iframe> (lexchat/index.html:13-16) and the cycler injects nothing
-    // here (theme-cycler.js:557-558 bails without a `.tc-nav-item`), so the DOM has 13 elements
-    // and ten slots are substituted with head nodes. Positional `link` indices, not hrefs: the
-    // bootstrap appends its [data-style-asset] links after these, so 1-4 are theme-stable.
-    selectors: [
-      'html',
-      'body',
-      'head',
-      'head > title',
-      'head > meta[charset]',
-      'head > meta[name="viewport"]',
-      'head > link[rel="icon"]',
-      'head > link[rel="apple-touch-icon"]',
-      'head > link:nth-of-type(3)', // lexchat-styles.css
-      'head > link:nth-of-type(4)', // css/theme-cycler.css
-      'head > script', // theme-bootstrap.js
-      'iframe.lexchat-iframe',
-    ],
-    mask: [],
-    fullPage: true,
-    async ready(page, deadline) {
-      // The iframe host is in the abort list, so its content never loads, by design on both
-      // sides. Only the embed element itself is asserted.
-      await pollUntil('lexchat', 'lexchat embed', deadline, () =>
-        page.evaluate(() =>
-          document.querySelector('iframe.lexchat-iframe') ? null : 'no iframe.lexchat-iframe',
-        ),
-      );
-    },
-  },
 };
+
+// `lexchat` remains in the compatibility-only PageType union for the preserved
+// untracked harness script, but it cannot enter PAGE_TYPES or this active map.
+export const sentinels = activeSentinels as unknown as Record<PageType, SentinelSpec>;
 
 for (const [pageType, spec] of Object.entries(sentinels)) {
   if (spec.selectors.length !== 12 || new Set(spec.selectors).size !== 12) {

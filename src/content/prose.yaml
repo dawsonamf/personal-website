@@ -28,8 +28,6 @@ meta:                                                  # only the fields each pa
     description: { m: Privacy policy for the website and applications of Dawson Metzger-Fleetwood. }
   notFound:
     title: { s: "404" }
-  lexchat:
-    title: { s: LexChat }
 
 nav:                                                   # labels only; hrefs are structure (Nav.astro)
   about: { xs: About }
@@ -266,7 +264,7 @@ projects:                                              # legacy FEATURED_PROJECT
     tech: [ Python, Pinecone, Streamlit, OpenAI, BeautifulSoup ]
     ctas:
       - label: { xs: Visit LexChat }
-        href: /lexchat/
+        href: https://huggingface.co/spaces/dawsonamf/lexchat
         external: true
   - id: deep-rl
     title: { xs: Deep RL }

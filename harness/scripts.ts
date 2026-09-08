@@ -23,14 +23,13 @@ function postAssets(postId: string | undefined): string[] {
 }
 
 function oldScripts(page: PageType, phase: Phase, postId?: string): string[] {
-  const staticByPage: Record<PageType, string[]> = {
+  const staticByPage = {
     home: [BOOTSTRAP, OLD_GSAP, OLD_JQUERY, OLD_JQUERY_UI, OLD_AOS, OLD_TILT, CALENDLY, '/js/blog-data.js', '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-config.js', '/js/script.js', '/js/cursor-follow.js', CYCLER],
     blog: [BOOTSTRAP, OLD_AOS, OLD_TILT, CALENDLY, '/js/blog-data.js', '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-config.js', '/js/cursor-follow.js', '/blog/blog-listing.js', CYCLER],
     post: [BOOTSTRAP, 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js', 'https://cdn.jsdelivr.net/npm/marked@18.0.5/lib/marked.umd.min.js', MERMAID, OLD_TILT, '/js/blog-data.js', '/js/nav-config.js', '/js/cursor-follow.js', '/blog/blog-post.js', CYCLER],
     privacy: [BOOTSTRAP, CYCLER],
     notFound: [BOOTSTRAP, CYCLER],
-    lexchat: [BOOTSTRAP, CYCLER],
-  };
+  } as Record<PageType, string[]>;
   const scripts = staticByPage[page];
   return page === 'post' && phase === 'loaded' ? [...scripts, ...postAssets(postId)] : scripts;
 }
@@ -43,14 +42,13 @@ function newScripts(page: PageType, adapter: MigratedAdapter, postId?: string): 
   };
   const aos = vendor('aos/dist/aos.js');
   const tilt = vendor('vanilla-tilt/dist/vanilla-tilt.min.js');
-  const byPage: Record<PageType, string[]> = {
+  const byPage = {
     home: [vendor('gsap/dist/gsap.min.js'), vendor('jquery/dist/jquery.min.js'), vendor('jquery-ui-dist/jquery-ui.min.js'), aos, tilt, CALENDLY, '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-behavior.js', '/js/script.js', '/js/cursor-follow.js', CYCLER],
     blog: [aos, tilt, CALENDLY, '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-behavior.js', '/js/cursor-follow.js', '/js/blog-listing-client.js', CYCLER],
     post: [...(postId === 'toolbelt' ? [MERMAID] : []), tilt, '/js/nav-behavior.js', '/js/cursor-follow.js', ...postAssets(postId), '/js/blog-post-client.js', CYCLER],
     privacy: [CYCLER],
     notFound: [CYCLER],
-    lexchat: [],
-  };
+  } as Record<PageType, string[]>;
   return byPage[page];
 }
 
