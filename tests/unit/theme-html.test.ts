@@ -23,6 +23,7 @@ import type { Colors, SkinTheme, StructuralTheme, Theme } from '../../src/themes
 
 const repoRoot = resolve(import.meta.dirname, '..', '..');
 const srcThemes = resolve(repoRoot, 'src', 'themes');
+const cyclerSource = readFileSync(resolve(repoRoot, 'public/js/theme-cycler.js'), 'utf8');
 
 interface FixtureTheme {
   attrs: Record<string, string>;
@@ -189,6 +190,18 @@ describe('rampDeclarations()', () => {
     const inlined = new Function('return (' + rampDeclarations.toString() + ')')() as typeof rampDeclarations;
     assert.equal(inlined(baseColors), rampDeclarations(baseColors));
     assert.equal(inlined(THEMES[0]!.colors), rampDeclarations(THEMES[0]!.colors));
+  });
+
+  it('matches the generated classic-script adapter for every registry palette', () => {
+    const match = cyclerSource.match(
+      /\/\/ <generated:rampDeclarations source="src\/themes\/ramp\.ts">\n([\s\S]*?)\n  \/\/ <\/generated:rampDeclarations>/,
+    );
+    assert.ok(match, 'theme-cycler.js carries the marked generated ramp adapter');
+    const generated = new Function(`${match[1]}; return rampDeclarations;`)() as typeof rampDeclarations;
+    for (const theme of THEMES) {
+      assert.equal(generated(theme.colors), rampDeclarations(theme.colors), theme.id);
+    }
+    assert.equal(generated(baseColors), rampDeclarations(baseColors));
   });
 });
 

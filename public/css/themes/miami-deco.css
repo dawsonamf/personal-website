@@ -747,15 +747,7 @@
   backdrop-filter: none;
 }
 
-[data-style="miami-deco"] .tc-toggle {
-  border-color: var(--accent);
-  color: var(--accent);
-}
 
-[data-style="miami-deco"] .tc-toggle:hover {
-  background-color: var(--accent);
-  color: var(--secondary);
-}
 
 
 /* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------- */

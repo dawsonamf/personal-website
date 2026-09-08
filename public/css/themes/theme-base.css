@@ -78,9 +78,6 @@
   display: none;
 }
 
-[data-still] .tc-toggle:hover {
-  transform: none;
-}
 
 [data-still] .tc-dock.tc-dropdown {
   animation: none;

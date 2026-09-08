@@ -14,13 +14,14 @@ import { runInNewContext } from 'node:vm';
 
 import { load as loadYaml } from 'js-yaml';
 
+import { oldDir } from '../../harness/baseline.ts';
 import { THEME_IDS, THEMES } from '../../src/themes/registry.ts';
 import { buildSite, cleanup } from '../fixtures/composition/build.ts';
 
 const repoRoot = resolve(import.meta.dirname, '..', '..');
-const oldRoot = process.env.PARITY_OLD_DIR ?? repoRoot;
-const oldDataFile = join(oldRoot, 'js', 'blog-data.js');
-const oldListingFile = join(oldRoot, 'blog', 'index.html');
+const baselineRoot = oldDir();
+const oldDataFile = join(baselineRoot, 'js', 'blog-data.js');
+const oldListingFile = join(baselineRoot, 'blog', 'index.html');
 for (const legacy of [oldDataFile, oldListingFile]) {
   assert.ok(
     existsSync(legacy),

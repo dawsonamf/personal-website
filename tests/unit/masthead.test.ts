@@ -13,12 +13,11 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, it } from 'node:test';
 
+import { oldDir } from '../../harness/baseline.ts';
 import { deriveMastheadSteps } from '../../src/prose/masthead.ts';
 import type { MastheadStep } from '../../src/prose/masthead.ts';
 
-const repoRoot = resolve(import.meta.dirname, '..', '..');
-// PARITY_OLD_DIR wins, matching tests/unit/theme-registry.test.ts:45.
-const oldRoot = process.env.PARITY_OLD_DIR ?? repoRoot;
+const oldRoot = oldDir();
 
 const type = (text: string): MastheadStep => ({ action: 'type', text });
 const pause = (duration: number): MastheadStep => ({ action: 'pause', duration });

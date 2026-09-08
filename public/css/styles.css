@@ -9,8 +9,8 @@
   --secondary: #2c2c2c;
   --accent:    #61ffda;
 
-  /* Typography tokens. Style versions override these via the registry in
-     js/theme-bootstrap.js; the defaults match the site as-built. */
+  /* Typography tokens. Non-default values come from src/themes/registry.ts
+     through the themeHtml() projection; the defaults match the site as-built. */
   --font-body:    sans-serif;
   --font-heading: var(--font-body);
   --font-mono:    'SF Mono', monospace;
@@ -30,9 +30,9 @@
   --jobs-menu-slate: #7B8A9A;
 
   /* Alpha ramps, declared statically so the design system exists without JS
-     and lives in one greppable place. js/theme-bootstrap.js regenerates the
-     same values inline pre-paint (inline wins), so with JS on these are
-     overridden by identical values. Keep both in sync. */
+     and lives in one greppable place. src/themes/ramp.ts supplies the same
+     inline values through themeHtml() at build and PalettePrepaint before
+     paint; inline values win. Keep both in sync. */
   --text5:  hsla(214,100%,95%,5%);  --text10: hsla(214,100%,95%,10%); --text15: hsla(214,100%,95%,15%); --text20: hsla(214,100%,95%,20%);
   --text25: hsla(214,100%,95%,25%); --text30: hsla(214,100%,95%,30%); --text35: hsla(214,100%,95%,35%); --text40: hsla(214,100%,95%,40%);
   --text45: hsla(214,100%,95%,45%); --text50: hsla(214,100%,95%,50%); --text55: hsla(214,100%,95%,55%); --text60: hsla(214,100%,95%,60%);

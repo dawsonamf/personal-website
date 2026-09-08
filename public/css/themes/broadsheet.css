@@ -848,9 +848,6 @@
   backdrop-filter: none;
 }
 
-[data-style="broadsheet"] .tc-toggle {
-  border-radius: 0;
-}
 
 [data-style="broadsheet"] .tc-action,
 [data-style="broadsheet"] .tc-presets button,

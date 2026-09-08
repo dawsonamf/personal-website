@@ -918,9 +918,6 @@
 }
 
 /* The fallback FAB squares off with the rest of the sheet. */
-[data-style="grid"] .tc-toggle {
-  border-radius: 0;
-}
 
 [data-style="grid"] .tc-action,
 [data-style="grid"] .tc-presets button,

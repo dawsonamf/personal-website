@@ -793,18 +793,7 @@
   backdrop-filter: none;
 }
 
-[data-style="bauhaus"] .tc-toggle {
-  border-radius: 0;
-  border: 2px solid var(--text);
-  color: var(--text);
-  transition: none;
-}
 
-[data-style="bauhaus"] .tc-toggle:hover {
-  background-color: var(--text);
-  color: var(--bg);
-  transform: none;
-}
 
 [data-style="bauhaus"] .tc-action,
 [data-style="bauhaus"] .tc-presets button,

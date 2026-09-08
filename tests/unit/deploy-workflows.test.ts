@@ -201,9 +201,12 @@ describe('full deploy workflow', () => {
     const pkg = JSON.parse(readFileSync(join(repoRoot, 'package.json'), 'utf8')) as {
       scripts: Record<string, string>;
     };
-    // S1-08 owns the production scripts (§4.3): the deploy workflow's `npm run build` gates
-    // on the draft check and astro check before it builds.
-    assert.equal(pkg.scripts.build, 'npm run prose:check && npm run check && astro build');
+    // The deploy workflow's `npm run build` refreshes the picker adapter before public copying,
+    // then gates on the draft check and Astro check before it builds.
+    assert.equal(
+      pkg.scripts.build,
+      'npm run picker:build && npm run prose:check && npm run check && astro build',
+    );
   });
 });
 

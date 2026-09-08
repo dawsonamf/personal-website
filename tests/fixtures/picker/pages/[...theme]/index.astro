@@ -26,9 +26,11 @@ const page: PageContext = { type: 'home', path: '/' };
     <title>picker fixture: {theme.id}</title>
     <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="/css/theme-cycler.css">
+    <Fragment set:html={'<!--theme-assets-->'} />
     {html.links.map((link) => <link rel="stylesheet" href={link} data-style-asset="1">)}
   </head>
   <body>
+    <Fragment set:html={'<!--picker-mount:nav-->'} />
     <nav>
       <ul class="static-menu"><ThemePicker /></ul>
       <ul class="static-menu-mobile"><ThemePicker icon="fa-solid fa-palette" className="tc-mobile" /></ul>

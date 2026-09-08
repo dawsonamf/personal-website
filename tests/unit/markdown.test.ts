@@ -17,11 +17,11 @@ import { runInNewContext } from 'node:vm';
 import hljs from 'highlight.js/lib/common';
 import { Marked } from 'marked';
 
+import { oldDir } from '../../harness/baseline.ts';
 import { renderMarkdown, renderParagraphs } from '../../src/prose/markdown.ts';
 
 const repoRoot = resolve(import.meta.dirname, '..', '..');
-// PARITY_OLD_DIR wins, matching tests/unit/theme-registry.test.ts:45.
-const oldRoot = process.env.PARITY_OLD_DIR ?? repoRoot;
+const oldRoot = oldDir();
 const legacyFile = resolve(oldRoot, 'blog/blog-post.js');
 const postsDir = resolve(oldRoot, 'blog/posts');
 

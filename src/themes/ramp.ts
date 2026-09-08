@@ -2,7 +2,8 @@
 // per-role emission loop). Byte contract: harness/fixtures/baseline/theme-html.json.
 //
 // D33 / §5.4 CONSTRAINT: `rampDeclarations` must stay SELF-CONTAINED. The pre-paint
-// `is:inline` script inlines it into the page via `Function.prototype.toString()`, so:
+// `is:inline` script and scripts/build-picker.mjs inline it via
+// `Function.prototype.toString()`, so:
 //   - it may close over nothing but its own parameter. The steps, the role order and
 //     `hexToHsl` all live inside the body, and this module imports nothing at runtime
 //     (a type-only import is erased);

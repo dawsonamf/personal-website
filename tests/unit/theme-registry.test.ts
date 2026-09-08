@@ -13,6 +13,7 @@ import { resolve } from 'node:path';
 import { describe, it } from 'node:test';
 import { runInNewContext } from 'node:vm';
 
+import { oldDir } from '../../harness/baseline.ts';
 import { THEMES, THEME_IDS, assertRegistry } from '../../src/themes/registry.ts';
 import type { LazyLayout, Profile, RoleProfile, SkinTheme, StructuralTheme, Theme } from '../../src/themes/types.ts';
 
@@ -39,10 +40,7 @@ const INACTIVE = ['space', 'vapor', 'wanted', 'constructivist'];
 
 const baseColors = { text: '#000000', bg: '#ffffff', primary: '#000000', secondary: '#eeeeee', accent: '#000000' };
 
-const repoRoot = resolve(import.meta.dirname, '..', '..');
-// PARITY_OLD_DIR wins, matching tests/build/astro-compatibility.test.ts:24. When a later
-// ticket retires js/, that ticket points this default at the baseline checkout or drops this test.
-const legacyFile = resolve(process.env.PARITY_OLD_DIR ?? repoRoot, 'js/theme-bootstrap.js');
+const legacyFile = resolve(oldDir(), 'js/theme-bootstrap.js');
 assert.ok(existsSync(legacyFile), `legacy theme-bootstrap.js not found at ${legacyFile}`);
 
 type LegacyEntry = Record<string, unknown> & { id: string; label: string };

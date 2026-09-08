@@ -844,9 +844,6 @@
   box-shadow: 0 0 24px var(--primary25);
 }
 
-[data-style="vapor"] .tc-toggle {
-  box-shadow: 0 0 12px var(--accent30);
-}
 
 
 /* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------------- */

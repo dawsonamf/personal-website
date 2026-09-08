@@ -1008,20 +1008,7 @@
 }
 
 /* The FAB (post/privacy pages) is a yellow badge; tap inverts to ink. */
-[data-style="neo-pop"] .tc-toggle {
-  border-radius: 0;
-  border: 2.5px solid var(--text);
-  background: #ffe94f;
-  color: var(--text);
-  box-shadow: 3px 3px 0 var(--text);
-  transition: none;
-}
 
-[data-style="neo-pop"] .tc-toggle:hover {
-  transform: none;
-  background-color: var(--text);
-  color: #ffe94f;
-}
 
 [data-style="neo-pop"] .tc-action,
 [data-style="neo-pop"] .tc-presets button,

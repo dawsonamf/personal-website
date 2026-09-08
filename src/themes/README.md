@@ -1,147 +1,266 @@
-# The theme engine
+# Theme authoring and runtime contracts
 
-How a theme becomes a page. Skeleton written by S1-12; S1-24 adds the demonstrated authoring
-walkthrough and S1-25 finishes the documentation. Spec 1 is the authority where this file and the
-spec disagree: `docs/intents/2026-09-05-theme-engine-rewrite/spec-1-migration-engine-parity.md`.
+This is the live guide for the Astro theme engine. `docs/theme-explorations.html` is frozen design
+research, and OLD commit `0f196d094ad64383ec58df5472fc12d403f846b3` is a historical oracle. Neither
+is an active implementation source.
 
-## Overview and module graph
+## Architecture
 
-One direction, no cycles (§3.3): `themes/types` ← `themes/registry` ← `themes/paths` ←
-`layouts/canonical/*` ← `layouts/compose` ← `pages/*`.
+The build graph runs in one direction:
 
-`themes/ramp.ts` and `themes/apply.ts` import nothing else from `src/`, because the 404's client
-script and the pre-paint component bundle them. `themes/validate.ts` is the only module here that
-touches the filesystem and must never reach a browser bundle.
+```text
+themes/types <- themes/registry <- themes/paths <- canonical layouts
+                                               <- layouts/compose <- pages
+```
 
-## Registry and types
+`src/themes/registry.ts` contains 16 active entries in the ordered `THEMES` array: default plus 15
+skins. Its order is picker order. A `skin` restyles canonical DOM; a `structural` theme owns one or
+more lazy layouts for `home`, `blog` or
+`post`. Privacy and 404 are utilities and are never structurally owned. `assertRegistry()` rejects
+duplicate, reserved or non-URL-safe ids and structural entries without an owned layout. Picker
+labels live at `themes.<id>.label` in `src/content/prose.yaml`; the strict prose schema derives those
+keys from `THEME_IDS`, so registry registration is also schema registration.
 
-`registry.ts` holds `THEMES` (array order is picker order), `THEME_IDS` and `RESERVED_IDS`; it is
-pure data plus `assertRegistry`. `types.ts` has the discriminated union: a `skin` restyles the
-canonical DOM, a `structural` theme owns layouts for some of `home`/`blog`/`post` through
-`layouts: Partial<Record<OwnablePageType, LazyLayout>>`. Utility pages are never owned. Reserved ids
-are the URL segments and build output a theme id would collide with. `assertRegistry` also holds
-an id to `/^[a-z0-9-]+$/`, which is load-bearing rather than tidiness: the id is the `?style=`
-redirect target, the 404's `#tc-presets a[data-id="..."]` selector and the route path segment.
+`src/layouts/compose.ts` is the only skin/structural/fallback branch. Page entrypoints resolve a
+registry theme and ask `compose()` for the layout, projected assets, picker mount, canonical URL and
+noindex state. `Shell.astro`, `ThemeAssets.astro`, page files and browser scripts render that result;
+they do not re-derive the branch.
 
-## Projection: theme to HTML
-
-`apply.ts` exports the one projection, `themeHtml(theme, colors?) -> { attrs, style, links }`
-(D33), `THEME_BASE_CSS` and `declarations(map)` for `--prop:value;` serialisation. `declarations()`
-throws on a value containing `;`, `{` or `}`, and every `styleExtras` value reaches it at build
-through the Shell, so no page-supplied string can append a declaration of its own. `ramp.ts` exports
-`rampDeclarations(colors)`: the 5 raw-hex base roles and 95 `hsla()` steps, self-contained so the
-pre-paint script can inline it. Three adapters consume the projection: the Shell, `ThemeAssets` and
-the 404's runtime script.
-
-## Paths
-
-`paths.ts` exports `href(path, theme?)`, the only way a component writes an internal link (D31): it
-throws on a relative path and prefixes `/<theme>` onto every root-absolute path that is not in
-`STATIC_PREFIXES`. `themeParams()` supplies `getStaticPaths()` for `src/pages/[...theme]/`, with
-`{ theme: undefined }` for the default theme's root routes.
-
-## Composition
-
-`layouts/compose.ts` decides a page once (§5.2, D34). `composeFor(theme, type)` is pure and
-synchronous and holds the whole table; `compose(theme, page)` awaits the selected lazy layout and
-adds the canonical URL; `routeTheme(param)` maps a route param to its registry entry.
-
-| theme, page type | layout | assets | picker |
+| Theme and page | Layout | Projected theme assets | Picker |
 |---|---|---|---|
-| `default` | canonical | none | nav; privacy/404: fab |
-| skin, any page type | canonical | fonts, `theme-base.css`, skin css | nav; privacy/404: fab |
-| structural, page type in `layouts` | the theme's layout | fonts | fab; an own-mount declaration is added with its consumer (§11) |
-| structural, unowned home/blog/post | canonical | fonts, `theme-base.css` | nav |
-| structural, utility page type | canonical | fonts | privacy/404: fab |
+| default, any page | canonical | none | nav; Privacy/404 use FAB |
+| skin, any page | canonical | fonts, `theme-base.css`, skin CSS | nav; Privacy/404 use FAB |
+| structural, owned home/blog/post | owned | fonts only | FAB by default |
+| structural, unowned home/blog/post | canonical fallback | fonts, `theme-base.css` | nav |
+| structural, Privacy/404 | canonical utility | fonts only | FAB |
 
-Nothing else in the engine branches on `theme.kind`.
+LexChat is an external project CTA to `https://huggingface.co/spaces/dawsonamf/lexchat`. It has no
+local page, redirect, picker exception or engine page type.
 
-## Shell, theme assets, pre-paint
+## Projection, paths and head order
 
-`layouts/Shell.astro` emits `<html lang="en" {...attrs} style={…}>`, the layout's head slot, the
-page content, then the tail of `<body>`: dock and scrim, `/js/theme-cycler.js`, the FAB when the
-mount is `fab`, and the draft pill. A `none` mount emits none of the picker elements or scripts.
+`src/themes/apply.ts` owns the single `themeHtml(theme, colors?)` projection. It returns `<html>`
+attributes, ordered inline declarations and stylesheet URLs. A non-default skin adds `data-style`
+plus any `data-still`, `data-no-tilt`, `data-typing` and `data-typing-delete` attributes, then token
+declarations and the palette ramp. The default adds no attribute or stylesheet, but still writes
+the five raw hex roles and 95 `hsla()` steps, exactly 100 inline custom properties.
 
-`layouts/ThemeAssets.astro` emits the `<!--theme-assets-->` marker and the projected links the
-composition selects, as `<link rel="stylesheet" href data-style-asset="1">`. **The layout places
-it**, at §6.2's position (where today's runtime append lands), and the checks integration asserts
-exactly one marker per page.
+`src/themes/ramp.ts` is the sole authored ramp formula. `PalettePrepaint.astro` stringifies it into
+the head, and `scripts/build-picker.mjs` injects the same function into the marked generated region
+of the classic picker script. The official `dev`, `build` and `build:preview` package commands run
+`picker:build` before Astro can copy `public/`. After changing the ramp, run `npm run picker:build`;
+`node scripts/build-picker.mjs --check` is the non-writing drift check. The generated region in
+`public/js/theme-cycler.js` is output, not an authoring surface. Keep `rampDeclarations()`
+self-contained and limited to TypeScript syntax Node 24 can erase because both consumers use its
+`toString()` value.
 
-`canonical/components/PalettePrepaint.astro` restores a saved palette before first paint by
-inlining `rampDeclarations`; it applies a record only when its `style` matches this page's theme.
-`canonical/components/StyleQueryShim.astro` renders only on default routes and redirects
-`?style=<id>` to that theme's path, keeping the rest of the query and the hash. Both sit in the
-head immediately after `/css/theme-cycler.css` and BEFORE `ThemeAssets`, which is the order the
-bootstrap produced: it ran, then appended the links, so the inline script was never blocked behind
-a fonts.googleapis.com stylesheet. The 404 carries the pre-paint component and never the shim.
+Each layout owns its complete head. `ThemeAssets.astro` emits one `<!--theme-assets-->` marker at
+the layout-selected position and filters the projection without inspecting `theme.kind`. Canonical
+post pages deliberately place theme assets before `github-dark.min.css`; the higher-specificity
+pins in `theme-base.css` preserve the fixed code-block ground and token colors. Page-derived CSS
+values such as `--prose-*`, `--ticker-run` and `--ticker-dur` arrive through
+`PageContext.styleExtras`; `declarations()` rejects declaration-breaking characters.
 
-## Picker runtime contract
+Use `href(path, theme.id)` from `src/themes/paths.ts` for every internal link. Schemes,
+protocol-relative URLs and fragments pass through; relative paths throw; root-absolute static URLs
+stay unthemed; other root-absolute page URLs gain the theme segment. Asset paths in CSS and
+frontmatter are root-absolute because `public/` is copied verbatim.
 
-`public/js/theme-cycler.js` documents its own inputs in its header comment: read it before changing
-any dock markup. It is a classic script, defines no global and creates no DOM; a mount is a
-`.tc-nav-item` element containing a `button.tc-nav-trigger` (D30). Its storage record is
-`sessionStorage['dawson-theme-cycler'] = { style, colors: [5 '#rrggbb'], locks, scheme, theme }`,
-and both the runtime and the pre-paint script ignore a record whose `style` is not this page's.
+## Authoring a skin
 
-## The 404 runtime
+A skin is a local three-file addition for the shipped contract:
 
-`themes/not-found.ts` exports `resolveNotFoundTheme(pathname, search, ids)`: path segment first,
-`?style=` second. `canonical/NotFound.astro` serialises the registry into one JSON island,
-`#nf-themes` = `{ [id]: { theme, extras } }`, where `extras` is the page's `<html style>` tail as a
-serialised declaration string (S1-21 fills it; it is `''` until then). The bundled script imports
-only `apply.ts` and `not-found.ts`, never the registry: `JSON.stringify` drops a structural theme's
-function-valued `layouts`, so no `.astro` layout can reach the client graph, and the ids come from
-`Object.keys` of the island. It applies `themeHtml()` to the document, writes `style + extras`,
-appends the links and moves the dock's current-row marker. It must run before the picker runtime and
-do its work synchronously at its own execution (D27).
+1. Add one ordered `kind: 'skin'` entry to `src/themes/registry.ts`. Supply a URL-safe id, polarity
+   and all five colors. Add tokens, Google Font CSS2 URLs, a `/css/themes/<id>.css` URL, motion/tilt
+   flags, typing modes or light/dark random profiles only when the design uses them. An omitted
+   `fonts` list is valid; an omitted random profile uses the picker runtime's `DEFAULT_RANDOM`.
+2. Add the approved `themes.<id>.label` value to `src/content/prose.yaml`. Use the normal draft flow
+   for new wording. Do not add a second schema key list.
+3. Add `public/css/themes/<id>.css`. Scope every selector under `[data-style="<id>"]`, prefix every
+   global `@keyframes` name with `<id>-`, and use root-absolute asset URLs. `theme-base.css` already
+   owns code-block ground, centered blog footers, reduced-motion typing, still/no-tilt rules and the
+   shared 1100px canonical fixes. The skin sheet owns its visual language across canonical Home,
+   listing, posts, Privacy, 404 and picker states.
+
+Map `text`, `bg`, `primary`, `secondary` and `accent` visibly, including randomized values. Check
+the canonical post widgets and Mermaid ground as well as ordinary page chrome. CSS decoration can
+remain literal; visitor-facing words belong in prose. The carousel ticker text and duration are
+already derived at build time, not supplied by skin CSS or runtime markup builders.
+
+The inactive sheets `space.css`, `vapor.css`, `wanted.css` and `constructivist.css` intentionally
+remain outside `THEMES`. Their exact former entries are available only from immutable OLD:
+
+- `space`: `js/theme-bootstrap.js` lines 213-239 at `0f196d0`
+- `vapor`: lines 243-265
+- `wanted`: lines 428-456
+- `constructivist`: lines 460-495
+
+Reactivation means translating one of those historical entries into the current typed registry,
+adding its approved YAML label and auditing its preserved public sheet against current canonical
+DOM. Do not restore the old bootstrap, `ORDER`, runtime globals or query-based architecture.
 
 ## Authoring a structural theme
 
-Use this workflow for the contract Spec 1 ships:
+The S1-24 proof demonstrates an exact five-file addition in an isolated copy:
 
-1. Add one typed registry entry with `kind: 'structural'`, a URL-safe `id`, `polarity`, the five
-   colors (`text`, `bg`, `primary`, `secondary`, `accent`), optional tokens/fonts/random profiles,
-   and at least one lazy owned layout such as
-   `layouts: { home: () => import('./my-theme/Home.astro') }`.
-2. Add the matching approved `themes.<id>.label` to `src/content/prose.yaml`. The strict
-   `themes` object in `src/prose/schema.ts` is derived from `THEME_IDS`, so registry registration
-   is also schema registration. Do not add a parallel label schema or theme-id branch.
-3. Add the owned layout under `src/themes/<id>/`. It accepts `LayoutProps`, wraps its content in
-   `Shell`, and owns its DOM and head. The head includes its own stylesheet, shared
-   `/css/theme-cycler.css`, Font Awesome for the FAB, then `PalettePrepaint` before `ThemeAssets`.
-   Add a theme script only when the theme owns behavior; keep its state under `theme.<id>.*`.
-4. Read sized copy only through the bound public `prose` accessor (`text`, `get`, `list`,
-   `paragraphs`, or `has`). Use `href()` for every root-absolute internal navigation target.
-5. Put root sizing and responsive structure in the owned stylesheet. If desktop and mobile need
-   distinct DOM, render both and toggle them with the theme's media query. Do not select a layout
-   from a boot-time width flag. Map all five shared palette roles into visible theme styling and
-   leave the shared randomizer enabled.
-6. Build an isolated copy and verify the owned page, canonical fallback listing/posts,
-   Privacy/404, exact loaded resources, picker switching, resize in both directions, saved
-   palette restoration, and the source-change manifest. Then build ordinary production and
-   verify the fixture id, prose, routes, picker row, CSS, and script are absent.
-
-The browser proof requires both output roots explicitly so every build, trace and cleanup record
-stays outside the checkout:
-
-```bash
-PARITY_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/parity/manual TEST_BUILD_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/builds/manual npx playwright test harness/theme-authoring.spec.ts
+```text
+src/themes/registry.ts
+src/content/prose.yaml
+src/themes/author-proof/Home.astro
+public/css/author-proof.css
+public/js/author-proof.js
 ```
 
-An executable example lives in `harness/fixtures/theme-authoring/`. Its README records these same
-steps, `allowed-change-manifest.json` names the five files changed inside the isolated copy, and
-`tests/build/theme-authoring.test.ts` plus `harness/theme-authoring.spec.ts` prove the build and
-browser behavior. Unowned Home/listing/post pages fall back to canonical layouts with the
-structural theme's fonts and `theme-base.css`; Privacy and 404 use canonical utility layouts with
-the structural fonts only. A theme-only route remains an ordinary page file and needs no registry
-field.
+`harness/fixtures/theme-authoring/allowed-change-manifest.json` pins that list. Follow the same
+workflow with the real theme id:
 
-## Verification
+1. Add a `kind: 'structural'` registry entry with its palette, tokens, fonts and narrow random
+   profiles. Register at least one lazy layout, for example
+   `layouts: { home: () => import('./my-theme/Home.astro') }`.
+2. Add the approved picker label in `src/content/prose.yaml`.
+3. Add the owned layout under `src/themes/<id>/`. Accept `LayoutProps`, wrap the page with `Shell`,
+   and own the complete head and DOM. Include the owned stylesheet, shared
+   `/css/theme-cycler.css`, Font Awesome for a FAB, `PalettePrepaint` before `ThemeAssets`, and an
+   owned script only when behavior requires one.
+4. Read copy through the public `prose` accessor (`text`, `get`, `list`, `paragraphs`, `has`) and
+   pass internal links through `href()`. Split-text inputs must use `prose.text()` so they are plain
+   escaped strings rather than HTML fragments.
+5. Put root sizing and responsive structure in the owned stylesheet. If mobile and desktop need
+   different DOM, render both and switch them with the theme's media query. JavaScript must not
+   choose the layout from a boot-time width. Test resize in both directions.
+6. Keep owned state under `theme.<id>.*`. The canonical palette key remains
+   `dawson-theme-cycler`; a structural script does not reuse it for theme-owned state. Prefix
+   document SVG ids with `theme-<id>-` and keep heavy assets on owned pages only.
+7. Ship a readable no-JavaScript path and a `prefers-reduced-motion: reduce` branch. If a curtain,
+   preloader or script hides content, provide `<noscript>` markup that reveals or replaces it. The
+   shared picker and palette are enhancements; the built page, navigation and prose remain useful
+   without them.
+
+A route unique to one theme remains an ordinary Astro page file and needs no speculative registry
+field. Add that page only with its real consumer and verify its route and asset boundary separately.
+
+An owned layout imports only its own CSS/script plus explicit shared Shell/picker components.
+Canonical scripts and libraries do not load there. Canonical fallbacks load the structural font and
+`theme-base.css`, never the owned stylesheet or script. Utilities load only the structural font.
+This isolation is the reason a structural theme can use different DOM without teaching canonical
+behavior about it.
+
+## Split text, motion and mobile safety
+
+The typing engine reads `data-typing` and `data-typing-delete` once per run. Cursorless modes wrap
+glyphs in `.tw` spans, keep each word inside `.tw-word` to prevent mid-word line breaks, retain
+deleted spaces and breaks during the 300ms drain, and keep a zero-width `.tw-anchor` while text is
+empty. Style those existing hooks; do not split prose HTML yourself. The second newline's glyphs
+also carry `.typing-accent`.
+
+`anim-utils.js` preserves the original section title on the node, wraps it once, and only explodes
+headers into glyphs for ids in its audited `GLYPH_SKINS` map. Glyphs stay grouped in
+`.section-header-word` spans. Adding a new per-glyph header treatment changes canonical behavior
+and needs an explicit audit; ordinary skins use the whole-text wrapper. Intro animations rely on
+their `animationend` handlers to pin visible final styles, so use a reduced-motion override that
+lands content in its final readable state rather than removing an animation that owns visibility.
+
+Canonical CSS and `script.js` share the 1100px breakpoint. Structural themes own their breakpoint
+in CSS and must keep both desktop-to-mobile and mobile-to-desktop transitions valid. The picker
+uses touch/click everywhere and adds hover behavior only for fine pointers. On narrow screens its
+side column moves first and the preview card hides. `data-still` suppresses AOS entrances and the
+cursor follower; it does not suppress the current `.tc-lift` applied to the active picker pill.
+
+## Picker and persistence
+
+The picker DOM is build output from `ThemeDock.astro`. The classic runtime creates no markup and
+defines no global. Every mount is `.tc-nav-item` containing `button.tc-nav-trigger`; canonical Home,
+listing and post pages use nav mounts, while Privacy, 404 and structural owned pages use the real
+`.tc-fab` mount. The retired `.tc-toggle` and `.tc-close` selectors have no contract. The dock closes
+through its trigger, outside click or Escape; there is no X button.
+
+The panel has three columns: Styles on the left, Palette actions on the right and a preview card.
+Advanced replaces the Styles list with schemes and role controls. The body-parented fixed panel
+measures the active nav pill or FAB, caps width at 940px with a 10px viewport edge, waits 300ms on
+hover-close and hides 440ms after collapse. Opening deliberately reads `dock.offsetWidth` to commit
+the closed state before transition; replacing it with `requestAnimationFrame` breaks background and
+automated runs. Pressing Space randomizes while the dock is open and focus is outside an input.
+
+Each row's build-authored `href` points to the same page in that theme, so switching preserves the
+page and clears the old theme's palette. On default routes, `StyleQueryShim.astro` converts a valid
+`?style=<id>` to the corresponding themed path while preserving other query parameters and the
+hash. The runtime 404 separately resolves its first path segment, then `?style=`, from its JSON
+appearance island. It is the only page that applies a route theme after parse.
+
+The shared record is:
+
+```text
+sessionStorage['dawson-theme-cycler'] =
+  { style, colors: [5 '#rrggbb'], locks: [5 boolean], scheme, theme }
+```
+
+It survives navigation and reload. Pre-paint restores only a valid five-color record whose `style`
+matches the page; the picker later restores controls and derived values. A palette change writes
+the five roles and 95 steps, derives the jobs/code neutrals, persists, and dispatches the payload-free
+`window` event `dawson:palette`. Returning to base restores captured token values and removes
+derived properties that were originally absent. Plotly post assets listen and redraw from CSS vars;
+Mermaid initializes once from `--secondary`, `--text` and `--neutral-gray` and does not redraw on
+that event.
+
+After first paint, `loadAllFonts()` loads every font URL carried by picker skin rows so their
+wordmarks render correctly. It is idle and idempotent, but picker-enabled visitors pay those
+non-blocking requests even when they never open the panel. Structural-only owned assets never ride
+on rows and are not fetched by this pass.
+
+With JavaScript disabled, themed paths still contain their build-projected attributes, palette,
+styles and static content. Picker controls, `?style=` conversion, saved-palette restoration and
+interactive behavior do not run. The single `404.html` remains its default build projection because
+its path/query theme resolution is necessarily runtime.
+
+## Retained classic modules
+
+These scripts have document-lifetime listeners and no SPA teardown because navigation loads a new
+document. Structural owned pages load none of the canonical-only modules.
+
+| Module | Owner and DOM/data inputs | Dependencies | Initialization and lifecycle |
+|---|---|---|---|
+| `anim-utils.js` | canonical animation helpers; animation targets and section-header DOM | DOM, RAF, `matchMedia`, optional `IntersectionObserver` | plain script; initializes at DOM ready, exposes three helpers, then owns observer/scroll/resize/RAF work |
+| `cursor-follow.js` | canonical cursor chrome | DOM, RAF | deferred IIFE; no-op without cursor nodes; delegated pointer listeners and RAF live for the document |
+| `featured-carousel.js` | canonical carousel interaction; build-rendered cards/dots | `VanillaTilt`, DOM, RAF/timers | Home/listing caller invokes once; click/scroll/wheel listeners live for the document |
+| `nav-behavior.js` | canonical moving nav and Calendly anchors | DOM/CSS roles, optional `Calendly` | deferred immediate init; node flags prevent duplicate binding; click/scroll listeners live for the document |
+| `script.js` | canonical Home behavior and build-rendered Home DOM | AOS, jQuery/UI easing, VanillaTilt, typing/animation globals, carousel | mixed immediate and DOM-ready setup; window/rail/jobs listeners and observers live for the document |
+| `blog-listing-client.js` | canonical listing filters, typing and carousel | AOS, VanillaTilt, typing/animation globals, carousel | synchronous end-of-body init; filter/resize/animation listeners live for the document |
+| `blog-post-client.js` | canonical post copy/read-time/Mermaid/image tilt | Clipboard, optional Mermaid and VanillaTilt | synchronous end-of-body init; delegated copy listener and at most one DOM-ready Mermaid callback |
+| `theme-cycler.js` | shared picker; rendered dock, rows, triggers and owned data attributes | DOM, theme-cycler CSS and Font Awesome presentation | deferred DOM-ready init; no-op without dock; document/window/control listeners, timers and idle font load live for the document |
+| `typing-engine.js` | reusable canonical masthead choreography | caller config, owned text node, DOM/fonts/timers | called by Home/listing clients; one timed run per call, with load/resize measurement for the document |
+
+Canonical load ownership is explicit in `Home.astro`, `BlogListing.astro` and `BlogPost.astro`.
+Privacy and 404 load the shared picker family only. Static carousel cards, dots and ticker values are
+build output; there is no runtime static-markup builder.
+
+## Verification contract
+
+The full visual matrix uses exactly five representatives at desktop and mobile: Home, blog listing,
+the Toolbelt post, the Embedded Swift Agent post and the METR post. Its tracked navigation cycle
+returns from METR to the same theme's Home. Privacy and runtime 404 have a separate functional
+contract: readable approved content, correct themed links and assets, safe 404 resolution, reachable
+picker, palette persistence and working navigation. They are not required to equal OLD visually.
+LexChat is tested only as the exact external project CTA and the absence of local output.
+
+The structural fixture has its own bounded probes: owned Home, fallback listing and Toolbelt, plus
+functional Privacy and runtime 404. Verify their resource isolation, mouse and touch picker
+switching, both palette profiles, all five visible roles, resize in both directions, storage
+namespace and first-paint restoration. Compare source changes to the intended manifest, then build
+ordinary production and prove the fixture id, prose, route, row and assets are absent.
+
+Migration inventory and parity tests pin the shipped 16-theme baseline at 177 engine HTML files,
+128 local post outputs and 12 sitemap URLs. S1-24 demonstrated one isolated candidate addition with
+an ordinary build: it added exactly 11 engine routes and eight themed local post outputs, producing
+188 engine HTML, 136 local post outputs and the same 12 sitemap URLs. Those proof totals describe
+that isolated fixture; permanent themes update the intentional inventory and its exact assertions.
 
 ```bash
-npm run check                                   # astro check
-npm run build                                   # prose:check, astro check, astro build
-npm run test:unit                               # pure contracts
-npm run test:build                              # build-level fixtures
-./node_modules/.bin/playwright test tests/browser/theme-routing.spec.ts   # the runtime halves
+npm run check
+npm run build
+npm run test:unit
+npm run test:build
+
+PARITY_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/parity/manual \
+TEST_BUILD_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/builds/manual \
+./node_modules/.bin/playwright test harness/theme-authoring.spec.ts
 ```

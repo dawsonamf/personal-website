@@ -3,8 +3,7 @@
  *
  * OWNERSHIP
  *   The one shared picker runtime, loaded by every picker-enabled page (canonical pages,
- *   the utility pages that mount a FAB, and any structural theme's own layouts). LexChat
- *   never loads it: that composition is picker-free and emits no dock, scrim or trigger.
+ *   utility pages that mount a FAB, and structural themes' own layouts).
  *   It is a classic script on purpose: no modules, no imports, and it defines no global.
  *
  * INPUTS (all read from DOM this file does not create; there is no runtime theme registry)
@@ -42,7 +41,8 @@
  *                                #tc-preview-meta.
  *
  * DEPENDENCIES
- *   None. No library, no global, no build artifact. The page must load
+ *   Runtime: no library or global. The marked ramp adapter is generated at build time from
+ *   src/themes/ramp.ts by scripts/build-picker.mjs. The page must load
  *   /css/theme-cycler.css (dock geometry, scrim, FAB) and a Font Awesome stylesheet
  *   (the lock icons and the FAB glyph).
  *
@@ -107,6 +107,56 @@
     }
     return { h, s: s*100, l: l*100 };
   }
+
+  // <generated:rampDeclarations source="src/themes/ramp.ts">
+  function rampDeclarations(colors        )         {
+    const STEPS = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75, 80, 85, 90, 95];
+    const ROLES = ['text', 'bg', 'primary', 'secondary', 'accent']         ;
+
+    function hexToHsl(hex        )                                      {
+      const m = hex.replace('#', '');
+      const r = parseInt(m.substring(0, 2), 16) / 255;
+      const g = parseInt(m.substring(2, 4), 16) / 255;
+      const b = parseInt(m.substring(4, 6), 16) / 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h = 0;
+      let s = 0;
+      const l = (max + min) / 2;
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r:
+            h = (g - b) / d + (g < b ? 6 : 0);
+            break;
+          case g:
+            h = (b - r) / d + 2;
+            break;
+          case b:
+            h = (r - g) / d + 4;
+            break;
+        }
+        h *= 60;
+      }
+      return { h: h, s: s * 100, l: l * 100 };
+    }
+
+    let out = '';
+    for (const role of ROLES) {
+      const hex = colors[role];
+      out += '--' + role + ':' + hex + ';';
+      const hsl = hexToHsl(hex);
+      for (const a of STEPS) {
+        out +=
+          '--' + role + a + ':hsla(' +
+          hsl.h.toFixed(0) + ',' + hsl.s.toFixed(0) + '%,' + hsl.l.toFixed(0) + '%,' + a + '%);';
+      }
+    }
+    return out;
+  }
+  // </generated:rampDeclarations>
+
   function hslFracToRgb(h,s,l) {
     h = ((h % 1) + 1) % 1;
     if (s===0) { const v = Math.round(l*255); return [v,v,v]; }
@@ -225,7 +275,6 @@
     } catch { return false; }
   }
 
-  const STEPS = [5,10,15,20,25,30,35,40,45,50,55,60,65,70,75,80,85,90,95];
   const ROLES = ['text','bg','primary','secondary','accent'];
   const ROW_VARS = ROLES.map(k => '--tc-row-' + k);
   const DEFAULT_THEME = 'dark';
@@ -257,13 +306,16 @@
   }
 
   function applyColors() {
-    ROLES.forEach((r,i) => root.style.setProperty('--'+r, state.colors[i]));
-    ROLES.forEach((r,i) => {
-      const {h,s,l} = hexToHsl(state.colors[i]);
-      STEPS.forEach(a => root.style.setProperty(
-        `--${r}${a}`,
-        `hsla(${h.toFixed(0)},${s.toFixed(0)}%,${l.toFixed(0)}%,${a}%)`
-      ));
+    const ramp = rampDeclarations({
+      text: state.colors[0],
+      bg: state.colors[1],
+      primary: state.colors[2],
+      secondary: state.colors[3],
+      accent: state.colors[4],
+    }).split(';');
+    ramp.forEach(declaration => {
+      const colon = declaration.indexOf(':');
+      if (colon > 0) root.style.setProperty(declaration.slice(0, colon), declaration.slice(colon + 1));
     });
     applyDerivedNeutrals();
     persist();

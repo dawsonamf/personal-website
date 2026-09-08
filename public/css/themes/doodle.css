@@ -875,10 +875,6 @@
 
 /* The FAB becomes a red-circled blob, logo grammar. (Its hover lift stays —
    motion skin.) */
-[data-style="doodle"] .tc-toggle {
-  border: 2px solid var(--accent);
-  border-radius: 64% 36% 58% 42% / 45% 60% 40% 55%;
-}
 
 
 /* ---- Mobile (site breakpoint: 1100px) -------------------------------------------- */

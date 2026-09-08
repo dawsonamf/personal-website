@@ -971,10 +971,6 @@
 }
 
 /* The fallback FAB and the dock's controls square off with the room. */
-[data-style="gallery"] .tc-toggle {
-  border-radius: 0;
-  box-shadow: none;
-}
 
 [data-style="gallery"] .tc-action,
 [data-style="gallery"] .tc-presets button,

@@ -997,9 +997,6 @@
   backdrop-filter: none;
 }
 
-[data-style="blueprint"] .tc-toggle {
-  border-radius: 0;
-}
 
 [data-style="blueprint"] .tc-action,
 [data-style="blueprint"] .tc-presets button,

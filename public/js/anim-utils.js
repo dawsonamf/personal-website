@@ -1,5 +1,5 @@
 /**
- * Shared animation helpers, used by js/script.js and blog/blog-listing.js.
+ * Shared animation helpers, used by public/js/script.js and public/js/blog-listing-client.js.
  *
  * persistAfterAnimation(el, finalStyles)
  *   When el's CSS animation ends, clears the animation and pins the given
@@ -89,7 +89,7 @@ function animateThenPersist(el, animation, delay, finalStyles) {
  * internal breaks — see .section-header-word in css/themes/marquee.css.
  *
  * Wrappers marked data-header-intro are left to the page's own intro wave —
- * js/script.js and blog/blog-listing.js call revealSectionHeader() on them
+ * public/js/script.js and public/js/blog-listing-client.js call revealSectionHeader() on them
  * at the point in the sequence where their title is due. They join the
  * observer at that moment, so from then on they reverse like the rest.
  */

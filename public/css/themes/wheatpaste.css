@@ -956,17 +956,7 @@
   backdrop-filter: none;
 }
 
-[data-style="wheatpaste"] .tc-toggle {
-  border-radius: 0;
-  border: 2px solid var(--accent);
-  color: var(--accent);
-  transition: none;
-}
 
-[data-style="wheatpaste"] .tc-toggle:hover {
-  background-color: var(--accent);
-  color: var(--bg);
-}
 
 [data-style="wheatpaste"] .tc-action,
 [data-style="wheatpaste"] .tc-presets button,

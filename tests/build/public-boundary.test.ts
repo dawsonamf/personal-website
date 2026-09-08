@@ -26,11 +26,10 @@ const astroBin = join(repoRoot, 'node_modules', 'astro', 'bin', 'astro.mjs');
 const BUILD_MS = 180_000;
 const INPUT_DIRS = [
   'src', 'public', 'docs',
-  '12years', 'blog', 'css', 'embedded-swift-agent', 'js', 'lexchat', 'privacy', 'resources',
 ] as const;
 const INPUT_FILES = [
   'astro.config.mjs', 'package.json', 'package-lock.json', 'tsconfig.json', '.nvmrc',
-  'index.html', '404.html', 'robots.txt', 'CLAUDE.md', 'CNAME', '.nojekyll', 'sitemap.xml',
+  'CLAUDE.md', 'CNAME', '.nojekyll',
 ] as const;
 
 const THEMES = [
@@ -182,7 +181,7 @@ describe('S1-22 complete public boundary', () => {
 
   it('builds from the exact repository inputs without mutating either source tree', () => {
     assert.equal(copyBefore, repoBefore, 'faithful build-copy inputs differ from repository inputs');
-    assert.equal(repoAfter, repoBefore, 'repository src/config/public/root candidates changed during build');
+    assert.equal(repoAfter, repoBefore, 'repository src/config/public inputs changed during build');
     assert.equal(copyAfter, copyBefore, 'faithful build-copy inputs changed during build');
   });
 
@@ -235,7 +234,7 @@ describe('S1-22 complete public boundary', () => {
     }
   });
 
-  it('keeps source-only root content, drafts, and the retired sitemap outside production', () => {
+  it('keeps source-only content, drafts, rollback files, and the retired sitemap path outside production', () => {
     for (const path of ['CLAUDE.md', 'CNAME', '.nojekyll', 'sitemap.xml', 'src', 'docs']) {
       assert.equal(existsSync(join(dist, path)), false, path);
     }

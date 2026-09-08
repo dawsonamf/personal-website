@@ -993,18 +993,7 @@
   backdrop-filter: none;
 }
 
-[data-style="constructivist"] .tc-toggle {
-  border-radius: 0;
-  border: 2px solid var(--text);
-  color: var(--text);
-  transition: none;
-}
 
-[data-style="constructivist"] .tc-toggle:hover {
-  background-color: var(--text);
-  color: var(--bg);
-  transform: none;
-}
 
 [data-style="constructivist"] .tc-action,
 [data-style="constructivist"] .tc-presets button,

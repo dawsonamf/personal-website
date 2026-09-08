@@ -28,9 +28,11 @@ const page: PageContext = { type: 'notFound', path: `/fab/${corner}/` };
     <title>picker fixture (fab {corner})</title>
     <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
     <link rel="stylesheet" href="/css/theme-cycler.css">
+    <Fragment set:html={'<!--theme-assets-->'} />
     {html.links.map((link) => <link rel="stylesheet" href={link} data-style-asset="1">)}
   </head>
   <body>
+    <Fragment set:html={'<!--picker-mount:fab-->'} />
     <main>
       <h1 id="probe" style="color: var(--text); background: var(--bg)">{corner}</h1>
     </main>

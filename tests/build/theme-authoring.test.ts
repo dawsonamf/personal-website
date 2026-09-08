@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cpSync, existsSync, readFileSync, readdirSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { after, before, describe, it } from 'node:test';
 
@@ -73,6 +73,8 @@ describe('S1-24 isolated structural authoring build', () => {
     fixtureDir = fixture.dir;
     fixtureDist = fixture.dist;
     for (const rel of ['package.json', 'tsconfig.json']) cpSync(join(repoRoot, rel), join(fixture.dir, rel));
+    mkdirSync(join(fixture.dir, 'scripts'));
+    cpSync(join(repoRoot, 'scripts', 'build-picker.mjs'), join(fixture.dir, 'scripts', 'build-picker.mjs'));
     const run = spawnSync('npm', ['run', 'build'], { cwd: fixture.dir, encoding: 'utf8', timeout: BUILD_MS, env: { ...process.env, PROSE_DRAFTS: undefined } });
     ordinary = { status: run.status, stdout: run.stdout, stderr: run.stderr };
     const production = buildSite('s1-24-production-');

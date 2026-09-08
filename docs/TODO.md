@@ -4,21 +4,21 @@
 
 - [ ] **Spec 1 migration engine** — [28 ordered agent tickets](superpowers/plans/2026-09-05-spec-1-migration-engine.md), with implementation dependencies and automated verification. Owner QA happens once the complete migration is finished.
 - [ ] **AI & Job Market post — more charts.** Research done; plan + data sources + pending decisions in [ai-job-market-post-plan.md](ai-job-market-post-plan.md). Blocked on 4 user decisions (D1–D6 in that file) before building.
-- [ ] OG / Twitter card images per blog post (so links unfurl nicely when shared — social crawlers don't execute JS, so `post.html` can only carry generic tags; inherent tradeoff of no-build)
+- [ ] Distinct OG / Twitter card images per blog post. Static post pages already emit post-owned title, description, canonical and JSON-LD metadata, but currently share `/resources/og-avatar.jpg`.
 - [ ] Case studies for 2–3 strongest projects (problem → constraints → decisions → outcome → what I'd do differently). Either a separate "Case Studies" section on the home page or tag existing posts as Case Study.
-- [ ] README.md — the repo has no README. CLAUDE.md documents conventions for agents; the README should sell the architecture to people: what this is, how to run locally, the interesting parts (theme system, config-driven nav, client-side markdown blog), a repo map, and conventions.
+- [ ] README.md — the repo has no human-facing root README. CLAUDE.md documents agent conventions; the README should explain the Astro static build, typed theme composition, owning prose/post sources, repo map and local commands.
 - [ ] .editorconfig — zero-dependency way to signal formatting discipline (spec in `docs/BACKLOG.md` git history if needed)
 
 ## Polish
 
 - [ ] `loading="lazy" decoding="async"` on blog-post images and the contact map
-- [ ] Selected Works scroll-expand treatment — `js/featured-carousel.js` ships a complete scroll-driven "expand" visual behind `EXPAND_VISUAL = false` (styles under `.fc-expand-*` in `css/featured-carousel.css`; respects `prefers-reduced-motion`). If enabled, reconcile its injected heading with the static "03. Selected Works" header.
+- [ ] Selected Works scroll-expand treatment. The retired experimental implementation is gone; a future version needs a fresh design, reduced-motion behavior and reconciliation with the static "03. Selected Works" header.
 
 ## Someday / maybe
 
 - [ ] Uses / stack page (`/uses` — editor, tools, hardware, services, dotfiles link)
 - [ ] "X reads" badge on blog posts (needs an analytics service — GoatCounter free / Plausible paid / Umami self-hosted. Site can stay on GH Pages; only the counter source moves.)
-- [ ] Basic build step (esbuild or similar: minify, bundle, version assets). Only worth it if the site outgrows raw static.
+- [ ] Bundle, minify or version the classic `public/` assets if cache invalidation warrants it. Astro already builds the site, but it intentionally copies these files verbatim.
 - [ ] Reading list / "things that shaped me" page — books, papers, talks.
 
 ## Done

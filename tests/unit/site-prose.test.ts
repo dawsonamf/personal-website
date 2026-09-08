@@ -19,6 +19,7 @@ import { runInNewContext } from 'node:vm';
 
 import { load } from 'js-yaml';
 
+import { oldDir } from '../../harness/baseline.ts';
 import { findDrafts } from '../../src/prose/drafts.ts';
 import { SIZES } from '../../src/prose/fields.ts';
 import type { Size } from '../../src/prose/fields.ts';
@@ -30,8 +31,7 @@ import type { SiteProse } from '../../src/prose/schema.ts';
 import { THEME_IDS } from '../../src/themes/registry.ts';
 
 const repoRoot = resolve(import.meta.dirname, '..', '..');
-// PARITY_OLD_DIR wins, matching tests/unit/theme-registry.test.ts:45.
-const oldRoot = process.env.PARITY_OLD_DIR ?? repoRoot;
+const oldRoot = oldDir();
 const legacy = (relative: string) => {
   const file = resolve(oldRoot, relative);
   assert.ok(

@@ -776,15 +776,7 @@
   backdrop-filter: none;
 }
 
-[data-style="chinoiserie"] .tc-toggle {
-  border-color: var(--primary);
-  color: var(--primary);
-}
 
-[data-style="chinoiserie"] .tc-toggle:hover {
-  background-color: var(--primary);
-  color: var(--secondary);
-}
 
 
 /* ---- Mobile (site breakpoint: 1100px) --------------------------------------------------- */

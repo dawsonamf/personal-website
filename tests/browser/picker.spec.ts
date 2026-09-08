@@ -5,8 +5,8 @@
  *
  * Servers: two in-process node:http static servers, both bound to 127.0.0.1 on an ephemeral
  * port and closed in the worker teardown: never a parity port, never a persistent listener.
- * The NEW side serves the temp build's dist/; the OLD side serves the legacy site
- * (PARITY_OLD_DIR, else this checkout, whose legacy files are still at the root) for the one
+ * The NEW side serves the temp build's dist/; the OLD side serves the SHA-pinned detached
+ * baseline checkout (or PARITY_OLD_DIR) for the one
  * dock-parity test. Every page aborts requests to any host but 127.0.0.1, so no font or CDN
  * ever loads and the run is offline-deterministic.
  *
@@ -20,6 +20,7 @@ import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { dirname, extname, join, normalize, resolve } from 'node:path';
 
+import { oldDir } from '../../harness/baseline.ts';
 import { href, themeParams } from '../../src/themes/paths.ts';
 import { THEME_IDS, THEMES } from '../../src/themes/registry.ts';
 import type { SkinTheme } from '../../src/themes/types.ts';
@@ -137,7 +138,7 @@ const test = base.extend<object, { sites: Sites }>({
 
         // The legacy site, for the dock-parity test. An explicit PARITY_OLD_DIR that is not a
         // checkout is a broken run, not a reason to pass.
-        const oldRoot = process.env.PARITY_OLD_DIR ?? repoRoot;
+        const oldRoot = oldDir();
         if (!existsSync(join(oldRoot, 'js', 'theme-cycler.js'))) {
           throw new Error(`old side ${oldRoot} has no js/theme-cycler.js; PARITY_OLD_DIR is wrong`);
         }

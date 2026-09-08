@@ -840,9 +840,6 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.55), 0 0 18px var(--primary10);
 }
 
-[data-style="space"] .tc-toggle {
-  box-shadow: 0 0 12px var(--accent25);
-}
 
 
 /* ---- Mobile (site breakpoint: 1100px) ----------------------------------------------- */

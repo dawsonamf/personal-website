@@ -1074,18 +1074,7 @@
 }
 
 /* The FAB (post/privacy pages) is a small brass seal. */
-[data-style="wanted"] .tc-toggle {
-  border-radius: 50%;
-  border: 2px solid var(--text);
-  background: var(--accent);
-  color: var(--text);
-  transition: none;
-}
 
-[data-style="wanted"] .tc-toggle:hover {
-  background: var(--text);
-  color: var(--accent);
-}
 
 [data-style="wanted"] .tc-action,
 [data-style="wanted"] .tc-presets button,

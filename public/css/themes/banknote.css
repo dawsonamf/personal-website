@@ -1257,9 +1257,6 @@
 
 /* The FAB on nav-less pages: a square ink chop (theme-base.css already
    stills its hover lift). */
-[data-style="banknote"] .tc-toggle {
-  border-radius: 0;
-}
 
 [data-style="banknote"] .tc-action,
 [data-style="banknote"] .tc-presets button,

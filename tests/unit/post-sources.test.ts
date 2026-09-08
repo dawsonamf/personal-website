@@ -14,6 +14,7 @@ import { join, resolve } from 'node:path';
 import { describe, it } from 'node:test';
 import { runInNewContext } from 'node:vm';
 
+import { oldDir } from '../../harness/baseline.ts';
 import * as posts from '../../src/build/posts.ts';
 
 const {
@@ -27,8 +28,7 @@ const {
 } = posts;
 
 const repoRoot = resolve(import.meta.dirname, '..', '..');
-// PARITY_OLD_DIR wins, matching tests/unit/markdown.test.ts:24.
-const oldRoot = process.env.PARITY_OLD_DIR ?? repoRoot;
+const oldRoot = oldDir();
 const legacyPostsDir = join(oldRoot, 'blog', 'posts');
 const legacyDataFile = join(oldRoot, 'js', 'blog-data.js');
 const publicDir = join(repoRoot, 'public');
