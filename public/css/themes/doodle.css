@@ -532,7 +532,7 @@
 }
 
 [data-style="doodle"] #job-1::after {
-  content: 'currently here \2713';
+  content: var(--prose-currently-here);
   position: absolute;
   top: 12px;
   right: 16px;
