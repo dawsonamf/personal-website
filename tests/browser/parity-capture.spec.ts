@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { test } from '@playwright/test';
 import type { Page, TestInfo } from '@playwright/test';
-import { screenshotWithExceptionRectangles } from '../../harness/exceptions.ts';
+import { exceptionRectangles, screenshotWithExceptionRectangles } from '../../harness/exceptions.ts';
 
 const ANCHOR_Y = 1_200;
 
@@ -21,6 +21,51 @@ async function assertViewportContext(page: Page, testInfo: TestInfo): Promise<vo
 function pngSize(png: Buffer): { width: number; height: number } {
   assert.deepEqual([...png.subarray(1, 4)], [0x50, 0x4e, 0x47], 'capture is a PNG');
   return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
+}
+
+type ChangedCardFixtureOptions = {
+  hidden?: readonly ('helm' | 'metr-doubling')[];
+  unrelatedHidden?: readonly ('helm' | 'metr-doubling')[];
+  missingDate?: 'helm' | 'metr-doubling';
+  duplicateTitle?: 'helm' | 'metr-doubling';
+};
+
+async function setChangedCardFixture(
+  page: Page,
+  side: 'old' | 'new',
+  options: ChangedCardFixtureOptions = {},
+): Promise<void> {
+  const card = (id: 'helm' | 'metr-doubling', left: number): string => {
+    const hidden = options.hidden?.includes(id) ?? false;
+    const unrelatedHidden = options.unrelatedHidden?.includes(id) ?? false;
+    const href = side === 'old' ? `post.html?id=${id}` : `/blog/${id}/`;
+    const title = `<h3 class="blog-card-title">${side}-${id}</h3>`;
+    return `
+      <div class="blog-card-wrapper${hidden ? ' filtered-out' : ''}" style="left:${left}px;${unrelatedHidden ? 'display:none;' : ''}">
+        <a class="blog-card" href="${href}">
+          ${title}${options.duplicateTitle === id ? title : ''}
+          ${options.missingDate === id ? '' : '<p class="blog-card-date">March 2026</p>'}
+          <span class="unchanged">unchanged</span>
+        </a>
+      </div>`;
+  };
+  await page.setContent(`
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      html, body { margin: 0; background: white; }
+      #blog-grid { position: relative; }
+      .blog-card-wrapper { position: absolute; top: 30px; width: 170px; height: 140px; }
+      .blog-card-wrapper.filtered-out { display: none; }
+      .blog-card { display: block; position: relative; width: 170px; height: 140px; background: #eee; color: black; }
+      .blog-card-title { position: absolute; left: 10px; top: 12px; width: var(--title-width); height: 30px; margin: 0; background: #b33; }
+      .blog-card-date { position: absolute; left: 10px; top: 90px; width: 72px; height: 18px; margin: 0; background: #36c; }
+      .unchanged { position: absolute; left: 12px; top: 58px; }
+    </style>
+    <main id="blog-grid" style="--title-width:${side === 'old' ? '80px' : '150px'}">
+      ${card('helm', 20)}
+      ${card('metr-doubling', 200)}
+    </main>
+  `);
 }
 
 async function captureAfterAnimationFreeze(
@@ -169,4 +214,118 @@ test('temporary screenshot-preparation shrink cannot shorten a viewport PNG', as
     /screenshot preparation could not preserve the intended viewport/,
   );
   assert.equal(await page.evaluate(() => scrollY), anchorY, 'cleanup-restored document must retain its original anchor');
+});
+
+test('paired Swift-filtered metadata groups are omitted only after both DOMs prove the same exclusion', async ({ browser }, testInfo) => {
+  const context = await browser.newContext({
+    viewport: testInfo.project.name === 'mobile-390' ? { width: 390, height: 844 } : { width: 1440, height: 900 },
+    isMobile: testInfo.project.name === 'mobile-390',
+    hasTouch: testInfo.project.name === 'mobile-390',
+  });
+  const oldPage = await context.newPage();
+  const newPage = await context.newPage();
+  try {
+    await setChangedCardFixture(oldPage, 'old', { hidden: ['helm', 'metr-doubling'] });
+    await setChangedCardFixture(newPage, 'new', { hidden: ['helm', 'metr-doubling'] });
+    await assertViewportContext(oldPage, testInfo);
+    await assertViewportContext(newPage, testInfo);
+
+    const rectangles = await exceptionRectangles(oldPage, newPage, 'blog', 'default', 'filter-swift');
+    assert.deepEqual(rectangles, [], 'legitimate paired filtered metadata needs no screenshot pixels masked');
+    assert.deepEqual(
+      await screenshotWithExceptionRectangles(newPage, [], rectangles, false),
+      await screenshotWithExceptionRectangles(oldPage, [], rectangles, false),
+      'paired filtered cards leave all remaining pixels directly comparable',
+    );
+  } finally {
+    await context.close();
+  }
+});
+
+test('metadata mask groups keep identity and reject malformed or unauthorized hidden targets', async ({ browser }, testInfo) => {
+  const context = await browser.newContext({
+    viewport: testInfo.project.name === 'mobile-390' ? { width: 390, height: 844 } : { width: 1440, height: 900 },
+    isMobile: testInfo.project.name === 'mobile-390',
+    hasTouch: testInfo.project.name === 'mobile-390',
+  });
+  const oldPage = await context.newPage();
+  const newPage = await context.newPage();
+  try {
+    await setChangedCardFixture(oldPage, 'old');
+    await setChangedCardFixture(newPage, 'new');
+    await assertViewportContext(oldPage, testInfo);
+    await assertViewportContext(newPage, testInfo);
+    const visible = await exceptionRectangles(oldPage, newPage, 'blog', 'default', 'settled');
+    assert.deepEqual(visible, [
+      { x: 30, y: 42, width: 150, height: 96 },
+      { x: 210, y: 42, width: 150, height: 96 },
+    ], 'group order and exact visible union pixels stay Helm then METR');
+    assert.deepEqual(
+      await screenshotWithExceptionRectangles(newPage, [], visible, false),
+      await screenshotWithExceptionRectangles(oldPage, [], visible, false),
+      'the exact retained rectangles mask only the accepted metadata pixels',
+    );
+
+    await setChangedCardFixture(oldPage, 'old', { hidden: ['helm'] });
+    await setChangedCardFixture(newPage, 'new');
+    await assert.rejects(
+      exceptionRectangles(oldPage, newPage, 'blog', 'default', 'filter-swift'),
+      /helm.*OLD\/NEW.*filtered state differs|OLD\/NEW.*helm.*filtered state differs/,
+      'asymmetric hidden/visible groups must fail',
+    );
+
+    await setChangedCardFixture(oldPage, 'old', { missingDate: 'helm' });
+    await setChangedCardFixture(newPage, 'new');
+    await assert.rejects(
+      exceptionRectangles(oldPage, newPage, 'blog', 'default', 'filter-swift'),
+      /helm.*blog-card-date.*expected one OLD node, found 0/,
+      'missing metadata targets must fail',
+    );
+
+    await setChangedCardFixture(oldPage, 'old');
+    await setChangedCardFixture(newPage, 'new', { duplicateTitle: 'metr-doubling' });
+    await assert.rejects(
+      exceptionRectangles(oldPage, newPage, 'blog', 'default', 'filter-swift'),
+      /metr-doubling.*blog-card-title.*expected one NEW node, found 2/,
+      'duplicate metadata targets must fail',
+    );
+
+    await setChangedCardFixture(oldPage, 'old', { unrelatedHidden: ['helm'] });
+    await setChangedCardFixture(newPage, 'new', { unrelatedHidden: ['helm'] });
+    await assert.rejects(
+      exceptionRectangles(oldPage, newPage, 'blog', 'default', 'filter-swift'),
+      /helm.*correct filtered-out wrapper/,
+      'unrelated hidden content must fail',
+    );
+
+    await setChangedCardFixture(oldPage, 'old', { hidden: ['helm', 'metr-doubling'] });
+    await setChangedCardFixture(newPage, 'new', { hidden: ['helm', 'metr-doubling'] });
+    await oldPage.evaluate(() => {
+      const hiddenAnchor = document.querySelector<HTMLAnchorElement>('a.blog-card[href="post.html?id=helm"]')!;
+      const visibleWrapper = document.createElement('div');
+      visibleWrapper.className = 'blog-card-wrapper';
+      visibleWrapper.style.cssText = 'left:20px;top:200px';
+      const visibleAnchor = document.createElement('a');
+      visibleAnchor.className = 'blog-card';
+      visibleAnchor.href = 'post.html?id=helm';
+      visibleAnchor.append(hiddenAnchor.querySelector('.blog-card-date')!);
+      visibleWrapper.append(visibleAnchor);
+      document.querySelector('#blog-grid')!.append(visibleWrapper);
+    });
+    await assert.rejects(
+      exceptionRectangles(oldPage, newPage, 'blog', 'default', 'filter-swift'),
+      /helm.*same correct filtered-out wrapper/,
+      'every target in an omitted group must belong to the same excluded wrapper',
+    );
+
+    await setChangedCardFixture(oldPage, 'old', { hidden: ['helm', 'metr-doubling'] });
+    await setChangedCardFixture(newPage, 'new', { hidden: ['helm', 'metr-doubling'] });
+    await assert.rejects(
+      exceptionRectangles(oldPage, newPage, 'blog', 'default', 'settled'),
+      /helm.*not visible and bounded/,
+      'hidden groups outside filter-swift must fail',
+    );
+  } finally {
+    await context.close();
+  }
 });

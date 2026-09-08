@@ -10,6 +10,7 @@ import { createMigratedAdapter } from '../../harness/migrated.ts';
 import { normalizeHtml, type NormalizeOptions } from '../../harness/normalize.ts';
 import { paletteEvidenceForComparison, reloadOutcome } from '../../harness/palette.ts';
 import { expectedScripts, rawScriptSources, scriptOrderIssues } from '../../harness/scripts.ts';
+import { blogFilterExpectations, blogFilterMismatch } from '../../harness/interactions.ts';
 import { loadMigratedAdapter } from '../../harness/urls.ts';
 
 const adapter = createMigratedAdapter();
@@ -279,5 +280,74 @@ describe('raw and loaded script verification', () => {
     assert.ok(newHome.includes('/vendor/gsap/gsap.min.js'));
     assert.deepEqual(scriptOrderIssues('home', 'new', 'raw', newHome, undefined, true, adapter), []);
     assert.match(scriptOrderIssues('home', 'new', 'raw', newHome.slice(1), undefined, true, adapter).join('\n'), /complete/);
+  });
+
+  it('pins the NEW listing client without changing legacy listing or post identities', () => {
+    const oldBlog = expectedScripts('blog', 'old', 'raw');
+    assert.ok(oldBlog.includes('/blog/blog-listing.js'));
+    assert.ok(!oldBlog.includes('/js/blog-listing-client.js'));
+
+    const newBlog = expectedScripts('blog', 'new', 'raw', undefined, adapter);
+    assert.ok(newBlog.includes('/js/blog-listing-client.js'));
+    assert.ok(!newBlog.includes('/blog/blog-listing-client.js'));
+    assert.deepEqual(scriptOrderIssues('blog', 'new', 'raw', newBlog, undefined, true, adapter), []);
+    assert.match(
+      scriptOrderIssues('blog', 'new', 'raw', newBlog.map((src) =>
+        src === '/js/blog-listing-client.js' ? '/blog/blog-listing-client.js' : src
+      ), undefined, true, adapter).join('\n'),
+      /not allowed|complete/,
+    );
+    assert.match(
+      scriptOrderIssues('blog', 'new', 'raw', newBlog.filter((src) => src !== '/js/blog-listing-client.js'), undefined, true, adapter).join('\n'),
+      /complete/,
+    );
+    assert.match(
+      scriptOrderIssues('blog', 'new', 'raw', [...newBlog, '/js/blog-listing-client.js'], undefined, true, adapter).join('\n'),
+      /duplicate script/,
+    );
+    assert.ok(expectedScripts('post', 'new', 'raw', 'toolbelt', adapter).includes('/blog/blog-post-client.js'));
+  });
+});
+
+describe('listing filter URL projection', () => {
+  const posts = [
+    { id: 'swift-local', url: 'blog/post.html?id=swift-local', tags: ['Swift'] },
+    { id: 'external', url: 'https://example.com/post', tags: ['Swift'], external: true },
+    { id: 'other-local', url: 'blog/post.html?id=other-local', tags: ['Tools'] },
+  ];
+
+  it('keeps legacy links in old-old without requiring the migrated adapter', () => {
+    assert.deepEqual(
+      blogFilterExpectations(posts, { mode: 'old-old', side: 'new', theme: 'brutalist' }, null),
+      [
+        { id: 'swift-local', href: 'post.html?id=swift-local', filteredOut: false },
+        { id: 'external', href: 'https://example.com/post', filteredOut: false },
+        { id: 'other-local', href: 'post.html?id=other-local', filteredOut: true },
+      ],
+    );
+  });
+
+  it('uses the existing migrated theme projection and rejects a wrong-theme actual link', () => {
+    const expected = blogFilterExpectations(
+      posts,
+      { mode: 'old-new', side: 'new', theme: 'brutalist' },
+      adapter,
+    );
+    assert.deepEqual(expected.map(({ href }) => href), [
+      '/brutalist/blog/swift-local/',
+      'https://example.com/post',
+      '/brutalist/blog/other-local/',
+    ]);
+    assert.equal(blogFilterMismatch({
+      active: true,
+      cards: expected.map(({ href, filteredOut }) => ({ href, filteredOut })),
+    }, expected), null);
+    assert.match(blogFilterMismatch({
+      active: true,
+      cards: expected.map(({ href, filteredOut }, index) => ({
+        href: index === 0 ? '/marquee/blog/swift-local/' : href,
+        filteredOut,
+      })),
+    }, expected) ?? '', /card 0 links to \/marquee\/blog\/swift-local\//);
   });
 });

@@ -15,7 +15,7 @@ import type { Page } from '@playwright/test';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { content, masthead, oldDir } from './baseline.ts';
-import type { MastheadFixture } from './baseline.ts';
+import type { BlogPost, MastheadFixture } from './baseline.ts';
 import {
   cleanMastheadText,
   HOME_DELETE_INDEX,
@@ -27,7 +27,8 @@ import {
 import { holdSteady, pollUntil, ROLE_TOKENS, SETTLE_TIMEOUT_MS } from './sentinels.ts';
 import { afterInteraction, settle } from './settle.ts';
 import { firstPaint, recordFirstPaint, reloadOutcome } from './palette.ts';
-import { urlPairs } from './urls.ts';
+import { loadMigratedAdapter, urlPairs } from './urls.ts';
+import type { MigratedAdapter } from './migrated.ts';
 import type { PageType, ParityMode, UrlPair } from './urls.ts';
 
 export type ProjectName = 'desktop-1440' | 'mobile-390';
@@ -86,6 +87,61 @@ async function dispatchClick(page: Page, selector: string): Promise<void> {
   const target = page.locator(selector);
   await expect(target, `${selector} resolves to exactly one element`).toHaveCount(1);
   await target.dispatchEvent('click');
+}
+
+export interface BlogFilterExpectation {
+  id: string;
+  href: string;
+  filteredOut: boolean;
+}
+
+interface BlogFilterActual {
+  active: boolean;
+  cards: Array<{ href: string | null; filteredOut: boolean }>;
+}
+
+/** Source-derived listing expectation, with the migrated adapter kept behind the old-new gate. */
+export function blogFilterExpectations(
+  posts: readonly BlogPost[],
+  context: { mode: ParityMode; side: 'old' | 'new'; theme: string },
+  migrated: MigratedAdapter | null,
+): BlogFilterExpectation[] {
+  const isMigrated = context.mode === 'old-new' && context.side === 'new';
+  if (isMigrated && !migrated) throw new Error('filter-swift: migrated side needs its lazy adapter');
+  return posts.map((post) => {
+    if (typeof post.url !== 'string') throw new Error(`filter-swift: ${post.id} has no text URL`);
+    const tags = Array.isArray(post.tags) ? post.tags : [];
+    const href = post.external === true
+      ? post.url
+      : isMigrated
+        ? migrated!.mapOldUrl(post.url, { page: 'blog', theme: context.theme, tag: 'a', attr: 'href' })
+        : post.url.startsWith('blog/') ? post.url.replace('blog/', '') : post.url;
+    return {
+      id: post.id,
+      href,
+      filteredOut: !tags.includes('Swift'),
+    };
+  });
+}
+
+/** Exact interaction predicate, exported so wrong-theme links have a non-browser regression. */
+export function blogFilterMismatch(
+  actual: BlogFilterActual,
+  expected: readonly BlogFilterExpectation[],
+): string | null {
+  if (!actual.active) return 'the Swift pill is not .active';
+  if (actual.cards.length !== expected.length) {
+    return `${actual.cards.length} cards, expected ${expected.length}`;
+  }
+  for (let i = 0; i < expected.length; i++) {
+    const want = expected[i]!;
+    const card = actual.cards[i]!;
+    if (card.href !== want.href) return `card ${i} links to ${card.href}, expected ${want.href}`;
+    if (card.filteredOut !== want.filteredOut) {
+      return `${want.id} filtered-out=${card.filteredOut}, expected ${want.filteredOut}`;
+    }
+  }
+  return null;
 }
 
 /** `window.scrollTo` plus the wait for the page to come to rest at the new offset. */
@@ -813,34 +869,27 @@ export const INTERACTIONS: Record<Exclude<StateName, 'settled'>, Interaction> = 
   'filter-swift': {
     pages: ['blog'],
     async run(page, ctx) {
-      // blog-listing.js:130 rewrites a local post's `blog/…` url relative to the listing.
-      const expected = content().blogPosts.map((post) => {
-        const url = post.url as string;
-        const tags = (post.tags as string[] | undefined) ?? [];
-        return {
-          id: post.id,
-          href: post.external === true ? url : url.startsWith('blog/') ? url.replace('blog/', '') : url,
-          filteredOut: !tags.includes('Swift'),
-        };
-      });
+      const migrated = ctx.mode === 'old-new' && ctx.side === 'new'
+        ? await loadMigratedAdapter(ctx.mode)
+        : null;
+      const expected = blogFilterExpectations(
+        content().blogPosts,
+        { mode: ctx.mode, side: ctx.side, theme: ctx.pair.theme },
+        migrated,
+      );
       await dispatchClick(page, '#filter-bar .filter-pill[data-tag="Swift"]');
       await pollUntil(ctx.pageType, 'filter-swift', ctx.deadline, () =>
-        page.evaluate((expected) => {
+        page.evaluate(() => {
           const pill = document.querySelector('#filter-bar .filter-pill[data-tag="Swift"]');
-          if (!pill?.classList.contains('active')) return 'the Swift pill is not .active';
           const wrappers = [...document.querySelectorAll('#blog-grid > .blog-card-wrapper')];
-          if (wrappers.length !== expected.length) {
-            return `${wrappers.length} cards, expected ${expected.length}`;
-          }
-          for (let i = 0; i < expected.length; i++) {
-            const want = expected[i]!;
-            const href = wrappers[i]!.querySelector('a.blog-card')?.getAttribute('href');
-            if (href !== want.href) return `card ${i} links to ${href}, expected ${want.href}`;
-            const out = wrappers[i]!.classList.contains('filtered-out');
-            if (out !== want.filteredOut) return `${want.id} filtered-out=${out}, expected ${want.filteredOut}`;
-          }
-          return null;
-        }, expected),
+          return {
+            active: pill?.classList.contains('active') ?? false,
+            cards: wrappers.map((wrapper) => ({
+              href: wrapper.querySelector('a.blog-card')?.getAttribute('href') ?? null,
+              filteredOut: wrapper.classList.contains('filtered-out'),
+            })),
+          };
+        }).then((actual) => blogFilterMismatch(actual, expected)),
       );
       ctx.evidence.filter = expected.map(({ id, filteredOut }) => ({ id, filteredOut }));
     },

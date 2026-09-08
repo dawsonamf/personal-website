@@ -45,7 +45,7 @@ function newScripts(page: PageType, adapter: MigratedAdapter, postId?: string): 
   const tilt = vendor('vanilla-tilt/dist/vanilla-tilt.min.js');
   const byPage: Record<PageType, string[]> = {
     home: [vendor('gsap/dist/gsap.min.js'), vendor('jquery/dist/jquery.min.js'), vendor('jquery-ui-dist/jquery-ui.min.js'), aos, tilt, CALENDLY, '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-behavior.js', '/js/script.js', '/js/cursor-follow.js', CYCLER],
-    blog: [aos, tilt, CALENDLY, '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-behavior.js', '/js/cursor-follow.js', '/blog/blog-listing-client.js', CYCLER],
+    blog: [aos, tilt, CALENDLY, '/js/featured-carousel.js', '/js/typing-engine.js', '/js/anim-utils.js', '/js/nav-behavior.js', '/js/cursor-follow.js', '/js/blog-listing-client.js', CYCLER],
     post: [...(postId === 'toolbelt' ? [MERMAID] : []), tilt, '/js/nav-behavior.js', '/js/cursor-follow.js', ...postAssets(postId), '/blog/blog-post-client.js', CYCLER],
     privacy: [CYCLER],
     notFound: [CYCLER],

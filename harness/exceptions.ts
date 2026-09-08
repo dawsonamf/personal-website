@@ -173,16 +173,32 @@ export function applyDomExceptions(lines: readonly string[], ctx: ExceptionConte
     });
 }
 
-/** Selector groups measured on NEW; each group becomes one identical union rectangle on both sides. */
-export function screenshotExceptionGroups(page: PageType, theme: string, side: 'old' | 'new' = 'new'): string[][] {
-  if (page === 'privacy' || page === 'notFound') return [['.tc-fab']];
+interface ScreenshotExceptionGroup {
+  id: string;
+  selectors: string[];
+  filteredMetadata: boolean;
+}
+
+function screenshotExceptionGroupSpecs(page: PageType, theme: string, side: 'old' | 'new'): ScreenshotExceptionGroup[] {
+  if (page === 'privacy' || page === 'notFound') {
+    return [{ id: 'theme-picker-fab', selectors: ['.tc-fab'], filteredMetadata: false }];
+  }
   if (page === 'home' || page === 'blog') return (['helm', 'metr-doubling'] as const).map((id) => {
     const href = side === 'new' ? changedCardHref(theme, id)
       : `${page === 'home' ? 'blog/' : ''}post.html?id=${id}`;
     const card = `a.blog-card[href="${href}"]`;
-    return [`${card} .blog-card-title`, `${card} .blog-card-date`];
+    return {
+      id,
+      selectors: [`${card} .blog-card-title`, `${card} .blog-card-date`],
+      filteredMetadata: page === 'blog',
+    };
   });
   return [];
+}
+
+/** Exact selector groups exposed for the §15 unit contract. */
+export function screenshotExceptionGroups(page: PageType, theme: string, side: 'old' | 'new' = 'new'): string[][] {
+  return screenshotExceptionGroupSpecs(page, theme, side).map(({ selectors }) => selectors);
 }
 
 export interface MaskRectangle { x: number; y: number; width: number; height: number }
@@ -199,35 +215,71 @@ function pngDimensions(png: Buffer): { width: number; height: number } {
   return { width: png.readUInt32BE(16), height: png.readUInt32BE(20) };
 }
 
-/** Measure each accepted visible NEW addition as one bounded union rectangle. */
-async function measureGroups(page: Page, groups: string[][]): Promise<MaskRectangle[]> {
+interface MeasuredGroup {
+  id: string;
+  rectangle: MaskRectangle | null;
+  filteredOut: boolean;
+}
+
+/** Measure each visible group, or prove one exact blog/filter-swift group is legitimately excluded. */
+async function measureGroups(
+  page: Page,
+  groups: ScreenshotExceptionGroup[],
+  side: 'old' | 'new',
+  allowFilteredMetadata: boolean,
+): Promise<MeasuredGroup[]> {
   if (!groups.length) return [];
-  return page.evaluate((selectorGroups) => {
+  return page.evaluate(({ selectorGroups, side, allowFilteredMetadata }) => {
     const viewport = { width: innerWidth, height: innerHeight };
-    return selectorGroups.map((selectors) => {
-      const boxes = selectors.map((selector) => {
+    return selectorGroups.map(({ id, selectors, filteredMetadata }) => {
+      let filteredWrapper: HTMLElement | null = null;
+      const targets = selectors.map((selector) => {
         const nodes = [...document.querySelectorAll<HTMLElement>(selector)];
-        if (nodes.length !== 1) throw new Error(`screenshot exception ${selector}: expected one NEW node, found ${nodes.length}`);
+        if (nodes.length !== 1) {
+          throw new Error(`screenshot exception ${id} ${selector}: expected one ${side.toUpperCase()} node, found ${nodes.length}`);
+        }
         const node = nodes[0]!;
         const style = getComputedStyle(node);
         const box = node.getBoundingClientRect();
         if (style.display === 'none' || style.visibility === 'hidden' || Number(style.opacity) === 0
           || box.width <= 0 || box.height <= 0) {
-          throw new Error(`screenshot exception ${selector}: target is not visible and bounded`);
+          if (!allowFilteredMetadata || !filteredMetadata) {
+            throw new Error(`screenshot exception ${id} ${selector}: target is not visible and bounded`);
+          }
+          const wrapper = node.closest<HTMLElement>('.blog-card-wrapper');
+          if (!wrapper || wrapper.parentElement?.id !== 'blog-grid'
+            || !wrapper.classList.contains('filtered-out') || getComputedStyle(wrapper).display !== 'none') {
+            throw new Error(`screenshot exception ${id} ${selector}: target is not in the correct filtered-out wrapper`);
+          }
+          if (filteredWrapper && filteredWrapper !== wrapper) {
+            throw new Error(`screenshot exception ${id}: metadata targets belong to different filtered-out wrappers`);
+          }
+          filteredWrapper = wrapper;
         }
-        return box;
+        return { box, node, selector };
       });
+      if (filteredWrapper) {
+        for (const { node, selector } of targets) {
+          const wrapper = node.closest<HTMLElement>('.blog-card-wrapper') as HTMLElement;
+          if (wrapper !== filteredWrapper || wrapper.parentElement?.id !== 'blog-grid'
+            || !wrapper.classList.contains('filtered-out') || getComputedStyle(wrapper).display !== 'none') {
+            throw new Error(`screenshot exception ${id} ${selector}: every target must belong to the same correct filtered-out wrapper`);
+          }
+        }
+        return { id, rectangle: null, filteredOut: true };
+      }
+      const boxes = targets.map(({ box }) => box);
       const left = Math.floor(Math.min(...boxes.map((box) => box.left)) + scrollX);
       const top = Math.floor(Math.min(...boxes.map((box) => box.top)) + scrollY);
       const right = Math.ceil(Math.max(...boxes.map((box) => box.right)) + scrollX);
       const bottom = Math.ceil(Math.max(...boxes.map((box) => box.bottom)) + scrollY);
       const rectangle = { x: left, y: top, width: right - left, height: bottom - top };
       if (rectangle.width >= viewport.width && rectangle.height >= viewport.height) {
-        throw new Error(`screenshot exception ${selectors.join(', ')}: refuses a viewport-sized rectangle`);
+        throw new Error(`screenshot exception ${id} ${selectors.join(', ')}: refuses a viewport-sized rectangle`);
       }
-      return rectangle;
+      return { id, rectangle, filteredOut: false };
     });
-  }, groups);
+  }, { selectorGroups: groups, side, allowFilteredMetadata });
 }
 
 export async function exceptionRectangles(
@@ -235,20 +287,47 @@ export async function exceptionRectangles(
   newPage: Page,
   pageType: PageType,
   theme: string,
+  state = 'settled',
 ): Promise<MaskRectangle[]> {
   if (pageType === 'privacy' || pageType === 'notFound') {
-    return measureGroups(newPage, screenshotExceptionGroups(pageType, theme, 'new'));
+    const groups = await measureGroups(
+      newPage,
+      screenshotExceptionGroupSpecs(pageType, theme, 'new'),
+      'new',
+      false,
+    );
+    return groups.map(({ rectangle }) => rectangle!);
   }
-  const oldRectangles = await measureGroups(oldPage, screenshotExceptionGroups(pageType, theme, 'old'));
-  const newRectangles = await measureGroups(newPage, screenshotExceptionGroups(pageType, theme, 'new'));
-  if (oldRectangles.length !== newRectangles.length) throw new Error('screenshot exceptions: OLD/NEW group count differs');
-  return oldRectangles.map((oldBox, index) => {
-    const newBox = newRectangles[index]!;
+  const allowFilteredMetadata = pageType === 'blog' && state === 'filter-swift';
+  const oldGroups = await measureGroups(
+    oldPage,
+    screenshotExceptionGroupSpecs(pageType, theme, 'old'),
+    'old',
+    allowFilteredMetadata,
+  );
+  const newGroups = await measureGroups(
+    newPage,
+    screenshotExceptionGroupSpecs(pageType, theme, 'new'),
+    'new',
+    allowFilteredMetadata,
+  );
+  if (oldGroups.length !== newGroups.length) throw new Error('screenshot exceptions: OLD/NEW group count differs');
+  return oldGroups.flatMap((oldGroup, index) => {
+    const newGroup = newGroups[index]!;
+    if (oldGroup.id !== newGroup.id) {
+      throw new Error(`screenshot exceptions: OLD group ${oldGroup.id} does not match NEW group ${newGroup.id}`);
+    }
+    if (oldGroup.filteredOut !== newGroup.filteredOut) {
+      throw new Error(`screenshot exception ${oldGroup.id}: OLD/NEW filtered state differs`);
+    }
+    if (oldGroup.filteredOut) return [];
+    const oldBox = oldGroup.rectangle!;
+    const newBox = newGroup.rectangle!;
     const left = Math.min(oldBox.x, newBox.x);
     const top = Math.min(oldBox.y, newBox.y);
     const right = Math.max(oldBox.x + oldBox.width, newBox.x + newBox.width);
     const bottom = Math.max(oldBox.y + oldBox.height, newBox.y + newBox.height);
-    return { x: left, y: top, width: right - left, height: bottom - top };
+    return [{ x: left, y: top, width: right - left, height: bottom - top }];
   });
 }
 

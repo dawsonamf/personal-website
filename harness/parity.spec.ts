@@ -566,7 +566,9 @@ for (const { pair, state } of matrix) {
 
         // §15 visible exceptions are measured once on NEW, then rendered as the same bounded
         // page-coordinate rectangles on both captures. Closed fullscreen scrims never enter this.
-        const rectangles = mode === 'old-new' ? await exceptionRectangles(old.page, next.page, pair.page, pair.theme) : [];
+        const rectangles = mode === 'old-new'
+          ? await exceptionRectangles(old.page, next.page, pair.page, pair.theme, state.name)
+          : [];
         oldCapture.png = await screenshotWithExceptionRectangles(
           old.page, spec.mask, rectangles, spec.fullPage,
         );

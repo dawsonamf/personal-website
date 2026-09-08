@@ -1,13 +1,18 @@
 ---
 // The blog listing, one route per theme: `/blog/` and `/<id>/blog/`.
 import { compose, routeTheme } from '../../../layouts/compose.ts';
+import { canonicalStyleExtras } from '../../../layouts/canonical/presentation.ts';
 import type { PageContext } from '../../../layouts/types.ts';
 import { themeParams } from '../../../themes/paths.ts';
 
 export const getStaticPaths = () => themeParams().map((params) => ({ params }));
 
 const theme = routeTheme(Astro.params.theme);
-const page: PageContext = { type: 'blog', path: '/blog/' };
+const page: PageContext = {
+  type: 'blog',
+  path: '/blog/',
+  styleExtras: canonicalStyleExtras(theme.id, { carousel: true }),
+};
 const composition = await compose(theme, page);
 const Layout = composition.layout;
 ---
