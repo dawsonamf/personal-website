@@ -181,6 +181,7 @@ describe('S1-20 publication output', () => {
       'https://www.dawsonamf.com/',
       'https://www.dawsonamf.com/blog/',
       'https://www.dawsonamf.com/privacy/',
+      'https://www.dawsonamf.com/subsites/dawson/embedded-swift-agent/',
       ...published.map((id) => `https://www.dawsonamf.com/blog/${id}/`),
     ]);
     assert.deepEqual(new Set(entries.keys()), expected);

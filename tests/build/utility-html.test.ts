@@ -82,7 +82,8 @@ describe('S1-21 utility HTML', () => {
     assert.equal(routes.filter((file) => /(?:^|\/)blog\/(?:fly-on-my-laptop|underviewed-art|arena-freshness|helm|toolbelt|embedded-swift-agent|metr-doubling|college-projects)\/index\.html$/.test(file)).length, 128);
 
     const sitemap = readFileSync(join(dist, 'sitemap-0.xml'), 'utf8');
-    assert.equal([...sitemap.matchAll(/<loc>[^<]+<\/loc>/g)].length, 11);
+    assert.equal([...sitemap.matchAll(/<loc>[^<]+<\/loc>/g)].length, 12);
+    assert.match(sitemap, /<loc>https:\/\/www\.dawsonamf\.com\/subsites\/dawson\/embedded-swift-agent\/<\/loc>/);
     assert.doesNotMatch(sitemap, /\/lexchat\//);
   });
 });

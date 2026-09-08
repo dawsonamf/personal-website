@@ -9,6 +9,7 @@ import { THEME_IDS } from './src/themes/registry.ts';
 
 const publicPostIds = new Set(publishedPostIds());
 const publicPostDates = postDates();
+const embeddedAgentSubsite = 'https://www.dawsonamf.com/subsites/dawson/embedded-swift-agent/';
 
 function sitemapPath(page) {
   return new URL(page).pathname;
@@ -95,6 +96,10 @@ export default defineConfig({
     prose(),
     postOutput(),
     checks(),
-    sitemap({ filter: includeInSitemap, serialize: serializeSitemapItem }),
+    sitemap({
+      customPages: [embeddedAgentSubsite],
+      filter: includeInSitemap,
+      serialize: serializeSitemapItem,
+    }),
   ],
 });
