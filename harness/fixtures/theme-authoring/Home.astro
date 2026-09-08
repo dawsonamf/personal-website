@@ -1,0 +1,56 @@
+---
+import Shell from '../../../src/layouts/Shell.astro';
+import ThemeAssets from '../../../src/layouts/ThemeAssets.astro';
+import PalettePrepaint from '../../../src/layouts/canonical/components/PalettePrepaint.astro';
+import type { LayoutProps } from '../../../src/layouts/types.ts';
+import { prose } from '../../../src/prose/site.ts';
+import { href } from '../../../src/themes/paths.ts';
+
+type Props = LayoutProps;
+const { theme, page, composition } = Astro.props;
+const paragraphs = prose.paragraphs('home.about.body', 'l');
+const links = [
+  { label: prose.text('nav.blog', 'xs'), href: href('/blog/', theme.id) },
+  { label: prose.text('meta.privacy.title', 's'), href: href('/privacy/', theme.id) },
+];
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{prose.text('meta.home.title', 's')}</title>
+    <meta name="description" content={prose.text('meta.home.description', 'm')}>
+    <link rel="canonical" href={composition.canonical}>
+    {composition.noindex && <meta name="robots" content="noindex">}
+    <link rel="stylesheet" href="/css/author-proof.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <PalettePrepaint />
+    <ThemeAssets theme={theme} composition={composition} />
+    <script is:inline defer src="/js/author-proof.js"></script>
+  </Fragment>
+
+  <main class="proof-shell" data-author-home="true">
+    <section class="proof-desktop" aria-label={prose.text('nav.aria.main', 'xs')}>
+      <header class="proof-mast">
+        <p class="proof-kicker" data-role="accent">{prose.text('site.logo', 'xs')}</p>
+        <h1 data-role="text">{prose.text('site.name', 'xs')}</h1>
+      </header>
+      <div class="proof-grid">
+        <nav data-role="primary"><ul>{links.map((link) => <li><a href={link.href}>{link.label}</a></li>)}</ul></nav>
+        <article data-role="background">
+          <h2>{prose.text('home.about.title', 'xs')}</h2>
+          {paragraphs.map((paragraph: string) => <p set:html={paragraph} />)}
+        </article>
+        <aside data-role="secondary" aria-hidden="true"><span data-role="accent"></span></aside>
+      </div>
+    </section>
+
+    <section class="proof-mobile" aria-label={prose.text('nav.aria.quick', 'xs')}>
+      <h1 data-role="text">{prose.text('site.name', 'xs')}</h1>
+      <div class="proof-mobile-stripe" data-role="secondary"><i data-role="primary"></i><i data-role="accent"></i></div>
+      <p set:html={paragraphs[0]} data-role="background" />
+      <nav><ul>{links.map((link) => <li><a href={link.href}>{link.label}</a></li>)}</ul></nav>
+    </section>
+  </main>
+</Shell>

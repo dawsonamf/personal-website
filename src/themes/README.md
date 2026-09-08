@@ -48,11 +48,11 @@ adds the canonical URL; `routeTheme(param)` maps a route param to its registry e
 
 | theme, page type | layout | assets | picker |
 |---|---|---|---|
-| `default` | canonical | none | nav; privacy/404: fab; lexchat: none |
-| skin, any page type | canonical | fonts, `theme-base.css`, skin css | nav; privacy/404: fab; lexchat: none |
+| `default` | canonical | none | nav; privacy/404: fab |
+| skin, any page type | canonical | fonts, `theme-base.css`, skin css | nav; privacy/404: fab |
 | structural, page type in `layouts` | the theme's layout | fonts | fab; an own-mount declaration is added with its consumer (§11) |
 | structural, unowned home/blog/post | canonical | fonts, `theme-base.css` | nav |
-| structural, utility page type | canonical | fonts | privacy/404: fab; lexchat: none |
+| structural, utility page type | canonical | fonts | privacy/404: fab |
 
 Nothing else in the engine branches on `theme.kind`.
 
@@ -97,20 +97,44 @@ do its work synchronously at its own execution (D27).
 
 ## Authoring a structural theme
 
-The minimal API:
+Use this workflow for the contract Spec 1 ships:
 
-1. Register it: `{ kind: 'structural', id, polarity, colors, tokens?, fonts?, layouts: { home: () => import('./home/Home.astro') } }`.
-2. Add `themes.<id>.label` to `src/content/prose.yaml`.
-3. Your layout takes `LayoutProps`, wraps `<Shell>` and writes its own head: `/css/theme-cycler.css`,
-   then `PalettePrepaint`, then `ThemeAssets`, plus a Font Awesome sheet for the FAB glyph.
-4. Use `href()` for every internal link; sized prose comes from the accessor.
+1. Add one typed registry entry with `kind: 'structural'`, a URL-safe `id`, `polarity`, the five
+   colors (`text`, `bg`, `primary`, `secondary`, `accent`), optional tokens/fonts/random profiles,
+   and at least one lazy owned layout such as
+   `layouts: { home: () => import('./my-theme/Home.astro') }`.
+2. Add the matching approved `themes.<id>.label` to `src/content/prose.yaml`. The strict
+   `themes` object in `src/prose/schema.ts` is derived from `THEME_IDS`, so registry registration
+   is also schema registration. Do not add a parallel label schema or theme-id branch.
+3. Add the owned layout under `src/themes/<id>/`. It accepts `LayoutProps`, wraps its content in
+   `Shell`, and owns its DOM and head. The head includes its own stylesheet, shared
+   `/css/theme-cycler.css`, Font Awesome for the FAB, then `PalettePrepaint` before `ThemeAssets`.
+   Add a theme script only when the theme owns behavior; keep its state under `theme.<id>.*`.
+4. Read sized copy only through the bound public `prose` accessor (`text`, `get`, `list`,
+   `paragraphs`, or `has`). Use `href()` for every root-absolute internal navigation target.
+5. Put root sizing and responsive structure in the owned stylesheet. If desktop and mobile need
+   distinct DOM, render both and toggle them with the theme's media query. Do not select a layout
+   from a boot-time width flag. Map all five shared palette roles into visible theme styling and
+   leave the shared randomizer enabled.
+6. Build an isolated copy and verify the owned page, canonical fallback listing/posts,
+   Privacy/404, exact loaded resources, picker switching, resize in both directions, saved
+   palette restoration, and the source-change manifest. Then build ordinary production and
+   verify the fixture id, prose, routes, picker row, CSS, and script are absent.
 
-Unowned page types fall back to the canonical layouts with your fonts and `theme-base.css`.
+The browser proof requires both output roots explicitly so every build, trace and cleanup record
+stays outside the checkout:
 
-A working example of exactly those four steps lives in `tests/fixtures/composition/`: `registry.ts`
-is the registration (overlaid onto this directory's `registry.ts` inside an isolated test build
-only) and `stub/Home.astro` is the owned layout, head and all. `tests/build/composition.test.ts`
-builds it and asserts the fallback; S1-24 expands it into the full walkthrough of §5.3.
+```bash
+PARITY_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/parity/manual TEST_BUILD_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/builds/manual npx playwright test harness/theme-authoring.spec.ts
+```
+
+An executable example lives in `harness/fixtures/theme-authoring/`. Its README records these same
+steps, `allowed-change-manifest.json` names the five files changed inside the isolated copy, and
+`tests/build/theme-authoring.test.ts` plus `harness/theme-authoring.spec.ts` prove the build and
+browser behavior. Unowned Home/listing/post pages fall back to canonical layouts with the
+structural theme's fonts and `theme-base.css`; Privacy and 404 use canonical utility layouts with
+the structural fonts only. A theme-only route remains an ordinary page file and needs no registry
+field.
 
 ## Verification
 

@@ -1,0 +1,34 @@
+  {
+    kind: 'structural',
+    id: 'author-proof',
+    polarity: 'light',
+    colors: { text: '#18201c', bg: '#f4f1e8', primary: '#9b2c22', secondary: '#d8cbb6', accent: '#176b5b' },
+    tokens: {
+      '--font-body': "Georgia, serif",
+      '--font-heading': "'Arial Narrow', Arial, sans-serif",
+    },
+    fonts: ['https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&display=swap'],
+    random: {
+      light: {
+        sat: [0.55, 0.65],
+        roles: [
+          { l: [0.12, 0.18], hueT: 0 },
+          { l: [0.91, 0.95], hueT: 0 },
+          { l: [0.34, 0.42], hueT: 1, sat: [0.62, 0.72] },
+          { l: [0.78, 0.84], hueT: 0.2, sat: [0.20, 0.30] },
+          { l: [0.30, 0.38], hueT: 0.65, sat: [0.58, 0.68] },
+        ],
+      },
+      dark: {
+        sat: [0.48, 0.58],
+        roles: [
+          { l: [0.88, 0.94], hueT: 0 },
+          { l: [0.08, 0.13], hueT: 0 },
+          { l: [0.60, 0.68], hueT: 1, sat: [0.60, 0.72] },
+          { l: [0.18, 0.24], hueT: 0.2, sat: [0.24, 0.34] },
+          { l: [0.62, 0.70], hueT: 0.65, sat: [0.58, 0.70] },
+        ],
+      },
+    },
+    layouts: { home: () => import('./author-proof/Home.astro') },
+  },

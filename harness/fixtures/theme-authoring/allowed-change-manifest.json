@@ -1,0 +1,7 @@
+[
+  "public/css/author-proof.css",
+  "public/js/author-proof.js",
+  "src/content/prose.yaml",
+  "src/themes/author-proof/Home.astro",
+  "src/themes/registry.ts"
+]
