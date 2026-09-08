@@ -1,0 +1,46 @@
+---
+// One build-time post adapter: select publishable sources, render each body once, then cross
+// those immutable results with the theme routes. BlogPost owns metadata and the named body slot.
+import { postDates, readPostSources } from '../../../build/posts.ts';
+import { compose, routeTheme } from '../../../layouts/compose.ts';
+import { canonicalStyleExtras } from '../../../layouts/canonical/presentation.ts';
+import type { PageContext } from '../../../layouts/types.ts';
+import { bindPostForLayout, projectPostLinks, renderPostBody } from '../../../posts/render.ts';
+import { themeParams } from '../../../themes/paths.ts';
+
+export function getStaticPaths() {
+  const preview = process.env.PROSE_DRAFTS === 'allow';
+  const selected = readPostSources().filter((post) =>
+    post.meta.publication === 'published' || (preview && post.meta.publication === 'draft'),
+  );
+  const dates = postDates(selected);
+  const rendered = selected.map((post) => ({ post, body: renderPostBody(post) }));
+
+  return rendered.flatMap(({ post, body }) =>
+    themeParams().map((params) => ({
+      params: { ...params, id: post.id },
+      props: { post: { ...post, datePublished: dates[post.id], hasMermaid: body.hasMermaid }, body },
+    })),
+  );
+}
+
+const { post, body } = Astro.props;
+const layoutPost = bindPostForLayout(post);
+const theme = routeTheme(Astro.params.theme);
+const previewDraft = post.meta.publication === 'draft';
+const page: PageContext = {
+  type: 'post',
+  path: `/blog/${post.id}/`,
+  previewDraft,
+  styleExtras: canonicalStyleExtras(theme.id, { carousel: false }),
+};
+const composed = await compose(theme, page);
+// A default-theme draft still needs noindex. Keep the draft rule local to this explicit
+// preview route so composeFor's ordinary page/theme table remains unchanged.
+const composition = previewDraft ? { ...composed, noindex: true } : composed;
+const Layout = composition.layout;
+const postBody = projectPostLinks(body.html, theme.id);
+---
+<Layout theme={theme} page={page} composition={composition} post={layoutPost}>
+  <Fragment slot="post-body" set:html={postBody} />
+</Layout>

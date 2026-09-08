@@ -14,9 +14,12 @@ import {
   canonicalizeGeneratedIds,
   installDeterminism,
   randomDraws,
+  randomSeedState,
   recordMastheadHistory,
   seedForPage,
+  STATIC_PAGE_SEED,
 } from './determinism.ts';
+import type { RouteSeedPlan } from './determinism.ts';
 import { INTERACTIONS, refreshAos, statesFor } from './interactions.ts';
 import type { Interaction, InteractionContext, ProjectName, StateName } from './interactions.ts';
 import { paletteEvidenceForComparison } from './palette.ts';
@@ -300,7 +303,13 @@ interface SideCapture {
   responseBody: string;
   html: string;
   /** §9's seeded `Math.random` and the draw count it served, dumped as the pick's evidence. */
-  determinism: { seed: number; draws: number };
+  determinism: {
+    seed: number;
+    effectiveSeed: number;
+    removedLibraryDraws: 0 | 1;
+    location: string;
+    draws: number;
+  };
   sample: Record<string, string>;
   counts: Record<string, number>;
   rawScripts: string[];
@@ -328,9 +337,22 @@ async function captureSide(
   page.on('requestfailed', (r) => network.failed.push({ url: r.url(), errorText: r.failure()?.errorText ?? 'unknown' }));
   const scriptRequests = recordScriptRequests(page);
 
-  // Before goto, so the seeded Math.random is in place before the first site script draws from it.
+  if (!ctx) throw new Error('captureSide: interaction context is required for route-aware determinism');
+  // One initializer covers the initial URL and any interaction navigation/reload. Its exact route
+  // map preserves destination masthead seeds and phase-adjusts only source-proven NEW post paths.
   const seed = seedForPage(pageType, opts.mastheadIndex);
-  await installDeterminism(page, seed);
+  const seeds = Object.fromEntries(pairs.map((candidate) => [
+    ctx.side === 'old' ? candidate.oldPath : candidate.newPath,
+    seedForPage(candidate.page),
+  ]));
+  const initialLocation = ctx.side === 'old' ? ctx.pair.oldPath : ctx.pair.newPath;
+  seeds[initialLocation] = seed;
+  const phaseAdvanceLocations = MODE === 'old-new' && ctx.side === 'new' && migrated
+    ? migrated.postRandomPhaseLocations
+    : [];
+  for (const location of phaseAdvanceLocations) seeds[location] ??= STATIC_PAGE_SEED;
+  const routePlan: RouteSeedPlan = { seeds, phaseAdvanceLocations };
+  await installDeterminism(page, STATIC_PAGE_SEED, routePlan);
   // Also before goto: `mastheadReady` asserts the *path* the engine took, not just where it
   // stopped, because five of the nine home sequences and all seven listing ones share a final
   // line. Without the recorder the pinned index would go unchecked on every page but one.
@@ -339,7 +361,8 @@ async function captureSide(
   const response = await page.goto(url, { waitUntil: 'load' });
   const responseBody = response ? await response.text() : '';
   await settle(page, pageType, { mastheadIndex: opts.mastheadIndex });
-  const determinism = { seed, draws: await randomDraws(page) };
+  const seedState = await randomSeedState(page);
+  const determinism = { seed: seedState.baseSeed, ...seedState, draws: await randomDraws(page) };
 
   // The state's own end condition, then the shared tail. Each gets a full settle budget: an
   // interaction that legitimately takes seconds must not eat the budget of the wait after it.
@@ -614,9 +637,16 @@ for (const { pair, state } of matrix) {
         ).toEqual(styleSampleForComparison(oldCapture.sample, { mode, side: 'old' }));
 
         await assertMigratedContracts(next.page, pair);
-        expect.soft(newCapture.determinism.draws, 'seeded Math.random draw count').toEqual(
-          oldCapture.determinism.draws,
-        );
+        expect.soft(oldCapture.determinism.removedLibraryDraws, 'OLD random phase offset').toBe(0);
+        expect.soft(oldCapture.determinism.effectiveSeed, 'OLD effective random seed').toBe(oldCapture.determinism.seed);
+        expect.soft(newCapture.determinism.seed, 'shared base random seed').toBe(oldCapture.determinism.seed);
+        const expectedRemovedDraws = mode === 'old-new' && migrated
+          && migrated.postRandomPhaseLocations.includes(newCapture.determinism.location) ? 1 : 0;
+        expect.soft(newCapture.determinism.removedLibraryDraws, 'source-derived removed Mermaid draw').toBe(expectedRemovedDraws);
+        expect.soft(
+          newCapture.determinism.draws + expectedRemovedDraws,
+          'seeded Math.random raw draw count plus exact removed-library calibration',
+        ).toEqual(oldCapture.determinism.draws);
         if (spec.masthead) expect.soft(newCapture.masthead, 'masthead text').toEqual(oldCapture.masthead);
 
         const snapshotPath = testInfo.snapshotPath.bind(testInfo) as unknown as SnapshotPathWithKind;

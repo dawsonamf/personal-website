@@ -8,6 +8,7 @@ import { postDates, publishedPostIds, readPostSources } from '../src/build/posts
 import { href } from '../src/themes/paths.ts';
 import { THEMES } from '../src/themes/registry.ts';
 import { prose } from '../src/prose/site.ts';
+import { renderPostBody } from '../src/posts/render.ts';
 import type { Written } from '../src/prose/fields.ts';
 import type { PageType } from './urls.ts';
 
@@ -37,6 +38,10 @@ export interface MigratedAdapter {
     ogImage: string;
     jsonLd: Record<string, unknown>;
   }>;
+  postReadTimeTemplate: string;
+  postStyles: Record<string, string[]>;
+  postFontLinks: Record<string, string[]>;
+  postRandomPhaseLocations: string[];
   vendorUrls: Array<{ npmPath?: string; cdnUrl: string; publicPath: string }>;
   newPath(page: PageType, theme: string, postId?: string): string;
   mapOldUrl(value: string, context: OldUrlContext): string;
@@ -164,15 +169,34 @@ export function createMigratedAdapter(): MigratedAdapter {
     title: metadata[id]!.title,
     date: metadata[id]!.date,
   }]));
+  const postStyles = Object.fromEntries(
+    sources
+      .filter((source) => source.meta.publication === 'published')
+      .map((source) => [source.id, [...source.meta.styles]]),
+  );
   const vendorUrls = VENDOR_FILES.map(({ npmPath, cdnUrl, publicPath }) => ({ ...(npmPath ? { npmPath } : {}), cdnUrl, publicPath }));
   const vendor = new Map(vendorUrls.map((row) => [row.cdnUrl, row.publicPath]));
   const themeIds = THEMES.map((theme) => theme.id);
+  const allFontLinks = [...new Set(THEMES.flatMap((theme) => theme.fonts ?? []))];
+  const postFontLinks = Object.fromEntries(THEMES.map((theme) => {
+    const initial = theme.fonts ?? [];
+    return [theme.id, [...initial, ...allFontLinks.filter((font) => !initial.includes(font))]];
+  }));
+  const diagramFree = sources
+    .filter((source) => source.meta.publication === 'published')
+    .filter((source) => !renderPostBody(source).hasMermaid);
+  const postRandomPhaseLocations = THEMES.flatMap((theme) =>
+    diagramFree.map((source) => newPath('post', theme.id, source.id)));
   return {
     themeIds,
     publishedPostIds: published,
     matrixPosts: [...MIGRATED_MATRIX_POSTS],
     changedCards,
     postMetadata: metadata,
+    postReadTimeTemplate: prose.text('post.readTime', 'xs'),
+    postStyles,
+    postFontLinks,
+    postRandomPhaseLocations,
     vendorUrls,
     newPath,
     mapOldUrl(value, context) {

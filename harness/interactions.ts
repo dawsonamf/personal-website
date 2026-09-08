@@ -19,10 +19,8 @@ import type { BlogPost, MastheadFixture } from './baseline.ts';
 import {
   cleanMastheadText,
   HOME_DELETE_INDEX,
-  installDeterminism,
   MASTHEAD_ELEMENT_IDS,
   mastheadHistory,
-  seedForPage,
 } from './determinism.ts';
 import { holdSteady, pollUntil, ROLE_TOKENS, SETTLE_TIMEOUT_MS } from './sentinels.ts';
 import { afterInteraction, settle } from './settle.ts';
@@ -948,10 +946,8 @@ export const INTERACTIONS: Record<Exclude<StateName, 'settled'>, Interaction> = 
       const next = await nextPair(ctx.pair);
 
       await recordFirstPaint(page, key, ROLE_TOKENS);
-      // The destination is a different page type, so it draws its own masthead: give it the seed
-      // the settled matrix loads it under, or its readiness predicate would be asserting a
-      // sequence this page's seed never picks.
-      await installDeterminism(page, seedForPage(next.page));
+      // captureSide's single route-aware initializer selects this destination's default page seed
+      // on navigation and again on reload; no second init script is stacked onto the context.
 
       // The destination on **this** side. Under `old-old` the two paths are the same string; under
       // `old-new` they are not, and following `oldPath` on the migrated side would 404 against

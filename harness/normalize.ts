@@ -248,7 +248,15 @@ export function normalizeHtml(
   while (stack.length) closeTag(stack[stack.length - 1]!);
 
   const normalized = opts.mode === 'old-new' && opts.page && opts.theme
-    ? applyDomExceptions(lines, { page: opts.page, side: opts.side, theme: opts.theme })
+    ? applyDomExceptions(lines, {
+        page: opts.page,
+        side: opts.side,
+        theme: opts.theme,
+        postId: opts.postId,
+        postReadTimeTemplate: opts.adapter?.postReadTimeTemplate,
+        postStyles: opts.postId ? opts.adapter?.postStyles[opts.postId] : undefined,
+        postFontLinks: opts.theme ? opts.adapter?.postFontLinks[opts.theme] : undefined,
+      })
     : lines;
 
   return { lines: normalized, guards: { astroAttrs, astroHashes } };

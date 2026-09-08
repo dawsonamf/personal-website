@@ -84,6 +84,51 @@ export const HOME_DELETE_INDEX = 0;
  */
 export const STATIC_PAGE_SEED = 1;
 
+/** One mulberry32 state advance: the pinned Mermaid 11.15 load consumes exactly this first draw. */
+export const MERMAID_RANDOM_STEP = 0x6d2b79f5;
+
+export interface RouteSeedPlan {
+  /** Exact pathname+search keys for every route the context may load. */
+  seeds: Record<string, number>;
+  /** NEW post locations where conditional Mermaid removed one proven leading library draw. */
+  phaseAdvanceLocations: string[];
+}
+
+export interface RouteSeedState {
+  location: string;
+  baseSeed: number;
+  effectiveSeed: number;
+  removedLibraryDraws: 0 | 1;
+}
+
+/** Reject a source/plumbing drift before serializing the route plan into a browser context. */
+export function validateRouteSeedPlan(plan: RouteSeedPlan): void {
+  for (const [location, seed] of Object.entries(plan.seeds)) {
+    if (!location.startsWith('/')) throw new Error(`determinism: ${JSON.stringify(location)} is not an absolute location`);
+    if (!Number.isInteger(seed)) throw new Error(`determinism: ${location} has non-integer seed ${seed}`);
+  }
+  if (new Set(plan.phaseAdvanceLocations).size !== plan.phaseAdvanceLocations.length) {
+    throw new Error('determinism: duplicate phase-advance location');
+  }
+  for (const location of plan.phaseAdvanceLocations) {
+    if (!Object.hasOwn(plan.seeds, location)) {
+      throw new Error(`determinism: phase-advance location ${location} is not a seeded route`);
+    }
+  }
+}
+
+/** Pure and standalone-stringifiable: `installDeterminism` executes this exact function in-page. */
+export function routeSeedState(location: string, fallbackSeed: number, plan: RouteSeedPlan): RouteSeedState {
+  const baseSeed = Object.hasOwn(plan.seeds, location) ? plan.seeds[location]! : fallbackSeed;
+  const removedLibraryDraws = plan.phaseAdvanceLocations.includes(location) ? 1 : 0;
+  return {
+    location,
+    baseSeed,
+    effectiveSeed: (baseSeed + removedLibraryDraws * 0x6d2b79f5) | 0,
+    removedLibraryDraws,
+  };
+}
+
 /** The seed that makes `pageType`'s masthead pick `index`, derived from the baseline's own count. */
 export function mastheadSeed(pageType: 'home' | 'blog', index: number = MASTHEAD_INDEX[pageType]): number {
   const count = masthead()[pageType].sequences.length;
@@ -102,12 +147,20 @@ export function seedForPage(pageType: PageType, mastheadIndex?: number): number 
  * folklore. The injected source is built from `mulberry32.toString()`, so Node and the browser
  * run the same function rather than two copies that can drift.
  */
-export async function installDeterminism(page: Page, seed: number): Promise<void> {
+export async function installDeterminism(
+  page: Page,
+  seed: number,
+  plan: RouteSeedPlan = { seeds: {}, phaseAdvanceLocations: [] },
+): Promise<void> {
+  validateRouteSeedPlan(plan);
   await page.addInitScript({
     content: [
       '(() => {',
+      `  const resolveSeed = ${routeSeedState.toString()};`,
+      `  const seedState = resolveSeed(location.pathname + location.search, ${seed}, ${JSON.stringify(plan)});`,
       `  const factory = ${mulberry32.toString()};`,
-      `  const next = factory(${seed});`,
+      '  const next = factory(seedState.effectiveSeed);',
+      '  window.__parityRandomSeed = seedState;',
       '  window.__parityRandomDraws = 0;',
       '  Math.random = function () { window.__parityRandomDraws += 1; return next(); };',
       '})();',
@@ -118,6 +171,15 @@ export async function installDeterminism(page: Page, seed: number): Promise<void
 /** How many `Math.random()` calls the page has made. Read after `settle()`, dumped per side. */
 export async function randomDraws(page: Page): Promise<number> {
   return page.evaluate(() => (window as unknown as { __parityRandomDraws?: number }).__parityRandomDraws ?? -1);
+}
+
+/** The actual route-selected seed beside its raw draw count; written into each parity dump. */
+export async function randomSeedState(page: Page): Promise<RouteSeedState> {
+  return page.evaluate(() => {
+    const state = (window as unknown as { __parityRandomSeed?: RouteSeedState }).__parityRandomSeed;
+    if (!state) throw new Error('determinism: route seed state was not installed');
+    return state;
+  });
 }
 
 /** The engine emits `<br>` for `\n` and parks a zero-width space in the cursorless anchor. */

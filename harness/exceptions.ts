@@ -8,6 +8,10 @@ export interface ExceptionContext {
   page: PageType;
   side: 'old' | 'new';
   theme: string;
+  postId?: string;
+  postReadTimeTemplate?: string;
+  postStyles?: readonly string[];
+  postFontLinks?: readonly string[];
 }
 
 export interface PostHeadSnapshot {
@@ -112,12 +116,91 @@ function presetAnchor(lines: readonly string[], links: readonly (number | undefi
     && ancestor(lines, links, at, (candidate) => attr(candidate, 'id') === 'tc-dock');
 }
 
+const METR_STYLE = '/blog/posts/assets/metr-chart.css';
+const PLOTLY_STYLE_ID = 'plotly.js-style-global';
+
+function serializedUrl(value: string): string {
+  return value.replaceAll('&', '&amp;');
+}
+
+/**
+ * OLD appends source-owned post styles after the cycler's font preload. NEW emits the static post
+ * style before that runtime preload, so move only METR's two exact nodes for comparison. Their
+ * bytes stay intact: any CSS text or attribute difference remains a normal DOM difference.
+ */
+function orderMetrHead(lines: readonly string[], ctx: ExceptionContext): string[] {
+  if (ctx.side !== 'new' || ctx.page !== 'post' || ctx.postId !== 'metr-doubling') return [...lines];
+  const fail = (detail: string): never => { throw new Error(`METR head order: ${detail}`); };
+  if (!isDeepStrictEqual(ctx.postStyles, [METR_STYLE])) {
+    fail(`expected source styles [${JSON.stringify(METR_STYLE)}], got ${JSON.stringify(ctx.postStyles)}`);
+  }
+  const postFontLinks = ctx.postFontLinks ?? fail('missing source-projected font inventory');
+
+  const links = parents(lines);
+  const directHeadChild = (at: number): boolean => {
+    const parent = links[at];
+    return parent !== undefined && tag(lines[parent]!) === 'head';
+  };
+  const metr = lines.flatMap((line, index) =>
+    tag(line) === 'link' && attr(line, 'rel') === 'stylesheet' && attr(line, 'href') === METR_STYLE
+      ? [index] : []);
+  const plotly = lines.flatMap((line, index) =>
+    tag(line) === 'style' && attr(line, 'id') === PLOTLY_STYLE_ID ? [index] : []);
+  if (metr.length !== 1 || !directHeadChild(metr[0]!)) fail(`expected one direct-head ${METR_STYLE} link, found ${metr.length}`);
+  if (plotly.length !== 1 || !directHeadChild(plotly[0]!)) fail(`expected one direct-head #${PLOTLY_STYLE_ID}, found ${plotly.length}`);
+  if (metr[0]! >= plotly[0]!) fail('source stylesheet must precede the generated Plotly style');
+
+  const actualFonts = lines.flatMap((line, index) => {
+    const value = tag(line) === 'link' && attr(line, 'rel') === 'stylesheet' ? attr(line, 'href') : undefined;
+    return value?.startsWith('https://fonts.googleapis.com/css2?') ? [{ index, value }] : [];
+  });
+  const expectedFonts = postFontLinks.map(serializedUrl);
+  if (!isDeepStrictEqual(actualFonts.map(({ value }) => value), expectedFonts)) {
+    fail(`font inventory/order differs: expected ${JSON.stringify(expectedFonts)}, got ${JSON.stringify(actualFonts.map(({ value }) => value))}`);
+  }
+  if (!actualFonts.length) return [...lines];
+
+  const first = metr[0]!;
+  const plotlyEnd = subtreeEnd(lines, plotly[0]!);
+  const moving = lines.slice(first, plotlyEnd + 1);
+  const removed = new Set<number>();
+  for (let i = first; i <= plotlyEnd; i++) removed.add(i);
+  const kept = lines.filter((_, index) => !removed.has(index));
+  const lastFontHref = expectedFonts.at(-1)!;
+  const after = kept.findIndex((line) =>
+    tag(line) === 'link' && attr(line, 'rel') === 'stylesheet' && attr(line, 'href') === lastFontHref);
+  if (after < 0) fail('last projected font disappeared during relocation');
+  return [...kept.slice(0, after + 1), ...moving, ...kept.slice(after + 1)];
+}
+
 export function applyDomExceptions(lines: readonly string[], ctx: ExceptionContext): string[] {
   const links = parents(lines);
   const drop = new Set<number>();
+  let readTimeBridge: number | undefined;
   const markSubtree = (at: number): void => {
     for (let i = at; i <= subtreeEnd(lines, at); i++) drop.add(i);
   };
+
+  if (ctx.side === 'new' && ctx.page === 'post' && ctx.postId && ctx.postReadTimeTemplate !== undefined) {
+    const readTime = lines.flatMap((line, index) => attr(line, 'id') === 'read-time' ? [index] : []);
+    const bridges = lines.flatMap((line, index) =>
+      (line.match(/\sdata-read-time="[^"]*"/g) ?? []).map(() => index));
+    const at = readTime[0];
+    const parent = at === undefined ? undefined : links[at];
+    const valid = readTime.length === 1
+      && bridges.length === 1
+      && bridges[0] === at
+      && at !== undefined
+      && tag(lines[at]!) === 'span'
+      && attr(lines[at]!, 'data-read-time') === ctx.postReadTimeTemplate
+      && parent !== undefined
+      && tag(lines[parent]!) === 'span'
+      && hasClass(lines[parent]!, 'pill');
+    if (!valid) {
+      throw new Error(`post ${ctx.postId}: data-read-time must occur once on #read-time inside span.pill with source template ${JSON.stringify(ctx.postReadTimeTemplate)}`);
+    }
+    readTimeBridge = at;
+  }
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i]!;
@@ -151,10 +234,11 @@ export function applyDomExceptions(lines: readonly string[], ctx: ExceptionConte
     }
   }
 
-  return lines
+  const filtered = lines
     .flatMap((line, index) => {
       if (drop.has(index)) return [];
       let out = line;
+      if (index === readTimeBridge) out = withoutAttrs(out, ['data-read-time']);
       const isPresetAnchor = presetAnchor(lines, links, index);
       if (isPresetAnchor) out = withoutAttrs(out, ['href']);
       if (ctx.side === 'new') {
@@ -171,6 +255,7 @@ export function applyDomExceptions(lines: readonly string[], ctx: ExceptionConte
       }
       return [out];
     });
+  return orderMetrHead(filtered, ctx);
 }
 
 interface ScreenshotExceptionGroup {

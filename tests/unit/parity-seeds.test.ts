@@ -16,9 +16,12 @@ import {
   canonicalizeGeneratedIds,
   cleanMastheadText,
   MASTHEAD_INDEX,
+  MERMAID_RANDOM_STEP,
   mulberry32,
   pickIndex,
+  routeSeedState,
   seedFor,
+  validateRouteSeedPlan,
 } from '../../harness/determinism.ts';
 
 const take = (random: () => number, n: number): number[] => Array.from({ length: n }, () => random());
@@ -81,6 +84,48 @@ test('(e) seedFor and pickIndex reject arguments that would silently pick the wr
   assert.throws(() => seedFor(0, 0, 1), /count must be a positive integer/);
   assert.throws(() => seedFor(0, 9, 0), /draw must be a 1-based integer/);
   assert.throws(() => pickIndex(0, 9, -1), /draw must be a 1-based integer/);
+});
+
+test('(e2) route seeding advances exactly one removed Mermaid draw only for exact eligible locations', () => {
+  const plan = {
+    seeds: {
+      '/': 7,
+      '/blog/': 11,
+      '/blog/toolbelt/': 1,
+      '/blog/metr-doubling/': 1,
+      '/brutalist/blog/metr-doubling/': 1,
+    },
+    phaseAdvanceLocations: ['/blog/metr-doubling/', '/brutalist/blog/metr-doubling/'],
+  };
+  validateRouteSeedPlan(plan);
+  assert.deepEqual(routeSeedState('/blog/metr-doubling/', 99, plan), {
+    location: '/blog/metr-doubling/', baseSeed: 1, effectiveSeed: (1 + MERMAID_RANDOM_STEP) | 0,
+    removedLibraryDraws: 1,
+  });
+  for (const location of ['/', '/blog/', '/blog/toolbelt/', '/unknown/blog/metr-doubling/', '/definitely-unknown']) {
+    const state = routeSeedState(location, 99, plan);
+    assert.equal(state.removedLibraryDraws, 0, location);
+    assert.equal(state.effectiveSeed, state.baseSeed, location);
+  }
+  assert.equal(routeSeedState('/definitely-unknown', 99, plan).baseSeed, 99);
+  assert.equal(
+    mulberry32(routeSeedState('/blog/metr-doubling/', 99, plan).effectiveSeed)(),
+    take(mulberry32(1), 2)[1],
+  );
+});
+
+test('(e3) route seed plan rejects duplicate, unknown and invalid calibration entries', () => {
+  assert.throws(() => validateRouteSeedPlan({ seeds: { '/known': 1 }, phaseAdvanceLocations: ['/known', '/known'] }), /duplicate/);
+  assert.throws(() => validateRouteSeedPlan({ seeds: { '/known': 1 }, phaseAdvanceLocations: ['/missing'] }), /not a seeded route/);
+  assert.throws(() => validateRouteSeedPlan({ seeds: { '/known': 1.5 }, phaseAdvanceLocations: [] }), /integer seed/);
+  assert.throws(() => validateRouteSeedPlan({ seeds: { 'relative': 1 }, phaseAdvanceLocations: [] }), /absolute location/);
+});
+
+test('(e4) routeSeedState is standalone-serializable for the browser init script', () => {
+  const standalone = new Function(`return (${routeSeedState.toString()});`)() as typeof routeSeedState;
+  const plan = { seeds: { '/blog/metr-doubling/': 1 }, phaseAdvanceLocations: ['/blog/metr-doubling/'] };
+  assert.deepEqual(standalone('/blog/metr-doubling/', 3, plan), routeSeedState('/blog/metr-doubling/', 3, plan));
+  assert.deepEqual(standalone('/unknown', 3, plan), routeSeedState('/unknown', 3, plan));
 });
 
 test('(f) canonicalizeGeneratedIds maps each mermaid epoch by order of first appearance', () => {

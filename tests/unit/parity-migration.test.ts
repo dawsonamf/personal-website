@@ -60,6 +60,22 @@ describe('lazy migrated adapter and URL matrix facts', () => {
     assert.deepEqual(adapter.themeIds, ['default', 'brutalist', 'marquee', 'blueprint', 'field-notes', 'doodle', 'grid', 'miami-deco', 'bauhaus', 'chinoiserie', 'gallery', 'banknote', 'neo-pop', 'broadsheet', 'studio', 'wheatpaste']);
     assert.deepEqual(adapter.publishedPostIds, ['fly-on-my-laptop', 'underviewed-art', 'arena-freshness', 'helm', 'toolbelt', 'embedded-swift-agent', 'metr-doubling', 'college-projects']);
     assert.deepEqual(adapter.matrixPosts, ['toolbelt', 'embedded-swift-agent', 'metr-doubling']);
+    assert.equal(adapter.postRandomPhaseLocations.length, 7 * 16);
+    assert.ok(adapter.postRandomPhaseLocations.includes('/blog/metr-doubling/'));
+    assert.ok(adapter.postRandomPhaseLocations.includes('/brutalist/blog/metr-doubling/'));
+    assert.ok(adapter.postRandomPhaseLocations.includes('/blog/embedded-swift-agent/'));
+    assert.ok(!adapter.postRandomPhaseLocations.includes('/blog/toolbelt/'));
+    assert.ok(!adapter.postRandomPhaseLocations.some((path) => path.includes('gemma4-heretic-ara')));
+    assert.ok(!adapter.postRandomPhaseLocations.some((path) => path.includes('autoencoders-1')));
+    assert.ok(!adapter.postRandomPhaseLocations.includes('/unknown/blog/metr-doubling/'));
+    assert.equal(new Set(adapter.postRandomPhaseLocations).size, adapter.postRandomPhaseLocations.length);
+    const diagramFree = ['arena-freshness', 'college-projects', 'embedded-swift-agent', 'fly-on-my-laptop', 'helm', 'metr-doubling', 'underviewed-art'];
+    for (const theme of adapter.themeIds) {
+      assert.deepEqual(
+        adapter.postRandomPhaseLocations.filter((location) => diagramFree.some((id) => location === adapter.newPath('post', theme, id))),
+        diagramFree.map((id) => adapter.newPath('post', theme, id)),
+      );
+    }
   });
 
   it('projects the six page forms without default or double prefixes', () => {
@@ -124,6 +140,83 @@ describe('§9 old-side-only map then theme', () => {
 });
 
 describe('bounded §15 exception table', () => {
+  it('repositions only the source-declared METR style and Plotly style after the projected font sequence', () => {
+    const escapedFonts = adapter.postFontLinks.default.map((url) => url.replaceAll('&', '&amp;'));
+    assert.equal(escapedFonts.length, 14);
+    const fonts = escapedFonts.map((href) => `<link rel="stylesheet" href="${href}">`).join('');
+    const readOld = '<span class="pill"><span id="read-time">4 min read</span></span>';
+    const readNew = '<span class="pill"><span id="read-time" data-read-time="{n} min read">4 min read</span></span>';
+    const asset = '<link rel="stylesheet" href="/blog/posts/assets/metr-chart.css">';
+    const plotly = '<style id="plotly.js-style-global" media="screen">.plot { color: red; }</style>';
+    const old = `<html><head>${fonts}${asset}${plotly}</head><body>${readOld}</body></html>`;
+    const migrated = `<html><head>${asset}${plotly}${fonts}</head><body>${readNew}</body></html>`;
+    assert.deepEqual(
+      norm(old, oldNew('old', 'post', 'default', 'metr-doubling')),
+      norm(migrated, oldNew('new', 'post', 'default', 'metr-doubling')),
+    );
+
+    const changedText = migrated.replace('color: red', 'color: blue');
+    const changedAttr = migrated.replace('media="screen"', 'media="print"');
+    assert.notDeepEqual(norm(old, oldNew('old', 'post', 'default', 'metr-doubling')), norm(changedText, oldNew('new', 'post', 'default', 'metr-doubling')));
+    assert.notDeepEqual(norm(old, oldNew('old', 'post', 'default', 'metr-doubling')), norm(changedAttr, oldNew('new', 'post', 'default', 'metr-doubling')));
+  });
+
+  it('rejects malformed METR head-order inputs and leaves every other scope untouched', () => {
+    const fonts = adapter.postFontLinks.default.map((url) => `<link href="${url.replaceAll('&', '&amp;')}" rel="stylesheet">`).join('');
+    const asset = '<link href="/blog/posts/assets/metr-chart.css" rel="stylesheet">';
+    const plotly = '<style id="plotly.js-style-global">x</style>';
+    const read = '<span class="pill"><span id="read-time" data-read-time="{n} min read">4 min read</span></span>';
+    const html = `<html><head>${asset}${plotly}${fonts}</head><body>${read}</body></html>`;
+    for (const invalid of [
+      html.replace(asset, asset + asset),
+      html.replace('plotly.js-style-global', 'plotly-wrong'),
+      html.replace(asset + plotly, plotly + asset),
+      html.replace(fonts, fonts.replace('</head>', '') + '<link href="https://fonts.googleapis.com/css2?family=Wrong" rel="stylesheet">'),
+    ]) {
+      assert.throws(() => norm(invalid, oldNew('new', 'post', 'default', 'metr-doubling')), /METR head order/);
+    }
+
+    const normalized = normalizeHtml(html, oldNew('new', 'post', 'default', 'metr-doubling')).lines;
+    const noSourceStyle = { ...adapter, postStyles: { ...adapter.postStyles, 'metr-doubling': [] } };
+    assert.throws(
+      () => normalizeHtml(html, { ...oldNew('new', 'post', 'default', 'metr-doubling'), adapter: noSourceStyle }),
+      /METR head order/,
+    );
+    assert.deepEqual(
+      applyDomExceptions(normalized, { page: 'post', side: 'old', theme: 'default', postId: 'metr-doubling', postStyles: adapter.postStyles['metr-doubling'], postFontLinks: adapter.postFontLinks.default }),
+      normalized,
+    );
+    assert.deepEqual(
+      applyDomExceptions(normalized, { page: 'post', side: 'new', theme: 'default', postId: 'toolbelt', postStyles: adapter.postStyles.toolbelt, postFontLinks: adapter.postFontLinks.default }),
+      normalized,
+    );
+    assert.deepEqual(
+      applyDomExceptions(normalized, { page: 'home', side: 'new', theme: 'default', postId: 'metr-doubling', postStyles: adapter.postStyles['metr-doubling'], postFontLinks: adapter.postFontLinks.default }),
+      normalized,
+    );
+  });
+
+  it('accepts only the source-owned read-time bridge on the exact NEW post span', () => {
+    assert.equal(adapter.postReadTimeTemplate, '{n} min read');
+    const old = '<html><body><span class="pill"><span id="read-time">4 min read</span></span></body></html>';
+    const exact = '<html><body><span class="pill"><span id="read-time" data-read-time="{n} min read">4 min read</span></span></body></html>';
+    assert.deepEqual(norm(old, oldNew('old', 'post', 'default', 'toolbelt')), norm(exact, oldNew('new', 'post', 'default', 'toolbelt')));
+
+    for (const invalid of [
+      '<html><body><span class="pill"><span id="read-time">4 min read</span></span></body></html>',
+      '<html><body><span class="pill"><span id="read-time" data-read-time="wrong">4 min read</span></span></body></html>',
+      '<html><body><span class="pill" data-read-time="{n} min read"><span id="read-time">4 min read</span></span></body></html>',
+      '<html><body><span class="pill"><span id="read-time" data-read-time="{n} min read" data-read-time="{n} min read">4 min read</span></span></body></html>',
+    ]) {
+      assert.throws(() => norm(invalid, oldNew('new', 'post', 'default', 'toolbelt')), /data-read-time/);
+    }
+
+    const unrelated = exact.replace('id="read-time"', 'id="read-time" data-extra="keep"');
+    assert.notDeepEqual(norm(old, oldNew('old', 'post', 'default', 'toolbelt')), norm(unrelated, oldNew('new', 'post', 'default', 'toolbelt')));
+    assert.deepEqual(norm(exact, oldNew('new', 'home')), norm(exact, oldNew('old', 'home')));
+    assert.deepEqual(norm(exact, { mode: 'old-old', side: 'new', page: 'post', theme: 'default', postId: 'toolbelt' }), norm(exact, { mode: 'old-old', side: 'old', page: 'post', theme: 'default', postId: 'toolbelt' }));
+  });
+
   it('removes only the declared privacy/404 picker additions from new DOM', () => {
     const base = ['<html>', '  <body>', '    <p class="keep">', '      #text x', '    </p>', '  </body>', '</html>'];
     const additions = ['<html>', '  <body>', '    <div class="tc-fab">', '    </div>', '    <aside id="tc-dock">', '    </aside>', '    <div id="tc-scrim">', '    </div>', '    <p class="keep">', '      #text x', '    </p>', '  </body>', '</html>'];
@@ -132,8 +225,8 @@ describe('bounded §15 exception table', () => {
   });
 
   it('bounds post metadata exceptions to title, description and new social tags', () => {
-    const old = '<html><head><title>Loading…</title><meta name="description" content="old"></head><body><p>same</p></body></html>';
-    const migrated = '<html><head><title>Toolbelt</title><meta name="description" content="new"><link rel="canonical" href="https://www.dawsonamf.com/blog/toolbelt/"><meta property="og:title" content="Toolbelt"><meta name="twitter:card" content="summary"></head><body><p>same</p></body></html>';
+    const old = '<html><head><title>Loading…</title><meta name="description" content="old"></head><body><span class="pill"><span id="read-time">4 min read</span></span><p>same</p></body></html>';
+    const migrated = '<html><head><title>Toolbelt</title><meta name="description" content="new"><link rel="canonical" href="https://www.dawsonamf.com/blog/toolbelt/"><meta property="og:title" content="Toolbelt"><meta name="twitter:card" content="summary"></head><body><span class="pill"><span id="read-time" data-read-time="{n} min read">4 min read</span></span><p>same</p></body></html>';
     assert.deepEqual(norm(old, oldNew('old', 'post', 'default', 'toolbelt')), norm(migrated, oldNew('new', 'post', 'default', 'toolbelt')));
     assert.notDeepEqual(norm(old.replace('<p>same</p>', '<p>changed</p>'), oldNew('old', 'post', 'default', 'toolbelt')), norm(migrated, oldNew('new', 'post', 'default', 'toolbelt')));
   });
@@ -282,7 +375,7 @@ describe('raw and loaded script verification', () => {
     assert.match(scriptOrderIssues('home', 'new', 'raw', newHome.slice(1), undefined, true, adapter).join('\n'), /complete/);
   });
 
-  it('pins the NEW listing client without changing legacy listing or post identities', () => {
+  it('pins NEW listing and post clients without changing either legacy inventory', () => {
     const oldBlog = expectedScripts('blog', 'old', 'raw');
     assert.ok(oldBlog.includes('/blog/blog-listing.js'));
     assert.ok(!oldBlog.includes('/js/blog-listing-client.js'));
@@ -305,7 +398,28 @@ describe('raw and loaded script verification', () => {
       scriptOrderIssues('blog', 'new', 'raw', [...newBlog, '/js/blog-listing-client.js'], undefined, true, adapter).join('\n'),
       /duplicate script/,
     );
-    assert.ok(expectedScripts('post', 'new', 'raw', 'toolbelt', adapter).includes('/blog/blog-post-client.js'));
+    const oldPost = expectedScripts('post', 'old', 'raw', 'toolbelt');
+    assert.ok(oldPost.includes('/blog/blog-post.js'));
+    assert.ok(!oldPost.includes('/js/blog-post-client.js'));
+
+    const newPost = expectedScripts('post', 'new', 'raw', 'toolbelt', adapter);
+    assert.ok(newPost.includes('/js/blog-post-client.js'));
+    assert.ok(!newPost.includes('/blog/blog-post-client.js'));
+    assert.deepEqual(scriptOrderIssues('post', 'new', 'raw', newPost, 'toolbelt', true, adapter), []);
+    assert.match(
+      scriptOrderIssues('post', 'new', 'raw', newPost.map((src) =>
+        src === '/js/blog-post-client.js' ? '/blog/blog-post-client.js' : src
+      ), 'toolbelt', true, adapter).join('\n'),
+      /not allowed|complete/,
+    );
+    assert.match(
+      scriptOrderIssues('post', 'new', 'raw', newPost.filter((src) => src !== '/js/blog-post-client.js'), 'toolbelt', true, adapter).join('\n'),
+      /complete/,
+    );
+    assert.match(
+      scriptOrderIssues('post', 'new', 'raw', [...newPost, '/js/blog-post-client.js'], 'toolbelt', true, adapter).join('\n'),
+      /duplicate script/,
+    );
   });
 });
 
