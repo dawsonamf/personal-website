@@ -27,3 +27,6 @@ harness/__parity__/
 tests/fixtures/**/.tmp/
 tests/fixtures/**/dist/
 tests/fixtures/**/.astro/
+
+# Local documentation and planning notes; existing CI script/templates remain tracked
+/docs/
