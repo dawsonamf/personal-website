@@ -353,9 +353,9 @@ async function captureSide(
   const routePlan: RouteSeedPlan = { seeds, phaseAdvanceLocations };
   await installDeterminism(page, STATIC_PAGE_SEED, routePlan);
   // Also before goto: `mastheadReady` asserts the *path* the engine took, not just where it
-  // stopped, because five of the nine home sequences and all seven listing ones share a final
-  // line. Without the recorder the pinned index would go unchecked on every page but one.
-  if (pageType === 'home' || pageType === 'blog') await recordMastheadHistory(page);
+  // stopped. Install the selector-safe recorder for every capture because an interaction can
+  // navigate an initial post to Home or the listing on the same Page.
+  await recordMastheadHistory(page);
   if (interaction?.install && ctx) await interaction.install(page, ctx);
   const response = await page.goto(url, { waitUntil: 'load' });
   const responseBody = response ? await response.text() : '';

@@ -79,6 +79,11 @@ const ISSUES = [
   'autoencoders-1.md:description.l',
 ];
 
+const EXTERNAL_REDIRECTS = {
+  'autoencoders-1': 'https://www.aboutobjects.com/2024/01/05/autoencoders-part-1/',
+  'autoencoders-2': 'https://www.aboutobjects.com/2024/04/01/autoencoders-part-2/',
+} as const;
+
 function plantDrafts(dir: string) {
   edit(dir, PROSE_YAML, 'title: { xs: About Me }', 'title: { xs: { draft: About Me } }');
   edit(dir, PROSE_YAML, 'tech: [ Directional Ablation,', 'tech: [ { draft: Directional Ablation },');
@@ -162,8 +167,12 @@ describe('S1-08 content validation and draft preview', () => {
     }
 
     assert.ok(existsSync(join(built.a.dist, 'blog', 'helm', 'index.html')), 'published post route');
-    for (const id of ['gemma4-heretic-ara', 'autoencoders-1']) {
-      assert.ok(!existsSync(join(built.a.dist, 'blog', id)), `no /blog/${id}/ route`);
+    assert.ok(!existsSync(join(built.a.dist, 'blog', 'gemma4-heretic-ara')), 'no draft post route');
+    for (const [id, destination] of Object.entries(EXTERNAL_REDIRECTS)) {
+      const redirect = readDist(built.a, 'blog', id, 'index.html');
+      assert.ok(redirect.includes(`<meta http-equiv="refresh" content="0;url=${destination}">`), id);
+      assert.ok(redirect.includes(`<link rel="canonical" href="${destination}">`), id);
+      assert.ok(redirect.includes('<meta name="robots" content="noindex">'), id);
     }
 
     // The draft body never reaches dist, and neither does any raw frontmatter.
@@ -182,6 +191,9 @@ describe('S1-08 content validation and draft preview', () => {
     // The published URL keeps the exclusion honest: an empty sitemap would pass otherwise.
     assert.ok(sitemap.includes('/blog/helm/'), 'sitemap has the published URL');
     assert.ok(!sitemap.includes('gemma4-heretic-ara'), 'sitemap has no draft URL');
+    for (const id of Object.keys(EXTERNAL_REDIRECTS)) {
+      assert.ok(!sitemap.includes(id), `sitemap has no external redirect URL for ${id}`);
+    }
   });
 
   it('b: a preview build marks drafts, counts them and stays asset-free', () => {
@@ -223,7 +235,8 @@ describe('S1-08 content validation and draft preview', () => {
 
   it('d: a YAML syntax error fails before any page renders', () => {
     assert.equal(built.d.status, 1, `broken YAML must fail\n${built.d.out}`);
-    assert.match(built.d.out, /checks:/);
+    assert.match(built.d.out, /\[astro\] Unable to load your Astro config/);
+    assert.match(built.d.out, /missed comma between flow collection entries/);
     assert.match(built.d.out, /prose\.yaml/);
     assert.ok(!existsSync(join(built.d.dist, 'index.html')), 'no page was emitted');
   });

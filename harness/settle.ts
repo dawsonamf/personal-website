@@ -5,6 +5,7 @@
  * interaction state's own end condition. Consumers: harness/parity.spec.ts, harness/interactions.ts.
  */
 import type { Page } from '@playwright/test';
+import { parityReducedMotion } from './motion.ts';
 import {
   postAssetsSettled,
   pollUntil,
@@ -102,6 +103,14 @@ export async function settle(page: Page, pageType: PageType, opts?: SettleOption
 
   // 1. load
   await page.waitForLoadState('load', { timeout: Math.max(1, deadline - Date.now()) });
+  const expectedReduced = parityReducedMotion() === 'reduce';
+  const actualReduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
+  if (actualReduced !== expectedReduced) {
+    throw new Error(
+      `settle(${pageType}) received prefers-reduced-motion=${actualReduced ? 'reduce' : 'no-preference'}, ` +
+        `expected ${expectedReduced ? 'reduce' : 'no-preference'}`,
+    );
+  }
 
   // 2a. An idle fence. The cycler queues loadAllFonts with requestIdleCallback({timeout: 2500})
   //     at theme-cycler.js:762, which runs before `load`, so an idle callback queued after `load`

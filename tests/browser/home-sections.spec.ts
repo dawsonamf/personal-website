@@ -416,7 +416,24 @@ test('source-position keys and job transition timing preserve the selected panel
   await page.locator('#jobs-menu-list li.selected').evaluate((element) => {
     (element as HTMLElement).style.paddingRight = '19px';
   });
-  await page.waitForFunction(() => document.getElementById('highlight')!.style.transition === 'none');
+  await page.waitForFunction((mobileLayout) => {
+    const selected = document.querySelector<HTMLElement>('#jobs-menu-list li.selected')!;
+    const list = document.getElementById('jobs-menu-list')!;
+    const wrapper = document.querySelector<HTMLElement>('.menu-scroll-wrapper')!;
+    const bar = document.getElementById('highlight')!;
+    if ((window.innerWidth <= 1100) !== mobileLayout || bar.style.transition !== 'none') return false;
+    return mobileLayout
+      ? parseFloat(bar.style.left) === selected.offsetLeft - wrapper.scrollLeft
+        && parseFloat(bar.style.top) === list.offsetTop + list.offsetHeight
+        && parseFloat(bar.style.width) === selected.offsetWidth
+        && parseFloat(bar.style.height) === 2
+        && bar.style.borderRadius === '0px'
+      : parseFloat(bar.style.left) === -3
+        && parseFloat(bar.style.top) === selected.offsetTop
+        && parseFloat(bar.style.width) === 3
+        && parseFloat(bar.style.height) === selected.offsetHeight
+        && bar.style.borderRadius === '6px';
+  }, startsMobile, { timeout: 1_000 });
   await assertGeometry(startsMobile);
 });
 

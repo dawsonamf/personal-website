@@ -163,3 +163,49 @@ the cached Playwright browser were reused; no install, secret access, deployment
 git mutation occurred. Browser workers owned only ephemeral `127.0.0.1` listeners. Their PID,
 port and closed-state records are under `parity/aggregate-browser-final-2/cleanup/`; no unrelated process was
 stopped.
+
+
+## S1-26 final automated readiness
+
+The final candidate satisfies the automated scope with the owner's reduced-motion amendment.
+This is agent-produced architecture evidence, not owner QA or deployment approval. Detailed
+commands, source hashes, raw footers, failure dispositions and cleanup are recorded in
+[S1-26 parity results](parity-results.md) and the
+[final verification report](/private/tmp/theme-engine-openai/s1-26/final-acceptance-verification-report.md).
+The existing S1-24/S1-25 evidence remains unchanged.
+
+| Spec 1 §1.1 criterion | Final evidence |
+| --- | --- |
+| One coherent system | S1-25's composition, Shell, picker, module ownership and public boundaries remain intact. The build guard requires a positive render-phase shared-prose access delta; schema errors preserve details/cause and identify their source. Final units 515/515, build tests 142/142 and component browsers 138/138 passed. |
+| Theme additions stay local | S1-24's structural demonstration uses only five files: registry, prose, owned Home, CSS and JS. No shared algorithm or unrelated theme change is required. Final isolated authoring browsers passed 8/8. |
+| Authoring is demonstrated | Preserve S1-24's 188-engine-HTML / 136-local-post-HTML / 12-sitemap fixture proof, canonical fallbacks, resource isolation, resize, utilities and picker. Final functional tests prove all five roles from one generated palette across actual navigation and reload. Ordinary production contains no fixture output. |
+| Transition is finished | Preserve S1-25's 119-file removal and 403-file retention audits and documented retained modules. Clean production emitted 300 files / 184 HTML: 177 engine HTML, 4 redirects and 3 public HTML, including 128 local-post HTML and 12 exact sitemap URLs. Draft/raw-source/fixture exclusions passed. |
+
+Normal coverage is the complete 864-case sweep's 854 passes plus exact successful retries of its
+ten transport-affected Studio cases, with unchanged source, OLD, seven workers, assertions and
+trace policy. The initial 854/10 footer remains retained; the exact retry passed 10/10. No replay
+was used. Privacy and runtime 404 passed separate functional coverage, with strict loading-time
+restoration on ordinary pages and the explicit runtime-404 D27/§15.11 after-parse exception.
+
+The owner made exact reduced-motion DOM/visual parity non-blocking and will inspect that mode
+later. Root requested graceful termination under that waiver: 749 passed, 3 failed, 7 interrupted
+and 105 did not run. Blueprint's inline section-rule difference and two Bauhaus carousel DOM
+symptoms remain unclassified; the prepared diagnostic was cancelled unused. No reduced-only
+source, assertion, mask, tolerance or exception change was made, and no owner QA is claimed.
+
+Four fresh reviews covered the initial readiness diff only: two Astra correctness, Sol security
+and Sol conventions, with no supported findings. The original builder corrected computed-role
+coverage. Later build-validation, final ResizeObserver readiness and observer-registration fixes
+have separate root/orchestrator source review and focused regression evidence; those four reviewers
+did not review the later fixes. The final unchanged code passed the complete applicable sweep.
+
+The tested input is accepted archive `a53d138e3616a320f6937f414f7f39bc94e7bdb2` plus twelve
+code/test changes, identified by the manifests in the parity report. These three completion
+documents were written afterward as inert Markdown. OLD remained clean and immutable; final
+owned process/signature and port checks passed. User previews/viewer, protected files and the
+independent worktree were preserved. No installs were made.
+
+LexChat remains external-only with its card, image and approved prose retained. The embedded
+subsite remains byte-preserved under root's existing scope disposition, not personal owner
+approval of its credential design. Local static serving does not prove real GitHub Pages 404
+behavior. S1-27 registration, S1-28 cutover/live verification and owner QA remain outside S1-26.

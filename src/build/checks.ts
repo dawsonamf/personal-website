@@ -284,13 +284,15 @@ export function assertNoYamlSyntaxError(): unknown {
 }
 
 /**
- * The positive sentinel required by spike §k. An empty unwritten set is only meaningful if
- * prose was actually read through THIS module instance; otherwise the gate passes vacuously.
+ * The positive sentinel required by spike §k. An empty unwritten set is only meaningful if prose
+ * was read through THIS module instance during page build/render; config-time reads do not prove
+ * that the page-side module was externalized, so the integration passes only their delta here.
  */
 function assertProseTouched(count: number): void {
-  if (count !== 0) return;
+  if (count > 0) return;
   throw new Error(
-    'checks: no prose request reached the checks integration (touches === 0), so the '
+    'checks: no prose request reached the checks integration during page build/render '
+      + '(render-phase touches <= 0), so the '
       + 'unwritten-size gate below would pass vacuously. Causes: no page rendered prose; '
       + 'src/prose/index.ts was bundled a second time because the vite resolveId '
       + 'externalization in astro.config.mjs no longer matches it; or the config chain failed '
@@ -311,15 +313,21 @@ export function assertNoUnwrittenSizes(unwritten: ReadonlySet<string>): void {
 }
 
 export default function checks(): AstroIntegration {
+  let touchesAtBuildStart = 0;
   return {
     name: 'checks',
     hooks: {
       'astro:config:setup': () => {
         assertNoYamlSyntaxError();
       },
+      'astro:build:start': () => {
+        // post-output legitimately reads shared prose during config setup. Snapshot afterward so
+        // only page build/render proves that the externalized accessor instance is shared.
+        touchesAtBuildStart = touches;
+      },
       'astro:build:done': ({ pages, dir }) => {
         // The sentinel first: without it an empty set proves nothing.
-        assertProseTouched(touches);
+        assertProseTouched(touches - touchesAtBuildStart);
         assertNoUnwrittenSizes(unwrittenSizes);
         assertNoRelativeHrefs();
         assertShellInvariants(pages, dir);

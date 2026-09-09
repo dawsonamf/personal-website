@@ -29,11 +29,23 @@ import type { LazyLayout, PageType, SkinTheme, StructuralTheme, Theme } from '..
 import { BUILD_MS, buildSite, cleanup, fixtureRoot } from '../fixtures/composition/build.ts';
 
 const PAGE_TYPES: readonly PageType[] = ['home', 'blog', 'post', 'privacy', 'notFound'];
-const ROUTE_TAILS = ['', 'blog/', 'privacy/'];
+const PUBLISHED_POSTS = [
+  'fly-on-my-laptop',
+  'underviewed-art',
+  'arena-freshness',
+  'helm',
+  'toolbelt',
+  'embedded-swift-agent',
+  'metr-doubling',
+  'college-projects',
+] as const;
+const ROUTE_TAILS = ['', 'blog/', 'privacy/', ...PUBLISHED_POSTS.map((id) => `blog/${id}/`)];
 
-/** Emitted index.html files that are not theme routes: two redirect stubs, two public passthroughs. */
+/** Emitted index.html files that are not engine routes: four redirect stubs, two public passthroughs. */
 const NON_ROUTE_PAGES = [
   '12years/index.html',
+  'blog/autoencoders-1/index.html',
+  'blog/autoencoders-2/index.html',
   'embedded-swift-agent/index.html',
   'subsites/dawson/embedded-swift-agent/index.html',
   'subsites/elise/12years/index.html',
@@ -76,7 +88,7 @@ const emittedPages = (dist: string) =>
     .map((entry) => join(entry.parentPath, entry.name).slice(dist.length + 1))
     .sort();
 
-/** The four route pages of every id, in dist-relative form. */
+/** The eleven route pages of every id, in dist-relative form. */
 const routePages = (ids: readonly string[]) =>
   ids.flatMap((id) => ROUTE_TAILS.map((tail) => (id === 'default' ? '' : `${id}/`) + tail + 'index.html')).sort();
 
@@ -263,10 +275,10 @@ describe('a structural theme registered in an isolated copy', () => {
 
   after(() => cleanup(dir));
 
-  it('emits 17 x 3 route pages plus 404.html, with no /default/ and no double prefix', () => {
+  it('emits 17 x 11 route pages plus 404.html, with no /default/ and no double prefix', () => {
     const expected = routePages(ids);
     const actual = emittedPages(dist);
-    assert.equal(expected.length, 17 * 3);
+    assert.equal(expected.length, 17 * 11);
     assert.deepEqual(expected.filter((page) => !actual.includes(page)), []);
     assert.deepEqual(actual.filter((page) => !expected.includes(page)), NON_ROUTE_PAGES);
     assert.ok(existsSync(join(dist, '404.html')));
@@ -295,7 +307,9 @@ describe('a structural theme registered in an isolated copy', () => {
     assert.deepEqual(styleAssets(html), [...stubFonts, BASE_CSS]);
     assert.equal(markers(html), 1);
     assert.ok(html.includes('<div id="main-body">'));
-    assert.ok(html.includes('<nav><ul><li class="tc-nav-item"><button type="button" class="menu-item tc-nav-trigger"'));
+    assert.ok(html.includes('<nav class="moving-menu"'));
+    assert.ok(html.includes('<ul class="menu-list">'));
+    assert.ok(html.includes('<li class="tc-nav-item"><button type="button" class="menu-item tc-nav-trigger"'));
     assert.equal(count(html, 'tc-fab'), 0);
     assert.ok(!html.includes('/css/stub.css'));
     assert.ok(!html.includes('data-fixture'));
@@ -362,10 +376,10 @@ describe('the production build', () => {
 
   after(() => cleanup(dir));
 
-  it('emits 16 x 3 route pages plus 404.html and nothing else route-shaped', () => {
+  it('emits 16 x 11 route pages plus 404.html and nothing else route-shaped', () => {
     const expected = routePages(THEME_IDS);
     const actual = emittedPages(dist);
-    assert.equal(expected.length, 48);
+    assert.equal(expected.length, 16 * 11);
     assert.deepEqual(expected.filter((page) => !actual.includes(page)), []);
     assert.deepEqual(actual.filter((page) => !expected.includes(page)), NON_ROUTE_PAGES);
     assert.ok(existsSync(join(dist, '404.html')));

@@ -195,11 +195,13 @@ export const MASTHEAD_ELEMENT_IDS = { home: 'typing-text', blog: 'blog-typing-te
  * engine took and not merely where it stopped. Asserting the terminal alone is very nearly vacuous:
  * home sequences 0, 1, 3, 5 and 7 all end on the same line and all seven listing sequences end on
  * `Blog.`, so the pinned index — and with it `MASTHEAD_DRAW` — would never actually be checked.
- * Installed on every home and listing capture, both sides (`harness/parity.spec.ts`).
+ * Installed on every capture, both sides, because later navigation can land on a masthead page
+ * (`harness/parity.spec.ts`); ids absent from the current document are safely ignored.
  *
  * Both ids are recorded by one observer, not just the current page's: `@state:palette`'s `after`
- * hook navigates home -> listing on the same `Page`, and an init script registered for `typing-text`
- * would leave that landing's readiness with nothing to assert.
+ * hook navigates through same-theme pages on one `Page`, including post -> home and home ->
+ * listing. Registering only for the initial page type would leave a landing's readiness with
+ * nothing to assert.
  */
 export async function recordMastheadHistory(page: Page): Promise<void> {
   await page.addInitScript({

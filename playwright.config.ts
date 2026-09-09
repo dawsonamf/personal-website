@@ -6,6 +6,7 @@
 import { defineConfig } from '@playwright/test';
 import { resolve } from 'node:path';
 import { oldDir } from './harness/baseline.ts';
+import { parityReducedMotion } from './harness/motion.ts';
 import { NEW_ORIGIN, OLD_ORIGIN, parityMode } from './harness/urls.ts';
 
 const serve = (port: number, directory: string, url: string) => ({
@@ -55,7 +56,7 @@ export default defineConfig({
   use: {
     colorScheme: 'light',
     // 1.61.1 has no top-level `reducedMotion` use-option; it lives under contextOptions.
-    contextOptions: { reducedMotion: 'no-preference' },
+    contextOptions: { reducedMotion: parityReducedMotion() },
     deviceScaleFactor: 1,
     trace: 'retain-on-failure',
   },

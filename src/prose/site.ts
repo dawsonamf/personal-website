@@ -18,7 +18,11 @@ import { siteProseSchema } from './schema.ts';
 // The collection schema owns the file() loader's `id` key; this side parses the YAML itself
 // and so never sees one (src/content.config.ts).
 const filename = fileURLToPath(new URL('../content/prose.yaml', import.meta.url));
-const tree = siteProseSchema.parse(load(readFileSync(filename, 'utf8'), { filename }));
+const parsed = siteProseSchema.safeParse(load(readFileSync(filename, 'utf8'), { filename }));
+if (!parsed.success) {
+  throw new Error(`prose: ${filename}: ${parsed.error.message}`, { cause: parsed.error });
+}
+const tree = parsed.data;
 
 export const prose = createProseAccess(tree, 'prose');
 
