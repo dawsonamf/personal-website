@@ -1,0 +1,82 @@
+---
+// Canonical featured-carousel markup owner. Inputs: Theme + PageContext and the
+// shared prose accessor. Dependencies: href() for every authored URL. The page
+// layout owns the surrounding numbered project section, spacer and runtime tag.
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+}
+
+const { theme, page } = Astro.props;
+void page;
+
+const dotLabel = prose.text('carousel.goToSlide', 'xs');
+const projects = prose.data.projects.map((project, projectIndex) => {
+  const title = prose.text(`projects.${projectIndex}.title`, 'xs');
+  const description = prose.paragraphs(`projects.${projectIndex}.description`, 'l');
+  const tech = prose.textList(`projects.${projectIndex}.tech`, 'xs');
+  const firstExternal = Boolean(project.ctas[0]?.external);
+  const ctas = project.ctas.map((cta, ctaIndex) => ({
+    label: prose.text(`projects.${projectIndex}.ctas.${ctaIndex}.label`, 'xs'),
+    href: href(cta.href, theme.id),
+    // Baseline line 70: CTA 2 inherits CTA 1's target unless external2 is true.
+    external: Boolean(cta.external) || (ctaIndex === 1 && firstExternal),
+  })).filter((cta) => cta.label);
+
+  return {
+    ...project,
+    title,
+    description,
+    tech,
+    ctas,
+  };
+});
+---
+<section class="featured-carousel-section fc-style-floating" id="featured-carousel">
+  <div class="featured-carousel-container">
+    <div class="featured-carousel-fade featured-carousel-fade-left"></div>
+    <div class="featured-carousel-track" id="featured-track">
+      {projects.map((project) => (
+        <div class="fc-card">
+          <div class="fc-card-image"><img src={href(project.image, theme.id)} alt={project.title}></div>
+          <div class="fc-card-body">
+            {project.title && <h3 class="fc-card-title">{project.title}</h3>}
+            {project.description.length > 0 && (
+              <p class="fc-card-desc"><Fragment set:html={project.description.join('<br><br>')} /></p>
+            )}
+            <div class="fc-card-tech">
+              {project.tech.map((technology) => <span class="pill">{technology}</span>)}
+            </div>
+            {project.ctas.length > 0 && (
+              <div class="fc-card-ctas">
+                {project.ctas.map((cta) => (
+                  <a
+                    class="fc-card-cta"
+                    href={cta.href}
+                    target={cta.external ? '_blank' : undefined}
+                    rel={cta.external ? 'noopener noreferrer' : undefined}
+                  >{cta.label}</a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+    <div class="featured-carousel-fade featured-carousel-fade-right"></div>
+  </div>
+  <div class="featured-carousel-dots" id="featured-dots">
+    {projects.map((_project, index) => (
+      <button
+        class:list={['fc-dot', { active: index === 0 }]}
+        data-index={index}
+        aria-label={dotLabel.replace('{n}', String(index + 1))}
+      ></button>
+    ))}
+  </div>
+</section>

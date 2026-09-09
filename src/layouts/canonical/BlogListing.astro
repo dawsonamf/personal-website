@@ -1,0 +1,120 @@
+---
+// The complete canonical blog listing. It owns the baseline page-level wrappers, generated
+// section numbers, derived masthead island and listing-specific resource order. Components own
+// the shared Nav, Socials, carousel, cards and footer DOM; Shell owns the picker tail.
+import { listingPosts } from '../../build/posts.ts';
+import { deriveMastheadSteps } from '../../prose/masthead.ts';
+import { prose } from '../../prose/site.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import BlogCards from './components/BlogCards.astro';
+import FeaturedCarousel from './components/FeaturedCarousel.astro';
+import Footer from './components/Footer.astro';
+import Nav from './components/Nav.astro';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import Socials from './components/Socials.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import Meta from './Meta.astro';
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+const title = prose.text('meta.blog.title', 's');
+const suffixed = `${title} | ${prose.text('site.titleSuffix', 'xs')}`; // og:title carries the full title
+const ogImage = new URL('/resources/og-avatar.jpg', import.meta.env.SITE).href;
+const posts = listingPosts();
+const intro = ([
+  { id: 'blog-sub-text', path: 'blog.intro.p1' },
+  { id: 'blog-sub-text-2', path: 'blog.intro.p2' },
+  { id: 'blog-sub-text-3', path: 'blog.intro.p3' },
+] as const).map((paragraph) => ({ ...paragraph, text: prose.text(paragraph.path, 'l') }));
+type SectionKey = 'works' | 'posts';
+const sectionOrder: SectionKey[] = ['works', 'posts'];
+const sectionNumber = (key: SectionKey) => String(sectionOrder.indexOf(key) + 1).padStart(2, '0');
+const worksLabel = prose.text('blog.sections.works', 'xs');
+const postsLabel = prose.text('blog.sections.posts', 'xs');
+const mastheadSequences = prose.data.canonical.masthead.listing.map((sequence) =>
+  deriveMastheadSteps(sequence.lines, sequence.pause ?? 800),
+);
+const mastheadJson = JSON.stringify(mastheadSequences).replace(/</g, '\\u003c');
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={title} suffix>
+      <meta name="description" content={prose.text('meta.blog.description', 'm')}>
+      <link rel="canonical" href={composition.canonical}>
+      {composition.noindex && <meta name="robots" content="noindex">}
+    </Meta>
+    <meta property="og:type" content="website">
+    <meta property="og:title" content={suffixed}>
+    <meta property="og:description" content={prose.text('meta.blog.ogDescription', 's')}>
+    <meta property="og:url" content={composition.canonical}>
+    <meta property="og:image" content={ogImage}>
+    <meta name="twitter:card" content="summary">
+
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/vendor/aos/aos.css">
+    <link rel="stylesheet" href="https://assets.calendly.com/assets/external/widget.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/css/featured-carousel.css">
+    <link rel="stylesheet" href="/blog/blog-listing-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+
+    <script is:inline src="/vendor/aos/aos.js"></script>
+    <script is:inline src="/vendor/vanilla-tilt/vanilla-tilt.min.js"></script>
+    <script is:inline src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+    <script is:inline src="/js/featured-carousel.js"></script>
+    <script is:inline src="/js/typing-engine.js"></script>
+    <script is:inline src="/js/anim-utils.js"></script>
+    <script is:inline defer src="/js/nav-behavior.js"></script>
+    <script is:inline defer src="/js/cursor-follow.js"></script>
+  </Fragment>
+
+  <div id="main-body">
+    <Nav theme={theme} page={page} />
+
+    <div id="blog-typing-container">
+      <div id="blog-typing-left">
+        <h1 id="blog-typing-text"></h1>
+        {intro.map((paragraph) => paragraph.text && <p id={paragraph.id}>{paragraph.text}</p>)}
+      </div>
+      <Socials theme={theme} mount="blog" />
+    </div>
+    <script type="application/json" id="masthead-sequences" is:inline set:html={mastheadJson}></script>
+
+    <div class="section-spacer"></div>
+
+    <div class="section-header-wrapper" id="selected-works-header" data-header-intro>
+      {worksLabel && (
+        <>
+          <h2 class="section-header blog-section-header"><span class="sec-num">{sectionNumber('works')}.</span>{worksLabel}</h2>
+          <span class="section-header-spacer"></span>
+        </>
+      )}
+    </div>
+
+    <FeaturedCarousel theme={theme} page={page} />
+
+    <div class="section-spacer"></div>
+
+    <div class="section-header-wrapper" data-aos="fade-up" data-aos-once="true">
+      {postsLabel && (
+        <>
+          <h2 class="section-header blog-section-header"><span class="sec-num">{sectionNumber('posts')}.</span>{postsLabel}</h2>
+          <span class="section-header-spacer"></span>
+        </>
+      )}
+    </div>
+
+    <BlogCards posts={posts} theme={theme} />
+    <Footer variants={['desktop', 'mobile']} desktopClass="blog-listing-footer" />
+  </div>
+
+  <script is:inline src="/js/blog-listing-client.js"></script>
+</Shell>

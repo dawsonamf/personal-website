@@ -1,0 +1,101 @@
+---
+// Canonical post metadata/chrome plus a named `post-body` extension point (§7). The current
+// adapter supplies once-rendered Markdown; a future component adapter can fill the same slot
+// without changing metadata ownership, routes, or this layout. No format registry lives here.
+import { prose } from '../../prose/site.ts';
+import { serializeJsonLd } from '../../posts/render.ts';
+import type { PostLayoutSource } from '../../posts/render.ts';
+import Shell from '../Shell.astro';
+import ThemeAssets from '../ThemeAssets.astro';
+import type { LayoutProps } from '../types.ts';
+import Footer from './components/Footer.astro';
+import Nav from './components/Nav.astro';
+import PalettePrepaint from './components/PalettePrepaint.astro';
+import StyleQueryShim from './components/StyleQueryShim.astro';
+import Meta from './Meta.astro';
+
+interface Props extends LayoutProps {
+  post: PostLayoutSource;
+}
+
+const { theme, page, composition, post } = Astro.props;
+const title = post.meta.title ? post.prose.text('title', 's') : '';
+const description = post.meta.description ? post.prose.text('description', 'l') : '';
+const tags = post.meta.tags ? post.prose.textList('tags', 'xs') : [];
+const date = post.meta.date ?? '';
+const pageTitle = title ? `${title} | ${prose.text('site.titleSuffix', 'xs')}` : prose.text('site.titleSuffix', 'xs');
+const ogImage = new URL('/resources/og-avatar.jpg', import.meta.env.SITE).href;
+const person = {
+  '@type': 'Person',
+  name: prose.text('site.name', 'xs'),
+  url: new URL('/', import.meta.env.SITE).href,
+};
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BlogPosting',
+  ...(title ? { headline: title } : {}),
+  url: composition.canonical,
+  mainEntityOfPage: { '@type': 'WebPage', '@id': composition.canonical },
+  author: person,
+  publisher: person,
+  ...(post.datePublished ? { datePublished: post.datePublished, dateModified: post.datePublished } : {}),
+  ...(description ? { description } : {}),
+  ...(tags.length ? { keywords: tags.join(', ') } : {}),
+};
+const hasMermaid = post.hasMermaid;
+const mermaidInitialize = `(function(){var css=getComputedStyle(document.documentElement);function v(name,fallback){var val=(css.getPropertyValue(name)||'').trim();return val||fallback;}var bgc=v('--secondary','#2c2c2c');var txt=v('--text','#e6f1ff');var line=v('--neutral-gray','#a2a2a3');mermaid.initialize({startOnLoad:false,theme:'base',themeVariables:{darkMode:true,background:bgc,primaryColor:bgc,primaryTextColor:txt,primaryBorderColor:line,lineColor:line,nodeTextColor:txt,mainBkg:bgc,nodeBorder:line,edgeLabelBackground:bgc},flowchart:{curve:'basis',padding:16}});})();`;
+---
+<Shell theme={theme} page={page} composition={composition}>
+  <Fragment slot="head">
+    <Meta title={pageTitle}>
+      {description && <meta name="description" content={description}>}
+      <link rel="canonical" href={composition.canonical}>
+      {composition.noindex && <meta name="robots" content="noindex">}
+    </Meta>
+    {title && <meta property="og:title" content={title}>}
+    {description && <meta property="og:description" content={description}>}
+    <meta property="og:url" content={composition.canonical}>
+    <meta property="og:image" content={ogImage}>
+    <meta name="twitter:card" content="summary">
+    <script type="application/ld+json" is:inline set:html={serializeJsonLd(jsonLd)}></script>
+
+    <link rel="stylesheet" href="/vendor/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="/vendor/boxicons/css/boxicons.min.css">
+    <link rel="stylesheet" href="/css/styles.css">
+    <link rel="stylesheet" href="/css/mobile-styles.css">
+    <link rel="stylesheet" href="/blog/blog-styles.css">
+    <link rel="stylesheet" href="/css/theme-cycler.css">
+    <PalettePrepaint />
+    <StyleQueryShim theme={theme} />
+    <ThemeAssets theme={theme} composition={composition} />
+    <link rel="stylesheet" href="/vendor/highlight.js/github-dark.min.css">
+    {post.meta.styles.map((href) => <link rel="stylesheet" href={href}>)}
+
+    {hasMermaid && <script is:inline src="https://cdn.jsdelivr.net/npm/mermaid@11.15.0/dist/mermaid.min.js"></script>}
+    <script is:inline src="/vendor/vanilla-tilt/vanilla-tilt.min.js"></script>
+    <script is:inline defer src="/js/nav-behavior.js"></script>
+    <script is:inline defer src="/js/cursor-follow.js"></script>
+    {hasMermaid && <script is:inline set:html={mermaidInitialize}></script>}
+  </Fragment>
+
+  <div id="main-body" class="blog-post-page">
+    <Nav theme={theme} page={page} />
+
+    <article class:list={['blog-post-container', { 'prose-draft': page.previewDraft }]} data-preview-draft={page.previewDraft || undefined}>
+      <header class="blog-post-header">
+        {title && <h1 class="blog-post-title" id="post-title">{title}</h1>}
+        <div class="blog-post-meta" id="post-meta">
+          {date && <span class="pill">{date}</span>}
+          {tags.map((tag) => <span class="pill">{tag}</span>)}
+          <span class="pill"><span id="read-time" data-read-time={prose.text('post.readTime', 'xs')}></span></span>
+        </div>
+      </header>
+      <div class="blog-post-content" id="post-content"><slot name="post-body" /></div>
+    </article>
+
+    <Footer variants={['desktop']} desktopClass="blog-footer" />
+  </div>
+
+  {post.meta.scripts.map((src) => <script is:inline src={src}></script>)}
+  <script is:inline src="/js/blog-post-client.js"></script>
+</Shell>

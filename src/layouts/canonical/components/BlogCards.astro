@@ -1,0 +1,65 @@
+---
+// Canonical listing-card owner. Inputs: validated publication-filtered post records and
+// Theme. Each record binds its own metadata to the shared accessor; href() is the only URL
+// projection. The page runtime owns only filtering and tilt over this static DOM.
+import type { PostSource } from '../../../build/posts.ts';
+import { createProseAccess } from '../../../prose/index.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+
+type ListedPost = Omit<PostSource, 'meta'> & {
+  meta: Exclude<PostSource['meta'], { publication: 'draft' }>;
+};
+
+interface Props {
+  posts: ListedPost[];
+  theme: Theme;
+}
+
+const { posts, theme } = Astro.props;
+const boundPosts = posts.map((post) => ({
+  ...post,
+  prose: createProseAccess(post.meta, post.source),
+}));
+const tags = [...new Set(boundPosts.flatMap((post) => post.prose.textList('tags', 'xs')))].sort();
+---
+<div class="blog-filter-bar" id="filter-bar" data-aos="fade-up" data-aos-once="true">
+  {tags.map((tag) => <button class="filter-pill" data-tag={tag}>{tag}</button>)}
+</div>
+
+<div class="blog-listing-content">
+  <div class="blog-listing-grid" id="blog-grid">
+    {boundPosts.map((post, index) => {
+      const postTags = post.prose.textList('tags', 'xs');
+      const title = post.prose.text('title', 's');
+      const excerpt = post.prose.text('description', 'l');
+      const external = post.meta.publication === 'external';
+      const destination = post.meta.publication === 'external'
+        ? post.meta.externalUrl
+        : `/blog/${post.id}/`;
+      return (
+        <div
+          class="blog-card-wrapper"
+          data-tags={postTags.join(',')}
+          data-aos="fade-up"
+          data-aos-once="true"
+          data-aos-delay={index * 50}
+        >
+          <a
+            class="blog-card"
+            href={href(destination, theme.id)}
+            target={external ? '_blank' : undefined}
+            rel={external ? 'noopener noreferrer' : undefined}
+          >
+            {title && <h3 class="blog-card-title">{title}</h3>}
+            <p class="blog-card-date">{post.meta.date}</p>
+            {excerpt && <p class="blog-card-excerpt">{excerpt}</p>}
+            <div class="blog-card-tags">
+              {postTags.map((tag) => <span class="pill">{tag}</span>)}
+            </div>
+          </a>
+        </div>
+      );
+    })}
+  </div>
+</div>

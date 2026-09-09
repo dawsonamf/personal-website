@@ -10,7 +10,10 @@
 .idea/
 .claude/
 
-# Scratch / temp files
-scrap.txt
-resources/scrap.txt
-resources/temp.ipynb
+# Node / Astro build
+node_modules/
+/dist/
+/.astro/
+
+# Local documentation and planning notes
+/docs/

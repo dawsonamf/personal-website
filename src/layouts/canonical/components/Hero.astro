@@ -1,0 +1,40 @@
+---
+// Canonical home hero owner. Inputs: Theme + PageContext and the shared prose accessor.
+// It emits the derived masthead choreography as inert JSON; public/js/script.js adds the
+// function-valued intro callback at runtime after each sequence's first type step.
+import { deriveMastheadSteps } from '../../../prose/masthead.ts';
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+import Socials from './Socials.astro';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+}
+
+const { theme, page } = Astro.props;
+void page;
+const alt = prose.text('home.heroAlt', 'xs');
+const subtitle = prose.data.home.skills.groups
+  .map((_group, index) => prose.text(`home.skills.groups.${index}.name`, 'xs'))
+  .filter(Boolean)
+  .join('\u00a0|\u00a0');
+const mastheadSequences = prose.data.canonical.masthead.home.map((sequence) =>
+  deriveMastheadSteps(sequence.lines, sequence.pause ?? 1500),
+);
+const mastheadJson = JSON.stringify(mastheadSequences).replace(/</g, '\\u003c');
+---
+<div id="typing-container">
+  <div id="typing-right">
+    {alt && <img id="typing-image" class="card" src={href('/resources/profile_photo.jpg', theme.id)} alt={alt} />}
+  </div>
+  <div id="typing-left">
+    <h1 id="typing-text"></h1>
+    {subtitle && <p id="sub-text">{subtitle}</p>}
+  </div>
+  <Socials theme={theme} mount="home" />
+</div>
+<script type="application/json" id="masthead-sequences" is:inline set:html={mastheadJson}></script>
+<div class="section-spacer"></div>

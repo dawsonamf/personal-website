@@ -1,0 +1,1010 @@
+/* NOTE: the mobile layout breakpoint is 1100px site-wide. Keep the media
+   queries here and in mobile-styles.css in sync with the JS checks
+   (MOBILE_BREAKPOINT in js/script.js, innerWidth checks in js/featured-carousel.js). */
+
+:root {
+  --text:      #e6f1ff;
+  --bg:        #1d1d1d;
+  --primary:   #61ffda;
+  --secondary: #2c2c2c;
+  --accent:    #61ffda;
+
+  /* Typography tokens. Non-default values come from src/themes/registry.ts
+     through the themeHtml() projection; the defaults match the site as-built. */
+  --font-body:    sans-serif;
+  --font-heading: var(--font-body);
+  --font-mono:    'SF Mono', monospace;
+
+  --border-radius: 20px;
+  --radius-pill: 20px;
+  --socials-menu-spacer-height: 45px;
+
+  --sec-num-color: var(--accent);
+
+  /* Static neutrals + the jobs-menu navy palette. These are the at-rest
+     values; once the palette toy diverges from the active style's base
+     colors, js/theme-cycler.js derives scheme-coherent replacements. */
+  --neutral-gray: #a2a2a3;
+  --jobs-menu-navy-dark: #192232;
+  --jobs-menu-navy: #253347;
+  --jobs-menu-slate: #7B8A9A;
+
+  /* Alpha ramps, declared statically so the design system exists without JS
+     and lives in one greppable place. src/themes/ramp.ts supplies the same
+     inline values through themeHtml() at build and PalettePrepaint before
+     paint; inline values win. Keep both in sync. */
+  --text5:  hsla(214,100%,95%,5%);  --text10: hsla(214,100%,95%,10%); --text15: hsla(214,100%,95%,15%); --text20: hsla(214,100%,95%,20%);
+  --text25: hsla(214,100%,95%,25%); --text30: hsla(214,100%,95%,30%); --text35: hsla(214,100%,95%,35%); --text40: hsla(214,100%,95%,40%);
+  --text45: hsla(214,100%,95%,45%); --text50: hsla(214,100%,95%,50%); --text55: hsla(214,100%,95%,55%); --text60: hsla(214,100%,95%,60%);
+  --text65: hsla(214,100%,95%,65%); --text70: hsla(214,100%,95%,70%); --text75: hsla(214,100%,95%,75%); --text80: hsla(214,100%,95%,80%);
+  --text85: hsla(214,100%,95%,85%); --text90: hsla(214,100%,95%,90%); --text95: hsla(214,100%,95%,95%);
+
+  --bg5:  hsla(0,0%,11%,5%);  --bg10: hsla(0,0%,11%,10%); --bg15: hsla(0,0%,11%,15%); --bg20: hsla(0,0%,11%,20%);
+  --bg25: hsla(0,0%,11%,25%); --bg30: hsla(0,0%,11%,30%); --bg35: hsla(0,0%,11%,35%); --bg40: hsla(0,0%,11%,40%);
+  --bg45: hsla(0,0%,11%,45%); --bg50: hsla(0,0%,11%,50%); --bg55: hsla(0,0%,11%,55%); --bg60: hsla(0,0%,11%,60%);
+  --bg65: hsla(0,0%,11%,65%); --bg70: hsla(0,0%,11%,70%); --bg75: hsla(0,0%,11%,75%); --bg80: hsla(0,0%,11%,80%);
+  --bg85: hsla(0,0%,11%,85%); --bg90: hsla(0,0%,11%,90%); --bg95: hsla(0,0%,11%,95%);
+
+  --primary5:  hsla(166,100%,69%,5%);  --primary10: hsla(166,100%,69%,10%); --primary15: hsla(166,100%,69%,15%); --primary20: hsla(166,100%,69%,20%);
+  --primary25: hsla(166,100%,69%,25%); --primary30: hsla(166,100%,69%,30%); --primary35: hsla(166,100%,69%,35%); --primary40: hsla(166,100%,69%,40%);
+  --primary45: hsla(166,100%,69%,45%); --primary50: hsla(166,100%,69%,50%); --primary55: hsla(166,100%,69%,55%); --primary60: hsla(166,100%,69%,60%);
+  --primary65: hsla(166,100%,69%,65%); --primary70: hsla(166,100%,69%,70%); --primary75: hsla(166,100%,69%,75%); --primary80: hsla(166,100%,69%,80%);
+  --primary85: hsla(166,100%,69%,85%); --primary90: hsla(166,100%,69%,90%); --primary95: hsla(166,100%,69%,95%);
+
+  --secondary5:  hsla(0,0%,17%,5%);  --secondary10: hsla(0,0%,17%,10%); --secondary15: hsla(0,0%,17%,15%); --secondary20: hsla(0,0%,17%,20%);
+  --secondary25: hsla(0,0%,17%,25%); --secondary30: hsla(0,0%,17%,30%); --secondary35: hsla(0,0%,17%,35%); --secondary40: hsla(0,0%,17%,40%);
+  --secondary45: hsla(0,0%,17%,45%); --secondary50: hsla(0,0%,17%,50%); --secondary55: hsla(0,0%,17%,55%); --secondary60: hsla(0,0%,17%,60%);
+  --secondary65: hsla(0,0%,17%,65%); --secondary70: hsla(0,0%,17%,70%); --secondary75: hsla(0,0%,17%,75%); --secondary80: hsla(0,0%,17%,80%);
+  --secondary85: hsla(0,0%,17%,85%); --secondary90: hsla(0,0%,17%,90%); --secondary95: hsla(0,0%,17%,95%);
+
+  --accent5:  hsla(166,100%,69%,5%);  --accent10: hsla(166,100%,69%,10%); --accent15: hsla(166,100%,69%,15%); --accent20: hsla(166,100%,69%,20%);
+  --accent25: hsla(166,100%,69%,25%); --accent30: hsla(166,100%,69%,30%); --accent35: hsla(166,100%,69%,35%); --accent40: hsla(166,100%,69%,40%);
+  --accent45: hsla(166,100%,69%,45%); --accent50: hsla(166,100%,69%,50%); --accent55: hsla(166,100%,69%,55%); --accent60: hsla(166,100%,69%,60%);
+  --accent65: hsla(166,100%,69%,65%); --accent70: hsla(166,100%,69%,70%); --accent75: hsla(166,100%,69%,75%); --accent80: hsla(166,100%,69%,80%);
+  --accent85: hsla(166,100%,69%,85%); --accent90: hsla(166,100%,69%,90%); --accent95: hsla(166,100%,69%,95%);
+}
+
+
+/* Layout */
+
+body {
+  background-color: var(--bg);
+  z-index: 3;
+}
+
+#main-body {
+  font-family: var(--font-body);
+  color: var(--text);
+  padding: 20px;
+  max-width: 1200px;
+  min-width: 1040px;
+  margin: 0 auto;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+/* Headings route through the heading token (defaults to the body font) so
+   style versions can swap display type without touching layout rules. */
+h1, h2, h3, h4 {
+  font-family: var(--font-heading);
+}
+
+
+/* Cursor follow */
+
+/* Pinned to the viewport, not to its static position in the header. The
+   followers are placed in raw client coordinates (js/cursor-follow.js), so
+   the container they are absolutely positioned inside has to have its origin
+   at the viewport origin — left/top: auto would put it at #main-body's
+   content edge, which moves with the page gutter and therefore with the
+   skin. That drift is what the old translate()/gutter-math pair existed to
+   cancel; with the container pinned, neither is needed. */
+#cursor-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 10001;
+}
+
+.cursor-follow {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background-color: var(--accent);
+  opacity: 0.8;
+  border-radius: 50%;
+  animation: bounceOff 0.5s;
+}
+
+.circle-follow {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 0.8px solid var(--accent);
+  border-radius: 50%;
+  opacity: 0.75;
+  background-color: transparent;
+}
+
+.cursor-follow-clickable {
+  width: 20px;
+  height: 20px;
+  opacity: 0.5;
+  animation: bounceOn 0.5s;
+}
+
+@keyframes bounceOn {
+  0%   { width: 5px;  height: 5px; }
+  30%  { width: 22px; height: 22px; }
+  60%  { width: 18px; height: 18px; }
+  100% { width: 20px; height: 20px; }
+}
+
+@keyframes bounceOff {
+  0%   { width: 20px; height: 20px; }
+  30%  { width: 3px;  height: 3px; }
+  60%  { width: 7px;  height: 7px; }
+  100% { width: 5px;  height: 5px; }
+}
+
+
+/* Header and menus */
+
+/* Both desktop menus size to their content (skins swap in wider type, and
+   the Theme item made the old fixed 500px a squeeze): at least the classic
+   500px pill, growing leftward as needed — the right edge stays anchored —
+   and capped to the viewport/row so items can't run off screen. */
+.static-menu {
+  background-color: var(--bg50);
+  border-radius: var(--border-radius);
+  width: auto;
+  min-width: 500px;
+  max-width: calc(100% - 90px);
+  /* Deliberately no z-index. .header-menu-container is display:flex, so a
+     z-index here would create a stacking context even at position:static
+     (Flexbox §5.4) and trap the theme dropdown that js/theme-cycler.js parks
+     inside this menu: its z-index:9999 would collapse to this element's layer
+     and .text-link (z-index:2) would paint over the open panel. */
+  margin-right: 10px;
+  margin-left: auto;
+  position: static;
+  right: 10px;
+  opacity: 0;
+}
+
+.moving-menu {
+  background-color: var(--bg50);
+  border-radius: var(--border-radius);
+  width: auto;
+  min-width: 500px;
+  max-width: calc(100vw - 40px);
+  margin-right: 27px;
+  margin-left: auto;
+  position: fixed;
+  right: calc(50% - 617px);
+  opacity: 1;
+  z-index: 4;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+  top: -70px;
+  transition: top 0.3s ease-in-out;
+}
+
+/* Minimum air between entries once the pill is content-sized (space-evenly
+   still distributes any slack when min-width wins). Scoped to the desktop
+   menus so the mobile quick-links row keeps its own spacing. */
+.moving-menu .menu-list,
+.static-menu .menu-list {
+  gap: 12px;
+  padding: 0 18px;
+}
+
+@media screen and (max-width: 1250px) {
+  .moving-menu {
+    right: 10px;
+  }
+}
+
+.menu-sticky {
+  position: fixed;
+  top: 20px;
+  opacity: 1;
+  transition: top 0.3s ease-in-out;
+}
+
+.menu-invisible {
+  opacity: 0;
+}
+
+.menu-list {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 3.5em;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.menu-item {
+  color: var(--text50);
+  text-decoration: none;
+  transition: 0.3s ease-in-out;
+}
+
+.menu-item:hover {
+  color: var(--accent);
+  transition: 0.3s ease-in-out;
+}
+
+.menu-spacer {
+  border-width: 0.5px;
+  border-style: solid;
+  border-color: var(--text50);
+  border-top-width: 8px;
+  border-bottom-width: 8px;
+}
+
+.name-logo {
+  text-decoration: none;
+  margin: 20px;
+  margin-top: 10px;
+  font-size: 22px;
+  color: var(--accent);
+  border-radius: var(--border-radius);
+  width: 37px;
+  height: 37px;
+  border: 1px solid var(--accent);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transform: translate(0, 0);
+  transition: 0.3s ease-in-out;
+}
+
+.name-logo:hover {
+  transform: translateY(-3.5px);
+  background-color: var(--accent);
+  color: var(--bg);
+  transition: 0.3s ease-in-out;
+}
+
+/* Pages without the intro animation (blog post, privacy, 404) show the logo statically. */
+.name-logo-visible {
+  opacity: 1;
+}
+
+.header-menu-container {
+  display: flex;
+}
+
+
+/* Typing animation */
+
+/* The caret is baseline-bottomed, so its 1em box reaches higher above the
+   baseline than the strut of a 1.2 line-height does (~0.95em). While a line
+   is being typed the caret therefore inflates that line's box, and the
+   moment a <br> carries the caret to the next line the box collapses back —
+   which is the finished line visibly hopping up as the one below it starts.
+   The negative top margin drops the caret's margin box to the baseline so it
+   contributes nothing to line height; painting is unaffected by margin, so
+   the bar still draws its full height. Skins that set a taller caret
+   (brutalist's 1.25em) come down by the same 1em and still clear the strut. */
+.cursor {
+  background-color: var(--accent);
+  width: 4px;
+  display: inline-block;
+  height: 1em;
+  margin-top: -1em;
+  margin-left: 2px;
+  animation: none;
+}
+
+@keyframes blink {
+  50% { background-color: transparent; }
+}
+
+/* Word boxes, written by js/typing-engine.js in the cursorless reveal modes.
+   Those modes wrap every glyph in its own inline-block so a skin can transform
+   it — and the line breaker is allowed to break between any two atomic
+   inlines, so the moment a column got tight the masthead broke mid-word and
+   set a lone letter on its own line. Each word's glyphs share a nowrap box;
+   the spaces between words are text nodes on the headline itself and still
+   break normally, so wrapping goes back to being a word-level thing. */
+.tw-word {
+  white-space: nowrap;
+}
+
+/* The hero is two columns that share ONE edge: the bottom one. #typing-right
+   pads 60px above the portrait and 0 below it, and the portrait is always the
+   taller of the two items, so the row's bottom edge IS the photo's bottom
+   edge — bottom-aligning the text column lands the standfirst a fixed 20px
+   above it in every skin.
+
+   It used to hang off a padding-top: 2.25em on the h1, an em measured against
+   the DEFAULT sheet's 70px type. Every skin that set its own size inherited a
+   proportional drop and finished somewhere else: measured across the sixteen
+   skins the standfirst landed anywhere from 11px under the photo's edge (grid)
+   to 109px (banknote), against the 20px the default sheet has always had. */
+#typing-container {
+  display: flex;
+  align-items: flex-end;
+  transform: translateX(-290px);
+}
+
+#typing-left {
+  border-radius: var(--border-radius);
+  text-align: left;
+  /* The gap to the photo's bottom edge, owned here rather than left to the
+     standfirst's UA margin — that margin is 1em of ITS font size, which every
+     skin sets differently, and re-introduces exactly the drift above. */
+  padding-bottom: 20px;
+}
+
+#typing-right {
+  padding: 60px 60px 0px 20px;
+  justify-content: center;
+  display: flex;
+}
+
+#typing-image {
+  height: 400px;
+  width: 225px;
+  border-radius: var(--border-radius);
+}
+
+@keyframes slidein {
+  from { }
+  to   { transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translate3d(-250%, 0, 0); visibility: visible; }
+  to   { transform: translate3d(0, 0, 0); visibility: visible; }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(250%); visibility: visible; }
+  to   { transform: translateX(0); visibility: visible; }
+}
+
+#typing-text {
+  font-size: 70px;
+  margin: 0;
+  line-height: 1.2;
+  font-weight: bold;
+  position: relative;
+}
+
+#typing-text .typing-accent {
+  color: var(--accent);
+}
+
+#sub-text {
+  color: var(--accent);
+  letter-spacing: 3px;
+  font-size: 14px;
+  position: relative;
+  opacity: 0;
+  font-family: var(--font-mono);
+  /* Last thing in the column, so its box IS the column's bottom edge — see
+     #typing-left, which owns the gap from here to the photo. */
+  margin-bottom: 0;
+}
+
+@keyframes fadein {
+  from { visibility: visible; opacity: 0; }
+  to   { visibility: visible; opacity: 1; }
+}
+
+
+/* Socials sidebar */
+
+#socials-list {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  right: 10px;
+  height: 100%;
+  top: 0;
+  padding-top: calc(75px - var(--socials-menu-spacer-height));
+  opacity: 0;
+}
+
+.socials-menu-spacer {
+  border-width: 0.5px;
+  border-style: solid;
+  border-color: var(--text20);
+  border-top-width: var(--socials-menu-spacer-height);
+  border-bottom-width: 0px;
+}
+
+.socials-menu-spacer2 {
+  display: none;
+}
+
+.socials-item {
+  height: 50px;
+  width: 50px;
+  border-radius: var(--border-radius);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.socials-item i {
+  font-size: 24px;
+  transform: translateY(0px);
+  transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+.socials-item:hover i {
+  color: var(--accent);
+  transform: translateY(-3.5px);
+  transition: 0.3s ease-in-out;
+}
+
+
+/* Cards */
+
+.card-style {
+  padding: 20px;
+  margin: 10px;
+  margin-bottom: 0px;
+  border-radius: var(--border-radius);
+  background-color: var(--text10);
+}
+
+
+/* About and skills section */
+
+.double-view-container {
+  display: flex;
+}
+
+.double-view-left {
+  width: 31%;
+  float: left;
+  visibility: hidden;
+}
+
+.double-view-right {
+  width: 69%;
+  float: right;
+  visibility: hidden;
+}
+
+.card-title {
+  color: var(--accent);
+  font-size: 28px;
+  margin: 0 0 12px 0;
+  font-weight: bold;
+}
+
+.about-header {
+  color: var(--accent);
+}
+
+.about-text {
+  line-height: 1.5;
+}
+
+.skills-header {
+  color: var(--accent);
+}
+
+.skills-section-header {
+  color: var(--accent);
+  font-size: 23px;
+  /* These are h4s for document-outline reasons; pin the margins they had
+     as default-styled h2s so the markup change stays pixel-identical. */
+  margin: 0.83em 0;
+}
+
+.skills-text {
+  line-height: 1.5;
+  margin-top: -10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--text20);
+}
+
+.skills-text:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.section-spacer {
+  height: 8em;
+}
+
+.quick-links {
+  margin-top: 2em;
+}
+
+
+/* Section headers (shared) */
+
+.section-header {
+  color: var(--accent);
+  font-size: 40px;
+  padding: 20px;
+  margin: 10px;
+  margin-bottom: 0px;
+}
+
+.section-header-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.section-header-spacer {
+  background-color: var(--text20);
+  flex-grow: 1;
+  height: 1px;
+  margin-right: 10px;
+  margin-left: auto;
+  transform: translateY(5px);
+}
+
+
+/* Jobs section */
+
+#jobs-header-static {
+  visibility: hidden;
+}
+
+#jobs-header { color: var(--accent); }
+
+#jobs-section {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: calc(100% - 20px);
+  color: var(--text);
+}
+
+@media (min-width: 1100px) {
+  #jobs-section {
+    display: flex;
+    flex-direction: row;
+    gap: 40px;
+  }
+}
+@media (max-width: 1100px) {
+  #jobs-section {
+    display: block;
+  }
+}
+
+.nav-container {
+  position: relative;
+  overflow-x: visible;
+  white-space: nowrap;
+  z-index: 1;
+  align-self: flex-start;
+  border-left: 3px solid var(--jobs-menu-navy);
+}
+
+.menu-scroll-wrapper {
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.menu-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 225px;
+  position: relative;
+}
+.menu li {
+  margin: 0;
+  cursor: pointer;
+  color: var(--jobs-menu-slate);
+  padding: 12px 12px;
+  font-size: 13px;
+  transition: background-color 0.2s, color 0.2s;
+}
+@media (min-width: 1101px) {
+  .menu li {
+    border-top-right-radius: 6px;
+    border-bottom-right-radius: 6px;
+  }
+}
+@media (max-width: 1100px) {
+  .menu li {
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+}
+.menu li:hover {
+  background: var(--jobs-menu-navy);
+}
+.menu li.selected {
+  background: var(--jobs-menu-navy-dark);
+  color: var(--accent);
+}
+
+.highlight {
+  position: absolute;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  transition: top 0.3s, height 0.3s, left 0.3s, width 0.3s, border-radius 0.3s;
+  pointer-events: none;
+  z-index: 999;
+}
+
+@media (max-width: 1100px) {
+  .nav-container {
+    border-left: none;
+    overflow-x: hidden;
+  }
+  .menu-scroll-wrapper {
+    overflow-x: auto;
+    border-bottom: 2px solid var(--jobs-menu-navy);
+  }
+  .menu {
+    display: inline-flex;
+    min-width: 100%;
+    width: auto;
+  }
+  .menu li {
+    display: inline-block;
+  }
+  .highlight {
+    height: 2px;
+    border-radius: 0;
+  }
+}
+
+#jobs-content-wrapper {
+  position: relative;
+  flex: 1;
+}
+@media (max-width: 1100px) {
+  #jobs-content-wrapper {
+    margin-top: 20px;
+  }
+}
+
+.job-content {
+  position: relative;
+  width: 100%;
+  background-color: var(--text10);
+  border-radius: var(--border-radius);
+  padding: 20px;
+  margin: 0;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  overflow: hidden;
+  color: var(--text);
+}
+.job-content.hidden {
+  display: none;
+}
+.job-content.showing {
+  display: flex;
+  align-items: flex-start;
+  height: 100%;
+  z-index: 1;
+}
+
+.job-out-right {
+  transform: translateX(1100px);
+  transition: transform 0.5s ease-in-out;
+}
+.job-in-right {
+  transform: translateX(1100px);
+  animation: jobSlideInRight 0.5s forwards ease-in-out;
+}
+@keyframes jobSlideInRight {
+  0%   { transform: translateX(1100px); }
+  100% { transform: translateX(0); }
+}
+
+.job-title {
+  font-size: 24px;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.job-dates {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  color: var(--text50);
+}
+.job-bullets {
+  list-style-type: disc;
+  padding-left: 20px;
+  line-height: 1.5;
+}
+
+
+/* Project section */
+
+#project-header-static {
+  visibility: hidden;
+}
+
+#project-header { color: var(--accent); }
+
+/* Pills, shared by the carousel tech tags, blog cards, post meta, and privacy meta. */
+
+.pill {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text50);
+  border-radius: var(--radius-pill);
+  padding: 5px 14px;
+  background-color: var(--text10);
+  white-space: nowrap;
+}
+
+
+
+/* Contact section */
+
+.contact-view-left {
+  padding: 28px;
+  margin: 10px;
+  margin-bottom: 0px;
+  background-color: var(--text10);
+  border-radius: var(--border-radius);
+  width: 50%;
+  float: left;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-view-left .contact-text {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.contact-view-left .quick-links {
+  margin-top: 12px;
+}
+
+.contact-view-left .contact-menu {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.contact-text {
+  line-height: 1.5;
+}
+
+.contact-image-wrapper {
+  width: 50%;
+  margin: 10px;
+  margin-bottom: 0;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  align-self: stretch;
+  position: relative;
+  min-height: 0;
+}
+
+.contact-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: var(--border-radius);
+  object-fit: cover;
+  object-position: center;
+}
+
+.contact-menu {
+  border-radius: var(--border-radius);
+  width: auto;
+  z-index: 1;
+  margin: 10px;
+  margin-right: auto;
+  margin-left: auto;
+  position: static;
+}
+
+.contact-menu .menu-list {
+  justify-content: center;
+  gap: 0;
+}
+
+
+/* Text links */
+
+.text-link {
+  text-decoration: none;
+  color: var(--accent);
+  transition: color 0.25s ease-in-out;
+  position: relative;
+  z-index: 2;
+}
+
+.text-link::before {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 0;
+  height: 0.5px;
+  opacity: 0.7;
+  background-color: var(--accent);
+  transition: width 0.25s ease-in-out;
+}
+
+.text-link:hover::before {
+  width: 100%;
+}
+
+
+/* Footer */
+
+.footer-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-text {
+  text-align: center;
+  color: var(--text50);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.footer-spacer {
+  margin: 20px;
+  padding: 0;
+  border-width: 0.5px;
+  border-style: solid;
+  border-color: var(--text20);
+  width: 80px;
+}
+
+
+/* Mobile-hidden elements (shown via mobile-styles.css) */
+
+.static-menu-mobile {
+  display: none;
+}
+
+.contact-menu-mobile {
+  display: none;
+}
+
+.footer-container-mobile {
+  display: none;
+}
+
+
+/* Blog section */
+
+#blog-header-static {
+  visibility: hidden;
+}
+
+#blog-header { color: var(--accent); }
+
+.blog-scroll-container {
+  position: relative;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: calc(100% - 20px);
+}
+
+.blog-scroll-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 20px 10px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.blog-scroll-track::-webkit-scrollbar {
+  display: none;
+}
+
+.blog-card {
+  flex-shrink: 0;
+  width: 380px;
+  min-height: 180px;
+  padding: 28px;
+  border-radius: var(--border-radius);
+  background-color: var(--text10);
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.blog-card:hover {
+  background-color: var(--text15);
+}
+
+.blog-card-title {
+  color: var(--text);
+  font-size: 20px;
+  font-weight: bold;
+  margin: 0 0 8px 0;
+  line-height: 1.3;
+}
+
+.blog-card-date {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text50);
+  margin: 0 0 14px 0;
+}
+
+.blog-card-excerpt {
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.5;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.blog-scroll-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.blog-scroll-fade-left {
+  left: 0;
+  background: linear-gradient(to right, var(--bg), transparent);
+  opacity: 0;
+}
+
+.blog-scroll-fade-right {
+  right: 0;
+  background: linear-gradient(to left, var(--bg), transparent);
+  opacity: 1;
+}
+
+.blog-see-all {
+  text-align: right;
+  padding: 15px 10px 0;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: calc(100% - 20px);
+}
+
+.sec-num {
+  color: var(--sec-num-color);
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.8em;
+  font-weight: 500;
+  margin-right: 10px;
+  letter-spacing: 1px;
+  vertical-align: middle;
+}

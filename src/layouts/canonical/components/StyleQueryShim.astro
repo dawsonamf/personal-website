@@ -1,0 +1,23 @@
+---
+// `?style=<id>` on a default-theme route redirects to that theme's path (§5.4), which is what
+// the bootstrap's query branch did (js/theme-bootstrap.js:689-696) now that the theme lives in
+// the URL. The rest of the query string and the hash ride along.
+//
+// Nothing renders on a themed route: the theme is already the path. The 404 never includes
+// this component, because its own script handles both the path segment and ?style= (D27).
+import { THEME_IDS } from '../../../themes/registry.ts';
+import type { Theme } from '../../../themes/types.ts';
+
+interface Props {
+  theme: Theme;
+}
+
+const { theme } = Astro.props;
+
+// An unknown id is ignored, exactly as the bootstrap's `if (param && REGISTRY[param])` guard
+// ignored it; `default` is already this page.
+const code = `(function(){var p=new URLSearchParams(location.search),q=p.get('style');
+if(q&&q!=='default'&&${JSON.stringify(THEME_IDS)}.indexOf(q)>-1){p.delete('style');var rest=p.toString();
+location.replace('/'+q+(location.pathname==='/'?'/':location.pathname)+(rest?'?'+rest:'')+location.hash);}})();`;
+---
+{theme.id === 'default' && <script is:inline set:html={code}></script>}

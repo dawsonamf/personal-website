@@ -1,0 +1,13 @@
+---
+// The only page file outside [...theme]/ (§6.1). GitHub Pages serves dist/404.html for every
+// missing URL, so it is built once in the default theme and picks a theme at runtime (D27).
+// `page.path` is `/`, so the dock's rows link to `/<id>/` (§15.11).
+import { compose, routeTheme } from '../layouts/compose.ts';
+import type { PageContext } from '../layouts/types.ts';
+
+const theme = routeTheme(undefined);
+const page: PageContext = { type: 'notFound', path: '/' };
+const composition = await compose(theme, page);
+const Layout = composition.layout;
+---
+<Layout theme={theme} page={page} composition={composition} />

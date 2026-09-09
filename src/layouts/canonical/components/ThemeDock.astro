@@ -1,0 +1,120 @@
+---
+// S1-11: the picker's dock and scrim, rendered at build instead of built by
+// js/theme-cycler.js:507-577 at runtime (D29, D32, §5.5). The PARSED DOM is exactly what the
+// legacy injectDom() + renderPresets() + renderSchemes() + renderRoles() produced for a fresh
+// session: same nesting, same class lists, same attributes, which is what the parity harness
+// compares. The serialization is not byte-identical, and cannot be: Astro drops an empty
+// attribute value (util.js addAttribute), so an unselected row's `class=""` is written
+// `<li class>`. Trailing spaces inside a non-empty class string do survive, including the
+// `class="tc-lk "` the legacy renderer wrote.
+//
+// It is also the whole input surface of /js/theme-cycler.js: that runtime reads the dock's
+// data-* prose, each row's --tc-row-* custom properties and data-profile, and each skin row's
+// data-fonts. Nothing is published on a global (D32).
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import { THEMES } from '../../../themes/registry.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+}
+
+const { theme, page } = Astro.props;
+
+/** ROLES in public/js/theme-cycler.js: the runtime indexes state.colors and the tiles by it. */
+const ROLES = ['text', 'bg', 'primary', 'secondary', 'accent'] as const;
+/** 'random' plus SCHEMES in public/js/theme-cycler.js, in the order the legacy strip rendered. */
+const SCHEMES = ['random', 'monochromatic', 'analogous', 'complementary', 'triadic', 'tetradic'] as const;
+
+// Each row carries its theme's palette + heading font as CSS custom properties, so a
+// randomized palette never repaints the rows: they always show the base registry colors.
+// --tc-row-heading is absent for a theme without one; the CSS falls back to the dock's font.
+const rows = THEMES.map((entry) => {
+  const selected = entry.id === theme.id;
+  const { text, bg, primary, secondary, accent } = entry.colors;
+  const heading = entry.tokens?.['--font-heading'];
+  return {
+    id: entry.id,
+    label: prose.text(`themes.${entry.id}.label`, 'xs'),
+    selected,
+    // D11: switching a theme keeps the current page.
+    href: href(page.path, entry.id),
+    style:
+      `--tc-row-text:${text};--tc-row-bg:${bg};--tc-row-primary:${primary};`
+      + `--tc-row-secondary:${secondary};--tc-row-accent:${accent};`
+      + (heading ? `--tc-row-heading:${heading};` : ''),
+    // Polarity, plus the random profile for the three themes that have one. The runtime only
+    // ever reads the ACTIVE row's, but every row carries its own so the 404 (D27) has nothing
+    // to synthesize: it moves the visual marker and stops. About 1.4 KB a page, which §15.9
+    // excepts as per-theme row data.
+    profile: JSON.stringify({ polarity: entry.polarity, ...(entry.random ? { random: entry.random } : {}) }),
+    // For loadAllFonts() in public/js/theme-cycler.js: the wordmark cards render each label in
+    // its own heading font. Skins only, because a structural theme owns its assets, and
+    // preloading them from an inactive row would pull in a page shell nobody asked for.
+    fonts: entry.kind === 'skin' && entry.fonts ? JSON.stringify(entry.fonts) : undefined,
+  };
+});
+---
+<aside class="tc-dock tc-mega tc-hidden" id="tc-dock" aria-label={prose.text('picker.ariaLabel', 'xs')} data-styles={prose.text('picker.styles', 'xs')} data-advanced={prose.text('picker.advanced', 'xs')} data-back-to-styles={prose.text('picker.backToStyles', 'xs')} data-advanced-sub={prose.text('picker.advancedSub', 'xs')} data-done-editing={prose.text('picker.doneEditing', 'xs')} data-current={prose.text('picker.current', 'xs')} data-preview={prose.text('picker.preview', 'xs')} data-lock={prose.text('picker.lock', 'xs')} data-unlock={prose.text('picker.unlock', 'xs')}>
+  <div class="tc-mega-clip">
+    <div class="tc-mega-inner">
+
+      <div class="tc-mega-styles">
+        <h3 class="tc-mega-head tc-stagger" id="tc-styles-head">{prose.text('picker.styles', 'xs')}</h3>
+        <div class="tc-mega-swap">
+        <ul class="tc-presets" id="tc-presets">{rows.map((row) => (
+          <li class={row.selected ? 'tc-row-sel' : ''} style={row.style} data-profile={row.profile}>
+            <a href={row.href} data-id={row.id} class={`tc-row-link menu-item tc-stagger ${row.selected ? 'tc-sel' : ''}`} aria-current={row.selected ? 'true' : undefined} data-fonts={row.fonts}>{row.label}</a>
+            <button data-id={row.id} class={`tc-row-card tc-stagger ${row.selected ? 'tc-sel' : ''}`} aria-pressed={row.selected ? 'true' : 'false'} tabindex="-1" aria-hidden="true">
+              <span class="tc-wm-name">{row.label}</span>
+              <span class="tc-wm-rule" aria-hidden="true"></span>
+            </button>
+          </li>
+        ))}</ul>
+        <div class="tc-advanced tc-hidden" id="tc-advanced">
+          <div class="tc-group tc-group-schemes">
+            <span class="tc-group-label">{prose.text('picker.scheme', 'xs')}</span>
+            <div class="tc-schemes" id="tc-schemes">{SCHEMES.map((key) => (
+              <button type="button" data-s={key} aria-pressed={key === 'random' ? 'true' : 'false'} class={key === 'random' ? 'tc-sel' : ''}>{prose.text(`picker.schemes.${key}`, 'xs')}</button>
+            ))}</div>
+          </div>
+          <div class="tc-group tc-group-roles">
+            <span class="tc-group-label">{prose.text('picker.colors', 'xs')}</span>
+            <div class="tc-roles" id="tc-roles">{ROLES.map((key, i) => (
+              <div class="tc-role" title={theme.colors[key]}>
+                <label class="tc-sw" style={`background:${theme.colors[key]}`}>
+                  <input type="color" id={`tc-color-${i}`} value={theme.colors[key]} data-i={String(i)}>
+                </label>
+                <label class="tc-role-name" for={`tc-color-${i}`}>{prose.text(`picker.roles.${key}`, 'xs')}</label>
+                <button type="button" class="tc-lk " data-i={String(i)} aria-label={`${prose.text('picker.lock', 'xs')} ${prose.text(`picker.roles.${key}`, 'xs')}`}>
+                  <i class="fa-solid fa-lock-open"></i>
+                </button>
+              </div>
+            ))}</div>
+          </div>
+        </div>
+        </div>
+      </div>
+
+      <div class="tc-mega-side">
+        <h3 class="tc-mega-head tc-stagger">{prose.text('picker.palette', 'xs')}</h3>
+        <div class="tc-actions">
+          <button class="tc-action menu-item tc-stagger" id="tc-randomize" type="button">{prose.text('picker.shuffle', 'xs')}<span class="tc-action-sub">{prose.text('picker.shuffleSub', 'xs')}</span></button>
+          <button class="tc-action menu-item tc-stagger" id="tc-reset" type="button">{prose.text('picker.reset', 'xs')}<span class="tc-action-sub">{prose.text('picker.resetSub', 'xs')}</span></button>
+          <button class="tc-action menu-item tc-stagger" id="tc-advanced-link" type="button" aria-expanded="false" aria-controls="tc-advanced"><span id="tc-advanced-label">{prose.text('picker.advanced', 'xs')}</span><span class="tc-action-sub" id="tc-advanced-sub">{prose.text('picker.advancedSub', 'xs')}</span></button>
+        </div>
+      </div>
+
+      <div class="tc-preview tc-stagger" id="tc-preview">
+        <span class="tc-preview-name" id="tc-preview-name"></span>
+        <span class="tc-preview-rule" aria-hidden="true"></span>
+        <span class="tc-preview-meta" id="tc-preview-meta">{prose.text('picker.current', 'xs')}</span>
+      </div>
+
+    </div>
+  </div>
+</aside>
+<div class="tc-scrim" id="tc-scrim"></div>

@@ -1,0 +1,51 @@
+---
+// Canonical Contact section owner. Inputs: Theme + PageContext, zero-based page-owned
+// sectionIndex and shared prose. Markdown links are rendered at build time; nav-behavior.js
+// binds every emitted Calendly anchor.
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+import Socials from './Socials.astro';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+  sectionIndex: number;
+}
+
+const { theme, page, sectionIndex } = Astro.props;
+void page;
+const sectionKey = 'contact';
+const sectionNumber = String(sectionIndex + 1).padStart(2, '0');
+const sectionLabel = prose.text(`home.sections.${sectionKey}`, 'xs');
+const body = prose.paragraphs('home.contact.body', 'm').join('<br><br>');
+const mapAlt = prose.text('home.contact.mapAlt', 'xs');
+---
+<div class="section-header-wrapper" id="contact-header-wrapper"
+  data-aos="fade-right"
+  data-aos-once="true">
+  {sectionLabel && (
+    <>
+      <h2 class="section-header" id="contact-section-header"><span class="sec-num">{sectionNumber}.</span>{sectionLabel}</h2>
+      <span class="section-header-spacer" id="contact-header-spacer"></span>
+    </>
+  )}
+</div>
+<section class="double-view-container" id="contact">
+  <div class="contact-view-left"
+    data-aos="fade-right"
+    data-aos-once="true">
+    {body && <p class="contact-text"><Fragment set:html={body} /></p>}
+    <Socials theme={theme} mount="contact" />
+  </div>
+
+  <div class="contact-image-wrapper card"
+    data-aos="fade-left"
+    data-aos-easing="ease-in-out"
+    data-aos-once="true">
+    {mapAlt && <img class="contact-image" src={href('/resources/location.png', theme.id)} alt={mapAlt} />}
+  </div>
+</section>
+
+<div class="section-spacer"></div>

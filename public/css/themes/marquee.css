@@ -1,0 +1,2103 @@
+/* Marquee: contemporary editorial maximalism — type at poster scale on
+   near-white paper, broken by full-width ink bands, with label strips
+   ticking across the page between sections.
+
+   The governing idea is SCALE, not decoration. Display type here runs 2-4x
+   what the default site uses: the masthead is set in an ultra-condensed
+   black grotesque (Anton) at the widest size the hero column will take, and
+   section headers run to 150px and are deliberately allowed to run past the
+   right edge, so a header reads as a marquee caught mid-scroll rather than
+   a centred title. Everything else is deliberately small: 15px body copy,
+   10.5px tracked micro-caps. The tension between 150px and 10.5px, with
+   almost nothing in between, is the design.
+
+   Two display faces alternate by temperature. Anton (condensed, heavy,
+   uppercase) is the shouting voice — masthead, section openers, the ink
+   bands. Instrument Serif (high-contrast, literary, real italics) is the
+   speaking voice — project titles, post headlines, pull quotes. Body and
+   marginalia sit in Inter Tight so the two display faces stay distinct.
+
+   Colour is ink on paper and nothing else. Links are not a different
+   colour; they carry a permanent rule that thickens on hover. The only
+   contrast device is the ink band — a solid block of near-black that a
+   section sits inside, reversing the page out to paper-on-ink.
+
+   Devices, in the order they carry the most weight:
+     1. Poster-scale display type with sub-1 line-heights (0.78-0.9).
+     2. Ink bands: full-container blocks that reverse a whole section.
+     3. Ticking label strips — CSS-only infinite marquees built from
+        duplicated literal content, so the loop is seamless.
+     4. A wandering left edge: list rows indent by varying amounts so the
+        margin reads hand-set rather than aligned.
+     5. Numerals in parentheses — (01), (02) — as row and section marks.
+
+   Stillness is off and tilt is off: the marquees and the drift are the
+   motion, and a 3D card lean would fight flat poster geometry.
+
+   Scoping rules and JS contracts: see
+   archive/themes/prototypes/theme-explorations.html. The code-block ground,
+   the tilt pins, and the mobile fixes come from css/themes/theme-base.css.
+
+   Line policy: rules and fills derive from the alpha ramps so the palette
+   toy keeps working. Bands use --primary (the ink role) so a shuffled
+   palette re-tints them coherently. */
+
+
+/* ---- Foundations: ink on paper ------------------------------------------ */
+
+[data-style="marquee"] ::selection {
+  background: var(--text);
+  color: var(--bg);
+}
+
+/* Display faces are single-weight. Anton and Instrument Serif ship 400
+   alone, so every site rule that says `bold` on heading-font text is pinned
+   here or the browser synthesises a smeared faux-bold. */
+[data-style="marquee"] h1,
+[data-style="marquee"] h2,
+[data-style="marquee"] h3,
+[data-style="marquee"] h4 {
+  font-weight: 400;
+}
+
+[data-style="marquee"] a:focus-visible,
+[data-style="marquee"] button:focus-visible,
+[data-style="marquee"] [tabindex]:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+/* Links are ink, not colour. The rule is permanent and doubles on hover —
+   the site draws it as an absolutely-positioned ::before, so this is a
+   height and width change on existing machinery. */
+[data-style="marquee"] .text-link {
+  color: var(--text);
+}
+
+[data-style="marquee"] .text-link::before {
+  width: 100%;
+  height: 1px;
+  bottom: -1px;
+  opacity: 1;
+  background-color: var(--text);
+  transition: height 0.18s ease-out;
+}
+
+[data-style="marquee"] .text-link:hover::before {
+  height: 3px;
+}
+
+/* Sections are far apart — poster type needs the air or the page reads as
+   one continuous shout. */
+[data-style="marquee"] .section-spacer {
+  height: 11em;
+}
+
+
+/* ---- Chrome: menus, logo, colophon -------------------------------------- */
+
+/* The menu plate goes square and hairline — a rule box, not a pill.
+   backdrop-filter is cancelled deliberately: styles.css puts blur(20px) on
+   .moving-menu for the default pill, and this skin's plate is flat paper, not
+   glass. Left live, the blur re-samples whatever passes behind it — including
+   the ticking label strip under Selected Works, which travels sideways
+   forever — so the fixed plate appeared to drift and fade on scroll-up even
+   though its own box never moves. Every other framed skin zeroes this too. */
+[data-style="marquee"] .moving-menu,
+[data-style="marquee"] .static-menu {
+  /* Opaque, not --bg90. The plate is paper: paper does not transmit. At 90%
+     the page read straight through it — body copy, the dither field, and the
+     ticker under Selected Works all showed in the plate, which is the drift
+     and the grey wash. The base sheet's blur(20px) used to smear that
+     show-through into a frosted wash rather than hide it, so cancelling the
+     blur alone only changed the symptom from a drift to a grey. Both come
+     from the same 10% of transparency; closing it fixes both. */
+  background-color: var(--bg);
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* The header row is a stretch flexbox sized by the logo's margin box, so a
+   framed static menu stretches ~11px past its list. Size it to content. */
+[data-style="marquee"] .static-menu {
+  align-self: flex-start;
+}
+
+/* The scroll-up menu is fixed to the viewport, so unlike the static menu it
+   does not sit inside the page gutter — the base sheet parks its right edge
+   where the classic centred 1240px column ends. This skin is full-bleed, so
+   that landed the floating plate a couple of hundred px inboard of the plate
+   it is meant to replace. Both edges are now stated from the same two terms:
+   this sheet's own rail, and the 10px the menu plate carries. Below 1100px
+   the floating menu is display: none, so this is desktop-only in effect.
+
+   Post pages are excluded, and deliberately so: they are the one page this
+   skin does not widen — a post stays a centred 750px reading column and its
+   nav bar is centred over that column, not run out to the page edge (see
+   blog/blog-styles.css). Measured at 1600px, the rail figure parked the
+   floating pill 381px to the right of the static one there. Scoping this off
+   .blog-post-page lets that sheet keep sole ownership of the post-page
+   figure, so the two stay in step if it ever changes. */
+[data-style="marquee"] #main-body:not(.blog-post-page) .moving-menu {
+  right: calc(var(--edge, 34px) + 10px);
+  margin-right: 0;
+}
+
+[data-style="marquee"] .menu-item {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text70);
+  transition: color 0.2s ease-out, background-size 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 calc(100% - 1px);
+  background-size: 0% 2px;
+}
+
+[data-style="marquee"] .menu-item:hover {
+  color: var(--text);
+  background-size: 100% 2px;
+}
+
+[data-style="marquee"] .menu-spacer {
+  display: none;
+}
+
+/* The logo becomes a solid ink chip — the smallest instance of the band. */
+[data-style="marquee"] .name-logo {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  border-radius: var(--border-radius);
+  background-color: var(--text);
+  border-color: var(--text);
+  color: var(--bg);
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] .name-logo:hover {
+  background-color: transparent;
+  color: var(--text);
+  transform: translateY(-3px);
+}
+
+[data-style="marquee"] .footer-container {
+  border-top: 2px solid var(--text);
+  margin: 0 10px;
+  padding: 16px 0 10px;
+}
+
+[data-style="marquee"] .footer-spacer {
+  display: none;
+}
+
+[data-style="marquee"] .footer-text,
+[data-style="marquee"] .footer-text-mobile {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--text60);
+}
+
+
+/* ---- Hero: the masthead as a poster -------------------------------------- */
+
+/* Anton uppercase, as large as the column allows. Measured: at 100px the
+   longest typed line ("full stack engineer." -> caps) sets 806px against a
+   ~795px column, so 96px is the ceiling. line-height 0.84 stacks the lines
+   into a solid block the way a poster sets them. */
+[data-style="marquee"] #typing-text {
+  font-family: var(--font-heading);
+  font-size: clamp(40px, 8.4vw, 96px);
+  font-weight: 400;
+  line-height: 0.98;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+/* Cursorless masthead: the registry sets typing: 'word'. A caret would make
+   a poster into a terminal. Words drop into place from above, slightly
+   over-shooting, the way a marquee letter clacks down. The reduced-motion
+   guard lives in theme-base.css. */
+[data-style="marquee"] #typing-text .tw,
+[data-style="marquee"] #blog-typing-text .tw {
+  display: inline-block;
+  animation: marquee-clack-in 0.42s cubic-bezier(0.2, 1.3, 0.4, 1) backwards;
+}
+
+[data-style="marquee"] #typing-text .tw-out,
+[data-style="marquee"] #blog-typing-text .tw-out {
+  display: inline-block;
+  animation: marquee-clack-out 0.24s ease-in forwards;
+}
+
+@keyframes marquee-clack-in {
+  from { opacity: 0; transform: translateY(-0.32em) scaleY(1.12); }
+  to   { opacity: 1; transform: translateY(0) scaleY(1); }
+}
+
+@keyframes marquee-clack-out {
+  from { opacity: 1; transform: translateY(0); }
+  to   { opacity: 0; transform: translateY(0.3em); }
+}
+
+/* Standfirst is the counterweight: tiny, tracked, sitting under the shout. */
+[data-style="marquee"] #sub-text {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  color: var(--text70);
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] .socials-item {
+  color: var(--text70);
+}
+
+[data-style="marquee"] .socials-item:hover {
+  color: var(--text);
+}
+
+/* Portrait treated as high-contrast repro — the stark two-tone look of a
+   dithered press image, clearing to full colour on hover. */
+[data-style="marquee"] #typing-image {
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+}
+
+
+
+
+/* ---- Dithered repro: 1-bit ordered dither ---------------------------------
+   The reference's artwork is pre-dithered PNG (its images carry filter:none),
+   so the look has to be manufactured here. This is a real ordered dither, not
+   a contrast crank.
+
+   Three layers, and the ORDER is load-bearing:
+     1. The host's ::before paints a Bayer threshold matrix — checkerboards and
+        stripes at 1/2/4px cells stacked at 50% alpha, so they average with
+        weights 1/2, 1/4, 1/8... which is literally the Bayer recursion and
+        yields a ~32-level threshold field in screen space.
+     2. The image sits above it with mix-blend-mode: screen, ADDING that
+        per-pixel threshold to its luminance. screen is the right operator
+        because screen(x,0) = x, so deep shadows stay solid; difference folds
+        them into white speckle instead.
+     3. The host's own filter then thresholds the composite: brightness() sets
+        where the cut falls and contrast(600) is the 1-bit knife. Because the
+        matrix was added BEFORE the cut, the noise becomes stipple rather than
+        a tint — which is the whole trick.
+
+   The sepia/hue-rotate tail warms pure black/white into ink-on-cream so the
+   images belong to this palette instead of sitting on it. isolation: isolate
+   keeps the blend off the page behind. Everything interpolates, so hover
+   cross-fades back to the untouched colour photograph.
+
+   Host must hug the image: its filter thresholds the entire box, so any
+   padding or backdrop gets crushed too. All three hosts here wrap only their
+   image. The 2px ink frame crushing to pure black is intended. */
+
+[data-style="marquee"] #typing-right,
+[data-style="marquee"] .fc-style-floating .fc-card-image,
+[data-style="marquee"] .contact-image-wrapper {
+  --dither-cell: 1px;
+  --dither-cut: 600;
+  --dither-pivot: 0.73;
+  --dither-range: 1.35;
+  --dither-hi: rgba(140, 140, 140, .5);
+  --dither-hi-base: #8c8c8c;
+  position: relative;
+  isolation: isolate;
+  display: block;
+  line-height: 0;
+  width: fit-content;
+  background: #000;
+  filter: grayscale(1) brightness(var(--dither-pivot)) contrast(var(--dither-cut)) sepia(0.5) saturate(1.45) hue-rotate(-12deg);
+}
+
+/* Plates take a chunkier cell — a fine grain at carousel size reads as mush.
+
+   They also need a different exposure, and the reason is worth writing down.
+   Under `screen`, a pixel of luminance x composites against a threshold m as
+   x + m(1-x), so the range the threshold can sweep for that pixel is only
+   M(1-x) wide, where M is the matrix's peak. The window of source values that
+   can dither at all is therefore ((t-M)/(1-M), t) for a cut at t = 0.5/pivot,
+   and at M = 0.55 that window is barely a third of the scale. The portrait
+   (mean luminance 0.53) and the map (0.32) sit inside it, which is why those
+   two read correctly. The project plates do not: measured means run 0.11 to
+   0.97, so at the old 0.95 pivot the light ones — a 0.97-mean screenshot of a
+   white UI, 99% of its pixels in the top fifth of the scale — cleared the cut
+   at every threshold and printed as blank paper.
+
+   Widening the field alone does not fix it: pushed far enough to catch the
+   0.97 screenshot, the same setting crushes the 0.11 one to a solid black
+   rectangle, and rendering the eight plates across a grid of pivots showed
+   no single cut that spares both ends. The reference never meets this,
+   because what it dithers are illustrations with a full tonal range, not UI
+   captures with a spike at one end of the histogram.
+
+   So the plates keep the field and give up the knife. `contrast(600)` is a
+   1-bit threshold — every pixel resolves to black or white, and a screenshot
+   whose information lives in a narrow band of greys has nothing left after
+   it. At 2.4 the cut is steep enough to read as high-contrast repro but
+   shallow enough that midtones survive, so the Bayer field prints as grain
+   over the image instead of replacing it. Measured across the eight real
+   plates this holds mean luminance between 0.24 and 0.71 with per-plate
+   structure intact at 8px blocks: the Pareto chart keeps its axes and its
+   frontier, the phone captures keep their screens, the fly render keeps its
+   lobes. The one that stays flat is a dark terminal capture whose content is
+   6px type — nothing survives a halftone at plate size, at any setting.
+
+   The portrait and the map keep the true 1-bit cut. They were always the two
+   sitting inside the window, and they are the two the eye reads closely. */
+[data-style="marquee"] .fc-style-floating .fc-card-image {
+  --dither-cell: 2px;
+  --dither-cut: 2.4;
+  --dither-pivot: 0.78;
+  --dither-range: 1;
+  --dither-hi: rgba(170, 170, 170, .5);
+  --dither-hi-base: #aaa;
+}
+
+/* The hero host ships 60px/20px of PADDING, which sits inside the filtered
+   box: the host's black ground fills it and the threshold keeps it, printing
+   a black slab around the portrait. Same offset, moved to margin, so the
+   filtered box is exactly the image. */
+[data-style="marquee"] #typing-right {
+  padding: 0;
+  margin: 0 60px 0 20px;
+  /* The hero row used to be a stretch flexbox, so the host grew to the text
+     column's height and the surplus printed as black under the portrait. Pin
+     it to its own content, on the row's own bottom edge. */
+  align-self: flex-end;
+  height: fit-content;
+}
+
+/* The base sheet's 60px lead-in above the portrait lives on #typing-right's
+   PADDING, and the rule above moved that offset to margin so the dither
+   filter would stop printing a black slab around the photo. The lead-in still
+   has to come from somewhere: put it on the container, where it drops both
+   columns together and the row's bottom-alignment (styles.css) is unaffected. */
+[data-style="marquee"] #typing-container {
+  padding-top: 60px;
+}
+
+/* Likewise the contact wrapper is a 50%-wide column, far larger than its
+   map image; fit-content on the shared rule pulls it in, and the row keeps
+   its alignment from the flex parent. */
+[data-style="marquee"] .contact-image-wrapper {
+  align-self: center;
+}
+
+[data-style="marquee"] #typing-right::before,
+[data-style="marquee"] .fc-style-floating .fc-card-image::before,
+[data-style="marquee"] .contact-image-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-color: #000;
+  background-image:
+    conic-gradient(from 90deg at 50% 50%, var(--dither-hi) 0 25%, rgba(0,0,0,.5) 0 50%, var(--dither-hi) 0 75%, rgba(0,0,0,.5) 0),
+    linear-gradient(0deg, var(--dither-hi) 0 50%, rgba(0,0,0,.5) 0 100%),
+    conic-gradient(from 90deg at 50% 50%, var(--dither-hi) 0 25%, rgba(0,0,0,.5) 0 50%, var(--dither-hi) 0 75%, rgba(0,0,0,.5) 0),
+    linear-gradient(0deg, var(--dither-hi) 0 50%, rgba(0,0,0,.5) 0 100%),
+    conic-gradient(from 90deg at 50% 50%, var(--dither-hi-base) 0 25%, #000 0 50%, var(--dither-hi-base) 0 75%, #000 0);
+  background-size:
+    calc(var(--dither-cell) * 2) calc(var(--dither-cell) * 2),
+    calc(var(--dither-cell) * 2) calc(var(--dither-cell) * 2),
+    calc(var(--dither-cell) * 4) calc(var(--dither-cell) * 4),
+    calc(var(--dither-cell) * 4) calc(var(--dither-cell) * 4),
+    calc(var(--dither-cell) * 8) calc(var(--dither-cell) * 8);
+}
+
+[data-style="marquee"] #typing-image,
+[data-style="marquee"] .fc-style-floating .fc-card-image img,
+[data-style="marquee"] .contact-image {
+  position: relative;
+  z-index: 1;
+  display: block;
+  mix-blend-mode: screen;
+  filter: grayscale(1) contrast(var(--dither-range));
+}
+
+
+/* ---- Section openers: poster-scale headers ------------------------------
+   Two treatments, not one. The page opens on the full device — hairline,
+   poster heading, ticking label strip — and then never repeats it. Every
+   header after the first is the quiet version: the section's name and a
+   rule that draws itself across the remaining measure as you scroll toward
+   it. One shout, then a rhythm. Repeating the tick strip at every opener
+   made six equally loud sections and no hierarchy at all.
+
+   The rule is scrubbed, not triggered: --section-rule runs 0 -> 1 from the
+   moment the header's top edge enters at the bottom of the viewport until
+   its bottom edge reaches the middle of the screen, so it finishes drawing
+   with the header sitting just above halfway and is done before you have
+   scrolled past it. js/anim-utils.js supplies the number; the geometry is
+   all here.
+
+   `overflow-x: clip` on the wrapper keeps the opener's overrun from widening
+   the document (clip, not hidden, so it creates no scroll container and
+   can't trap the page's own scrolling). The vertical axis stays visible:
+   Anton's glyph box is taller than a 0.82 line box, so cap-tops sit outside
+   the wrapper's content edge and a clip on both axes shaves them — and the
+   title's entrance starts below its resting line, which the same clip would
+   swallow. `clip` is the one overflow value that may pair with `visible`. */
+
+[data-style="marquee"] .section-header-wrapper {
+  display: block;
+  border-top: none;
+  padding-top: 0;
+  margin: 0 10px 40px;
+  overflow-x: clip;
+  overflow-y: visible;
+}
+
+[data-style="marquee"] .section-header {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-heading);
+  font-size: clamp(42px, 9.4vw, 124px);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--text);
+
+  display: flex;
+  align-items: center;
+  column-gap: 0.26em;
+}
+
+/* The title shrinks before the rule does, so a long header on a narrow sheet
+   eats into the rule rather than pushing it out of the box entirely. */
+[data-style="marquee"] .section-header-text {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+/* The rule. Height is set in em so it tracks the clamped heading and reads
+   as part of the same drawn object; the floor keeps it from thinning to a
+   hairline once the clamp bottoms out on a phone. */
+[data-style="marquee"] .section-header::after {
+  content: "";
+  display: block;
+  flex: 1 1 0;
+  min-width: 2ch;
+  height: 0.085em;
+  min-height: 3px;
+  background-color: currentColor;
+  transform: scaleX(var(--section-rule, 1));
+  transform-origin: 0 50%;
+}
+
+/* Numerals are gone. The rule is the section mark now, and (01) beside a
+   drawn line read as two competing systems doing the same job. */
+[data-style="marquee"] .sec-num {
+  display: none;
+}
+
+
+/* ---- The opening header --------------------------------------------------
+   One section keeps the full device: poster heading at its widest setting
+   with the ticking strip beneath. It is Selected Works on both pages —
+   #project-header-wrapper on the home page, #selected-works-header on the
+   blog listing. The work is the thing worth shouting about, and giving the
+   same section the same treatment on both pages makes it read as one block
+   that the two pages share rather than as "whatever came first here".
+
+   Both sit on ink, so their top edge is the edge of the ground and no
+   hairline is drawn above them — see the alternating-grounds section further
+   down, which sets the padding these sit on. */
+
+[data-style="marquee"] #project-header-wrapper .section-header,
+[data-style="marquee"] #selected-works-header .section-header {
+  display: block;
+  font-size: clamp(46px, 12vw, 150px);
+}
+
+/* No drawn rule under the full treatment — the tick strip is already the
+   line under this heading. */
+[data-style="marquee"] #project-header-wrapper .section-header::after,
+[data-style="marquee"] #selected-works-header .section-header::after {
+  content: none;
+}
+
+/* The strip belongs to the opener alone; every other header ends on its
+   rule. */
+[data-style="marquee"] .section-header-spacer {
+  display: none;
+}
+
+[data-style="marquee"] #project-header-wrapper .section-header-spacer,
+[data-style="marquee"] #selected-works-header .section-header-spacer {
+  display: block;
+  position: relative;
+  flex-grow: 0;
+  width: auto;
+  height: 28px;
+  margin: 28px 0 0;
+  transform: none;
+  background-color: transparent;
+  border-top: 2px solid var(--text);
+  border-bottom: 2px solid var(--text);
+  overflow: clip;
+}
+
+/* The run is written twice and travels exactly -50%, so copy 2 lands where
+   copy 1 began and the loop has no seam. One half must be wider than the
+   widest container or a gap opens at the right edge on wide screens: at
+   10px/0.18em one pass sets ~515px, so six per half (~3090px) covers any
+   realistic viewport.
+
+   Both the run and its duration come from js/featured-carousel.js, which
+   builds them out of the .pill chips on the cards below — the strip indexes
+   what is actually in the section instead of naming fixed disciplines. It
+   sizes the run past that same width threshold and scales the duration with
+   it, so the strip keeps this speed however many chips there are. The
+   fallback below is the original hand-written run, printed if the script
+   never lands. */
+[data-style="marquee"] #project-header-wrapper .section-header-spacer::after,
+[data-style="marquee"] #selected-works-header .section-header-spacer::after {
+  content: var(--ticker-run, var(--prose-ticker));
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: max-content;
+  font-family: var(--font-body);
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  line-height: 28px;
+  white-space: pre;
+  color: var(--text65);
+  animation: marquee-tick var(--ticker-dur, 46s) linear infinite;
+  will-change: transform;
+}
+
+
+/* ---- The title entrance --------------------------------------------------
+   The ground never moves. js/anim-utils.js adds .section-header-in to the
+   wrapper when the header comes into view and takes it off again if the
+   header leaves back out the bottom, and only the glyphs travel — so a
+   section that reverses out to ink is already ink before its first letter
+   arrives. Each glyph rises out of the line and fades up, one after the next
+   left to right, which at this scale reads as the words being set rather
+   than switched on. The stagger caps so a long header lands in about the
+   same beat as a short one.
+
+   Transitions, not an animation. A keyframe entrance plays one way: taking
+   the class off snaps the letters back to the floor instead of walking them
+   there, so scrolling up gave nothing to watch. Two states with a transition
+   between them run in whichever direction the class moves, for free. Each
+   state also carries its own delay, so the words set left to right on the
+   way in (--glyph-i) and come apart right to left on the way out (--glyph-r,
+   the distance from the end), which reads as the line being struck rather
+   than rewound.
+
+   --header-in-ms is the same entrance measured end to end, for
+   js/anim-utils.js: 544ms of stagger plus the 420ms the last glyph itself
+   takes. The rule below cannot draw past this, so the bar never arrives
+   ahead of the letters. Change either number here and change this one. */
+
+/* Same rule, other direction: AOS fades and slides whichever element carries
+   the attribute, and on a header wrapper that element is the one painting the
+   section's ground — so the contact block's ink slid in from the left with
+   its own title rather than standing behind it. The wrapper is pinned and the
+   title's entrance below is the reveal. Scoped to header wrappers: the
+   section wrappers that carry data-aos are animating real content, not a
+   ground, and keep their entrance. */
+[data-style="marquee"] .section-header-wrapper[data-aos] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Selected Works is a whole ink field wrapped in one element, and that
+   element is what AOS fades and slides — so the band itself used to travel
+   up 100px with the poster head and the carousel riding on it. Now that this
+   is the section carrying the full device, its ground has to be the one
+   thing that does not move. Pin the wrapper and hand the entrance to what
+   sits on it: the title already has one, and the carousel gets the slide the
+   wrapper was doing, hung off AOS's own trigger class so it still fires at
+   the same point in the scroll. */
+[data-style="marquee"] .project-section-wrapper[data-aos] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-style="marquee"] .project-section-wrapper .featured-carousel-container,
+[data-style="marquee"] .project-section-wrapper .featured-carousel-dots {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+[data-style="marquee"] .project-section-wrapper.aos-animate .featured-carousel-container,
+[data-style="marquee"] .project-section-wrapper.aos-animate .featured-carousel-dots {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-style="marquee"] .project-section-wrapper .featured-carousel-container,
+  [data-style="marquee"] .project-section-wrapper .featured-carousel-dots {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+[data-style="marquee"] .section-header-wrapper {
+  --header-in-ms: 964;
+}
+
+/* js/anim-utils.js groups each word's glyphs in one of these. The glyphs are
+   atomic inlines, so wherever the heading is allowed to wrap — the small
+   sheet, further down — a line could otherwise break between any two letters
+   and "WHERE I'VE WORKED" printed as "WHERE I'VE WORKE / D". Pinning the
+   word puts the break opportunities back on the spaces. Both declarations
+   are load-bearing: inline-block makes the word one box, and without nowrap
+   that box shrinks to the column and wraps its letters inside itself. */
+[data-style="marquee"] .section-header-word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+[data-style="marquee"] .section-header-glyph {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(0.28em);
+  transition:
+    opacity 0.42s ease-out,
+    transform 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  transition-delay: min(calc(var(--glyph-r, 0) * 22ms), 340ms);
+}
+
+[data-style="marquee"] .section-header-in .section-header-glyph {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: min(calc(var(--glyph-i, 0) * 34ms), 544ms);
+}
+
+/* Less motion: the words are simply there, and the rule is drawn whole
+   rather than scrubbed. The observer in js/anim-utils.js already pins
+   --section-rule to 1 under the same query; this covers a skin switched on
+   after the fact, when the observer has already run. */
+@media (prefers-reduced-motion: reduce) {
+  [data-style="marquee"] .section-header-glyph {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  [data-style="marquee"] .section-header::after {
+    transform: none;
+  }
+}
+
+
+/* ---- Ticking label strip -------------------------------------------------
+   Device 3. A CSS-only infinite marquee: the ::before carries the label run
+   twice and translates exactly -50%, so the second copy lands where the
+   first began and the loop is seamless. Literal content only — nothing here
+   depends on page copy. */
+
+@keyframes marquee-tick {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-style="marquee"] #project-header-wrapper .section-header-spacer::after,
+  [data-style="marquee"] #selected-works-header .section-header-spacer::after {
+    animation: none;
+  }
+}
+
+
+
+
+/* ---- Optical alignment of the display type -------------------------------
+   Anton's left side bearing is the blank the font carries before the first
+   glyph's ink, and it changes with the letter: measured at 150px it runs
+   1.98px on "W" but 5.71px on "B". Laid out on a common left edge, the
+   headers therefore print with a ragged left margin against the hairline
+   rules and numerals that sit flush above them — "Blog" visibly indented
+   next to "Where I've Worked".
+
+   Each header gets back exactly its own bearing as a negative text-indent,
+   expressed in em so it tracks the clamped font-size instead of breaking
+   at other viewport widths. The numeral is a separate block inside the same
+   h2 and is set in the body face, whose bearing is negligible, so it resets
+   the indent to zero and stays on the grid.
+
+   These constants are keyed to each heading's FIRST GLYPH. If a heading is
+   reworded to start with a different letter, re-measure:
+     ctx.font = '400 150px Anton';
+     ctx.measureText('BLOG').actualBoundingBoxLeft / 150 + 'em'
+   actualBoundingBoxLeft is already negative when the ink starts right of the
+   origin, so the recipe yields the negative value to paste in as-is — do not
+   negate it again or the glyph moves the wrong way, further into the clip. */
+
+[data-style="marquee"] #about-section-header    { text-indent: -0.0146em; }
+[data-style="marquee"] #jobs-header             { text-indent: -0.0132em; }
+[data-style="marquee"] #project-header          { text-indent: -0.0205em; }
+[data-style="marquee"] #blog-header             { text-indent: -0.0381em; }
+[data-style="marquee"] #contact-section-header  { text-indent: -0.0313em; }
+
+/* Blog listing page: "Selected Works" then "All Posts". */
+[data-style="marquee"] .blog-listing-content .section-header-wrapper:first-of-type .blog-section-header { text-indent: -0.0205em; }
+[data-style="marquee"] .blog-listing-content .section-header-wrapper:last-of-type .blog-section-header  { text-indent: -0.0146em; }
+
+/* text-indent inherits into the anonymous block holding the title, so the
+   numeral has to opt out or it drifts left with it. */
+[data-style="marquee"] .sec-num {
+  text-indent: 0;
+}
+
+/* The masthead is one element with <br> line breaks, so its lines cannot be
+   corrected individually — the bearing there swings 2.0-3.7px between "H",
+   "I" and "S". The block takes the mid value so it sits flush with the
+   tracked sub-text beneath it; the residual ~1px between lines is inherent
+   to setting three different opening letters on one common edge. */
+[data-style="marquee"] #typing-text {
+  text-indent: -0.03em;
+}
+
+[data-style="marquee"] #blog-typing-text {
+  text-indent: -0.03em;
+}
+
+
+/* ---- About / Skills: the ink band ----------------------------------------
+   Device 2. The about panel reverses out to paper-on-ink and carries its
+   label at top and bottom, the lower one set upside down so the block reads
+   the same whichever way you come at it. */
+
+[data-style="marquee"] .card-style {
+  background-color: var(--bg);
+  color: var(--text);
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  padding: 32px 30px;
+}
+
+[data-style="marquee"] .card-title,
+[data-style="marquee"] .about-header,
+[data-style="marquee"] .skills-header {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--text60);
+  margin-bottom: 22px;
+}
+
+[data-style="marquee"] .skills-section-header {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-weight: 400;
+  color: var(--text);
+  font-size: 30px;
+  letter-spacing: -0.01em;
+}
+
+[data-style="marquee"] .about-text,
+[data-style="marquee"] .skills-text {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text85);
+  max-width: 62ch;
+}
+
+[data-style="marquee"] .skills-text {
+  border-bottom: 1px solid var(--text20);
+  padding-bottom: 14px;
+}
+
+[data-style="marquee"] .skills-text:last-child {
+  border-bottom: none;
+}
+
+
+/* ---- Experience: numbered rail, wandering edge --------------------------- */
+
+[data-style="marquee"] .nav-container {
+  border-left: 2px solid var(--text);
+}
+
+/* Rail rows in tracked caps. line-height is pinned in px because
+   js/script.js measures offsetHeight at load to size the highlight bar — a
+   late webfont changing the line box leaves the bar misaligned. */
+[data-style="marquee"] .menu li {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  font-weight: 600;
+  line-height: 16px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: var(--text60);
+  border-radius: 0;
+}
+
+/* Device 4: the wandering edge — retired. Rail rows used to indent by
+   differing amounts so the left margin read hand-set, but with exactly four
+   employers each row landed on a different indent (14/30/20/38px) and the
+   rail just read ragged rather than hand-set. Rows now sit flush on the base
+   12px padding. Kept here in case the device is wanted back, e.g. if the
+   rail ever grows past one cycle of four.
+@media (min-width: 1101px) {
+  [data-style="marquee"] .menu li:nth-child(4n + 1) { padding-left: 14px; }
+  [data-style="marquee"] .menu li:nth-child(4n + 2) { padding-left: 30px; }
+  [data-style="marquee"] .menu li:nth-child(4n + 3) { padding-left: 20px; }
+  [data-style="marquee"] .menu li:nth-child(4n + 4) { padding-left: 38px; }
+}
+*/
+@media (min-width: 1101px) {
+  [data-style="marquee"] .menu {
+    width: 262px;
+  }
+}
+
+[data-style="marquee"] .menu li:hover {
+  background: var(--text10);
+  color: var(--text);
+}
+
+/* Selected reverses to the band. The base rule colours this with --accent,
+   which is ink here, so it has to be restated as paper or it vanishes. */
+[data-style="marquee"] .menu li.selected {
+  background: var(--primary);
+  color: var(--bg);
+}
+
+/* Flat ink marker. JS writes all four geometry props inline on every move,
+   including border-radius, so these two need !important. left/width/top/
+   height are measured — never override those. */
+[data-style="marquee"] .highlight {
+  background: var(--text);
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+[data-style="marquee"] .job-content {
+  background-color: transparent;
+  border-radius: 0;
+  border-left: 2px solid var(--text);
+  padding: 4px 0 4px 26px;
+}
+
+/* Job titles take the serif — the speaking voice, at real display size. */
+[data-style="marquee"] .job-title {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-weight: 400;
+  color: var(--text);
+  font-size: 44px;
+  line-height: 0.98;
+  letter-spacing: -0.015em;
+}
+
+[data-style="marquee"] .job-dates {
+  font-family: var(--font-body);
+  color: var(--text60);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] .job-bullets {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text85);
+  max-width: 62ch;
+  list-style: none;
+  padding-left: 0;
+}
+
+/* Numerals replace bullet glyphs — the same parenthetical mark as .sec-num. */
+[data-style="marquee"] .job-bullets {
+  counter-reset: marquee-bullet;
+}
+
+[data-style="marquee"] .job-bullets li {
+  counter-increment: marquee-bullet;
+  position: relative;
+  padding-left: 40px;
+  margin-bottom: 12px;
+}
+
+[data-style="marquee"] .job-bullets li::before {
+  content: "(" counter(marquee-bullet, decimal-leading-zero) ")";
+  position: absolute;
+  left: 0;
+  top: 0.25em;
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--text50);
+}
+
+[data-style="marquee"] .job-in-right {
+  transform: none;
+  animation-name: marquee-job-in;
+}
+
+[data-style="marquee"] .job-out-right {
+  transform: none;
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+
+@keyframes marquee-job-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ---- Selected Works: catalogue rows -------------------------------------- */
+
+[data-style="marquee"] .fc-style-floating .fc-card-image {
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  background-color: var(--secondary);
+}
+
+[data-style="marquee"] .fc-style-floating .fc-card-body {
+  justify-content: flex-start;
+  padding-top: 2px;
+}
+
+/* Project titles are the serif at catalogue scale — the single biggest
+   thing in the section after the header itself. */
+[data-style="marquee"] .fc-card-title {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-weight: 400;
+  color: var(--text);
+  font-size: 46px;
+  line-height: 0.95;
+  letter-spacing: -0.018em;
+  margin-bottom: 14px;
+}
+
+[data-style="marquee"] .fc-card-desc {
+  color: var(--text85);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Tech tags become a tracked caption run, not chips. */
+[data-style="marquee"] .fc-card-tech {
+  gap: 4px 8px;
+}
+
+[data-style="marquee"] .fc-card-tech .pill {
+  padding: 0;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] .fc-card-tech .pill + .pill::before {
+  content: "✷";
+  color: var(--text35);
+  margin-right: 8px;
+}
+
+/* CTAs are ink blocks that reverse on hover. The base sheet sets a literal
+   10px radius here, so it must be named explicitly. */
+[data-style="marquee"] .fc-card-cta {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bg);
+  background-color: var(--text);
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  padding: 12px 20px;
+}
+
+[data-style="marquee"] .fc-card-cta:hover {
+  background-color: transparent;
+  color: var(--text);
+  transform: translateY(-2px);
+}
+
+[data-style="marquee"] .fc-dot {
+  border-radius: 0;
+  width: 26px;
+  height: 3px;
+  background-color: var(--text);
+  opacity: 0.22;
+}
+
+[data-style="marquee"] .fc-dot:hover {
+  opacity: 0.55;
+}
+
+[data-style="marquee"] .fc-dot.active {
+  background-color: var(--text);
+  opacity: 1;
+  transform: none;
+}
+
+
+/* ---- Selected Works sits on the ink band --------------------------------
+   The field itself is painted further down, with the other two; what lives
+   here is the reversal of everything inside it — including the carousel's
+   edge fades, which are painted from --bg by featured-carousel.css and would
+   otherwise print as two pale smears against the ink. */
+
+[data-style="marquee"] .featured-carousel-fade-left {
+  background: linear-gradient(to right, var(--primary), transparent);
+}
+
+[data-style="marquee"] .featured-carousel-fade-right {
+  background: linear-gradient(to left, var(--primary), transparent);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-card-title {
+  color: var(--bg);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-card-desc {
+  color: var(--bg85);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-card-tech .pill {
+  color: var(--bg70);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-card-tech .pill + .pill::before {
+  color: var(--bg40);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-style-floating .fc-card-image {
+  border-color: var(--bg);
+}
+
+/* CTA reverses too: paper block on ink, hollowing out on hover. */
+[data-style="marquee"] .featured-carousel-section .fc-card-cta {
+  background-color: var(--bg);
+  border-color: var(--bg);
+  color: var(--primary);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-card-cta:hover {
+  background-color: transparent;
+  color: var(--bg);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-dot {
+  background-color: var(--bg);
+}
+
+[data-style="marquee"] .featured-carousel-section .fc-dot.active {
+  background-color: var(--bg);
+}
+
+
+/* ---- Blog: the shelf ------------------------------------------------------
+   Cards are unboxed: a top rule, a numeral, a serif headline. The wandering
+   edge (device 4) runs vertically here because the home shelf is a
+   horizontal scroller — cards hang at differing depths.
+
+   The listing grid deliberately does NOT get the wander: its filter toggles
+   a .filtered-out class and :nth-child counts filtered nodes, so offsets
+   would reshuffle on every pill click. */
+
+[data-style="marquee"] .blog-card {
+  background-color: var(--bg);
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  padding: 22px 24px 24px;
+  transition: opacity 0.25s ease-out;
+}
+
+[data-style="marquee"] .blog-card:hover {
+  background-color: transparent;
+}
+
+/* The shelf used to hang its rows at differing depths — the wandering edge
+   again — which only worked while the cards were unboxed and their top rules
+   were the whole of their frame. Framed cards staggered like that read as a
+   layout fault, and the reference lays its article cards on a strict grid, so
+   the rows come level and stretch to a common height. */
+[data-style="marquee"] .blog-scroll-track {
+  align-items: stretch;
+  padding-top: 0;
+}
+
+[data-style="marquee"] .blog-card-title {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-weight: 400;
+  font-size: 32px;
+  line-height: 1;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  transition: opacity 0.2s ease-out;
+}
+
+[data-style="marquee"] .blog-card:hover .blog-card-title {
+  opacity: 0.55;
+}
+
+[data-style="marquee"] .blog-card > .blog-card-date {
+  order: -1;
+  margin: 0 0 12px;
+}
+
+[data-style="marquee"] .blog-card-date {
+  font-family: var(--font-body);
+  color: var(--text60);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] .blog-card-excerpt {
+  color: var(--text75);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+[data-style="marquee"] .blog-see-all .text-link {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Listing page: the grid's rules sit at higher specificity, so the row
+   grammar has to be restated. No wander here — see above. */
+[data-style="marquee"] .blog-listing-grid .blog-card {
+  background-color: var(--bg);
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  margin-top: 0;
+}
+
+[data-style="marquee"] .blog-listing-grid .blog-card:hover {
+  background-color: transparent;
+}
+
+[data-style="marquee"] .blog-listing-grid .blog-card .blog-card-date {
+  font-family: var(--font-body);
+  color: var(--text60);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* Listing hero: the typed h1 carries an ID-level bold — pin the face and
+   Anton's only weight. */
+[data-style="marquee"] #blog-typing-text {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  font-size: clamp(40px, 8vw, 92px);
+  line-height: 0.98;
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] [id^="blog-sub-text"] {
+  color: var(--text75);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+[data-style="marquee"] .filter-pill {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background-color: transparent;
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  color: var(--text70);
+}
+
+[data-style="marquee"] .filter-pill:hover {
+  color: var(--text);
+}
+
+[data-style="marquee"] .filter-pill.active {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+
+/* ---- Post pages ----------------------------------------------------------- */
+
+/* The dark code ground is pinned in theme-base.css; this only frames it. */
+[data-style="marquee"] .blog-post-content pre {
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+}
+
+/* Pull quotes take the serif at display size — body copy's one chance to
+   speak in the loud voice. */
+[data-style="marquee"] .blog-post-content blockquote {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-weight: 400;
+  font-size: 30px;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  color: var(--text);
+  border-left: 3px solid var(--text);
+}
+
+/* Body headings. Every other skin restates these; this one had not, so a
+   post's h2s and h3s were left on the site-wide `h1,h2,h3,h4 { font-family:
+   var(--font-heading) }` — which here is Anton, a poster face, printed at
+   22px in the middle of a paragraph of Inter. The serif is the reading voice
+   this sheet already gives pull quotes and card titles; headings inside the
+   article belong to it too. */
+[data-style="marquee"] .blog-post-content h2,
+[data-style="marquee"] .blog-post-content h3 {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+[data-style="marquee"] .blog-post-content h2 {
+  font-size: 34px;
+  line-height: 1.1;
+}
+
+[data-style="marquee"] .blog-post-content h3 {
+  font-size: 25px;
+  line-height: 1.15;
+}
+
+[data-style="marquee"] #metr-chart {
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+}
+
+/* The under-viewed art widget (blog/posts/assets/underviewed-art.css) was
+   the one post widget this sheet never answered, so it kept its default
+   dress: a tinted fill for the mat, which on a dark skin recedes behind the
+   picture but here printed a 750px grey slab across the paper, and a picture
+   floating in the middle of it with no edge of its own. Same move as the
+   chart above and as the panels in the about band — the fill goes and a
+   drawn frame takes over, so the square reads as a mount around the work
+   instead of a box that failed to load. The rail thumbnails follow. */
+[data-style="marquee"] .uva-frame {
+  background: transparent;
+  border: 2px solid var(--text);
+}
+
+[data-style="marquee"] .uva-thumb {
+  background: transparent;
+  border-color: var(--text25);
+}
+
+[data-style="marquee"] .uva-thumb-active {
+  border-color: var(--text);
+}
+
+/* The caption title is the work's own name and sits directly above the
+   mount, so it takes the same reading voice as the headings above rather
+   than shouting in Anton at 22px. */
+[data-style="marquee"] .uva-title {
+  font-family: var(--font-heading-serif, Georgia, serif);
+  font-size: 24px;
+}
+
+/* The control under the mount is a button, and buttons on this sheet are
+   ruled boxes in the body face, not soft pills. */
+[data-style="marquee"] .uva-refresh,
+[data-style="marquee"] .uva-retry {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  padding: 10px 18px;
+}
+
+[data-style="marquee"] .uva-refresh:hover {
+  background-color: var(--text);
+  color: var(--bg);
+}
+
+[data-style="marquee"] #pareto-chart,
+[data-style="marquee"] #ara-objectives-chart,
+[data-style="marquee"] #kl-explainer-chart {
+  border-radius: var(--border-radius);
+}
+
+
+/* ---- Contact --------------------------------------------------------------- */
+
+/* The closing band — the page ends the way the about panel opened it. */
+[data-style="marquee"] .contact-view-left {
+  background: var(--primary);
+  color: var(--bg);
+  border-radius: 0;
+  padding: 40px 36px;
+}
+
+[data-style="marquee"] .contact-text {
+  color: var(--bg85);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 62ch;
+}
+
+[data-style="marquee"] .contact-view-left .text-link {
+  color: var(--bg);
+}
+
+[data-style="marquee"] .contact-view-left .text-link::before {
+  background-color: var(--bg);
+}
+
+[data-style="marquee"] .contact-menu .socials-item {
+  color: var(--bg75);
+}
+
+[data-style="marquee"] .contact-menu .socials-item:hover {
+  color: var(--bg);
+}
+
+[data-style="marquee"] .calendly-link {
+  font-family: var(--font-body);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+[data-style="marquee"] .contact-image-wrapper {
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+}
+
+
+/* ---- Pills elsewhere (post meta, privacy) --------------------------------- */
+
+[data-style="marquee"] .pill {
+  background-color: transparent;
+  border-radius: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text65);
+}
+
+[data-style="marquee"] .blog-post-meta {
+  gap: 4px 8px;
+}
+
+[data-style="marquee"] .blog-post-meta .pill + .pill::before {
+  content: "✷";
+  color: var(--text35);
+  margin-right: 8px;
+}
+
+
+/* ---- Cycler dock ----------------------------------------------------------- */
+
+[data-style="marquee"] .tc-dock {
+  border: 2px solid var(--text);
+  border-radius: var(--border-radius);
+  box-shadow: none;
+}
+
+
+/* ---- Mobile (site breakpoint: 1100px) -------------------------------------- */
+
+
+
+/* ---- Reclaiming the page ------------------------------------------------
+   Measured against the reference: it uses 98% of the viewport across five
+   full-bleed bands in two colour regimes; this site used 75%, with 200px of
+   dead gutter each side and one regime. The surprise in that comparison was
+   that this page is not short of whitespace — it carries 81% background
+   pixels to the reference's 45%. The air was never the problem. The problem
+   is that the air is undifferentiated: nothing is organised into fields, so
+   400px of empty gutter reads as slack rather than structure.
+
+   So: let the STRUCTURE run the full width and keep the TEXT at a readable
+   measure. Poster type, rules, ticker strips and bands go edge to edge;
+   prose stays capped in ch. That is exactly the reference's arrangement —
+   full-bleed sections, 49-82 characters per line inside them.
+
+   #main-body carries overflow-x: hidden, so negative-margin bleeds inside it
+   can never produce a horizontal scrollbar. That makes the gutter-width
+   negative margin safe where a 100vw bleed would not be. */
+
+/* The document's own 8px body margin is paper the bands cannot cross, so a
+   full-bleed field stopped 8px short of the viewport on both sides and read
+   as a very wide box rather than a ground. Zero it and hand the 8px to the
+   rail, so text lands where it did and the fields reach a true 0. */
+[data-style="marquee"] body {
+  margin: 0;
+}
+
+[data-style="marquee"] #main-body {
+  --edge: 34px;
+  max-width: none;
+  padding-left: var(--edge);
+  padding-right: var(--edge);
+}
+
+/* Inner rails that re-cap at 1180px and re-centre; without these the page
+   would widen but its contents would stay in the old column. */
+[data-style="marquee"] #jobs-section,
+[data-style="marquee"] .blog-scroll-container,
+[data-style="marquee"] .blog-see-all {
+  max-width: none;
+  width: 100%;
+}
+
+/* Structure now starts at the true page edge, so the 10px nudge these
+   carried against the old column is gone. */
+[data-style="marquee"] .section-header-wrapper,
+[data-style="marquee"] .footer-container {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* The optical indent further up pulls each heading's first glyph out to
+   exactly x=0 of this box — which is exactly where overflow-x: clip cuts.
+   Flush against the clip plane, the glyph loses its anti-aliased edge column
+   and prints with a shaved left side ("W" of Where I've Worked, "B" of Blog:
+   the two wrappers that get no left padding from the ink-band rule below).
+   Start the box 8px further left and pad the same 8px back, so the content
+   edge — and so every rule on the page — does not move, but the clip plane
+   now clears the widest bearing (#blog-header, up to 4.7px at the 124px cap).
+   The ink fields below override this with the same idiom at --edge, which is
+   already clear. */
+[data-style="marquee"] .section-header-wrapper {
+  margin-left: -8px;
+  padding-left: 8px;
+}
+
+/* ---- Alternating grounds -------------------------------------------------
+   The reference does not decorate its sections; it alternates their ground.
+   Paper masthead, the editor's letter reversed out to ink, About back on
+   paper, Selected Works reversed, Articles on paper, the closing block
+   reversed. The colour change IS the section break — which is why the
+   reference can abut its sections at 0px and still read as chaptered.
+
+   Three ink fields here, in the same rhythm: hero paper, ABOUT ink,
+   EXPERIENCE paper, SELECTED WORKS ink, BLOG paper, CONTACT ink.
+
+   Two of the three span a header wrapper and a body section that are
+   siblings in the markup rather than one wrapped element, so the ground goes
+   on both and the gap between them is closed — the wrapper's bottom margin
+   becomes bottom padding, or a paper stripe prints straight across the
+   field. Every field bleeds the gutter with the same negative margin the
+   carousel used, which #main-body's overflow-x: hidden makes safe. */
+
+[data-style="marquee"] #about-header-wrapper,
+[data-style="marquee"] #about,
+[data-style="marquee"] .project-section-wrapper,
+[data-style="marquee"] #selected-works-header,
+[data-style="marquee"] .featured-carousel-section,
+[data-style="marquee"] #contact-header-wrapper,
+[data-style="marquee"] #contact {
+  background-color: var(--primary);
+  color: var(--bg);
+  margin-left: calc(var(--edge) * -1);
+  margin-right: calc(var(--edge) * -1);
+  padding-left: var(--edge);
+  padding-right: var(--edge);
+}
+
+/* A field opens on its header and closes on its body; the seam between the
+   two carries no margin. */
+[data-style="marquee"] #about-header-wrapper,
+[data-style="marquee"] #selected-works-header,
+[data-style="marquee"] #contact-header-wrapper {
+  margin-bottom: 0;
+  padding-bottom: 40px;
+}
+
+[data-style="marquee"] #about-header-wrapper,
+[data-style="marquee"] #selected-works-header,
+[data-style="marquee"] #contact-header-wrapper,
+[data-style="marquee"] .project-section-wrapper {
+  padding-top: 54px;
+}
+
+[data-style="marquee"] #about,
+[data-style="marquee"] #contact,
+[data-style="marquee"] .featured-carousel-section,
+[data-style="marquee"] .project-section-wrapper {
+  padding-bottom: 54px;
+}
+
+/* The opening rule belongs to paper sections only. On an ink field the edge
+   of the ground is the rule, which is what the reference does — its reversed
+   blocks carry no hairline above the heading. */
+[data-style="marquee"] #about-header-wrapper,
+[data-style="marquee"] #selected-works-header,
+[data-style="marquee"] #contact-header-wrapper,
+[data-style="marquee"] .project-section-wrapper .section-header-wrapper {
+  border-top: none;
+}
+
+/* Everything inside a field reverses. :is() takes the highest specificity of
+   its arguments, so an ID in the list lifts these over the per-section ID
+   colour rules they have to undo. */
+[data-style="marquee"] :is(#about-header-wrapper, #about, .project-section-wrapper, #selected-works-header, .featured-carousel-section, #contact-header-wrapper, #contact) .section-header {
+  color: var(--bg);
+}
+
+[data-style="marquee"] :is(#about-header-wrapper, #about, .project-section-wrapper, #selected-works-header, .featured-carousel-section, #contact-header-wrapper, #contact) .sec-num {
+  color: var(--bg60);
+}
+
+[data-style="marquee"] :is(#about-header-wrapper, #about, .project-section-wrapper, #selected-works-header, .featured-carousel-section, #contact-header-wrapper, #contact) .section-header-spacer {
+  border-top-color: var(--bg);
+  border-bottom-color: var(--bg);
+}
+
+[data-style="marquee"] :is(#about-header-wrapper, #about, .project-section-wrapper, #selected-works-header, .featured-carousel-section, #contact-header-wrapper, #contact) .section-header-spacer::after {
+  color: var(--bg65);
+}
+
+[data-style="marquee"] :is(#about, #contact) .text-link {
+  color: var(--bg);
+}
+
+[data-style="marquee"] :is(#about, #contact) .text-link::before {
+  background-color: var(--bg);
+}
+
+/* Panels inside a field are hollow: the ground is already ink, so a filled
+   panel would be ink on ink. A paper hairline frame is what remains — the
+   same move the reference makes on its reversed letter block. */
+[data-style="marquee"] #about .card-style,
+[data-style="marquee"] #contact .contact-view-left {
+  background-color: transparent;
+  background: transparent;
+  border: 2px solid var(--bg);
+  border-radius: var(--border-radius);
+}
+
+[data-style="marquee"] #about :is(.card-title, .about-header, .skills-header) {
+  color: var(--bg60);
+}
+
+[data-style="marquee"] #about .skills-section-header {
+  color: var(--bg);
+}
+
+[data-style="marquee"] #about :is(.about-text, .skills-text) {
+  color: var(--bg85);
+}
+
+[data-style="marquee"] #about .skills-text {
+  border-bottom-color: var(--bg20);
+}
+
+/* The carousel appears on two pages under different parentage. On the blog
+   listing it is a bare sibling of #selected-works-header, so it carries the
+   lower half of that field itself — which is why it is in the list above. On
+   the home page it sits inside .project-section-wrapper, which already paints
+   the field, so there it hands the ground and the bleed back and becomes
+   plain content. Its edge fades are drawn from --primary either way. */
+[data-style="marquee"] .project-section-wrapper .featured-carousel-section {
+  background-color: transparent;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+/* Sections were separated by 176px of nothing, five times over; the
+   reference abuts its sections at 0px and separates them by colour and rule
+   instead. Cut the void to roughly a third and let the opening rule do the
+   work. */
+[data-style="marquee"] .section-spacer {
+  height: 4em;
+}
+
+/* The about/skills row is a stretch flexbox, so both panels take the taller
+   one's height. On every narrow-column skin the two blocks come out roughly
+   level; here the page is full width, and skills — three headed sections
+   set one under another against about's single continuous run — came to
+   about twice the about panel's height, with a few hundred px of empty
+   frame standing beside it.
+
+   The width is the fix, not the copy. A full-width sheet has room to set the
+   three skill sections side by side instead of stacked, which drops the
+   panel to roughly the height of the about text next to it and lets both
+   frames close on the same line again. Forced breaks put one section per
+   column, so the balancer can't split a paragraph across two.
+
+   Scoped to #about: the contact row below is a different pair and keeps the
+   ragged bottom. */
+[data-style="marquee"] .double-view-container {
+  align-items: flex-start;
+}
+
+/* Wide sheet only. One rail has no "beside it" and no width to split, so
+   below the breakpoint the sections go back to running on and the panels
+   keep the fit-content frame the small sheet sets up. */
+@media (min-width: 1101px) {
+  [data-style="marquee"] #about {
+    align-items: stretch;
+  }
+
+  /* Both panels take their column whole now that they end level — the
+     fit-content frame above is for the single-panel blocks. The measures
+     land near 55ch and 40ch, so neither frame outruns its copy. */
+  [data-style="marquee"] #about .double-view-left {
+    width: 31%;
+    max-width: none;
+  }
+
+  [data-style="marquee"] #about .double-view-right {
+    width: 69%;
+    max-width: none;
+    column-count: 3;
+    column-gap: 40px;
+    column-rule: 1px solid var(--bg20);
+  }
+
+  /* The panel label belongs above the columns, not inside the first one. */
+  [data-style="marquee"] #about .skills-header {
+    column-span: all;
+  }
+
+  [data-style="marquee"] #about .skills-section-header {
+    break-after: avoid;
+    break-inside: avoid;
+  }
+
+  [data-style="marquee"] #about .skills-section-header:nth-of-type(n + 2) {
+    break-before: column;
+  }
+
+  /* The column is the measure now; the 68ch cap would never bind and only
+     confuses the balancer. */
+  [data-style="marquee"] #about .skills-text {
+    break-inside: avoid;
+    max-width: none;
+  }
+
+  /* The site draws a rule under each skill section to separate it from the
+     next one down. Set side by side there is no next one down: the column
+     rule between them already does the separating, and the underline just
+     printed a stray bar at the foot of two of the three columns, at whatever
+     height the balancer happened to end that column. Stacked (below the
+     breakpoint, where the sections do run one under another) it still earns
+     its keep, so this stays inside the wide-sheet query. */
+  [data-style="marquee"] #about .skills-text {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+}
+
+/* With the page now full width, the panels filled their columns while their
+   prose stayed capped at a readable measure — so each border ran on past the
+   last word with a few hundred px of empty card behind it. Let the panel
+   shrink to its own text so the frame hugs the copy. */
+[data-style="marquee"] .card-style {
+  width: fit-content;
+  max-width: 100%;
+}
+
+/* Prose keeps a reference-matching measure now that its container is wide. */
+[data-style="marquee"] .about-text,
+[data-style="marquee"] .skills-text,
+[data-style="marquee"] .contact-text,
+[data-style="marquee"] .job-bullets,
+[data-style="marquee"] .blog-card-excerpt,
+[data-style="marquee"] .fc-card-desc,
+[data-style="marquee"] [id^="blog-sub-text"] {
+  max-width: 68ch;
+}
+
+
+/* ---- Type scale ----------------------------------------------------------
+   The comparison found 85 elements sitting at 9.5-10.5px against 15px body
+   copy — a cramped microtype floor the reference does not have (its floor is
+   12px). Small type was doing too many jobs at once. Lift the floor to 12px
+   and let the display tier carry the contrast instead: the reference runs a
+   34x ratio top to bottom, this sheet ran 15.8x. */
+
+[data-style="marquee"] .menu-item,
+[data-style="marquee"] #sub-text,
+[data-style="marquee"] .sec-num,
+[data-style="marquee"] .footer-text,
+[data-style="marquee"] .footer-text-mobile,
+[data-style="marquee"] .job-dates,
+[data-style="marquee"] .blog-card-date,
+[data-style="marquee"] .blog-listing-grid .blog-card .blog-card-date,
+[data-style="marquee"] .filter-pill,
+[data-style="marquee"] .fc-card-cta,
+[data-style="marquee"] .calendly-link,
+[data-style="marquee"] .blog-see-all .text-link,
+[data-style="marquee"] .card-title,
+[data-style="marquee"] .about-header,
+[data-style="marquee"] .skills-header,
+[data-style="marquee"] .menu li,
+[data-style="marquee"] .pill,
+[data-style="marquee"] .fc-card-tech .pill,
+[data-style="marquee"] .section-header-spacer::after,
+[data-style="marquee"] .job-bullets li::before {
+  font-size: 12px;
+}
+
+/* Titles take the freed contrast — the reference carries a whole 82px tier
+   between its display heads and its body copy; this sheet had nothing
+   between 46px and 15px. */
+[data-style="marquee"] .fc-card-title {
+  font-size: 58px;
+}
+
+[data-style="marquee"] .job-title {
+  font-size: 54px;
+}
+
+[data-style="marquee"] .blog-card-title {
+  font-size: 38px;
+}
+
+[data-style="marquee"] .skills-section-header {
+  font-size: 34px;
+}
+
+
+
+@media screen and (max-width: 1100px) {
+
+  /* ---- Small-sheet layout -------------------------------------------------
+     The wide-sheet rules above widen #main-body to the whole page and hang a
+     26px rail off it. On a 390px phone that rail stacked with the body's own
+     8px margin and the base sheet's 10px card margin and 22px card padding:
+     66px of inset before a word of copy, and 64px on the other side, leaving
+     238px of a 390px screen for text. The small sheet takes ONE rail — --edge,
+     measured from the true viewport edge, with the body margin zeroed so the
+     ink band can bleed to 0 instead of stopping 8px short of it. */
+
+  /* mobile-styles.css pins `min-width: 319px` on a content-box element, so at
+     --edge the box floors at 319 + 2*edge: with the old 26px rail that was
+     371px, and the document overflowed horizontally on anything narrower.
+     Nothing here needs a floor — the sheet is fluid all the way down. */
+  [data-style="marquee"] #main-body {
+    --edge: 16px;
+    min-width: 0;
+  }
+
+  /* The dither stack sets `display: block` on #typing-image at (0,1,1,0),
+     which outranks mobile-styles.css's `#typing-image { display: none }`. So
+     the 225x400 portrait came back on the small sheet, inside a hero box the
+     base sheet pins to 125px: it squeezed the masthead column to 62px (the h1
+     then set roughly one letter per line and ran to x=405 on a 390px viewport,
+     kept off the scrollbar only by #main-body's overflow-x: hidden) and
+     printed 279px of itself straight down through the About header and its
+     ticker strip. Restore the base behaviour. The host goes with it — it
+     carries the 60px filter margins and an empty one still reserves them. */
+  [data-style="marquee"] #typing-right,
+  [data-style="marquee"] #typing-image {
+    display: none;
+  }
+
+  /* With the portrait gone there is nothing to hang the masthead off, and
+     mobile-styles.css pins the hero box to 125px and positions it by
+     transform — so the wide sheet's 60px lead-in just made the box 185px and
+     pushed the whole hero down the page. It comes off; the small sheet's own
+     lead-in is the base `#typing-text { padding-top: 1.125em }`, which this
+     skin no longer overrides. */
+  [data-style="marquee"] #typing-container {
+    padding-top: 0;
+  }
+
+  /* The ABOUT field's ink ground is held back until the intro wave.
+     mobile-styles.css positions the masthead by transform, and where it parks
+     it for the whole time the type runs is on top of this field — ink type on
+     an ink ground, which read as nothing being there at all. .hero-extras-in
+     lands on <html> the moment the headline finishes typing (js/script.js),
+     which is the same beat the masthead starts sliding up to its resting
+     place; the delay is the ~0.18s the slide takes to carry it clear. The
+     field then inks in with the rest of the page. */
+  [data-style="marquee"] #about-header-wrapper,
+  [data-style="marquee"] #about {
+    background-color: transparent;
+  }
+
+  [data-style="marquee"].hero-extras-in #about-header-wrapper,
+  [data-style="marquee"].hero-extras-in #about {
+    background-color: var(--primary);
+    transition: background-color 0.45s ease-out 0.2s;
+  }
+
+  /* Panels: one rail, and the frame hugs its copy.
+     `width: fit-content` is right in both regimes — it just needed the margins
+     out of the way. fit-content resolves to min(max-content, stretch-fit), and
+     stretch-fit subtracts the box's own margins: with the base sheet's 10px a
+     side that came to 282px inside a 302px column, so the panel printed 44px
+     of gutter on the left against 64px on the right and never once lined up
+     with the rules above it. Zero the side margins and the same declaration
+     gives a phone the full 358px column (the 68ch measure is wider than the
+     sheet, so max-content loses) while a 1099px tablet still gets a frame that
+     ends where the prose ends, as the wide sheet intends.
+     The container's own 20px right padding goes for the same reason. */
+  [data-style="marquee"] .double-view-container {
+    align-items: stretch;
+    padding-right: 0;
+  }
+
+  [data-style="marquee"] .card-style {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* The closing band is a band, not a card: it takes the column whole. */
+  [data-style="marquee"] .contact-view-left {
+    width: auto;
+    max-width: none;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Base ships this as `width: calc(100% - 20px); margin: 0 auto`; zeroing the
+     side margins alone would just un-centre it. Take the full column. */
+  [data-style="marquee"] .footer-container-mobile {
+    width: 100%;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* The shelf is a scroller and the base sheet pads it 10px a side, which
+     offset every card rule from every other rule on the page by that much. */
+  [data-style="marquee"] .blog-scroll-track {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* The rail's 26px and the numeral column's 40px cost 66px of a 358px
+     measure between them. Both come in on the small sheet. */
+  [data-style="marquee"] .job-content {
+    padding-left: 16px;
+  }
+
+  [data-style="marquee"] .job-bullets li {
+    padding-left: 32px;
+  }
+
+  /* Base ships `padding: 15px 10px 0` here, which on the small sheet put the
+     box's right edge at 394 on a 390px viewport (only #main-body's
+     overflow-x: hidden kept it off the scrollbar) and hung the link 10px past
+     every other rule on the page. Vertical padding stays. */
+  [data-style="marquee"] .blog-see-all {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* The desktop contact band reverses its socials to paper via
+     `.contact-menu .socials-item`, but the small sheet swaps in
+     .contact-menu-mobile — which that selector never matched. The icons were
+     therefore printing ink-on-ink: rgba(35,31,26,.7) on a rgb(42,39,34)
+     panel, effectively invisible. Reverse the mobile menu too. */
+  /* The quick-links row is a single nowrap flex line and is already 12px wider
+     than its column at 320px on the default sheet; the 12px microtype floor
+     this theme sets takes that to 17px. Let it wrap rather than run under the
+     panel edge. */
+  [data-style="marquee"] .quick-links .menu-list {
+    flex-wrap: wrap;
+  }
+
+  [data-style="marquee"] .contact-view-left .contact-menu-mobile .socials-item,
+  [data-style="marquee"] .contact-view-left .quick-links .calendly-link {
+    color: var(--bg75);
+  }
+
+  [data-style="marquee"] .contact-view-left .contact-menu-mobile .socials-item:hover,
+  [data-style="marquee"] .contact-view-left .quick-links .calendly-link:hover {
+    color: var(--bg);
+  }
+
+  /* The masthead row is the only thing left off the rail: the logo carries a
+     10px margin and the mobile menu a 10px right margin, so the top row sat
+     10px inside every rule beneath it. */
+  [data-style="marquee"] .name-logo {
+    margin-left: 0;
+  }
+
+  [data-style="marquee"] .static-menu-mobile {
+    margin-right: 0;
+  }
+
+  /* The mobile ID rule pins 34px; poster type overflows the 125px hero box
+     into the about section if left unscaled. Anton is condensed enough to
+     still read as display type at 40px. */
+  [data-style="marquee"] #typing-text {
+    font-size: clamp(32px, 10vw, 42px);
+    line-height: 1;
+  }
+
+  [data-style="marquee"] #sub-text {
+    font-size: 8.5px;
+    letter-spacing: 0.22em;
+  }
+
+  [data-style="marquee"] #blog-typing-text {
+    font-size: clamp(32px, 10vw, 44px);
+    line-height: 1;
+  }
+
+  /* mobile-styles.css pins nowrap for the small inline headers. This skin's
+     department heads are set at poster scale, so they wrap instead: with
+     nowrap, "WHERE I'VE WORKED" runs ~34px past the column at every phone
+     width — the heading and the sheet both scale with vw, so the overrun is
+     near-constant and no font-size clamp closes it — and overflow-x: clip
+     eats the last word. Two lines at the poster size beats one line shrunk
+     to fit. Every other skin already resets this in its mobile block. */
+  [data-style="marquee"] .section-header {
+    font-size: clamp(38px, 14vw, 62px);
+    white-space: normal;
+  }
+
+  /* Wide, the rule sits on the heading's own line and takes whatever measure
+     the words leave it. There is no such measure on a phone: "Where I've
+     Worked" set nowrap already fills the sheet, so an inline rule would be
+     squeezed to nothing or push the title off the edge. It drops below the
+     heading instead and takes the full column — same object, stacked. */
+  [data-style="marquee"] .section-header {
+    display: block;
+  }
+
+  [data-style="marquee"] .section-header::after {
+    width: 100%;
+    min-width: 0;
+    margin-top: 12px;
+  }
+
+  /* The opener's poster setting comes down with everything else; the ID rules
+     that set it wide outrank a class-only override at any point in the
+     sheet, so they are answered in kind. */
+  [data-style="marquee"] #project-header-wrapper .section-header,
+  [data-style="marquee"] #selected-works-header .section-header {
+    font-size: clamp(38px, 14vw, 62px);
+  }
+
+  [data-style="marquee"] .section-header-wrapper {
+    margin-bottom: 28px;
+  }
+
+  [data-style="marquee"] .section-spacer {
+    height: 7em;
+  }
+
+  /* Two sections open on paper straight after an ink field: Experience after
+     About, and Blog after Selected Works. The field's own closing 54px is
+     already above them and its bottom edge is the section break, so the full
+     7em on top of that dropped "Where I've Worked" 118px below the boundary
+     while every ink-ground title sits its own 54px padding-top below one —
+     the same run of nothing, read as two and a half times the gap. Blog only
+     escaped it because mobile-styles.css pulls that section up 80px for the
+     default sheet. Undo the pull and set both openers here, so the two paper
+     headings answer their boundary at the same distance and the number is in
+     one place. */
+  [data-style="marquee"] #about + .section-spacer,
+  [data-style="marquee"] .project-section-wrapper + .section-spacer {
+    height: 2em;
+  }
+
+  [data-style="marquee"] .blog-section-wrapper {
+    margin-top: 0;
+  }
+
+  /* Tighter tick strip on the small sheet. Named by ID for the same reason
+     as the heading above. */
+  [data-style="marquee"] #project-header-wrapper .section-header-spacer,
+  [data-style="marquee"] #selected-works-header .section-header-spacer {
+    height: 22px;
+    margin-top: 20px;
+  }
+
+  [data-style="marquee"] #project-header-wrapper .section-header-spacer::after,
+  [data-style="marquee"] #selected-works-header .section-header-spacer::after {
+    font-size: 8.5px;
+    line-height: 22px;
+  }
+
+  [data-style="marquee"] .static-menu-mobile .menu-list {
+    gap: 16px;
+  }
+
+  [data-style="marquee"] .static-menu-mobile .menu-item {
+    font-size: 9.5px;
+    letter-spacing: 0.12em;
+  }
+
+  [data-style="marquee"] .static-menu-mobile .socials-item {
+    color: var(--text70);
+  }
+
+  [data-style="marquee"] .menu-scroll-wrapper {
+    border-bottom: 2px solid var(--text);
+  }
+
+  /* Display type inside panels has to come down or it breaks the column. */
+  [data-style="marquee"] .job-title {
+    font-size: 30px;
+  }
+
+  [data-style="marquee"] .fc-card-title {
+    font-size: 32px;
+  }
+
+  [data-style="marquee"] .blog-card-title {
+    font-size: 26px;
+  }
+
+  [data-style="marquee"] .blog-post-content blockquote {
+    font-size: 23px;
+  }
+
+  [data-style="marquee"] .card-style,
+  [data-style="marquee"] .contact-view-left {
+    padding: 24px 18px;
+  }
+
+  /* The wander is a wide-sheet gesture; on a narrow sheet the cards are
+     nearly full-width and staggering them just looks broken. */
+  [data-style="marquee"] .blog-scroll-track {
+    padding-top: 4px;
+  }
+
+  [data-style="marquee"] .blog-scroll-track .blog-card:nth-child(4n + 1),
+  [data-style="marquee"] .blog-scroll-track .blog-card:nth-child(4n + 2),
+  [data-style="marquee"] .blog-scroll-track .blog-card:nth-child(4n + 3),
+  [data-style="marquee"] .blog-scroll-track .blog-card:nth-child(4n + 4) {
+    margin-top: 0;
+  }
+
+  [data-style="marquee"] .footer-container-mobile {
+    border-top: 2px solid var(--text);
+    padding-top: 14px;
+  }
+}

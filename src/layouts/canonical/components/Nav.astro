@@ -1,0 +1,197 @@
+---
+// Canonical shared chrome owner. Inputs: Theme + PageContext. Dependencies: href(), bound
+// prose and ThemePicker. Build-rendered only; callers own behavior script tags and ordering.
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+import ThemePicker from './ThemePicker.astro';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+}
+
+const { theme, page } = Astro.props;
+const home = page.type === 'home';
+const post = page.type === 'post';
+const homeLink = (fragment: string) => home ? fragment : `${href('/', theme.id)}${fragment}`;
+
+const desktopLinks = [
+  { label: prose.text('nav.about', 'xs'), href: homeLink('#about') },
+  { label: prose.text('nav.experience', 'xs'), href: homeLink('#jobs-header-static') },
+  { label: prose.text('nav.projects', 'xs'), href: homeLink('#project-header-static') },
+  {
+    label: prose.text('nav.blog', 'xs'),
+    href: href('/blog/', theme.id),
+    className: 'menu-item blog-page-link',
+  },
+  { label: prose.text('nav.contact', 'xs'), href: homeLink('#contact') },
+  {
+    label: prose.text('nav.resume', 'xs'),
+    href: href('/resources/Resume.pdf', theme.id),
+    className: 'menu-item resume-link',
+    external: true,
+  },
+].filter((link) => link.label);
+
+const mobileLinks = [
+  {
+    label: prose.text('nav.email', 'xs'),
+    href: `mailto:${prose.data.site.email}`,
+    className: 'socials-item',
+    icon: 'bx bx-envelope',
+    external: true,
+  },
+  {
+    label: prose.text('nav.blog', 'xs'),
+    href: href('/blog/', theme.id),
+    className: 'menu-item blog-page-link',
+  },
+  {
+    label: prose.text('nav.resume', 'xs'),
+    href: href('/resources/Resume.pdf', theme.id),
+    className: 'menu-item resume-link',
+    external: true,
+  },
+].filter((link) => link.label);
+
+const logo = prose.text('site.logo', 'xs');
+const mainLabel = prose.text('nav.aria.main', 'xs');
+const quickLabel = prose.text('nav.aria.quick', 'xs');
+---
+{home ? (
+  <header>
+    <nav class="moving-menu" aria-label={mainLabel}>
+      <ul class="menu-list">
+        {desktopLinks.map((link) => (
+          <>
+            <li>
+              <a
+                class={link.className ?? 'menu-item'}
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+              >{link.label}</a>
+            </li>
+            <li><span class="menu-spacer"></span></li>
+          </>
+        ))}
+        <ThemePicker />
+      </ul>
+    </nav>
+    <div id="cursor-container">
+      <div class="cursor-follow"></div>
+      <div class="circle-follow"></div>
+    </div>
+    <div class="header-menu-container">
+      {logo && <a class="name-logo" href={href('/', theme.id)}>{logo}</a>}
+      <nav class="static-menu" aria-label={mainLabel}>
+        <ul class="menu-list">
+          {desktopLinks.map((link) => (
+            <>
+              <li>
+                <a
+                  class={link.className ?? 'menu-item'}
+                  href={link.href}
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noopener noreferrer' : undefined}
+                >{link.label}</a>
+              </li>
+              <li><span class="menu-spacer"></span></li>
+            </>
+          ))}
+          <ThemePicker />
+        </ul>
+      </nav>
+      <nav class="static-menu-mobile" aria-label={quickLabel}>
+        <ul class="menu-list">
+          {mobileLinks.map((link) => (
+            <>
+              <li>
+                {link.icon ? (
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" class={link.className} aria-label={link.label}>
+                    <i class={link.icon} aria-hidden="true"></i>
+                  </a>
+                ) : (
+                  <a class={link.className} href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+                    {link.label}
+                  </a>
+                )}
+              </li>
+              <li><span class="menu-spacer"></span></li>
+            </>
+          ))}
+          <ThemePicker icon="fa-solid fa-palette" />
+        </ul>
+      </nav>
+    </div>
+  </header>
+) : (
+  <>
+    <div id="cursor-container">
+      <div class="cursor-follow"></div>
+      <div class="circle-follow"></div>
+    </div>
+    <nav class="moving-menu" aria-label={mainLabel}>
+      <ul class="menu-list">
+        {desktopLinks.map((link) => (
+          <>
+            <li>
+              <a
+                class={link.className ?? 'menu-item'}
+                href={link.href}
+                target={link.external ? '_blank' : undefined}
+                rel={link.external ? 'noopener noreferrer' : undefined}
+              >{link.label}</a>
+            </li>
+            <li><span class="menu-spacer"></span></li>
+          </>
+        ))}
+        <ThemePicker />
+      </ul>
+    </nav>
+    <div class="header-menu-container">
+      {logo && <a class={`name-logo${post ? ' name-logo-visible' : ''}`} href={href('/', theme.id)}>{logo}</a>}
+      <nav class="static-menu" aria-label={mainLabel}>
+        <ul class="menu-list">
+          {desktopLinks.map((link) => (
+            <>
+              <li>
+                <a
+                  class={link.className ?? 'menu-item'}
+                  href={link.href}
+                  target={link.external ? '_blank' : undefined}
+                  rel={link.external ? 'noopener noreferrer' : undefined}
+                >{link.label}</a>
+              </li>
+              <li><span class="menu-spacer"></span></li>
+            </>
+          ))}
+          <ThemePicker />
+        </ul>
+      </nav>
+      <nav class="static-menu-mobile" aria-label={quickLabel}>
+        <ul class="menu-list">
+          {mobileLinks.map((link) => (
+            <>
+              <li>
+                {link.icon ? (
+                  <a href={link.href} target="_blank" rel="noopener noreferrer" class={link.className} aria-label={link.label}>
+                    <i class={link.icon} aria-hidden="true"></i>
+                  </a>
+                ) : (
+                  <a class={link.className} href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined}>
+                    {link.label}
+                  </a>
+                )}
+              </li>
+              <li><span class="menu-spacer"></span></li>
+            </>
+          ))}
+          <ThemePicker icon="fa-solid fa-palette" />
+        </ul>
+      </nav>
+    </div>
+  </>
+)}

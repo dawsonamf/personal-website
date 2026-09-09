@@ -1,0 +1,57 @@
+---
+// The one page shell (D29): `<html>` with the theme projection on it, the layout's head,
+// the layout's content, and the shared tail of `<body>`. It renders what the composition
+// says and never inspects `theme.kind` or the page type; it has no pageType prop (D34).
+//
+// Each layout owns its own head, including where ThemeAssets and the pre-paint scripts sit
+// (§6.2). The Shell gives it a slot and stays out of it.
+import { declarations, themeHtml } from '../themes/apply.ts';
+import { postDraftIssues, readPostSources } from '../build/posts.ts';
+import { proseDrafts } from '../prose/site.ts';
+import DraftPill from './canonical/components/DraftPill.astro';
+import PickerFab from './canonical/components/PickerFab.astro';
+import ThemeDock from './canonical/components/ThemeDock.astro';
+import type { LayoutProps } from './types.ts';
+
+// The Astro compiler hoists `export` out of the render function, so the post sources are
+// read once per build rather than once per page. DraftPill renders nothing without
+// PROSE_DRAFTS=allow, so a production build reads no sources and counts no drafts.
+export const drafts =
+  process.env.PROSE_DRAFTS === 'allow' ?
+    (() => {
+      const sources = readPostSources();
+      return {
+        issues: [...proseDrafts, ...postDraftIssues(sources)],
+        posts: sources.filter((post) => post.meta.publication === 'draft').length,
+      };
+    })()
+  : { issues: [], posts: 0 };
+
+type Props = LayoutProps;
+
+const { theme, page, composition } = Astro.props;
+const picker = composition.picker;
+
+const html = themeHtml(theme);
+// The theme's tokens and ramp, then the page's approved extras (D14 prose, D35 ticker).
+const style = html.style + declarations(page.styleExtras ?? {});
+---
+<!DOCTYPE html>
+<html lang="en" {...html.attrs} style={style}>
+<head><slot name="head" /></head>
+
+<body>
+<slot />
+{/* This comment serializes the composition decision so the build check can validate the tail
+    without importing compose.ts or inferring intent from the markup it is checking. */}
+<Fragment set:html={`<!--picker-mount:${picker.mount}-->`} />
+{picker.mount !== 'none' && (
+  <Fragment>
+    <ThemeDock theme={theme} page={page} />
+    <script is:inline defer src="/js/theme-cycler.js"></script>
+    {picker.mount === 'fab' && <PickerFab corner={picker.corner} />}
+  </Fragment>
+)}
+<DraftPill issues={drafts.issues} draftPosts={drafts.posts} />
+</body>
+</html>

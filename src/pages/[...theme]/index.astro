@@ -1,0 +1,20 @@
+---
+// Home, one route per theme: `/` for the default (a rest parameter matches the root with
+// `theme: undefined`) and `/<id>/` for the rest. compose() decides everything else (D34).
+import { compose, routeTheme } from '../../layouts/compose.ts';
+import { canonicalStyleExtras } from '../../layouts/canonical/presentation.ts';
+import type { PageContext } from '../../layouts/types.ts';
+import { themeParams } from '../../themes/paths.ts';
+
+export const getStaticPaths = () => themeParams().map((params) => ({ params }));
+
+const theme = routeTheme(Astro.params.theme);
+const page: PageContext = {
+  type: 'home',
+  path: '/',
+  styleExtras: canonicalStyleExtras(theme.id, { carousel: true }),
+};
+const composition = await compose(theme, page);
+const Layout = composition.layout;
+---
+<Layout theme={theme} page={page} composition={composition} />

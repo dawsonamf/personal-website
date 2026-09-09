@@ -1,0 +1,19 @@
+---
+// S1-11: the floating picker trigger for pages with no nav (D12: privacy and 404). Same
+// trigger contract as ThemePicker, a `.tc-nav-item` element containing a
+// `button.tc-nav-trigger` (D30), so /js/theme-cycler.js wires it with no special case; the
+// runtime only branches on `.tc-fab` to anchor the dock from the corner it sits in.
+//
+// A <div>, not an <li>: this mounts at the tail of <body>, outside any list. The fixed
+// placement and the round button live in public/css/theme-cycler.css under `.tc-fab`.
+import { prose } from '../../../prose/site.ts';
+
+interface Props {
+  /** Viewport corner: bottom/top × right/left. */
+  corner: 'br' | 'bl' | 'tr' | 'tl';
+}
+
+const { corner } = Astro.props;
+const label = prose.text('nav.theme', 'xs');
+---
+<div class="tc-nav-item tc-fab" data-corner={corner}><button type="button" class="tc-nav-trigger tc-fab-btn" aria-label={label} aria-haspopup="true" aria-expanded="false" aria-controls="tc-dock"><i class="fa-solid fa-palette" aria-hidden="true"></i></button></div>

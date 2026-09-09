@@ -1,49 +1,54 @@
-# Registration copy of deploy.yml, prepared by S1-23 and installed by S1-27.
-#
-# S1-27 (owner-driven) copies this file VERBATIM to `.github/workflows/deploy.yml`
-# on the default branch `main`, before the migration branch is merged. Reason:
-# GitHub only exposes `workflow_dispatch` for workflows that exist on the default
-# branch ("This trigger only receives events when the workflow file is on the
-# default branch" (docs.github.com .../choose-when-workflows-run/trigger-a-workflow).
-# A dispatched run then executes the file version found on the target `--ref`, so
-# `--ref engine-rewrite` runs the full build while `main` still holds this stub.
-#
-# This copy exists ONLY to register the workflow name and its dispatch input. It
-# builds nothing and deploys nothing, which is what makes it harmless on a `main`
-# that is still the legacy static site with no package.json and no Node project.
-# `deploy-full.yml` (same directory) replaces it on `engine-rewrite`, so the merge in
-# Spec 1 §10 step 7 is then an edit, not an add/add conflict.
-#
-# See ./README.md for the exact commands. Spec 1 §10 calls the branch `astro`;
-# the real branch name is `engine-rewrite`.
 name: Deploy to Pages
 
 on:
-  # workflow_dispatch only: no push trigger, so committing this to legacy `main`
-  # cannot start a run by itself.
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       deploy:
-        # Same input name/type/default as deploy-full.yml, so one dispatch payload
-        # is valid against either ref.
-        description: "Ignored by this registration copy, which builds and deploys nothing"
+        description: "Actually deploy (unchecked = build-only dry run)"
         type: boolean
         default: false
 
-# This job needs no token at all.
-permissions: {}
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
 
 jobs:
-  register:
+  build:
     runs-on: ubuntu-latest
     steps:
-      # No `uses:`, no checkout, no node/npm/python: nothing here depends on the
-      # contents of the branch. The input is read through env, never interpolated
-      # into the script body.
-      - name: Report registration
-        env:
-          DEPLOY: ${{ inputs.deploy }}
-          REF: ${{ github.ref }}
-        run: |
-          echo "Registration copy of deploy.yml. ref=$REF deploy=$DEPLOY"
-          echo "This copy builds nothing and deploys nothing."
+      - name: Check out repository
+        uses: actions/checkout@v7
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      # The package script includes picker generation, prose validation, and Astro checks.
+      - name: Build production site
+        run: npm run build
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: github.event_name == 'push' || inputs.deploy
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

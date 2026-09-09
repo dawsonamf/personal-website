@@ -1,0 +1,28 @@
+---
+// The saved palette, applied before first paint (§5.4, D11). Without it every navigation and
+// reload with an active palette paints the base colours and flips at DOMContentLoaded, which
+// is what the blocking bootstrap avoided (js/theme-bootstrap.js:727-742).
+//
+// The ramp function is inlined from src/themes/ramp.ts, so there is ONE ramp implementation
+// at build and at pre-paint (D33). Everything else the record holds (locks, scheme, polarity,
+// derived neutrals, the dock controls) is the picker runtime's job after load.
+//
+// The script text is built here and emitted with set:html, the documented JSON-LD-style
+// pattern, so no build-time interpolation can land inside the script body by accident.
+import { rampDeclarations } from '../../../themes/ramp.ts';
+
+// Same validation as public/js/theme-cycler.js restore(): a record only applies to the theme
+// it was drawn under, and every colour must be a six-digit hex.
+const code = `(function(){try{
+var s=JSON.parse(sessionStorage.getItem('dawson-theme-cycler')||'null');
+if(!s||s.style!==(document.documentElement.getAttribute('data-style')||'default'))return;
+var c=s.colors;
+if(!Array.isArray(c)||c.length!==5)return;
+for(var i=0;i<5;i++){if(typeof c[i]!=='string'||!/^#[0-9a-f]{6}$/i.test(c[i]))return;}
+var ramp=${rampDeclarations.toString()};
+var d=ramp({text:c[0],bg:c[1],primary:c[2],secondary:c[3],accent:c[4]}).split(';');
+for(var j=0;j<d.length;j++){var k=d[j].indexOf(':');
+if(k>0)document.documentElement.style.setProperty(d[j].slice(0,k),d[j].slice(k+1));}
+}catch(e){}})();`;
+---
+<script is:inline set:html={code}></script>

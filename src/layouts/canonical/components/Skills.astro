@@ -1,0 +1,32 @@
+---
+// Canonical Skills card owner. Inputs: Theme + PageContext and shared prose. This component
+// deliberately emits only the existing right-hand card; About owns the shared parent section.
+import { prose } from '../../../prose/site.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+}
+
+const { theme, page } = Astro.props;
+void theme;
+void page;
+const title = prose.text('home.skills.title', 'xs');
+const groups = prose.data.home.skills.groups.map((_group, index) => ({
+  name: prose.text(`home.skills.groups.${index}.name`, 'xs'),
+  paragraphs: prose.paragraphs(`home.skills.groups.${index}.body`, 'l'),
+}));
+---
+<div class="double-view-right card-style">
+  {title && <h3 class="card-title skills-header">{title}</h3>}
+  {groups.map((group) => (
+    <>
+      {group.name && <h4 class="skills-section-header">{group.name}</h4>}
+      {group.paragraphs.length > 0 && (
+        <p class="skills-text"><Fragment set:html={group.paragraphs.join('<br><br>')} /></p>
+      )}
+    </>
+  ))}
+</div>

@@ -1,0 +1,28 @@
+---
+// The theme's stylesheet links, at the position today's runtime append lands (§6.2): each
+// layout places this element in its own head, and the checks integration asserts exactly one
+// marker per page (D39), so placement stays mechanical rather than remembered.
+//
+// The marker is emitted even when the composition selects no link, which is the default
+// theme on every page.
+import { THEME_BASE_CSS, themeHtml } from '../themes/apply.ts';
+import type { Theme } from '../themes/types.ts';
+import type { Composition } from './types.ts';
+
+interface Props {
+  theme: Theme;
+  composition: Composition;
+}
+
+const { theme, composition } = Astro.props;
+const { assets } = composition;
+
+// themeHtml() projects fonts, then theme-base, then the skin sheet; the composition says
+// which of the three categories this page carries (§5.2). Each link is classified by where
+// it came from, so no `theme.kind` branch is needed and no prefix can be mistaken for another.
+// Order is preserved.
+const links = themeHtml(theme).links.filter((link) =>
+  theme.fonts?.includes(link) ? assets.fonts : link === THEME_BASE_CSS ? assets.base : assets.skin,
+);
+---
+<!--theme-assets-->{links.map((link) => (<link rel="stylesheet" href={link} data-style-asset="1">))}

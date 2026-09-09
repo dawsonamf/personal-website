@@ -1,0 +1,22 @@
+---
+// The head spine every canonical layout shares (D34): charset, viewport, title, the page's own
+// tags, then the favicons. There is no Head.astro ladder: what goes between the title and the
+// favicons is §6.2's per-page list, and the layout writes it into the slot.
+import { prose } from '../../prose/site.ts';
+
+interface Props {
+  /** The page title without the site suffix; `meta.<page>.title`, or the post title (S1-19). */
+  title: string;
+  /** `<title> | Dawson Metzger-Fleetwood` on blog, post, privacy and 404; home and lexchat take none. */
+  suffix?: boolean;
+}
+
+const { title, suffix } = Astro.props;
+const full = suffix ? `${title} | ${prose.text('site.titleSuffix', 'xs')}` : title;
+---
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{full}</title>
+<slot />
+<link rel="icon" type="image/png" sizes="32x32" href="/resources/favicon-32.png">
+<link rel="apple-touch-icon" href="/resources/apple-touch-icon.png">

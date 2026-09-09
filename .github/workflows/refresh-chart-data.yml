@@ -1,7 +1,7 @@
-# Refreshes the prebaked chart-data snapshots (NY Fed cohorts, Canaries/ADP,
-# FRED DFII10) used by blog/posts/ai-job-market.md. Weekly because the fastest
-# source publishes monthly; the Indeed postings series fetch live in the browser
-# and don't need this. Pushing the refreshed JSONs redeploys GitHub Pages.
+# Refreshes the archived AI job-market research snapshots (NY Fed cohorts,
+# Canaries/ADP, FRED DFII10). Weekly because the fastest source publishes
+# monthly. The archive is outside public/, so snapshot commits do not change the
+# deployed site and do not need to dispatch the deployment workflow.
 # Manual run: Actions tab -> "Refresh chart data" -> Run workflow.
 name: Refresh chart data
 
@@ -21,13 +21,13 @@ jobs:
 
       # Stdlib-only script (xlsx/zip parsed by hand), so no pip installs.
       - name: Rebuild data snapshots
-        run: python3 docs/prebake-cohort-data.py
+        run: python3 archive/posts/ai-job-market/scripts/prebake-cohort-data.py
 
       - name: Commit and push if changed
         run: |
-          git add blog/posts/assets/cohort-unemployment-data.json \
-                  blog/posts/assets/cohort-swe-age-data.json \
-                  blog/posts/assets/rate-data.json
+          git add archive/posts/ai-job-market/data/cohort-unemployment-data.json \
+                  archive/posts/ai-job-market/data/cohort-swe-age-data.json \
+                  archive/posts/ai-job-market/data/rate-data.json
           if git diff --cached --quiet; then
             echo "No data changes."
           else

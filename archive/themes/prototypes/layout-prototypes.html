@@ -1,0 +1,306 @@
+<!-- PROTOTYPE, throwaway. Six layout-shifting theme ideas mocked in one scrollable
+     file. Each frame scrolls on its own so sticky / snap levers can be felt.
+     Not linked from the site, not a skin, nothing here is production CSS. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Layout prototypes (throwaway)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=IBM+Plex+Mono:wght@400;600&family=Instrument+Serif:ital@0;1&family=Inter+Tight:wght@400;500;600;800&display=swap">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0f1115;color:#e6e9ef;font:15px/1.5 'Inter Tight',system-ui,sans-serif}
+a{color:inherit}
+.intro{max-width:1100px;margin:0 auto;padding:48px 24px 8px}
+.intro h1{font-size:28px;font-weight:800}
+.intro p{color:#9aa3b2;margin-top:6px}
+.proto{max-width:1100px;margin:44px auto;padding:0 24px}
+.label{display:flex;gap:16px;align-items:baseline;flex-wrap:wrap;font:600 12px 'IBM Plex Mono',monospace;letter-spacing:.06em;text-transform:uppercase;color:#9aa3b2;margin-bottom:10px}
+.label b{color:#fff;font-size:15px}
+.frame{height:88vh;overflow-y:auto;border:1px solid #2a2f3a;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.mono{font-family:'IBM Plex Mono',ui-monospace,monospace}
+.ph{background:linear-gradient(135deg,#c9c3b4,#8e887a);border-radius:6px}
+
+/* 01 sticky chapter heads ----------------------------------------------- */
+.p-sticky{background:#f6f4ee;color:#1b1a17}
+.p-sticky .hero{padding:64px 48px 44px;display:flex;justify-content:space-between;align-items:flex-end;gap:24px}
+.p-sticky .hero h1{font:400 48px/1.05 'Instrument Serif',Georgia,serif}
+.p-sticky .hero h1 i{color:#a8321f}
+.p-sticky .hero img{width:120px;height:120px;object-fit:cover;border-radius:50%}
+.p-sticky .ch{background:#f6f4ee}
+.p-sticky .ch.alt{background:#ebe7dc}
+.p-sticky .ch h2{position:sticky;top:0;z-index:1;padding:14px 48px;font:600 12px/1 'IBM Plex Mono',monospace;letter-spacing:.16em;text-transform:uppercase;border-top:1px solid #1b1a17;background:inherit;display:flex;gap:18px}
+.p-sticky .ch h2 span{opacity:.45}
+.p-sticky .ch .body{padding:32px 48px 90px;min-height:60vh;max-width:64ch}
+.p-sticky .ch .body p+p{margin-top:12px}
+.p-sticky ul{list-style:none;margin-top:14px}
+.p-sticky li{padding:10px 0;border-bottom:1px solid rgba(27,26,23,.15);display:flex;justify-content:space-between;gap:20px}
+.p-sticky li small{opacity:.55}
+
+/* 02 deck --------------------------------------------------------------- */
+.p-deck{scroll-snap-type:y mandatory;background:#0d0d0d}
+.p-deck .slide{scroll-snap-align:start;height:100%;padding:36px 52px;display:flex;flex-direction:column;justify-content:space-between}
+.p-deck .slide:nth-child(odd){background:#0d0d0d;color:#f4f1ea}
+.p-deck .slide:nth-child(even){background:#f4f1ea;color:#0d0d0d}
+.p-deck h2{font:400 clamp(64px,11vw,140px)/.85 'Anton',Impact,sans-serif;text-transform:uppercase}
+.p-deck .foot{display:flex;justify-content:space-between;font:12px 'IBM Plex Mono',monospace;letter-spacing:.12em;text-transform:uppercase;opacity:.6}
+.p-deck .row{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:960px;margin-top:24px}
+.p-deck .row div{border-top:1px solid currentColor;padding-top:10px;font-size:14px}
+.p-deck .row b{display:block;font-size:16px;margin-bottom:4px}
+.p-deck p{max-width:52ch;font-size:18px;line-height:1.4;margin-top:20px}
+
+/* 03 terminal ----------------------------------------------------------- */
+.p-term{background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0 1px,transparent 1px 3px),#050806;background-attachment:local;color:#b9f2c4;font:14px/1.65 'IBM Plex Mono',ui-monospace,monospace;padding:30px 34px;text-shadow:0 0 6px rgba(120,255,150,.35)}
+.p-term pre{font:inherit;white-space:pre-wrap;max-width:80ch}
+.p-term .pr{color:#5f9d6c}
+.p-term .dim{color:#6f9c78}
+.p-term a{text-decoration:underline dotted}
+.p-term .caret{display:inline-block;width:.6em;height:1.1em;background:currentColor;vertical-align:text-bottom;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* 04 dossier / sidebar -------------------------------------------------- */
+.p-side{display:grid;grid-template-columns:260px 1fr;background:#fbfbfa;color:#16181d}
+.p-side aside{position:sticky;top:0;align-self:start;height:88vh;padding:30px 26px;border-right:1px solid #e3e3df;background:#f3f3f0;display:flex;flex-direction:column;gap:26px}
+.p-side aside img{width:64px;height:64px;border-radius:50%;object-fit:cover}
+.p-side aside h1{font-size:17px;font-weight:600;margin-top:12px}
+.p-side aside .sub{font-size:13px;color:#6b6f78}
+.p-side nav a{display:block;padding:7px 10px;border-radius:6px;font-size:14px;text-decoration:none;color:#3a3e46}
+.p-side nav a.cur{background:#e6e6e1;color:#16181d;font-weight:600}
+.p-side .soc{margin-top:auto;font-size:12px;color:#6b6f78;display:flex;gap:12px}
+.p-side main{padding:52px 60px;max-width:820px}
+.p-side main section+section{margin-top:56px}
+.p-side h2{font-size:22px;font-weight:600;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e3e3df}
+.p-side .masthead{font:400 44px/1.05 'Instrument Serif',Georgia,serif;margin-bottom:8px}
+.p-side .cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.p-side .card{border:1px solid #e3e3df;border-radius:10px;padding:14px}
+.p-side .card .ph{height:90px;margin-bottom:10px}
+.p-side .card b{font-size:14px}
+.p-side ul{list-style:none}
+.p-side li{padding:10px 0;border-bottom:1px solid #eeeeea;display:flex;justify-content:space-between;font-size:14px}
+.p-side li small{color:#6b6f78}
+
+/* 05 bento -------------------------------------------------------------- */
+.p-bento{background:#0b0c10;color:#eef0f4;padding:26px}
+.p-bento .g{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:14px}
+.p-bento .t{background:#15171d;border:1px solid #23262e;border-radius:22px;padding:20px;position:relative;overflow:hidden;display:flex;flex-direction:column}
+.p-bento .k{font:600 11px 'IBM Plex Mono',monospace;letter-spacing:.14em;text-transform:uppercase;color:#7d8494;margin-bottom:auto}
+.p-bento .name{grid-column:span 2;grid-row:span 2;background:linear-gradient(140deg,#1b1e2a,#2c2440 60%,#61ffda22)}
+.p-bento .name h1{font-size:38px;line-height:1.05;font-weight:800}
+.p-bento .name h1 span{color:#61ffda}
+.p-bento .photo{grid-row:span 2;padding:0}
+.p-bento .photo img{width:100%;height:100%;object-fit:cover}
+.p-bento .job{grid-row:span 2}
+.p-bento .about{grid-column:span 2}
+.p-bento .works{grid-column:span 2;grid-row:span 2}
+.p-bento .post{grid-column:span 2}
+.p-bento .t p{font-size:14px;color:#c3c8d3}
+.p-bento .t b{font-size:16px}
+.p-bento .tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.p-bento .tags span{font-size:12px;padding:4px 9px;border-radius:999px;background:#23262e}
+.p-bento .works .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.p-bento .works .grid div{background:#1f222a;border-radius:12px;padding:10px;font-size:13px;height:78px}
+.p-bento .cta{margin-top:auto;font-size:14px;color:#61ffda}
+
+/* 06 zine --------------------------------------------------------------- */
+.p-zine{background:#efe6d2;color:#1a1410;padding:44px 36px 60px;display:grid;grid-template-columns:repeat(12,1fr);grid-auto-rows:minmax(56px,auto);column-gap:12px;row-gap:0}
+.p-zine .v{writing-mode:vertical-rl;font:400 60px/1 'Anton',Impact,sans-serif;text-transform:uppercase;color:#c8322b;letter-spacing:.02em}
+.p-zine .hero{grid-column:2/9;grid-row:1/3;font:400 clamp(40px,6vw,72px)/1 'Instrument Serif',Georgia,serif;align-self:center}
+.p-zine .hero i{color:#c8322b}
+.p-zine .photo{grid-column:8/11;grid-row:1/4;transform:rotate(3deg);background:#fff;padding:10px 10px 34px;box-shadow:0 12px 30px rgba(0,0,0,.25);z-index:2;align-self:start}
+.p-zine .photo img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.p-zine .h1{grid-column:1/2;grid-row:3/6}
+.p-zine .about{grid-column:2/8;grid-row:3/5;background:#fffdf7;padding:26px;transform:rotate(-1deg);box-shadow:0 8px 24px rgba(0,0,0,.12);z-index:1}
+.p-zine .skills{grid-column:7/12;grid-row:4/6;background:#1a1410;color:#efe6d2;padding:26px;transform:rotate(1.5deg);z-index:3;margin-top:24px}
+.p-zine .skills b{display:block;font:400 22px 'Anton';text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.p-zine .h2{grid-column:12/13;grid-row:6/9;justify-self:end}
+.p-zine .work{grid-column:3/11;grid-row:6/8;margin-top:48px}
+.p-zine .work ul{list-style:none}
+.p-zine .work li{display:flex;justify-content:space-between;padding:12px 0;border-bottom:2px solid #1a1410;font-weight:600}
+.p-zine .work li small{font-weight:400;opacity:.6}
+.p-zine .h3{grid-column:1/2;grid-row:8/11}
+.p-zine .proj{grid-column:2/12;grid-row:8/10;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px}
+.p-zine .proj div{background:#fffdf7;padding:12px;box-shadow:0 8px 20px rgba(0,0,0,.14);font-weight:600;font-size:14px}
+.p-zine .proj div .ph{height:80px;margin-bottom:10px;background:linear-gradient(135deg,#c8322b,#7a1e17)}
+.p-zine .proj div:nth-child(odd){transform:rotate(-2deg)}
+.p-zine .proj div:nth-child(even){transform:rotate(1.5deg)}
+.p-zine .band{grid-column:1/13;grid-row:10/11;margin-top:44px;background:#c8322b;color:#efe6d2;padding:14px 20px;font:400 22px 'Anton';text-transform:uppercase;letter-spacing:.03em;transform:rotate(-.6deg)}
+.p-zine p{font-size:15px;line-height:1.5}
+</style>
+</head>
+<body>
+
+<header class="intro">
+  <h1>Layout prototypes</h1>
+  <p>Six ideas that move structure, not just tokens. Each frame scrolls on its own. Throwaway mock, real strings, placeholder copy.</p>
+</header>
+
+<!-- 01 ------------------------------------------------------------------ -->
+<section class="proto">
+  <div class="label"><b>01 · Sticky chapter heads</b><span>lever: position: sticky</span><span>cost: low</span><span>scroll the frame</span></div>
+  <div class="frame p-sticky">
+    <div class="hero">
+      <h1>Hi,<br>I'm Dawson,<br><i>full stack engineer.</i></h1>
+      <img src="../../../public/resources/profile_photo.jpg" alt="">
+    </div>
+    <div class="ch alt"><h2><span>01</span>About</h2><div class="body">
+      <p>Software engineer working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy.</p>
+      <p>Skills: Web · iOS and visionOS · ML and RL</p>
+    </div></div>
+    <div class="ch"><h2><span>02</span>Where I've Worked</h2><div class="body">
+      <ul>
+        <li>About Objects <small>Software Engineer</small></li>
+        <li>Johns Hopkins University <small>Guest Lecturer</small></li>
+        <li>Visual Language Associates <small>Technical Co-Founder</small></li>
+        <li>Startup Shell <small>Fellow</small></li>
+      </ul>
+    </div></div>
+    <div class="ch alt"><h2><span>03</span>Selected Works</h2><div class="body">
+      <ul>
+        <li>Gemma 4 MoE Heretic-ARA</li><li>Embedded Swift Agent</li><li>Silicon Fly</li><li>Helm</li><li>Toolbelt</li><li>LexChat</li>
+      </ul>
+    </div></div>
+    <div class="ch"><h2><span>04</span>Blog</h2><div class="body">
+      <ul>
+        <li>There is a fly on my laptop and it runs away</li>
+        <li>Fine-Tuning Gemma 4 MoE with Heretic-ARA</li>
+      </ul>
+    </div></div>
+    <div class="ch alt"><h2><span>05</span>Contact</h2><div class="body"><p>Say hi. Calendly button would sit here.</p></div></div>
+  </div>
+</section>
+
+<!-- 02 ------------------------------------------------------------------ -->
+<section class="proto">
+  <div class="label"><b>02 · Deck / keynote</b><span>lever: scroll-snap + 100vh sections + alternating grounds</span><span>cost: medium</span><span>scroll the frame</span></div>
+  <div class="frame p-deck">
+    <div class="slide"><h2>Hi, I'm<br>Dawson.</h2><div class="foot"><span>Full stack engineer</span><span>01 / 06</span></div></div>
+    <div class="slide"><h2>About</h2><div><p>Software engineer working across web, Apple platforms, and machine learning.</p><div class="row"><div><b>Web</b></div><div><b>iOS + visionOS</b></div><div><b>ML + RL</b></div></div></div><div class="foot"><span>About</span><span>02 / 06</span></div></div>
+    <div class="slide"><h2>Where I've<br>Worked</h2><div class="row"><div><b>About Objects</b>Software Engineer</div><div><b>Johns Hopkins</b>Guest Lecturer</div><div><b>Visual Language Associates</b>Technical Co-Founder</div><div><b>Startup Shell</b>Fellow</div></div><div class="foot"><span>Experience</span><span>03 / 06</span></div></div>
+    <div class="slide"><h2>Selected<br>Works</h2><div class="row"><div><b>Gemma 4 MoE Heretic-ARA</b></div><div><b>Embedded Swift Agent</b></div><div><b>Silicon Fly</b></div><div><b>Helm</b></div></div><div class="foot"><span>Projects</span><span>04 / 06</span></div></div>
+    <div class="slide"><h2>Blog</h2><div class="row"><div><b>There is a fly on my laptop and it runs away</b></div><div><b>Fine-Tuning Gemma 4 MoE with Heretic-ARA</b></div></div><div class="foot"><span>Writing</span><span>05 / 06</span></div></div>
+    <div class="slide"><h2>Say hi.</h2><div class="foot"><span>Contact</span><span>06 / 06</span></div></div>
+  </div>
+</section>
+
+<!-- 03 ------------------------------------------------------------------ -->
+<section class="proto">
+  <div class="label"><b>03 · Terminal / CRT</b><span>lever: single 80ch mono column, chrome deleted</span><span>cost: low</span></div>
+  <div class="frame p-term">
+<pre><span class="pr">dawson@amf:~$</span> cat hi.txt
+Hi, I'm Dawson, full stack engineer.<span class="caret"></span>
+
+<span class="pr">dawson@amf:~$</span> ls
+about/  work/  projects/  blog/  contact/
+
+<span class="pr">dawson@amf:~$</span> cat about/README
+┌────────────────────────────────────────────────┐
+│ Software engineer working across web, Apple    │
+│ platforms, and machine learning.               │
+│                                                │
+│ skills: web · ios+visionos · ml+rl             │
+└────────────────────────────────────────────────┘
+
+<span class="pr">dawson@amf:~$</span> ls -l work/
+<span class="dim">drwxr-xr-x</span>  About Objects                Software Engineer
+<span class="dim">drwxr-xr-x</span>  Johns Hopkins University     Guest Lecturer
+<span class="dim">drwxr-xr-x</span>  Visual Language Associates   Technical Co-Founder
+<span class="dim">drwxr-xr-x</span>  Startup Shell                Fellow
+
+<span class="pr">dawson@amf:~$</span> ls projects/
+[01] <a href="https://huggingface.co/dawsonamf">Gemma 4 MoE Heretic-ARA</a>   [02] <a href="https://www.dawsonamf.com/blog/embedded-swift-agent/">Embedded Swift Agent</a>
+[03] <a href="https://www.dawsonamf.com/blog/fly-on-my-laptop/">Silicon Fly</a>               [04] <a href="https://marketplace.visualstudio.com/items?itemName=dawsonamf.project-helm">Helm</a>
+[05] <a href="https://github.com/dawsonamf/toolbelt">Toolbelt</a>                  [06] <a href="https://apps.apple.com/us/app/amino-amigo/id1638666228">Amino Amigo</a>
+[07] <a href="https://huggingface.co/spaces/dawsonamf/lexchat">LexChat</a>                   [08] <a href="https://www.dawsonamf.com/">Deep RL</a>
+
+<span class="pr">dawson@amf:~$</span> tail -n 2 blog/index
+<a href="https://www.dawsonamf.com/blog/fly-on-my-laptop/">There is a fly on my laptop and it runs away</a>
+<a href="https://huggingface.co/dawsonamf">Fine-Tuning Gemma 4 MoE with Heretic-ARA</a>
+
+<span class="pr">dawson@amf:~$</span> cat contact
+<a href="https://github.com/dawsonamf">github</a>  <a href="https://www.linkedin.com/in/dawsonamf7/">linkedin</a>  <a href="https://calendly.com/dawsonamf/30min">calendly</a>  <a href="../../../public/resources/Resume.pdf">resume.pdf</a>
+
+<span class="pr">dawson@amf:~$</span> <span class="caret"></span></pre>
+  </div>
+</section>
+
+<!-- 04 ------------------------------------------------------------------ -->
+<section class="proto">
+  <div class="label"><b>04 · Dossier / sidebar</b><span>lever: grid on #main-body + sticky rail</span><span>cost: medium, mobile collapse is the work</span></div>
+  <div class="frame p-side">
+    <aside>
+      <div><img src="../../../public/resources/profile_photo.jpg" alt=""><h1>Dawson Metzger-Fleetwood</h1><div class="sub">Full stack engineer</div></div>
+      <nav><a class="cur" href="#sidebar-about">About</a><a href="#sidebar-work">Work</a><a href="#sidebar-projects">Projects</a><a href="#sidebar-blog">Blog</a><a href="#sidebar-contact">Contact</a></nav>
+      <div class="soc"><span>GitHub</span><span>LinkedIn</span><span>Résumé</span></div>
+    </aside>
+    <main>
+      <div class="masthead">Hi, I'm Dawson,<br>full stack engineer.</div>
+      <section id="sidebar-about"><h2>About</h2><p>Software engineer working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy.</p></section>
+      <section id="sidebar-work"><h2>Work</h2><ul>
+        <li>About Objects <small>Software Engineer</small></li>
+        <li>Johns Hopkins University <small>Guest Lecturer</small></li>
+        <li>Visual Language Associates <small>Technical Co-Founder</small></li>
+        <li>Startup Shell <small>Fellow</small></li>
+      </ul></section>
+      <section id="sidebar-projects"><h2>Projects</h2><div class="cards">
+        <div class="card"><div class="ph"></div><b>Gemma 4 MoE Heretic-ARA</b></div>
+        <div class="card"><div class="ph"></div><b>Embedded Swift Agent</b></div>
+        <div class="card"><div class="ph"></div><b>Silicon Fly</b></div>
+        <div class="card"><div class="ph"></div><b>Helm</b></div>
+      </div></section>
+      <section id="sidebar-blog"><h2>Blog</h2><ul>
+        <li>There is a fly on my laptop and it runs away</li>
+        <li>Fine-Tuning Gemma 4 MoE with Heretic-ARA</li>
+      </ul></section>
+      <section id="sidebar-contact"><h2>Contact</h2><p>Say hi. Calendly button would sit here.</p></section>
+    </main>
+  </div>
+</section>
+
+<!-- 05 ------------------------------------------------------------------ -->
+<section class="proto">
+  <div class="label"><b>05 · Bento / dashboard</b><span>lever: grid on #main-body with spans + order</span><span>cost: medium-high</span></div>
+  <div class="frame p-bento"><div class="g">
+    <div class="t name"><div class="k">dawsonamf.com</div><h1>Hi, I'm Dawson,<br><span>full stack engineer.</span></h1></div>
+    <div class="t photo"><img src="../../../public/resources/profile_photo.jpg" alt=""></div>
+    <div class="t job"><div class="k">Now</div><b>About Objects</b><p>Software Engineer</p><p style="margin-top:14px">Before: Johns Hopkins · Visual Language Associates · Startup Shell</p></div>
+    <div class="t about"><div class="k">About</div><p>Software engineer working across web, Apple platforms, and machine learning.</p></div>
+    <div class="t"><div class="k">Skills</div><div class="tags"><span>Web</span><span>iOS</span><span>visionOS</span><span>ML</span><span>RL</span></div></div>
+    <div class="t"><div class="k">Contact</div><div class="cta">Say hi →</div></div>
+    <div class="t works"><div class="k">Selected Works</div><div class="grid"><div>Gemma 4 MoE Heretic-ARA</div><div>Embedded Swift Agent</div><div>Silicon Fly</div><div>Helm</div></div></div>
+    <div class="t post"><div class="k">Latest post</div><b>There is a fly on my laptop and it runs away</b></div>
+    <div class="t post"><div class="k">Earlier</div><b>Fine-Tuning Gemma 4 MoE with Heretic-ARA</b></div>
+  </div></div>
+</section>
+
+<!-- 06 ------------------------------------------------------------------ -->
+<section class="proto">
+  <div class="label"><b>06 · Zine / margin heads</b><span>lever: 12-col grid with overlaps + writing-mode</span><span>cost: high on mobile</span></div>
+  <div class="frame p-zine">
+    <div class="hero">Hi, I'm Dawson,<br><i>full stack engineer.</i></div>
+    <div class="photo"><img src="../../../public/resources/profile_photo.jpg" alt=""></div>
+    <div class="v h1">About</div>
+    <div class="about"><p>Software engineer working across web, Apple platforms, and machine learning. Placeholder paragraph standing in for the real about copy.</p></div>
+    <div class="skills"><b>Skills</b><p>Web · iOS and visionOS · ML and RL</p></div>
+    <div class="v h2">Work</div>
+    <div class="work"><ul>
+      <li>About Objects <small>Software Engineer</small></li>
+      <li>Johns Hopkins University <small>Guest Lecturer</small></li>
+      <li>Visual Language Associates <small>Technical Co-Founder</small></li>
+      <li>Startup Shell <small>Fellow</small></li>
+    </ul></div>
+    <div class="v h3">Works</div>
+    <div class="proj">
+      <div><div class="ph"></div>Gemma 4 MoE Heretic-ARA</div>
+      <div><div class="ph"></div>Embedded Swift Agent</div>
+      <div><div class="ph"></div>Silicon Fly</div>
+      <div><div class="ph"></div>Helm</div>
+    </div>
+    <div class="band">Blog → There is a fly on my laptop and it runs away · Fine-Tuning Gemma 4 MoE with Heretic-ARA</div>
+  </div>
+</section>
+
+</body>
+</html>

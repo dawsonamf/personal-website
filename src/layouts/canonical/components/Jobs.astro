@@ -1,0 +1,78 @@
+---
+// Canonical jobs section owner. Inputs: Theme + PageContext, zero-based page-owned
+// sectionIndex and shared prose. DOM keys are derived from source position; content ids
+// remain build-time data and never reach the DOM.
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+  sectionIndex: number;
+}
+
+const { theme, page, sectionIndex } = Astro.props;
+void page;
+const sectionKey = 'jobs';
+const sectionNumber = String(sectionIndex + 1).padStart(2, '0');
+const sectionLabel = prose.text(`home.sections.${sectionKey}`, 'xs');
+const jobs = prose.data.jobs.map((job, index) => ({
+  domId: `job-${index + 1}`,
+  company: prose.text(`jobs.${index}.company`, 'xs'),
+  role: prose.text(`jobs.${index}.role`, 'xs'),
+  dates: prose.text(`jobs.${index}.dates`, 'xs'),
+  bullets: prose.list(`jobs.${index}.bullets`, 'l'),
+  url: job.url,
+})).filter((job) => job.company);
+---
+<section class="jobs-section-container"
+  data-aos="fade-up"
+  data-aos-easing="ease-in-out"
+  data-aos-once="true">
+
+  <div id="jobs-header-static"></div>
+  <div class="section-header-wrapper" id="jobs-header-wrapper">
+    {sectionLabel && (
+      <>
+        <h2 class="section-header" id="jobs-header"><span class="sec-num">{sectionNumber}.</span>{sectionLabel}</h2>
+        <span class="section-header-spacer" id="jobs-header-spacer"></span>
+      </>
+    )}
+  </div>
+
+  <div id="jobs-section">
+    <div class="nav-container" id="jobs-nav-container">
+      <div class="menu-scroll-wrapper">
+        <ul class="menu" id="jobs-menu-list">
+          {jobs.map((job, index) => (
+            <li class={index === 0 ? 'selected job-menu-item' : 'job-menu-item'} data-job={job.domId}>{job.company}</li>
+          ))}
+        </ul>
+      </div>
+      <div class="highlight" id="highlight"></div>
+    </div>
+    <div id="jobs-content-wrapper">
+      {jobs.map((job, index) => (
+        <div class:list={['job-content', index === 0 ? 'showing' : 'hidden']} id={job.domId}>
+          {(job.role || job.company) && (
+            <h3 class="job-title">
+              {job.role}{job.role && job.company && ' @ '}
+              {job.company && job.url ? (
+                <a href={href(job.url, theme.id)} target="_blank" rel="noopener noreferrer" class="text-link">{job.company}</a>
+              ) : job.company}
+            </h3>
+          )}
+          {job.dates && <div class="job-dates">{job.dates}</div>}
+          {job.bullets.length > 0 && (
+            <ul class="job-bullets">
+              {job.bullets.map((bullet) => <li set:html={bullet} />)}
+            </ul>
+          )}
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+<div class="section-spacer"></div>

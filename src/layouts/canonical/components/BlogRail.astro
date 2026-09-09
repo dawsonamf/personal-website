@@ -1,0 +1,73 @@
+---
+// Canonical home blog-rail owner. Inputs: Theme + PageContext, zero-based page-owned
+// sectionIndex and the publication-filtered post projection. Each post binds its own
+// metadata to the shared prose accessor before any title or description is rendered.
+import { listingPosts } from '../../../build/posts.ts';
+import { createProseAccess } from '../../../prose/index.ts';
+import { prose } from '../../../prose/site.ts';
+import { href } from '../../../themes/paths.ts';
+import type { Theme } from '../../../themes/types.ts';
+import type { PageContext } from '../../types.ts';
+
+interface Props {
+  theme: Theme;
+  page: PageContext;
+  sectionIndex: number;
+}
+
+const { theme, page, sectionIndex } = Astro.props;
+void page;
+const sectionNumber = String(sectionIndex + 1).padStart(2, '0');
+const sectionLabel = prose.text('home.sections.blog', 'xs');
+const seeAll = prose.text('home.seeAllPosts', 'xs');
+const posts = listingPosts().map((post) => {
+  const postProse = createProseAccess(post.meta, post.source);
+  return {
+    id: post.id,
+    title: postProse.text('title', 's'),
+    date: post.meta.date,
+    excerpt: postProse.text('description', 'l'),
+    href: href(
+      post.meta.publication === 'external' ? post.meta.externalUrl : `/blog/${post.id}/`,
+      theme.id,
+    ),
+    external: post.meta.publication === 'external',
+  };
+});
+---
+<div id="blog-header-static"></div>
+<section class="blog-section-wrapper" data-aos="fade-up" data-aos-easing="ease-in-out" data-aos-once="true">
+  <div class="section-header-wrapper" id="blog-header-wrapper">
+    {sectionLabel && (
+      <>
+        <h2 class="section-header" id="blog-header"><span class="sec-num">{sectionNumber}.</span>{sectionLabel}</h2>
+        <span class="section-header-spacer" id="blog-header-spacer"></span>
+      </>
+    )}
+  </div>
+  <div class="blog-scroll-container">
+    <div class="blog-scroll-fade blog-scroll-fade-left"></div>
+    <div class="blog-scroll-track" id="blog-scroll-track">
+      {posts.map((post) => (
+        <a
+          class="blog-card"
+          href={post.href}
+          target={post.external ? '_blank' : undefined}
+          rel={post.external ? 'noopener noreferrer' : undefined}
+        >
+          {post.title && <h3 class="blog-card-title">{post.title}</h3>}
+          <p class="blog-card-date">{post.date}</p>
+          {post.excerpt && <p class="blog-card-excerpt">{post.excerpt}</p>}
+        </a>
+      ))}
+    </div>
+    <div class="blog-scroll-fade blog-scroll-fade-right"></div>
+  </div>
+  {seeAll && (
+    <div class="blog-see-all">
+      <a href={href('/blog/', theme.id)} class="text-link">{seeAll}</a>
+    </div>
+  )}
+</section>
+
+<div class="section-spacer"></div>

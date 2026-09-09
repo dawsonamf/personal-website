@@ -1,0 +1,495 @@
+# Shared site/theme prose; each post owns its metadata/body (§7). Read src/themes/README.md.
+# A plain string is approved. { draft: "…" } is unapproved and blocks the production build.
+# Sizes: xs ≤ ~3 words · s one line ≤ ~15 words · m ≤ ~60 words or ≤ 3 bullets · l = full.
+# null at a size = "nothing fits here, omit the element". A missing size is only an error
+# when some theme requests it; the build then lists exactly what is unwritten.
+# Quote any flow-mapping value containing , { } [ ] # or ": " (rule 8).
+
+site:
+  name: { xs: Dawson Metzger-Fleetwood }
+  logo: { xs: D }                                      # the wordmark glyph, on all six pages
+  titleSuffix: { xs: Dawson Metzger-Fleetwood }        # "<title> | <suffix>" on blog, post, privacy and 404 only
+  email: dawsonamf@icloud.com                          # data, not prose
+  footerCredit: { s: Designed and built by Dawson Metzger-Fleetwood }
+
+meta:                                                  # only the fields each page's legacy <head> actually has
+  home:
+    title: { s: Dawson Metzger-Fleetwood }
+    description: { m: "Dawson Metzger-Fleetwood is a software engineer working across web, iOS and visionOS, and ML/RL. Projects, blog, experience, and ways to get in touch." }
+    ogDescription: { s: "Software engineer working across web, iOS and visionOS, and ML/RL." }
+  blog:
+    title: { s: Blog }
+    description: { m: "Deep dives into projects by Dawson Metzger-Fleetwood — AI and ML, Swift, systems, and developer tools." }
+    ogDescription: { s: "Deep dives into projects by Dawson Metzger-Fleetwood — AI and ML, Swift, systems, and developer tools." }
+  post:
+    description: { m: A blog post by Dawson Metzger-Fleetwood. }
+  privacy:
+    title: { s: Privacy Policy }
+    description: { m: Privacy policy for the website and applications of Dawson Metzger-Fleetwood. }
+  notFound:
+    title: { s: "404" }
+
+nav:                                                   # labels only; hrefs are structure (Nav.astro)
+  about: { xs: About }
+  experience: { xs: Experience }
+  projects: { xs: Projects }
+  blog: { xs: Blog }
+  contact: { xs: Contact }
+  resume: { xs: Resume }
+  email: { xs: Email }
+  theme: { xs: Theme }
+  aria:
+    main: { xs: Main navigation }
+    quick: { xs: Quick links }
+    social: { xs: Social links }
+
+socials:                                               # order = render order; label doubles as aria-label
+  - id: linkedin
+    label: { xs: LinkedIn }
+    href: https://www.linkedin.com/in/dawsonamf7/
+    icon: fab fa-linkedin
+  - id: x
+    label: { xs: X (Twitter) }
+    href: https://twitter.com/dawsonamf7
+    icon: fa-brands fa-x-twitter
+  - id: messenger
+    label: { xs: Messenger }
+    href: https://www.facebook.com/messages/t/dawson.metzgerfleetwood
+    icon: fab fa-facebook-messenger
+  - id: email
+    label: { xs: Email }
+    href: mailto:dawsonamf@icloud.com
+    icon: bx bx-envelope
+  - id: vcard
+    label: { xs: Contact card }
+    href: /resources/contact.vcf
+    icon: fas fa-user-circle
+  - id: calendly
+    label: { xs: Schedule a call }
+    calendly: true                                     # no href: the click handler opens the popup
+    icon: far fa-calendar-alt
+
+home:
+  sections:                                            # the "01." numbers are generated (D17)
+    about: { xs: About }
+    jobs: { xs: Where I've Worked }
+    projects: { xs: Selected Works }
+    blog: { xs: Blog }
+    contact: { xs: Contact }
+  heroAlt: { xs: Dawson Metzger-Fleetwood }
+  about:
+    title: { xs: About Me }
+    body:
+      l: |-
+        I’m Dawson Metzger-Fleetwood, a software engineer with dual degrees in Finance and Computer Science (Machine Learning specialization) from the University of Maryland.
+
+        I've been a professional developer since 2019. Most of my work revolves around web, iOS, and visionOS development, but my professional experience also includes building ML pipelines, automating business processes, contributing to open source, and developing agentic workflows, MCP servers, and CLI tools. I also co-founded Visual Language Associates, a startup in the cued language and interpretation space. I love building cool things both at work and in my free time, and I’m passionate about solving real world problems with technology.
+
+        When I’m not coding, I’m dedicated to fitness and continuously pushing myself as a natural bodybuilder. I also love learning - whether it be a random skill, a new language, or an RL algorithm optimization. Traveling is another big part of my life. I enjoy exploring new places, immersing myself in different cultures, and collecting experiences that shape who I am.
+
+        I’m currently a Software Engineer at About Objects, but am always open to interesting projects. If you’d like to connect, please don’t hesitate to reach out!
+  skills:
+    title: { xs: Skills }
+    groups:                                            # names also form the hero subtitle (D17)
+      - id: web
+        name: { xs: Web }
+        body:
+          l: |-
+            I have professional experience engineering full-stack web applications and interactive websites. I've built modern backends with Node and Bun, as well as specialized sites with PHP and custom WordPress plugins. I've led full-scale, from-scratch overhauls of enterprise websites, built production grade frontends with React as well as vanilla HTML, CSS, and JavaScript, managed business critical production deployments, and built integrated web experiences featuring real-time data processing with WebSockets and libraries like Three.js. On the systems side, I've architected CI/CD pipelines with GitHub Actions and Docker, deployed secure multi-tenant serverless applications on AWS (Lambda, DynamoDB, Cognito), engineered backend platform systems including an OAuth 2.0/OIDC authorization server with PKCE and token introspection, integrated usage-based billing and payment systems, and hardened production infrastructure to safely run untrusted workloads with process isolation and network egress controls.
+      - id: ios
+        name: { xs: iOS and visionOS }
+        body:
+          l: |-
+            I’ve worked extensively on iOS and visionOS projects, including advanced AR/VR development using RealityKit. I have experience with RealityKit’s entity-component-system architecture, coordinating SharePlay in 3D spaces, designing and debugging complex and highly customized view hierarchies in UIKit and SwiftUI, package management in Xcode, concurrency in Swift 6, and building ultra high performance, heapless programs. I’m comfortable across Apple's full development stack, from optimizing performance with Instruments, managing scenes in Reality Composer Pro, deploying CI/CD pipelines with Xcode Cloud and TestFlight, and training/using ML models with Create and Core ML.
+      - id: ml
+        name: { xs: ML and RL }
+        body:
+          l: |-
+            Professionally, I've applied machine learning to both enterprise and government systems. I designed and built a real time computer vision pipeline that trains models capable of recognizing and tracking the orientation of 3D objects using LIDAR. I’ve also fine-tuned and deployed foundation models on H100 clusters to improve performance on proprietary domain-specific tasks. I've also built multimodal agentic pipelines that generate structured metadata, using LLM juries for consensus scoring and evaluation driven loops that iteratively optimize prompts.
+
+            Personally, my interest in ML extends much further. I built a transformer using only numpy, and have worked directly with embeddings, autoencoders, and more. I've had some exposure to deep reinforcement learning and loved it. I've read Reinforcement Learning: An Introduction by Sutton and Barto cover to cover and implemented some of the core algorithms: TD(λ), DQN and SARSA varieties, some policy gradients, off policy importance sampling, etc.
+  contact:
+    body:
+      m: |-
+        My inbox is always open. If you're interested in working together, have a question, or just want to say hi, feel free to reach out! Send me an email at [dawsonamf@icloud.com](mailto:dawsonamf@icloud.com), or connect with me by selecting an option below. You can also [schedule a call](#calendly).
+    mapAlt: { xs: Map }
+  seeAllPosts: { xs: See all posts }
+
+jobs:                                                  # `id` is a content key only; the DOM keys stay positional (D17)
+                                                       # every `dates` value is verbatim, dash included
+  - id: about-objects
+    company: { xs: About Objects }
+    role: { xs: Software Engineer }
+    url: https://www.aboutobjects.com/
+    dates: { xs: July 2023 – Present }
+    bullets:
+      l:
+        - "Worked extensively on a multi-platform (iPad, iPhone, and Vision Pro) event management platform for government clients, featuring real-time resource tracking and 3D visualizations with RealityKit. Featured in Apple’s enterprise showcase."
+        - "Scaled the platform from inception to being able to handle 10,000+ concurrent users, architected real time data sharing for collaboration across distributed command teams, and optimized rendering hierarchical data with a tree-based architecture that reduced latency by 80%."
+        - Scaled a CI/CD pipeline with GitHub Actions and automated TestFlight builds as the team quadrupled in size. Mentoring interns and junior engineers.
+        - "Worked on several internal projects, including leading the overhaul of the company website with custom WordPress plugins and a PHP backend, building an MCP server to help PMs with Jira project administration, and building pipelines to automate billing processes."
+        - "Led development of a 3D ML object recognition pipeline, enabling rotation inference from 200 images. Supported an industrial oil drill manufacturer in analyzing drill bit component history and repairs."
+        - "Led About Object’s AI blog, writing articles on autoencoders, reinforcement learning, GNNs, and transformers."
+  - id: johns-hopkins-university
+    company: { xs: Johns Hopkins University }
+    role: { xs: Guest Lecturer }
+    url: https://cogsci.jhu.edu/
+    dates: { xs: Spring 2024 – Present }
+    bullets:
+      l:
+        - "Led the development of internal tools that helped interpreters more efficiently prepare for high stakes lectures and meetings, including a knowledge base prep portal that integrated various internal systems, a vocabulary practice app, a custom MCP server, and a skill pack for agents."
+        - "Presented to interpreters on statistical concepts to enhance research interpretation, covering topics from fundamentals to the central limit theorem and multiple linear regression."
+        - Designed accessible training materials to make complex statistical ideas understandable for non-statisticians and provided insights on applying reasoning in cognitive science research.
+  - id: visual-language-associates
+    company: { xs: Visual Language Associates }
+    role: { xs: Technical Co-Founder }
+    dates: { xs: September 2019 - July 2023 }
+    bullets:
+      l:
+        - "Co-founder of an agency that provides signed language interpreting and cued language transliteration services, successfully securing contracts with the MD and VA state governments, and serving over two dozen clients in the DMV area with an average contract value of over $90,000."
+        - Grew the business from founding to several million dollars in revenue.
+        - "Led the automation and integration of client payment, payroll, and scheduling software to streamline operations."
+        - "Responsible for coordinating scheduling with school officials and other interpreters and transliterators, as well as preparing and leading language and policy training sessions. Assisted with recruiting, onboarding, and sales."
+        - "Developed methodology to screen employees, clients, and contracts, as well as match clients with service providers."
+        - "In the early days, served directly as a cued language transliterator when needed, directly providing interpretation/transliteration services to consumers."
+  - id: startup-shell
+    company: { xs: Startup Shell }
+    role: { xs: Fellow }
+    url: https://startupshell.org/
+    dates: { xs: September 2022 – Present }
+    bullets:
+      l:
+        - "Startup Shell is UMD’s student-run startup incubator, founding home of ventures collectively worth over $1 billion."
+        - "As a fellow, assisted with product development for a variety of ventures including a patient management platform for underfunded hospitals in Africa, a farmland valuation AI model, and a prompt engineering website with over 400,000 monthly visitors and a discord server with over 50,000 active members."
+        - "Mentor 3 students each semester on topics including career preparedness, leadership, product design, and system architecture."
+
+projects:                                              # legacy FEATURED_PROJECTS order; independent of post publication
+  - id: gemma4-heretic-ara
+    title: { xs: Gemma 4 MoE Heretic-ARA }
+    description:
+      l: |-
+        Out of curiosity I rented an H100 on RunPod and fine tuned Google's Gemma 4 26B MoE model using Heretic's experimental ARA branch. I couldn't decide between two of the models on the KL divergence/refusals Pareto frontier, so I benchmarked them both against the evals Google released for the original model (MMMLU, MMMU Pro, AIME 2026, GPQA Diamond, LiveCodeBench V6, τ2-bench, etc).
+
+        I'm currently working on a blog post that explains in more depth what I did, how Heretic works, and how arbitrary rank ablation improves on Heretic's original design. In the meantime, you can download and try the models yourself using the link below.
+    image: /resources/KLvsRefusals.png
+    accentColor: "#61ffda"
+    tech: [ Directional Ablation, KL Divergence, Refusal Suppression, HuggingFace, L-BFGS, PyTorch ]
+    ctas:
+      - label: { xs: View on HuggingFace }
+        href: https://huggingface.co/dawsonamf
+        external: true
+  - id: embedded-swift-agent
+    title: { xs: Embedded Swift Agent }
+    description:
+      l: |-
+        Recently I decided I wanted to build a coding agent from scratch. With so many tutorials online, I decided to make it a little more challenging for myself; make the final binary as small as possible. Rather than learn Rust, I went with Embedded Swift. Without Foundation I had to create almost every dependency manually: networking with libcurl via C interop, JSON parsing by wrapping cJSON with RAII semantics, concurrency with raw pthreads and mutexes, etc. Once the initial implementation was working in standard Swift, I used the agent running inside its own binary to help port itself to Embedded Swift.
+
+        The final result is a 195 KB binary that boots in 120ms, supports streaming responses, parallel tool execution, subagents, and more. It's smaller than most JPEGs, with the same capabilities as agents more than 500x its size.
+    image: /resources/EmbeddedSwiftAgent_CLIScreenshot.png
+    accentColor: "#61ffda"
+    tech: [ Embedded Swift, C, libcurl, cJSON, pthreads ]
+    ctas:
+      - label: { xs: Try it in your browser }
+        href: /subsites/dawson/embedded-swift-agent/
+      - label: { xs: View on GitHub }
+        href: https://github.com/dawsonamf/EmbeddedSwiftAgent
+        external: true
+  - id: silicon-fly
+    title: { xs: Silicon Fly }
+    description:
+      l: |-
+        A team of more than 200 researchers from 50 labs mapped every neuron and synapse in a real fly's brain and open sourced it. Others turned half a percent of that brain into a desktop app that produces a fly that wanders across your display, sees your cursor, and runs away from it.
+
+        I wrote a Metal kernel that made running the whole brain feasible by scattering instead of gathering, cutting the per step work by 560x. I used integer arithmetic to make the kernel bit for bit verifiable against a CPU reference. The result is 139,255 neurons and 15,091,983 connections running at 13.5x realtime on an M4 Pro in 163 lines of Metal.
+    image: /resources/Fly_Media.jpg
+    accentColor: "#61ffda"
+    tech: [ Metal, Swift, Compute Shaders, Connectomics, GPU ]
+    ctas:
+      - label: { xs: Read the post }
+        href: /blog/fly-on-my-laptop/
+      - label: { xs: View on GitHub }
+        href: https://github.com/dawsonamf/siliconfly
+        external: true
+  - id: helm
+    title: { xs: Helm }
+    description:
+      l: |-
+        I often work on many projects at the same time. Sometimes I find myself with over a dozen Cursor windows open at once. At a certain point, managing them all started to feel like a job on its own. I am a huge fan of Arc Browser and wanted its elegant space and tab management inside my IDE, so I built it.
+
+        Helm is a VS Code/Cursor extension that lives in the Explorer sidebar. You can save workspaces, and organize them into “spaces” with custom names, colors, and emojis. You can swipe between spaces with the trackpad, and drag and drop to reorder. The styling uses VS Code's built-in theme variables, so it looks native regardless of which theme you're using.
+    image: /resources/Helm_All.png
+    accentColor: "#61ffda"
+    tech: [ TypeScript, VSCode API, Webview, CSP, esbuild ]
+    ctas:
+      - label: { xs: View on VS Code Marketplace }
+        href: https://marketplace.visualstudio.com/items?itemName=dawsonamf.project-helm
+        external: true
+  - id: toolbelt
+    title: { xs: Toolbelt }
+    description:
+      l: |-
+        Fundamentally, a coding agent is just a chatbot with access to a filesystem. There's no reason that access must be restricted to a CLI agent running locally on a machine. In theory, any chatbot could become a coding agent if given the right access.
+
+        Toolbelt is an MCP server that does exactly that. It runs on your machine (or a cloud VM/dev box) and exposes a configurable set of tools (bash, read_file, write_file, glob, grep, web_search, etc) over the internet through a secure Cloudflare tunnel. Add Toolbelt to any MCP compatible chatbot (like the ChatGPT app on your iPhone or a local model in LM Studio) and it will become an agent capable of taking actions on your machine. This makes the chat interface the minor component of the agentic system; you can swap it out anytime without having to modify your tools or environment.
+    image: /resources/Purple_Toolbelt_Image.jpg
+    accentColor: "#61ffda"
+    tech: [ Python, FastMCP, Cloudflare, OAuth 2.0 ]
+    ctas:
+      - label: { xs: View on GitHub }
+        href: https://github.com/dawsonamf/toolbelt
+        external: true
+  - id: amino-amigo
+    title: { xs: Amino Amigo }
+    description:
+      l: |-
+        I like to workout, and building muscle requires lots of protein. Building muscle optimally requires timing protein intake. However, no macronutrient tracking app that I could find takes this into account. None distinguish complete from incomplete protein, or optimal protein windows. This frustrated me to the point that I created the app I wished already existed.
+
+        Amino Amigo has been downloaded in over a dozen countries. The app factors in individual metabolic limits and alerts users to when - and how much - protein to have. The app closely follows Apple's interface guidelines and design principles, and makes use of a wide variety of Swift features and frameworks.
+    image: /resources/Amino_Media.png
+    accentColor: "#61ffda"
+    tech: [ Swift, SwiftUI, Xcode ]
+    ctas:
+      - label: { xs: View on the App Store }
+        href: https://apps.apple.com/us/app/amino-amigo/id1638666228
+        external: true
+  - id: lexchat
+    title: { xs: LexChat }
+    description:
+      l: |-
+        LexChat is a website that allows users to search and talk to the Lex Fridman podcast. I transcribed the podcast with Whisper, created the search engine using vector embeddings, and construct natural language replies based on this search using GPT-3.5. Each search result includes a timestamped link directly to the moment in the podcast episode containing the search result.
+
+        I built this back in 2022, before ChatGPT was launched and the explosion of LLMs in general. Because there was limited LLM tooling at the time, I had to build my own RAG stack from scratch, including hosting the embeddings and implementing my own search engine using approximate k-NN.
+    image: /resources/LexChat_Media.jpeg
+    accentColor: "#61ffda"
+    tech: [ Python, Pinecone, Streamlit, OpenAI, BeautifulSoup ]
+    ctas:
+      - label: { xs: Visit LexChat }
+        href: https://huggingface.co/spaces/dawsonamf/lexchat
+        external: true
+  - id: deep-rl
+    title: { xs: Deep RL }
+    description:
+      l: |-
+        After graduating college, I became interested in reinforcement learning, and decided to do a self-study using "Reinforcement Learning: An Introduction" by Sutton and Barto as a guide. I read that book from cover to cover and fell in love with the ideas there. Along with OpenAI's Spinning Up, I implemented many of the algorithms I learned from scratch, including SARSA, DQN, PPO, DDPG, SAC, and a simple version of Monte Carlo Tree Search inspired by AlphaZero.
+    image: /resources/RL_Media.png
+    accentColor: "#61ffda"
+    tech: [ Python, C++, OpenAI Gym ]
+    ctas: []                                           # deep-rl has no CTAs today
+
+post:                                                  # post-page chrome
+  copyCode: { xs: Copy code }                          # aria-label on every copy button (blog/blog-post.js:98)
+  readTime: { xs: "{n} min read" }                     # template; blog/blog-post.js:179
+
+carousel: { goToSlide: { xs: "Go to slide {n}" } }     # dot aria-label template; js/featured-carousel.js:266
+
+blog:
+  intro:
+    p1:
+      l: |-
+        I like building things. While some projects become public, most never leave my machine, and the only people who hear about them are my friends and family. That's what this page is; an excuse to dive deep into something and get it out into the world.
+    p2:
+      l: |-
+        Writing about something is its own kind of project, and so is posting something publicly. It makes you commit to producing a real version of what's in your head, knowing someone might actually look at it. It forces a different kind of clarity than building alone does.
+    p3:
+      l: |-
+        The topics jump around a lot, but if something kept me up late more than a few nights in a row, it might end up here.
+  sections:
+    works: { xs: Selected Works }
+    posts: { xs: All Posts }
+
+canonical:                                             # strings only the canonical layout uses
+  masthead:                                            # terminal lines in order; steps derived (D36)
+    home:                                              # 9 sequences, default pause 1500 ms
+      - lines:
+          - "Hi,\nI'm Dawson,\nweb developer."
+          - "Hi,\nI'm Dawson,\niOS developer."
+          - "Hi,\nI'm Dawson,\nML engineer."
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hi,\nI'm Dawson,\nfull stack engineer."
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
+        pause: 1000
+      - lines:
+          - "Hey,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hey,\nI'm Dawson,\nbuilder."
+          - "Hey,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hi,\nI'm Dawson,\nbuilder."
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hey,\nI'm Dawson,\nbuilder."
+          - "Hey,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hi,\nI'm Dawson,\nbuilder."
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hey,\nI'm Dawson,\nagentic engineer."
+          - "Hey,\nI'm Dawson,\nsoftware engineer."
+    listing:                                           # 7 sequences, default pause 800 ms
+      - lines:
+          - "Cool things I've built."
+          - "Blog."
+      - lines:
+          - "Things I find interesting."
+          - "Blog."
+      - lines:
+          - "Late night rabbit holes."
+          - "Blog."
+      - lines:
+          - "Rabbit holes."
+          - "Blog."
+      - lines:
+          - "Things I've built."
+          - "Blog."
+      - lines:
+          - "Random projects."
+          - "Blog."
+      - lines:
+          - "Side quests."
+          - "Blog."
+
+picker:                                                # the theme picker's own UI strings (js/theme-cycler.js)
+  ariaLabel: { xs: Theme controls }
+  styles: { xs: Styles }
+  palette: { xs: Palette }
+  advanced: { xs: Advanced }
+  backToStyles: { xs: Back to styles }
+  shuffle: { xs: Shuffle colors }
+  shuffleSub: { xs: random palette }
+  reset: { xs: Reset }
+  resetSub: { xs: back to default }
+  advancedSub: { xs: scheme & colors }
+  doneEditing: { xs: done editing }
+  scheme: { xs: Scheme }
+  colors: { xs: Colors }
+  current: { xs: current }
+  preview: { xs: preview }
+  roles:
+    text: { xs: Text }
+    bg: { xs: Background }
+    primary: { xs: Primary }
+    secondary: { xs: Secondary }
+    accent: { xs: Accent }
+  lock: { xs: Lock }
+  unlock: { xs: Unlock }                               # composed as "<Lock|Unlock> <Role>" (js/theme-cycler.js:462)
+  schemes:
+    random: { xs: random }
+    monochromatic: { xs: monochromatic }
+    analogous: { xs: analogous }
+    complementary: { xs: complementary }
+    triadic: { xs: triadic }
+    tetradic: { xs: tetradic }
+
+themes:                                                # one entry per registry id, in picker order
+  default: { label: { xs: Default } }
+  brutalist: { label: { xs: Brutalist } }
+  marquee:
+    label: { xs: Marquee }
+    ticker: { xs: "✷ WEB ✷ iOS ✷ VISIONOS ✷ MACHINE LEARNING ✷ REINFORCEMENT LEARNING " }   # the unit; the build repeats it 12x (css/themes/marquee.css:572)
+  blueprint: { label: { xs: Blueprint } }
+  field-notes: { label: { xs: Field Notes } }
+  doodle:
+    label: { xs: Doodle }
+    currentlyHere: { xs: "currently here ✓" }          # css/themes/doodle.css:535
+  grid: { label: { xs: Swiss Grid } }
+  miami-deco: { label: { xs: Miami Deco } }
+  bauhaus: { label: { xs: Bauhaus } }
+  chinoiserie: { label: { xs: Porcelain } }
+  gallery: { label: { xs: Gallery } }
+  banknote: { label: { xs: Banknote } }
+  neo-pop: { label: { xs: Pop Art } }
+  broadsheet: { label: { xs: Broadsheet } }
+  studio: { label: { xs: Studio } }
+  wheatpaste: { label: { xs: Street Poster } }
+
+privacy:
+  title: { xs: Privacy Policy }
+  updated: { xs: "Updated January 10, 2026" }
+  body:
+    l: |-
+      Dawson Metzger-Fleetwood ("we", "us", or "our") operates the website and various applications (collectively, the "Service"). This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or use our mobile applications ("Applications").
+
+      By using our Applications or website, you agree to the collection and use of information in accordance with this policy.
+
+      ## 1. Information Collection
+
+      ### A. Information You Provide
+
+      We may collect information that you voluntarily provide to us when you use our Applications. This includes:
+
+      - Account information: If an Application requires you to create an account, we may collect your email address, name, or a unique user identifier (such as those provided by "Sign in with Apple"). This is used solely for authentication and account management.
+
+      ### B. Technical Metadata
+
+      To ensure the stability and security of our Applications, we may receive limited technical metadata. This includes information such as:
+
+      - Device model and operating system version.
+      - Aggregated, non-identifying information regarding Application performance and usage patterns to help us optimize the user experience.
+
+      This data is used exclusively for diagnosing technical issues and optimizing Application performance. We do not use this data for tracking, advertising, or building user profiles.
+
+      ### C. Financial Data (FinanceKit)
+
+      For Applications utilizing FinanceKit, we adhere to a "privacy-by-default" architecture:
+
+      - All financial data accessed via FinanceKit is processed locally on your device.
+      - We do not transmit, store, or have access to your raw financial transactions or account balances on our external servers.
+      - Access to financial data is strictly controlled by system-level permissions which you can revoke at any time.
+
+      ### D. Device Permissions
+
+      Certain Applications may request access to specific features on your mobile device. These may include:
+
+      - Camera & microphone, to capture photos, record videos, or record audio within the Application.
+      - Photo library, to save or upload images.
+      - Location services, to provide location-based features. We do not track your location in the background unless explicitly stated within the Application.
+
+      Requests for access to these features will be presented by the operating system, and you may revoke these permissions at any time via your device settings.
+
+      ## 2. Use of Information
+
+      We use the information collected for the following purposes:
+
+      - To provide and maintain the functionality of our Applications.
+      - To manage user accounts and authentication.
+      - To improve our Applications and perform technical troubleshooting.
+      - To comply with legal obligations.
+
+      ## 3. Data Storage and Security
+
+      - For many of our Applications, your data is stored locally on your device or synchronized via your personal iCloud account. We do not have access to data stored in your personal iCloud.
+      - In some cases, we may use third-party cloud services (such as AWS, Google Cloud, or Azure) to host backend services. We prioritize services that offer end-to-end encryption or robust data protection.
+      - We implement reasonable security measures to protect your information. However, no method of transmission over the internet or method of electronic storage is 100% secure.
+
+      ## 4. Third-Party Services
+
+      We may employ third-party companies and individuals to facilitate our Service, provide the Service on our behalf, perform Service-related services, or assist us in analyzing how our Service is used.
+
+      We do not sell your personal data to third parties, nor do we use third-party advertising networks.
+
+      ## 5. Children's Privacy
+
+      Our Applications and website are not intended for use by children under the age of 13. We do not knowingly collect personally identifiable information from children under 13. If we discover that a child under 13 has provided us with personal information, we will immediately delete this from our servers. If you are a parent or guardian and you are aware that your child has provided us with personal information, please contact us.
+
+      ## 6. Your Rights
+
+      Depending on your location, you may have certain rights regarding your personal data, such as the right to access, correct, or delete your data.
+
+      - If you have created an account within one of our Applications, you can request deletion of your account and associated data by contacting us.
+      - You can revoke Application permissions (Camera, Location, FinanceKit, etc.) at any time via your device settings.
+
+      ## 7. Changes to This Privacy Policy
+
+      We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page. You are advised to review this Privacy Policy periodically for any changes.
+
+      ## 8. Contact Information
+
+      If you have any questions or suggestions about our Privacy Policy, do not hesitate to contact us at [dawsonamf@icloud.com](mailto:dawsonamf@icloud.com).
+
+notFound:
+  code: { xs: "404" }
+  message: { s: "This page doesn't exist, or it moved." }
+  back: { xs: Back to the home page }
