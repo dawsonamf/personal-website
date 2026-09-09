@@ -1,8 +1,9 @@
 # Theme authoring and runtime contracts
 
-This is the live guide for the Astro theme engine. `docs/theme-explorations.html` is frozen design
-research, and OLD commit `0f196d094ad64383ec58df5472fc12d403f846b3` is a historical oracle. Neither
-is an active implementation source.
+This is the live guide for the Astro theme engine.
+`archive/themes/prototypes/theme-explorations.html` is frozen design research, and OLD commit
+`0f196d094ad64383ec58df5472fc12d403f846b3` is a historical oracle. Neither is an active
+implementation source.
 
 ## Architecture
 
@@ -87,32 +88,16 @@ the canonical post widgets and Mermaid ground as well as ordinary page chrome. C
 remain literal; visitor-facing words belong in prose. The carousel ticker text and duration are
 already derived at build time, not supplied by skin CSS or runtime markup builders.
 
-The inactive sheets `space.css`, `vapor.css`, `wanted.css` and `constructivist.css` intentionally
-remain outside `THEMES`. Their exact former entries are available only from immutable OLD:
-
-- `space`: `js/theme-bootstrap.js` lines 213-239 at `0f196d0`
-- `vapor`: lines 243-265
-- `wanted`: lines 428-456
-- `constructivist`: lines 460-495
-
-Reactivation means translating one of those historical entries into the current typed registry,
-adding its approved YAML label and auditing its preserved public sheet against current canonical
-DOM. Do not restore the old bootstrap, `ORDER`, runtime globals or query-based architecture.
+The retired `space`, `vapor`, `wanted` and `constructivist` sheets and their exact former metadata
+live under `archive/themes/inactive-skins/`. Reactivation means translating the historical entry
+into the current typed registry, adding its approved YAML label, moving the sheet into `public/`,
+and auditing it against current canonical DOM. Do not restore the old bootstrap, `ORDER`, runtime
+globals or query-based architecture.
 
 ## Authoring a structural theme
 
-The S1-24 proof demonstrates an exact five-file addition in an isolated copy:
-
-```text
-src/themes/registry.ts
-src/content/prose.yaml
-src/themes/author-proof/Home.astro
-public/css/author-proof.css
-public/js/author-proof.js
-```
-
-`harness/fixtures/theme-authoring/allowed-change-manifest.json` pins that list. Follow the same
-workflow with the real theme id:
+The inert example under `archive/themes/structural-example/` demonstrates the source shape. Follow
+the same workflow with the real theme id:
 
 1. Add a `kind: 'structural'` registry entry with its palette, tokens, fonts and narrow random
    profiles. Register at least one lazy layout, for example
@@ -233,34 +218,15 @@ Canonical load ownership is explicit in `Home.astro`, `BlogListing.astro` and `B
 Privacy and 404 load the shared picker family only. Static carousel cards, dots and ticker values are
 build output; there is no runtime static-markup builder.
 
-## Verification contract
+## Verification
 
-The full visual matrix uses exactly five representatives at desktop and mobile: Home, blog listing,
-the Toolbelt post, the Embedded Swift Agent post and the METR post. Its tracked navigation cycle
-returns from METR to the same theme's Home. Privacy and runtime 404 have a separate functional
-contract: readable approved content, correct themed links and assets, safe 404 resolution, reachable
-picker, palette persistence and working navigation. They are not required to equal OLD visually.
-LexChat is tested only as the exact external project CTA and the absence of local output.
-
-The structural fixture has its own bounded probes: owned Home, fallback listing and Toolbelt, plus
-functional Privacy and runtime 404. Verify their resource isolation, mouse and touch picker
-switching, both palette profiles, all five visible roles, resize in both directions, storage
-namespace and first-paint restoration. Compare source changes to the intended manifest, then build
-ordinary production and prove the fixture id, prose, route, row and assets are absent.
-
-Migration inventory and parity tests pin the shipped 16-theme baseline at 177 engine HTML files,
-128 local post outputs and 12 sitemap URLs. S1-24 demonstrated one isolated candidate addition with
-an ordinary build: it added exactly 11 engine routes and eight themed local post outputs, producing
-188 engine HTML, 136 local post outputs and the same 12 sitemap URLs. Those proof totals describe
-that isolated fixture; permanent themes update the intentional inventory and its exact assertions.
+Run the production build, which includes static diagnostics and prose validation:
 
 ```bash
-npm run check
 npm run build
-npm run test:unit
-npm run test:build
-
-PARITY_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/parity/manual \
-TEST_BUILD_OUT_DIR=/private/tmp/theme-engine-openai/s1-24/builds/manual \
-./node_modules/.bin/playwright test harness/theme-authoring.spec.ts
 ```
+
+For theme changes, inspect Home, the blog listing, representative posts, Privacy and 404 at desktop
+and mobile widths. Exercise navigation, both pointer and touch picker paths, palette persistence,
+first paint, reduced motion, no-JavaScript readability, resize in both directions and structural
+asset isolation. Keep the LexChat CTA external and confirm no local LexChat route is emitted.

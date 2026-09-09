@@ -1,0 +1,1144 @@
+<!-- PROTOTYPE, throwaway. A single-page rebuild of dawsonamf.com in the manner of
+     bleibtgleich.dev (Maksym Bleibtgleich's Webflow portfolio), ported from that
+     site's own stylesheet and its Slater interaction bundle
+     (assets.slater.app/slater/20419/62015.js): a monochrome Swiss layout at html
+     font-size 1vw with a 14.4 scale ratio, one grotesk at weight 500 (Akzidenz
+     Grotesk Pro there, Work Sans here), an 8-column grid, and its devices: the
+     preloader (vertical progress line, 0 to 100 percent count, nav sliding in),
+     the gooey SVG-filter text reveal, blur div reveals and clip-down spacers,
+     split-char link hovers, the staircase Menu dropdown, the theme picker with
+     its liquid wipe and spinning totem, the sticky wordmark that joins at the page
+     bottom, the hero's wipe-to-reveal orbit of project tiles, the works globe
+     under a sticky heading that spreads and turns into "All Works", the /work card
+     grid with tilt and slide-up button, the awards certificate grid (reused for
+     jobs and blog posts), and the footer clock with its cycling logo cell.
+     Real site strings and images from index.html, js/blog-data.js and
+     js/nav-config.js. Placeholder copy: the hero headline fragments, the statement
+     line, the footer quote (both assembled from the site's own about and contact
+     text) and the sticky meta line. The reference has five colour modes and no
+     true dark mode; a sixth dark tile was added so a light/dark switch exists.
+     Not linked from the site, nothing here is a skin. -->
+<!DOCTYPE html>
+<html lang="en" class="theme-mode-base">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mono prototype (throwaway)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@500&display=swap">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.0.9/css/boxicons.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lenis@1.3.21/dist/lenis.css">
+<style>
+/* ---------------------------------------------------------------- tokens (bleibtgleich :root, scale ratio 14.4, html at 1vw) */
+:root{
+  --sr:14.4;--px:calc(1rem/var(--sr));
+  --u4:calc(4*var(--px));--u6:calc(6*var(--px));--u8:calc(8*var(--px));--u12:calc(12*var(--px));--u16:calc(16*var(--px));
+  --u24:calc(24*var(--px));--u32:calc(32*var(--px));--u40:calc(40*var(--px));--u48:calc(48*var(--px));--u64:calc(64*var(--px));
+  --u72:calc(72*var(--px));--u104:calc(104*var(--px));--u120:calc(120*var(--px));--u144:calc(144*var(--px));--u200:calc(200*var(--px));--u240:calc(240*var(--px));
+  --cell:calc(162*var(--px));--gap:var(--u16);--pad:var(--u16);--stroke:1px;
+  --h1:calc(90*var(--px));--h1-lh:88%;--h1-ls:-.30938rem;--h2:calc(40*var(--px));--p1:calc(14*var(--px));--p1-lh:107.143%;--p1-ls:-.02625rem;
+  --font:'Work Sans',Arial,sans-serif;
+  --dur-s:.4s;--dur-m:.8s;--dur-l:1.2s;--ease-in-out:cubic-bezier(.76,0,.24,1);--ease-out:cubic-bezier(.25,1,.5,1);
+}
+@media (max-width:991px){:root{--sr:3.93;--gap:var(--u12);--h1:calc(45*var(--px));--h1-lh:90%;--h1-ls:-.6rem;--p1:calc(12*var(--px));--p1-lh:100%}}
+/* theme modes (bleibtgleich .theme-mode-base/1/2/3/4; dark is an addition) */
+html{--ink:#000;--ink50:#00000080;--ink30:#0000004d;--fill3:#0000000d;--line10:#0000001a;--nav-fill:#000;
+     --bg:#fff;--bg2:#f2f2f2;--nav-active:#fff;--nav1:#cbcccd;--nav2:#d8d9da;--nav3:#e6e6e6}
+html.theme-mode-1{--bg:#bec1ca;--bg2:#b4b7c0;--nav-active:#bec1ca;--nav1:#989aa2;--nav2:#a2a4ac;--nav3:#b0b3bb}
+html.theme-mode-2{--bg:#ff633d;--bg2:#f25e3a;--nav-active:#ff633d;--nav1:#cc4f31;--nav2:#d95434;--nav3:#ec5c38}
+html.theme-mode-3{--bg:#919e44;--bg2:#8a9641;--nav-active:#919e44;--nav1:#747e36;--nav2:#7b863a;--nav3:#86923f}
+html.theme-mode-4{--bg:#c31f26;--bg2:#b41d23;--nav-active:#c31f26;--nav1:#9c191e;--nav2:#a61a20;--nav3:#b41d23;--fill3:#0000001a;--ink30:#00000080}
+html.theme-mode-dark{--ink:#fff;--ink50:#ffffff80;--ink30:#ffffff4d;--fill3:#ffffff0d;--line10:#ffffff1a;--nav-fill:#fff;--bg:#111;--bg2:#1a1a1a;--nav-active:#111;--nav1:#2c2c2c;--nav2:#242424;--nav3:#1e1e1e}
+[data-theme-mode="base"]{border-color:#fff}[data-theme-mode="1"]{border-color:#bec1ca}[data-theme-mode="2"]{border-color:#ff633d}
+[data-theme-mode="3"]{border-color:#919e44}[data-theme-mode="4"]{border-color:#c31f26}[data-theme-mode="dark"]{border-color:#111}
+
+/* ---------------------------------------------------------------- base */
+*,*::before,*::after{box-sizing:border-box}
+html{font-size:1vw;background:var(--bg);scrollbar-width:none}
+::-webkit-scrollbar{display:none}
+body{margin:0;font-family:var(--font);font-weight:500;color:var(--ink);background:var(--bg);line-height:1;overflow-x:clip;-webkit-font-smoothing:antialiased}
+h1{margin:0;font-weight:500}
+a{color:inherit;text-decoration:none}
+img{display:block}
+::selection{background:var(--ink);color:var(--bg)}
+.h1{font-size:var(--h1);line-height:var(--h1-lh);letter-spacing:var(--h1-ls)}
+.h1.is-display{font-size:calc(75*var(--px))}
+.h2{font-size:var(--h2);line-height:80%;letter-spacing:-.1rem}
+.p1{font-size:var(--p1);line-height:var(--p1-lh);letter-spacing:var(--p1-ls)}
+.p1.is-2,.h2.is-2{position:absolute;left:0;bottom:0}
+.events-auto,.link{pointer-events:auto}
+.mb-104{margin-bottom:var(--u104)}.mt-8{margin-top:var(--u8)}.p1.mt-240{margin-top:var(--u240)}.opacity-0-5{opacity:.5}
+.h1.left-offset-120{padding-left:var(--u120)}
+.grid{display:grid;grid-template-columns:repeat(8,1fr);gap:var(--gap)}
+.grid.row-0{row-gap:0}
+.wrapper{overflow:clip}
+[data-reveal],[data-preloader],[data-sticky-name],[data-sticky-meta]{visibility:hidden}
+.ln{display:block}
+.ch{display:inline-block;will-change:transform}
+.link-inner{position:relative;display:block;flex:none}
+.link-inner.pointer{cursor:pointer}
+[data-link="shadow"]{display:none}
+.is-mobile{display:none}
+
+/* ---------------------------------------------------------------- nav + dev grid */
+.nav{position:fixed;inset:0 0 auto;z-index:94;pointer-events:none}
+.nav-inner{position:relative;display:flex;justify-content:space-between;align-items:center;padding:var(--pad) var(--pad) 0}
+.nav-grid{width:var(--u16);height:var(--u16);background:var(--fill3);pointer-events:auto;cursor:pointer;visibility:hidden}
+.nav-grid:hover{background:var(--line10)}
+.nav-button{position:relative;z-index:2;padding:var(--u4) var(--u8);border-radius:var(--u16);background:var(--nav-fill);color:var(--nav-active);pointer-events:auto;cursor:pointer;visibility:hidden;border:0;font:inherit}
+.nav-menu{position:absolute;top:0;right:0;display:none;pointer-events:none}
+.menu-link{display:flex;flex-direction:column;justify-content:space-between;align-items:flex-start;padding:var(--u16);pointer-events:auto;width:calc(240*var(--px));height:calc(360*var(--px));background:var(--nav1);color:var(--ink)}
+.menu-link.is-works{width:calc(272*var(--px));height:calc(280*var(--px));background:var(--nav2)}
+.menu-link.is-contact{width:calc(224*var(--px));height:calc(216*var(--px));background:var(--nav3)}
+.menu-link.is-archive{position:fixed;bottom:0;right:calc(240*var(--px));width:auto;height:auto;padding:var(--u12) var(--u16);background:var(--nav2)}
+.menu-link.is-archive.is-resume{right:var(--pad)}
+.menu-indicator{display:flex;justify-content:center;align-items:center;width:calc(23*var(--px));height:calc(23*var(--px));padding:var(--u4);border:var(--stroke) solid var(--ink);border-radius:50%}
+.menu-indicator.is-current{background:var(--nav-fill);color:var(--nav-active)}
+.grid-wrap{position:fixed;inset:0;z-index:95;display:none;padding:0 var(--pad);pointer-events:none}
+.grid-wrap .grid{flex:1}
+.grid-column{width:0;height:100%;background:var(--fill3)}
+
+/* ---------------------------------------------------------------- intro (hero) */
+.intro{position:relative;z-index:0}
+.intro-inner{position:relative;z-index:1;padding:var(--pad);pointer-events:none}
+.progress-wrap{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;height:2.083rem;border-right:var(--stroke) solid var(--ink)}
+.icon-wrap.is-logo{position:absolute;top:var(--u16);left:0;width:calc(95*var(--px));height:calc(160*var(--px));visibility:hidden;color:var(--ink)}
+.icon-wrap.is-logo svg,.totem-wrap svg{display:block;width:100%;height:100%}
+.hero-heading-wrap{display:flex;flex-direction:column;row-gap:44.25vh}
+.hero-meta-inner{display:flex;gap:var(--u4)}
+.heading-group-wrap{display:flex;flex-direction:column;align-items:flex-start}
+.heading-group-wrap.offset-16{margin-top:calc(var(--u16)*-1)}
+.heading-group-wrap.is-right{align-items:flex-end}
+.spacer{border-right:var(--stroke) solid var(--ink)}
+.theme-grid{display:grid;grid-template-columns:repeat(8,1fr);gap:var(--gap)}
+.theme-switch{display:flex;justify-content:center;align-items:center;width:var(--cell);height:var(--cell);background:var(--fill3);pointer-events:auto}
+.theme-switch-inner{width:var(--u32);height:var(--u32);border-style:solid;border-width:1px;border-radius:50%;cursor:pointer;transition:transform .6s var(--ease-in-out)}
+.theme-switch:hover .theme-switch-inner{transform:scale(1.125)}
+.t2{grid-area:1/2/2/3}.t4{grid-area:1/4/2/5}.t5{grid-area:1/5/2/6}.t7{grid-area:1/7/2/8}.t8{grid-area:1/8/2/9}
+/* grid placements, ported from the #w-node rules */
+.g-progress{grid-area:1/3/2/4}.g-hero{grid-area:1/4/2/7}.g-a{grid-area:2/3/3/6}.g-b{grid-area:3/4/4/8}.g-sp1{grid-area:3/3/7/4}
+.g-theme{grid-area:4/1/5/9}.g-state{grid-area:5/4/6/6}.g-hi{grid-area:6/2/7/4}.g-im{grid-area:6/4/7/8}.g-c{grid-area:7/3/8/8}.g-sp2{grid-area:8/3/9/4}.g-copy{grid-area:8/4/9/6}
+/* the wipe-to-reveal block behind the hero */
+.reveal-block-wrap{position:absolute;inset:0 0 auto;z-index:0;height:100vh;background:var(--bg2)}
+.reveal-block{position:relative;height:100%;overflow:hidden}
+.fluid-canvas{position:absolute;inset:0;z-index:3;width:100%;height:100%}
+.orbit-tiles{position:relative;display:flex;justify-content:center;align-items:center;width:100%;height:100dvh;overflow:clip}
+.orbit-tiles__collection{position:relative;display:none;justify-content:center;align-items:center}
+.orbit-tiles__list{display:grid;place-items:center}
+.orbit-tiles__item{grid-area:1/1;display:flex;width:max-content;height:max-content;will-change:transform,opacity,filter}
+.demo-card{position:relative;aspect-ratio:4/3;width:clamp(16em,30vw,32em)}
+.cover-image{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+
+/* ---------------------------------------------------------------- featured (globe under a sticky heading) */
+.featured-inner{position:relative;display:flex;flex-direction:column;align-items:center;padding:50vh var(--u16) var(--u200);height:calc(var(--cell)*4 + var(--gap)*5 + var(--u200)*1.75 + var(--u120)*2 + 50vh)}
+.featured-heading-wrap{position:sticky;top:50%;z-index:2;display:flex;justify-content:space-between;align-items:center;gap:var(--u16);width:30%;pointer-events:none;transform:translateY(-50%)}
+.featured-link-wrap{display:none}
+[data-underline="text"]{display:inline;background-image:linear-gradient(currentColor,currentColor);background-position:0 87%;background-repeat:no-repeat;background-size:100% .35rem;transition:background-size .6s var(--ease-in-out)}
+[data-underline="wrap"]:hover [data-underline="text"]{background-size:0% .3rem}
+.featured-globe{position:relative;width:calc(var(--cell)*4 + var(--gap)*5);height:calc(var(--cell)*4 + var(--gap)*5);margin-top:var(--u144);perspective:calc(750*var(--px));cursor:grab}
+.globe-scene{position:absolute;inset:0;z-index:1;transform-style:preserve-3d}
+.globe-tile{position:absolute;top:50%;left:50%;width:calc(104*var(--px));aspect-ratio:16/10;background:var(--ink);pointer-events:auto;cursor:pointer;will-change:transform,opacity}
+.globe-tile img{width:100%;height:100%;object-fit:cover}
+.globe-info{position:absolute;top:50%;left:var(--u16);right:var(--u16);z-index:0;transform:translateY(-50%);text-align:center;pointer-events:none;opacity:0}
+
+/* ---------------------------------------------------------------- works grid (/work card grammar) */
+.works{position:relative;background:var(--bg2);padding:var(--u120) 0}
+.works-heading{padding:0 var(--pad) var(--u64)}
+.works-list{display:grid;grid-template-columns:repeat(8,1fr);gap:var(--gap);padding:0 var(--pad)}
+.works-item{position:relative;grid-column:span 4;height:calc(480*var(--px));background:var(--ink);overflow:clip}
+.works-item-link-overlay{position:absolute;inset:0;z-index:2}
+.works-item-image-wrap{position:relative;z-index:0;display:flex;justify-content:center;align-items:center;height:100%}
+.works-item-image-inner{flex:none;height:calc(332*var(--px))}
+.works-item-image-inner img{width:auto;height:100%}
+.works-item-meta{position:absolute;left:var(--u16);bottom:var(--u16);z-index:1;display:flex;align-items:center;gap:var(--u12);color:var(--bg)}
+.works-type{padding:var(--u4) var(--u8);border:var(--stroke) solid var(--bg);border-radius:var(--u32)}
+.works-item-button{position:absolute;right:var(--u16);bottom:-2.222rem;z-index:3}
+.button{display:block;padding:var(--u4) var(--u8);border-radius:var(--u16);background:var(--bg);color:var(--ink)}
+
+/* ---------------------------------------------------------------- awards grammar (jobs, blog) */
+.awards-inner{display:flex;flex-direction:column;gap:var(--u120);padding:var(--u120) var(--u16) var(--u104)}
+.g-aw1{grid-area:1/3/2/6}.g-aw2{grid-area:2/2/3/3}.g-aw3{grid-area:2/3/3/6}.g-aw4{grid-area:3/4/4/6}.g-awlist{grid-area:1/2/2/8}
+.d-awards-list{position:relative}
+.d-awards-item{display:grid;grid-template-columns:repeat(6,1fr);gap:0 var(--gap)}
+.d-award-item-cell{position:relative;padding:var(--u4);margin-left:calc(var(--u4)*-1)}
+.d-award-item-cell.is-year{position:absolute;top:0;left:0;width:var(--cell)}
+.d-award-item-cell.is-name{position:absolute;top:0;left:calc(var(--cell) + var(--gap));width:calc(var(--cell)*2 + var(--gap))}
+.d-award-list-wrap{grid-column:span 6}
+.d-award-item{display:grid;grid-template-columns:repeat(6,1fr);gap:0 var(--gap);cursor:pointer}
+.award-item-cell{position:relative;padding:var(--u4);margin-left:calc(var(--u4)*-1);border-bottom:var(--stroke) solid var(--line10);transition:background var(--dur-s) var(--ease-out)}
+.d-award-item:hover .award-item-cell{background:var(--fill3);transition:background 0s}
+.award-item-cell.c1{grid-area:1/1/2/2}.award-item-cell.c2{grid-area:1/2/2/4}.award-item-cell.c3{grid-area:1/4/2/6}.award-item-cell.c4{grid-area:1/6/2/7}
+.award-item-certificate{position:absolute;right:0;top:50%;display:none;width:calc(var(--cell)*2 + var(--gap));min-height:var(--u144);padding:var(--u12);background:color-mix(in srgb,var(--ink) 6%,var(--bg));pointer-events:none;transform:translateY(-50%)}
+
+/* ---------------------------------------------------------------- footer */
+.footer{background:var(--bg)}
+.footer-inner{padding:var(--u16) var(--u16) var(--u120)}
+.grid.is-footer{padding-top:var(--u120);border-top:var(--stroke) solid var(--ink)}
+.g-f1{grid-area:1/3/2/7}.g-f2{grid-area:2/4/3/7}.g-ftime{grid-area:3/1/4/9}.g-f3{grid-area:4/3/5/6}.g-f4{grid-area:5/4/6/7}.g-fmail{grid-area:5/3/6/5}.g-fsoc{grid-area:6/3/7/7}
+.footer-time{display:grid;grid-template-columns:repeat(8,1fr);gap:var(--gap);margin:var(--u104) 0}
+.ft-open{grid-area:1/1/2/2;place-self:center end}.ft-h{grid-area:1/2/2/3;place-self:center start}.ft-c1{grid-area:1/3/2/4;place-self:center}
+.ft-logo{grid-area:1/4/2/6}.ft-c2{grid-area:1/6/2/7;place-self:center}.ft-m{grid-area:1/7/2/8;place-self:center end}.ft-close{grid-area:1/8/2/9;place-self:center start}
+.footer-time-inner{display:flex;justify-content:center;align-items:center}
+.footer-logo-cell{width:calc(192*var(--px));padding:var(--u40) 0;background:var(--ink);cursor:pointer}
+.footer-logo-list{position:relative}
+.footer-logo-item{position:absolute;inset:0;display:none;height:calc(184*var(--px));background:var(--ink)}
+.footer-logo-item:first-child{position:relative;display:block}
+.footer-logo-item img{width:100%;height:100%;object-fit:cover}
+.footer-socials{display:flex;justify-content:center;align-items:center;padding-top:var(--u104)}
+.social-list{display:flex;gap:var(--u8)}
+.social-item{display:flex;justify-content:center;align-items:center;flex:none;width:var(--u64);height:var(--u64);border:var(--stroke) solid var(--ink);border-radius:50%;cursor:pointer;transition:transform .3s ease}
+.social-item:hover{background:var(--ink);transform:scale(.9)}
+.social-item-inner{display:flex;justify-content:center;align-items:center;width:100%;height:100%;font-size:calc(16*var(--px))}
+.social-item:hover .social-item-inner{color:var(--bg)}
+.foooter-mail{display:flex;flex-direction:column;justify-content:flex-end;gap:var(--u40)}
+.footer-mail-inner{display:flex;flex-direction:column;align-items:flex-start;gap:var(--u4)}
+.link-button{display:flex;justify-content:center;align-items:center;padding:var(--u4) var(--u8);border-radius:var(--u32)}
+.link-button.left-offset{margin-left:calc(var(--u6)*-1);min-width:max-content}
+.link-button:hover{background:var(--ink);color:var(--bg)}
+.m-footer-inner-wrap{display:flex;flex-direction:column;gap:var(--u16);padding:var(--u72) var(--u16) 0}
+.m-footer-name{display:flex;justify-content:center}
+.m-footer-meta{display:flex;justify-content:space-between}
+
+/* ---------------------------------------------------------------- sticky wordmark, count, scrollbar, theme overlays */
+.sticky-name{position:sticky;bottom:0;z-index:95;display:flex;justify-content:center;align-items:flex-end;height:var(--u104);padding:0 var(--pad) var(--u16);pointer-events:none;overflow:clip}
+.sticky-name-inner{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;opacity:.1}
+.name-part-wrap{display:flex}
+.name-part-wrap.is-right{justify-content:flex-end}
+.sticky-name-meta{position:absolute;left:var(--pad);right:var(--pad);bottom:var(--pad);display:flex;justify-content:space-between;align-items:flex-end}
+.count{position:absolute;inset:var(--u16);font-size:var(--h1);line-height:var(--h1-lh);letter-spacing:var(--h1-ls)}
+.scrollbar-wrap{position:fixed;top:0;right:0;bottom:0;z-index:10;padding:var(--u4) var(--u4) var(--u4) 0;pointer-events:none}
+.scrollbar-thumb{width:var(--u4);height:var(--u16);border-radius:var(--u8);background:var(--line10)}
+.theme-change-overlay{position:fixed;inset:0;z-index:100;display:flex;justify-content:center;align-items:center;pointer-events:none}
+.totem-wrap{display:none;width:calc(256*var(--px));color:var(--ink)}
+.theme-wipe{position:fixed;inset:0;z-index:99;display:none;pointer-events:none}
+
+/* with motion reduced the orbit and wipe never start, so drop the block rather than show a bare grey field */
+@media (prefers-reduced-motion:reduce){.reveal-block-wrap{display:none}}
+
+/* ---------------------------------------------------------------- small screens (abbreviated port of the 991px rules) */
+@media (max-width:991px){
+  .grid{grid-template-columns:repeat(6,1fr)}
+  .nav-grid,.reveal-block-wrap,.featured,.sticky-name-inner,.sticky-name-meta,.scrollbar-wrap,.is-desktop,.works-item-button{display:none}
+  .is-mobile{display:block}
+  .sticky-name{position:fixed;inset:auto 0 0;height:var(--u72)}
+  .count{inset:auto auto var(--u16) var(--u16)}
+  .intro-inner{pointer-events:auto}
+  .progress-wrap{height:calc(24*var(--px))}
+  .heading-group-wrap.mt-8{margin-top:0}
+  .p1.mt-240{margin-top:var(--u120)}
+  .theme-grid{display:flex;overflow:auto;margin:0 calc(var(--pad)*-1) 0 calc(var(--gap)*-1);padding:0 var(--pad) 0 var(--gap)}
+  .theme-switch{flex:none;width:calc(113*var(--px));height:calc(113*var(--px))}
+  .g-progress,.g-sp1,.g-hi,.g-sp2{grid-area:auto;grid-column:1/3}
+  .g-hero,.g-b,.g-state,.g-im,.g-copy{grid-area:auto;grid-column:3/7}
+  .g-a,.g-c{grid-area:auto;grid-column:1/7}
+  .g-theme{grid-area:auto;grid-column:3/7}
+  .nav-menu{flex-direction:column;align-items:flex-end}
+  .menu-link{width:calc(320*var(--px));height:calc(180*var(--px))}
+  .menu-link.is-works{width:calc(272*var(--px))}
+  .menu-link.is-contact{width:calc(224*var(--px))}
+  .menu-link.is-archive{right:0;width:calc(272*var(--px))}
+  .menu-link.is-archive.is-resume{bottom:calc(46*var(--px))}
+  .works-list{display:flex;flex-direction:column}
+  .works-item{height:calc(380*var(--px))}
+  .works-item-image-inner{height:calc(200*var(--px))}
+  .awards-inner{gap:var(--u72);padding:var(--u72) var(--u16)}
+  .g-aw2{grid-area:auto;grid-column:1/2}.g-awlist{grid-area:auto;grid-column:1/7}
+  .d-award-item-cell.is-year,.d-award-item-cell.is-name{position:static;width:auto;margin-left:0;border-bottom:var(--stroke) solid var(--line10)}
+  .d-award-item-cell.is-year{grid-area:1/1/2/2}.d-award-item-cell.is-name{grid-area:1/2/2/7}.d-award-list-wrap{grid-area:2/1/3/7}
+  .award-item-cell.c3{grid-area:auto;grid-column:2/5}.award-item-cell.c4{grid-area:auto;grid-column-start:5}
+  .award-item-certificate{display:none!important}
+  .grid.is-footer{padding-top:var(--u72)}
+  .footer-inner{padding:0 var(--u16) var(--u72)}
+  .g-f1{grid-area:auto;grid-column:1/7}.g-f2{grid-area:auto;grid-column:3/7}.g-ftime{grid-area:auto;grid-column:1/7}
+  .g-f3{grid-area:auto;grid-column:1/5}.g-f4{grid-area:auto;grid-column:4/7}.g-fmail{grid-area:auto;grid-column:1/4}.g-fsoc{grid-area:auto;grid-column:1/7;justify-self:center}
+  .footer-time{grid-template-columns:repeat(6,1fr);margin:var(--u48) 0}
+  .ft-open{grid-area:auto;grid-column:1/2;justify-self:start}.ft-h{grid-area:auto;grid-column:1/2}.ft-c1{grid-area:auto;grid-column:2/3}
+  .ft-logo{grid-area:auto;grid-column:3/5}.ft-c2{grid-area:auto;grid-column:5/6}.ft-m{grid-area:auto;grid-column:6/7}.ft-close{grid-area:auto;grid-column:6/7;justify-self:end}
+  .footer-logo-cell{padding:var(--u24) 0}.footer-logo-item{height:calc(120*var(--px))}
+  .footer-socials{padding-top:var(--u72)}
+  .foooter-mail{gap:var(--u16)}
+}
+</style>
+</head>
+<body>
+
+<!-- dev grid overlay (the small square top-left toggles it) -->
+<div class="grid-wrap"><div class="grid fill">
+  <div class="grid-column"></div><div class="grid-column"></div><div class="grid-column"></div><div class="grid-column"></div>
+  <div class="grid-column"></div><div class="grid-column"></div><div class="grid-column"></div><div class="grid-column"></div>
+</div></div>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-grid" data-nav="grid" title="Grid"></div>
+    <button class="nav-button" type="button" data-nav="button" data-link-trigger>
+      <div class="link-inner">
+        <div class="p1" data-link="label" data-nav="label">Menu</div>
+        <div class="p1 is-2" data-link="shadow" data-nav="label">Menu</div>
+      </div>
+    </button>
+    <div class="nav-menu" data-nav="link-group">
+      <a class="menu-link is-home" data-nav="link" data-link-trigger href="#top">
+        <div class="menu-indicator is-current" data-nav="indicator"><div class="p1">1</div></div>
+        <div class="menu-link-inner"><div class="link-inner"><div class="h2" data-link="label">Home</div><div class="h2 is-2" data-link="shadow">Home</div></div></div>
+      </a>
+      <a class="menu-link is-works" data-nav="link" data-link-trigger href="#work">
+        <div class="menu-indicator" data-nav="indicator"><div class="p1">2</div></div>
+        <div class="menu-link-inner"><div class="link-inner"><div class="h2" data-link="label">Work</div><div class="h2 is-2" data-link="shadow">Work</div></div></div>
+      </a>
+      <a class="menu-link is-contact" data-nav="link" data-link-trigger href="#contact">
+        <div class="menu-indicator" data-nav="indicator"><div class="p1">3</div></div>
+        <div class="menu-link-inner"><div class="link-inner"><div class="h2" data-link="label">Contact</div><div class="h2 is-2" data-link="shadow">Contact</div></div></div>
+      </a>
+      <a class="menu-link is-archive" data-nav-link="archive" data-link-trigger href="https://www.dawsonamf.com/blog/">
+        <div class="menu-link-inner"><div class="link-inner"><div class="p1" data-link="label">Blog</div><div class="p1 is-2" data-link="shadow">Blog</div></div></div>
+      </a>
+      <a class="menu-link is-archive is-resume" data-nav-link="archive" data-link-trigger href="../../../public/resources/Resume.pdf" target="_blank" rel="noopener noreferrer">
+        <div class="menu-link-inner"><div class="link-inner"><div class="p1" data-link="label">Resume</div><div class="p1 is-2" data-link="shadow">Resume</div></div></div>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<div class="wrapper" id="top">
+<main>
+
+  <!-- ============================================================ intro -->
+  <section class="intro">
+    <div class="intro-inner">
+      <div class="grid">
+        <div class="progress-wrap g-progress" data-preloader="progress">
+          <div class="icon-wrap is-logo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95 160" fill="none" preserveAspectRatio="none">
+              <path fill="currentColor" fill-rule="evenodd" data-morph-final="M0 0H50C90 0 95 40 95 80C95 120 90 160 50 160H0Z M26 30H48C66 30 70 55 70 80C70 105 66 130 48 130H26Z" d="M0 0H95V160H0Z M26 30H70V130H26Z"></path>
+            </svg>
+          </div>
+          <div class="p1 events-auto" data-preloader="text-1">Engineer<br>&amp; Builder</div>
+        </div>
+        <div class="hero-heading-wrap g-hero">
+          <div class="hero-meta">
+            <div class="p1" data-preloader="text-2">Based in Washington, DC<br></div>
+            <div class="hero-meta-inner">
+              <div class="p1" data-preloader="text-2">Working w/<br></div>
+              <a class="link-inner events-auto pointer" data-preloader="text-2" data-link-trigger href="https://www.aboutobjects.com/" target="_blank" rel="noopener noreferrer">
+                <div class="p1" data-link="label">About Objects</div>
+                <div class="p1 is-2" data-link="shadow">About Objects</div>
+              </a>
+            </div>
+          </div>
+          <div class="heading-group-wrap">
+            <h1 class="h1" data-reveal="text">Dawson</h1>
+            <h1 class="h1" data-reveal="text">Metzger-</h1>
+            <h1 class="h1" data-reveal="text">Fleetwood</h1>
+          </div>
+        </div>
+        <div class="heading-group-wrap mt-8 g-a">
+          <h1 class="h1" data-reveal="text">Web,</h1>
+          <h1 class="h1" data-reveal="text">iOS &amp;</h1>
+          <h1 class="h1" data-reveal="text">vision-</h1>
+        </div>
+        <div class="heading-group-wrap mt-8 events-auto g-b">
+          <h1 class="h1" data-reveal="text">OS apps,</h1>
+          <h1 class="h1" data-reveal="text">ML &amp;</h1>
+          <h1 class="h1" data-reveal="text">RL</h1>
+          <h1 class="h1 left-offset-120 mb-104" data-reveal="text">dev.</h1>
+        </div>
+        <div class="spacer mt-8 g-sp1" data-reveal="clip-down"></div>
+        <div class="theme-grid g-theme">
+          <div class="theme-switch" data-reveal="div"><div class="theme-switch-inner" data-theme-mode="1" role="button" tabindex="0" aria-label="Concrete theme"></div></div>
+          <div class="theme-switch t2" data-reveal="div"><div class="theme-switch-inner" data-theme-mode="dark" role="button" tabindex="0" aria-label="Dark theme"></div></div>
+          <div class="theme-switch t4" data-reveal="div"><div class="theme-switch-inner" data-theme-mode="3" role="button" tabindex="0" aria-label="Verdigris theme"></div></div>
+          <div class="theme-switch t5" data-reveal="div"><div class="theme-switch-inner" data-theme-mode="2" role="button" tabindex="0" aria-label="Rust theme"></div></div>
+          <div class="theme-switch t7" data-reveal="div"><div class="theme-switch-inner" data-theme-mode="base" role="button" tabindex="0" aria-label="Light theme"></div></div>
+          <div class="theme-switch t8" data-reveal="div"><div class="theme-switch-inner" data-theme-mode="4" role="button" tabindex="0" aria-label="Blood theme"></div></div>
+        </div>
+        <div class="p1 mb-104 events-auto g-state" data-reveal="text">Professional developer since 2019. Builds<br>web, iOS, and visionOS software and ML pipelines,<br>with a focus on solving real world problems.</div>
+        <h1 class="h1 events-auto g-hi" data-reveal="text">Hi,</h1>
+        <h1 class="h1 events-auto g-im" data-reveal="text">I'm</h1>
+        <div class="heading-group-wrap offset-16 events-auto g-c">
+          <h1 class="h1" data-reveal="text">Dawson, full</h1>
+          <h1 class="h1" data-reveal="text">stack engineer.</h1>
+        </div>
+        <div class="spacer mt-8 g-sp2" data-reveal="clip-down"></div>
+        <div class="p1 mt-240 events-auto g-copy" data-reveal="text">&copy; '26</div>
+      </div>
+    </div>
+    <div class="reveal-block-wrap">
+      <div class="reveal-block" data-fluid-reveal>
+        <canvas class="fluid-canvas" data-fluid-canvas></canvas>
+        <div class="orbit-tiles" data-orbit-tiles-init>
+          <div class="orbit-tiles__collection"><div class="orbit-tiles__list"><!-- project tiles rendered from FEATURED_PROJECTS --></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ featured: globe of works under a sticky heading -->
+  <section class="featured" id="work">
+    <div class="featured-inner">
+      <div class="featured-heading-wrap" data-featured="heading">
+        <div class="h1" data-featured="text" data-reveal="text">Work</div>
+        <div class="h1" data-featured="text" data-reveal="text">22-26</div>
+        <div class="featured-link-wrap" data-featured="link">
+          <a class="link" data-underline="wrap" href="#all-works"><div class="h1" data-underline="text">All Works</div></a>
+        </div>
+      </div>
+      <div class="featured-globe" data-globe="wrap" data-featured="globe">
+        <div class="globe-info p1"></div>
+        <div class="globe-scene"><!-- tiles rendered from FEATURED_PROJECTS --></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ all works (the /work card grid) -->
+  <section class="works" id="all-works">
+    <div class="works-inner">
+      <div class="works-heading grid"><h1 class="h1" data-reveal="text" style="grid-area:1/3/2/7;justify-self:center">All Works</h1></div>
+      <div class="works-list"><!-- rendered from FEATURED_PROJECTS --></div>
+    </div>
+  </section>
+
+  <!-- ============================================================ where I've worked, in the awards certificate grammar -->
+  <section class="awards" id="experience">
+    <div class="awards-inner">
+      <div class="grid row-0">
+        <div class="g-aw1"><h1 class="h1" data-reveal="text">Roles</h1></div>
+        <h1 class="h1 g-aw2" data-reveal="text">&amp;</h1>
+        <h1 class="h1 g-aw3" data-reveal="text">Experi-</h1>
+        <h1 class="h1 g-aw4" data-reveal="text">ence</h1>
+      </div>
+      <div class="grid">
+        <div class="d-awards-master-list g-awlist">
+
+          <div class="d-awards-master-item"><div class="d-awards-list">
+            <div class="d-awards-item" data-reveal="div">
+              <div class="d-award-item-cell is-year"><div class="p1">'23</div></div>
+              <div class="d-award-item-cell is-name"><div class="p1">About Objects</div></div>
+              <div class="d-award-list-wrap"><div class="d-award-list">
+                <a class="d-award-item" data-award="item" href="https://www.aboutobjects.com/" target="_blank" rel="noopener noreferrer">
+                  <div class="award-item-cell is-desktop c1"></div><div class="award-item-cell is-desktop c2"></div>
+                  <div class="award-item-cell c3"><div class="p1">Software Engineer</div>
+                    <div class="award-item-certificate" data-award="certificate"><div class="p1">Worked extensively on a multi-platform (iPad, iPhone, and Vision Pro) event management platform for government clients, featuring real-time resource tracking and 3D visualizations with RealityKit. Featured in Apple's enterprise showcase.</div></div>
+                  </div>
+                  <div class="award-item-cell c4"><div class="p1">July 2023 &ndash; Present</div></div>
+                </a>
+              </div></div>
+            </div>
+          </div></div>
+
+          <div class="d-awards-master-item"><div class="d-awards-list">
+            <div class="d-awards-item" data-reveal="div">
+              <div class="d-award-item-cell is-year"><div class="p1">'24</div></div>
+              <div class="d-award-item-cell is-name"><div class="p1">Johns Hopkins University</div></div>
+              <div class="d-award-list-wrap"><div class="d-award-list">
+                <a class="d-award-item" data-award="item" href="https://cogsci.jhu.edu/" target="_blank" rel="noopener noreferrer">
+                  <div class="award-item-cell is-desktop c1"></div><div class="award-item-cell is-desktop c2"></div>
+                  <div class="award-item-cell c3"><div class="p1">Guest Lecturer</div>
+                    <div class="award-item-certificate" data-award="certificate"><div class="p1">Presented to interpreters on statistical concepts to enhance research interpretation, covering topics from fundamentals to the central limit theorem and multiple linear regression.</div></div>
+                  </div>
+                  <div class="award-item-cell c4"><div class="p1">Spring 2024 &ndash; Present</div></div>
+                </a>
+              </div></div>
+            </div>
+          </div></div>
+
+          <div class="d-awards-master-item"><div class="d-awards-list">
+            <div class="d-awards-item" data-reveal="div">
+              <div class="d-award-item-cell is-year"><div class="p1">'19</div></div>
+              <div class="d-award-item-cell is-name"><div class="p1">Visual Language Associates</div></div>
+              <div class="d-award-list-wrap"><div class="d-award-list">
+                <div class="d-award-item" data-award="item">
+                  <div class="award-item-cell is-desktop c1"></div><div class="award-item-cell is-desktop c2"></div>
+                  <div class="award-item-cell c3"><div class="p1">Technical Co-Founder</div>
+                    <div class="award-item-certificate" data-award="certificate"><div class="p1">Co-founder of an agency that provides signed language interpreting and cued language transliteration services, successfully securing contracts with the MD and VA state governments, and serving over two dozen clients in the DMV area with an average contract value of over $90,000.</div></div>
+                  </div>
+                  <div class="award-item-cell c4"><div class="p1">September 2019 &ndash; July 2023</div></div>
+                </div>
+              </div></div>
+            </div>
+          </div></div>
+
+          <div class="d-awards-master-item"><div class="d-awards-list">
+            <div class="d-awards-item" data-reveal="div">
+              <div class="d-award-item-cell is-year"><div class="p1">'22</div></div>
+              <div class="d-award-item-cell is-name"><div class="p1">Startup Shell</div></div>
+              <div class="d-award-list-wrap"><div class="d-award-list">
+                <a class="d-award-item" data-award="item" href="https://startupshell.org/" target="_blank" rel="noopener noreferrer">
+                  <div class="award-item-cell is-desktop c1"></div><div class="award-item-cell is-desktop c2"></div>
+                  <div class="award-item-cell c3"><div class="p1">Fellow</div>
+                    <div class="award-item-certificate" data-award="certificate"><div class="p1">Mentor 3 students each semester on topics including career preparedness, leadership, product design, and system architecture.</div></div>
+                  </div>
+                  <div class="award-item-cell c4"><div class="p1">September 2022 &ndash; Present</div></div>
+                </a>
+              </div></div>
+            </div>
+          </div></div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ blog, same grammar -->
+  <section class="awards" id="blog">
+    <div class="awards-inner">
+      <div class="grid row-0">
+        <div class="g-aw1"><h1 class="h1" data-reveal="text">Blog</h1></div>
+        <h1 class="h1 g-aw2" data-reveal="text">&amp;</h1>
+        <h1 class="h1 g-aw3" data-reveal="text">Writ-</h1>
+        <h1 class="h1 g-aw4" data-reveal="text">ing</h1>
+      </div>
+      <div class="grid">
+        <div class="d-awards-master-list g-awlist" id="blog-list"><!-- rendered from BLOG_POSTS --></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================ footer -->
+  <footer class="footer" id="contact">
+    <div class="footer-inner">
+      <div class="grid is-footer">
+        <div class="heading-group-wrap g-f1">
+          <h1 class="h1" data-reveal="text">My inbox</h1>
+          <h1 class="h1" data-reveal="text">is always</h1>
+        </div>
+        <div class="heading-group-wrap mt-8 g-f2">
+          <h1 class="h1" data-reveal="text">open. If</h1>
+          <h1 class="h1" data-reveal="text">you're</h1>
+        </div>
+        <div class="footer-time g-ftime">
+          <h1 class="h1 is-desktop ft-open" data-reveal="text">(</h1>
+          <h1 class="h1 ft-h" data-footer-time="hours" data-reveal="text">00</h1>
+          <h1 class="h1 ft-c1" data-reveal="text">:</h1>
+          <div class="footer-time-inner ft-logo">
+            <div class="footer-logo-cell" data-footer-logo="wrap" data-reveal="clip-down">
+              <div class="footer-logo-list" data-footer-logo="list">
+                <div class="footer-logo-item" data-footer-logo="item"><img src="../../../public/resources/profile_photo.jpg" alt="Dawson Metzger-Fleetwood" loading="lazy"></div>
+                <div class="footer-logo-item" data-footer-logo="item"><img src="../../../public/resources/location.png" alt="Map" loading="lazy"></div>
+                <div class="footer-logo-item" data-footer-logo="item"><img src="../../../public/resources/Fly_Media.jpg" alt="Silicon Fly" loading="lazy"></div>
+                <div class="footer-logo-item" data-footer-logo="item"><img src="../../../public/resources/Helm_All.png" alt="Helm" loading="lazy"></div>
+                <div class="footer-logo-item" data-footer-logo="item"><img src="../../../public/resources/Amino_Media.png" alt="Amino Amigo" loading="lazy"></div>
+              </div>
+            </div>
+          </div>
+          <h1 class="h1 ft-c2" data-reveal="text">:</h1>
+          <h1 class="h1 ft-m" data-footer-time="minutes" data-reveal="text">00</h1>
+          <h1 class="h1 is-desktop ft-close" data-reveal="text">)</h1>
+        </div>
+        <div class="heading-group-wrap is-right g-f3">
+          <h1 class="h1" data-reveal="text">interested</h1>
+          <h1 class="h1" data-reveal="text">in working</h1>
+        </div>
+        <div class="heading-group-wrap is-right mt-8 g-f4">
+          <h1 class="h1" data-reveal="text">together,</h1>
+          <h1 class="h1" data-reveal="text">say hi.</h1>
+        </div>
+        <div class="foooter-mail g-fmail">
+          <div class="p1" data-reveal="text">Always open to<br>interesting projects</div>
+          <div class="footer-mail-inner">
+            <div class="opacity-0-5"><div class="p1" data-reveal="div">Write directly to:</div></div>
+            <a class="link-button left-offset" data-reveal="div" data-link-trigger href="mailto:dawsonamf@icloud.com">
+              <div class="link-inner">
+                <div class="p1 is-2" data-link="shadow">dawsonamf@icloud.com</div>
+                <div class="p1" data-link="label">dawsonamf@icloud.com</div>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="footer-socials g-fsoc">
+          <div class="social-list" data-reveal="w" id="social-list"><!-- rendered from SOCIAL_LINKS --></div>
+        </div>
+      </div>
+      <div class="m-footer-inner is-mobile">
+        <div class="m-footer-inner-wrap">
+          <div class="m-footer-name"><div class="h1 is-display" data-reveal="text">dawson</div></div>
+          <div class="m-footer-meta">
+            <div class="p1" data-reveal="text">'26 &copy; All rights reserved</div>
+            <div class="p1" data-reveal="text">Built by Dawson Metzger-Fleetwood</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <div class="theme-change-overlay">
+    <div class="totem-wrap">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 95 160" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M0 0H50C90 0 95 40 95 80C95 120 90 160 50 160H0Z M26 30H48C66 30 70 55 70 80C70 105 66 130 48 130H26Z"></path></svg>
+    </div>
+  </div>
+</main>
+
+<!-- the wordmark that sits at 10% at the viewport bottom and joins at the end of the page -->
+<section class="sticky-name">
+  <div class="count" data-preloader="count">0%</div>
+  <div class="sticky-name-inner">
+    <div class="name-part-wrap is-left" data-sticky-name><div class="h1">daw</div></div>
+    <div class="name-part-wrap is-right" data-sticky-name><div class="h1">son</div></div>
+  </div>
+  <div class="sticky-name-meta">
+    <div class="p1" data-sticky-meta="text">'26 &copy; All rights reserved</div>
+    <div class="p1" data-sticky-meta="text">Designed and built by Dawson Metzger-Fleetwood</div>
+  </div>
+</section>
+<div class="scrollbar-wrap"><div class="scrollbar-thumb"></div></div>
+<div class="theme-wipe" id="theme-wipe"></div>
+</div>
+
+<script>
+/* Preserved demo data distilled from js/blog-data.js and js/nav-config.js at 0f196d0. */
+window.FEATURED_PROJECTS = [
+  { title: 'Gemma 4 MoE Heretic-ARA', description: 'Out of curiosity I rented an H100 on RunPod and fine tuned Google\'s Gemma 4 26B MoE model using Heretic\'s experimental ARA branch.', image: '../../../public/resources/KLvsRefusals.png', tech: ['Directional Ablation'], url: 'https://huggingface.co/dawsonamf', ctaLabel: 'View on HuggingFace', external: true },
+  { title: 'Embedded Swift Agent', description: 'Recently I decided I wanted to build a coding agent from scratch.', image: '../../../public/resources/EmbeddedSwiftAgent_CLIScreenshot.png', tech: ['Embedded Swift'], url: 'https://www.dawsonamf.com/blog/embedded-swift-agent/', ctaLabel: 'Read the post', external: true },
+  { title: 'Silicon Fly', description: 'A team of more than 200 researchers from 50 labs mapped every neuron and synapse in a real fly\'s brain and open sourced it.', image: '../../../public/resources/Fly_Media.jpg', tech: ['Metal'], url: 'https://www.dawsonamf.com/blog/fly-on-my-laptop/', ctaLabel: 'Read the post', external: true },
+  { title: 'Helm', description: 'I often work on many projects at the same time.', image: '../../../public/resources/Helm_All.png', tech: ['TypeScript'], url: 'https://marketplace.visualstudio.com/items?itemName=dawsonamf.project-helm', ctaLabel: 'View on VS Code Marketplace', external: true },
+  { title: 'Toolbelt', description: 'Fundamentally, a coding agent is just a chatbot with access to a filesystem.', image: '../../../public/resources/Purple_Toolbelt_Image.jpg', tech: ['Python'], url: 'https://github.com/dawsonamf/toolbelt', ctaLabel: 'View on GitHub', external: true },
+  { title: 'Amino Amigo', description: 'I like to workout, and building muscle requires lots of protein.', image: '../../../public/resources/Amino_Media.png', tech: ['Swift'], url: 'https://apps.apple.com/us/app/amino-amigo/id1638666228', ctaLabel: 'View on the App Store', external: true },
+  { title: 'LexChat', description: 'LexChat is a website that allows users to search and talk to the Lex Fridman podcast.', image: '../../../public/resources/LexChat_Media.jpeg', tech: ['Python'], url: 'https://huggingface.co/spaces/dawsonamf/lexchat', ctaLabel: 'Visit LexChat', external: true },
+  { title: 'Deep RL', description: 'After graduating college, I became interested in reinforcement learning, and decided to do a self-study using Reinforcement Learning: An Introduction by Sutton and Barto as a guide.', image: '../../../public/resources/RL_Media.png', tech: ['Python'] }
+];
+window.BLOG_POSTS = [
+  { title: 'There is a fly on my laptop and it runs away', date: 'August 2026', url: 'https://www.dawsonamf.com/blog/fly-on-my-laptop/', external: true },
+  { title: 'The Art Nobody Looks At', date: 'July 2026', url: 'https://www.dawsonamf.com/blog/underviewed-art/', external: true },
+  { title: 'Arena.ai Leaderboard Update Badges', date: 'May 2026', url: 'https://www.dawsonamf.com/blog/arena-freshness/', external: true },
+  { title: 'Helm: A Minimalist Workspace Switcher for your IDE', date: 'April 2026', url: 'https://www.dawsonamf.com/blog/helm/', external: true },
+  { title: 'Toolbelt: Giving AI Clients a Way Into Your Environment', date: 'March 2026', url: 'https://www.dawsonamf.com/blog/toolbelt/', external: true },
+  { title: 'Building a Coding Agent in Embedded Swift', date: 'February 2026', url: 'https://www.dawsonamf.com/blog/embedded-swift-agent/', external: true },
+  { title: 'How Fast Are Agents Improving?', date: 'January 2026', url: 'https://www.dawsonamf.com/blog/metr-doubling/', external: true },
+  { title: 'Autoencoders – Part 2', date: 'April 2024', url: 'https://www.aboutobjects.com/2024/04/01/autoencoders-part-2/', external: true },
+  { title: 'Autoencoders – Part 1', date: 'January 2024', url: 'https://www.aboutobjects.com/2024/01/05/autoencoders-part-1/', external: true },
+  { title: 'Highlights from My CS Degree', date: 'May 2022', url: 'https://www.dawsonamf.com/blog/college-projects/', external: true }
+];
+window.SOCIAL_LINKS = [
+  { href: 'https://www.linkedin.com/in/dawsonamf7/', icon: 'fab fa-linkedin', label: 'LinkedIn' },
+  { href: 'https://twitter.com/dawsonamf7', icon: 'fa-brands fa-x-twitter', label: 'X (Twitter)' },
+  { href: 'https://www.facebook.com/messages/t/dawson.metzgerfleetwood', icon: 'fab fa-facebook-messenger', label: 'Messenger' },
+  { href: 'mailto:dawsonamf@icloud.com', icon: 'bx bx-envelope', label: 'Email' },
+  { href: 'https://www.dawsonamf.com/resources/contact.vcf', icon: 'fas fa-user-circle', label: 'Contact card' },
+  { href: 'https://calendly.com/dawsonamf/30min', icon: 'far fa-calendar-alt', label: 'Schedule a call' }
+];
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/CustomEase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/MorphSVGPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/lenis@1.3.21/dist/lenis.min.js"></script>
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mobile = matchMedia('(max-width: 991px)').matches;
+  /* the bundle's timing constants */
+  var durS = 0.4, durM = 0.8, durL = 1.2, stagger = 0.1, delayReveal = 0.2;
+  var loaded = false;
+  gsap.registerPlugin(ScrollTrigger, CustomEase, MorphSVGPlugin);
+  CustomEase.create('InOut', '0.76,0,0.24,1'); CustomEase.create('Out', '0.25,1,0.5,1');
+  CustomEase.create('In', '0.5,0,0.75,0'); CustomEase.create('osmo', '0.625,0.05,0,1');
+  history.scrollRestoration = 'manual';
+  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
+  var firstSentence = function (s) { s = String(s || '').replace(/<br\s*\/?>/gi, ' ').replace(/<[^>]+>/g, ''); var m = s.match(/^.*?[.!?](\s|$)/); return (m ? m[0] : s).trim(); };
+
+  /* ---------------------------------------------------------------- lenis */
+  var lenis = null;
+  if (!reduced && window.Lenis) {
+    lenis = new Lenis({ duration: 1.2, smoothWheel: true, touchMultiplier: 2, easing: function (t) { return Math.min(1, 1.001 - Math.pow(2, -10 * t)); } });
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(function (t) { lenis.raf(t * 1000); });
+    gsap.ticker.lagSmoothing(0);
+  }
+  var scrollY = function () { return lenis ? lenis.scroll : window.scrollY; };
+  var scrollLimit = function () { return lenis ? lenis.limit : document.documentElement.scrollHeight - innerHeight; };
+  var onScroll = function (fn) { lenis ? lenis.on('scroll', fn) : addEventListener('scroll', fn, { passive: true }); };
+  var scrollToEl = function (el) { lenis ? lenis.scrollTo(el) : el.scrollIntoView(); };
+
+  /* ---------------------------------------------------------------- content from the site's own registries */
+  function renderContent() {
+    var P = window.FEATURED_PROJECTS || [], B = window.BLOG_POSTS || [], S = window.SOCIAL_LINKS || [];
+    $('.orbit-tiles__list').innerHTML = P.map(function (p) {
+      return '<div class="orbit-tiles__item"><div class="demo-card"><img class="cover-image" src="' + p.image + '" alt="' + esc(p.title) + '" loading="lazy"></div></div>';
+    }).join('');
+    $('.globe-scene').innerHTML = P.map(function (p, i) {
+      var href = p.url || p.url2 || '#all-works', ext = p.url ? p.external : p.external2;
+      return '<a class="globe-tile" data-i="' + i + '" href="' + href + '"' + (ext ? ' target="_blank" rel="noopener noreferrer"' : '') + '><img src="' + p.image + '" alt="' + esc(p.title) + '" loading="lazy"></a>';
+    }).join('');
+    $('.works-list').innerHTML = P.map(function (p) {
+      var href = p.url || p.url2, ext = p.url ? p.external : p.external2, cta = p.url ? p.ctaLabel : p.ctaLabel2;
+      var t = ext ? ' target="_blank" rel="noopener noreferrer"' : '';
+      return '<div class="works-item" data-works-item="wrap" data-tilt="wrap">' +
+        (href ? '<a class="works-item-link-overlay" href="' + href + '"' + t + ' aria-label="' + esc(p.title) + '"></a>' : '') +
+        '<div class="works-item-image-wrap" data-tilt="card"><div class="works-item-image-inner"><img src="' + p.image + '" alt="' + esc(p.title) + '" loading="lazy"></div></div>' +
+        '<div class="works-item-meta"><div class="works-type"><div class="p1">' + esc(p.tech[0]) + '</div></div><div class="p1">' + esc(p.title) + '</div></div>' +
+        (href ? '<div class="works-item-button" data-works-item="button"><a class="button" href="' + href + '"' + t + '><div class="link-inner"><div class="p1" data-link="label">' + esc(cta) + '</div><div class="p1 is-2" data-link="shadow">' + esc(cta) + '</div></div></a></div>' : '') +
+        '</div>';
+    }).join('');
+    var groups = {}, years = [];
+    B.forEach(function (b) { var y = b.date.slice(-4); if (!groups[y]) { groups[y] = []; years.push(y); } groups[y].push(b); });
+    $('#blog-list').innerHTML = years.map(function (y) {
+      var rows = groups[y], ext = rows.some(function (b) { return b.external; });
+      return '<div class="d-awards-master-item"><div class="d-awards-list"><div class="d-awards-item" data-reveal="div">' +
+        '<div class="d-award-item-cell is-year"><div class="p1">\'' + y.slice(2) + '</div></div>' +
+        '<div class="d-award-item-cell is-name"><div class="p1">' + rows.length + (rows.length > 1 ? ' posts' : ' post') + (ext ? ', About Objects blog' : '') + '</div></div>' +
+        '<div class="d-award-list-wrap"><div class="d-award-list">' + rows.map(function (b) {
+          var href = b.external ? b.url : '../' + b.url;
+          return '<a class="d-award-item" href="' + href + '"' + (b.external ? ' target="_blank" rel="noopener noreferrer"' : '') + '>' +
+            '<div class="award-item-cell is-desktop c1"></div><div class="award-item-cell is-desktop c2"></div>' +
+            '<div class="award-item-cell c3"><div class="p1">' + esc(b.title) + '</div></div>' +
+            '<div class="award-item-cell c4"><div class="p1">' + esc(b.date.split(' ')[0]) + '</div></div></a>';
+        }).join('') + '</div></div></div></div></div>';
+    }).join('');
+    $('#social-list').innerHTML = S.map(function (s) {
+      var href = s.isCalendly ? 'https://calendly.com/dawsonamf/30min' : s.href;
+      return '<div class="social-item" data-reveal="div"><a class="social-item-inner" href="' + href + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(s.label) + '"><i class="' + s.icon + '" aria-hidden="true"></i></a></div>';
+    }).join('');
+  }
+
+  /* ---------------------------------------------------------------- gooey text reveal (animateTextReveal): one SVG filter per line */
+  var NS = 'http://www.w3.org/2000/svg', gooDefs = null;
+  var defs = function () {
+    if (!gooDefs) { gooDefs = document.createElementNS(NS, 'svg'); gooDefs.id = 'goo-defs'; gooDefs.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden'; document.body.prepend(gooDefs); }
+    return gooDefs;
+  };
+  var matrix = function (a, o) { return '1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 ' + a + ' ' + o; };
+  function lines(el) {
+    if (el._lines) return el._lines;
+    if (el.querySelector('br')) {
+      var parts = el.innerHTML.split(/<br\s*\/?>/i).map(function (s) { return s.trim(); }).filter(Boolean);
+      el.innerHTML = parts.map(function (p) { return '<span class="ln">' + p + '</span>'; }).join('');
+      el._lines = $$('.ln', el);
+    } else el._lines = [el];
+    el._lines.forEach(function (l) {
+      if (l.dataset.filterId) return;
+      var id = 'goo-' + Math.random().toString(36).slice(2, 9);
+      l.dataset.filterId = id;
+      var f = document.createElementNS(NS, 'filter');
+      f.id = id; f.setAttribute('x', '-25%'); f.setAttribute('y', '-25%'); f.setAttribute('width', '150%'); f.setAttribute('height', '150%'); f.setAttribute('color-interpolation-filters', 'sRGB');
+      f.innerHTML = '<feGaussianBlur in="SourceGraphic" stdDeviation="50" result="blur"></feGaussianBlur><feColorMatrix in="blur" mode="matrix" values="' + matrix(20, -8) + '"></feColorMatrix>';
+      defs().appendChild(f);
+      l._blur = f.querySelector('feGaussianBlur'); l._cm = f.querySelector('feColorMatrix');
+    });
+    return el._lines;
+  }
+  function textReveal(els, mode, delay) {
+    gsap.utils.toArray(els).forEach(function (el, i) {
+      /* only undo a display:none that a hide here applied; other code (the featured heading) owns its own display state */
+      if (mode !== 'hide' && el._hiddenByReveal) { el.style.display = ''; el._hiddenByReveal = false; }
+      var ls = lines(el), base = i * stagger;
+      if (reduced) {
+        gsap.set(el, { autoAlpha: mode === 'hide' ? 0 : 1 }); ls.forEach(function (l) { l.style.filter = ''; });
+        if (mode === 'hide') { el.style.display = 'none'; el._hiddenByReveal = true; }
+        return;
+      }
+      if (mode === 'initial') {
+        ls.forEach(function (l) { l._blur.setAttribute('stdDeviation', 50); l._cm.setAttribute('values', matrix(20, -8)); l.style.filter = 'url(#' + l.dataset.filterId + ')'; });
+      } else if (mode === 'reveal') {
+        gsap.set(el, { autoAlpha: 1 });
+        var tl = gsap.timeline();
+        ls.forEach(function (l, j) {
+          l._blur.setAttribute('stdDeviation', 50); l._cm.setAttribute('values', matrix(20, -8)); l.style.filter = 'url(#' + l.dataset.filterId + ')';
+          var d = j === 0 ? (delay == null ? delayReveal : delay) + base : 0, g = { amp: 20, off: -8 };
+          tl.to(l._blur, { attr: { stdDeviation: 0 }, duration: durL, delay: d, ease: 'Out' }, j * stagger);
+          tl.to(g, { amp: 1, off: 0, duration: 0.35 * durL, ease: 'none', onUpdate: function () { l._cm.setAttribute('values', matrix(g.amp, g.off)); }, onComplete: function () { l._cm.setAttribute('values', matrix(1, 0)); l.style.filter = ''; } }, '>-' + 0.35 * durL);
+        });
+      } else {
+        var tl2 = gsap.timeline({ onComplete: function () { gsap.set(el, { autoAlpha: 0 }); el.style.display = 'none'; el._hiddenByReveal = true; } });
+        ls.forEach(function (l, j) {
+          l._blur.setAttribute('stdDeviation', 0); l._cm.setAttribute('values', matrix(1, 0)); l.style.filter = 'url(#' + l.dataset.filterId + ')';
+          var d = j === 0 ? (delay || 0) : 0, m = { amp: 1, off: 0 };
+          tl2.to(m, { amp: 20, off: -8, duration: 0.3 * durS, delay: d, ease: 'none', onUpdate: function () { l._cm.setAttribute('values', matrix(m.amp, m.off)); } }, j * stagger * 0.5);
+          tl2.to(l._blur, { attr: { stdDeviation: 50 }, duration: durS, delay: d, ease: 'In' }, j * stagger * 0.5);
+        });
+      }
+    });
+  }
+  function divReveal(els, mode, delay) {
+    var o = gsap.utils.toArray(els); if (!o.length) return;
+    if (reduced) { gsap.set(o, { opacity: mode === 'hide' ? 0 : 1, filter: 'none' }); return; }
+    if (mode === 'initial') gsap.set(o, { opacity: 0, filter: 'blur(20px)' });
+    else if (mode === 'reveal') gsap.to(o, { opacity: 1, filter: 'blur(0px)', duration: durL, delay: delay == null ? delayReveal : delay, stagger: stagger, ease: 'power2.out', overwrite: true });
+    else gsap.to(o, { opacity: 0, filter: 'blur(20px)', duration: durS, delay: delay || 0, stagger: 0.5 * stagger, ease: 'power2.in', overwrite: true });
+  }
+  function clipReveal(els, mode, delay) {
+    var o = gsap.utils.toArray(els), hid = 'inset(0% 0% 100% 0%)', vis = 'inset(0% 0% 0% 0%)';
+    if (reduced) { gsap.set(o, { clipPath: vis }); return; }
+    if (mode === 'initial') gsap.set(o, { clipPath: hid });
+    else gsap.to(o, { clipPath: vis, duration: durL, delay: delay == null ? delayReveal : delay, stagger: stagger, ease: 'power2.out' });
+  }
+  function initReveals() {
+    $$('[data-reveal="text"]').forEach(function (el) {
+      gsap.set(el, { visibility: 'visible' }); if (reduced) return;
+      textReveal(el, 'initial');
+      ScrollTrigger.create({ trigger: el, start: 'top bottom', once: true, onEnter: function () { textReveal(el, 'reveal', 0.1); } });
+    });
+    $$('[data-reveal="clip-down"]').forEach(function (el) {
+      gsap.set(el, { visibility: 'visible' }); if (reduced) return;
+      clipReveal(el, 'initial');
+      ScrollTrigger.create({ trigger: el, start: 'top bottom', once: true, onEnter: function () { clipReveal(el, 'reveal', 0.1); } });
+    });
+    $$('[data-reveal="div"]').forEach(function (el) {
+      var w = el.closest('[data-reveal="w"]');
+      gsap.set(el, { visibility: 'visible' }); if (reduced) return;
+      divReveal(el, 'initial');
+      ScrollTrigger.create({ trigger: w || el, start: 'top bottom', once: true, onEnter: function () { divReveal(el, 'reveal', 0.1); } });
+    });
+  }
+
+  /* ---------------------------------------------------------------- split-char link hover (initLinks / animateLink) */
+  function chars(el) {
+    if (el._chars) return el._chars;
+    var t = el.textContent; el.textContent = '';
+    el._chars = Array.from(t).map(function (c) { var s = document.createElement('span'); s.className = 'ch'; s.textContent = c === ' ' ? ' ' : c; el.appendChild(s); return s; });
+    el.style.display = 'block'; el.style.overflow = 'clip';
+    return el._chars;
+  }
+  function initLinks() {
+    if (mobile) return;
+    $$('.link-inner').forEach(function (el) {
+      var lbl = $('[data-link="label"]', el), shd = $('[data-link="shadow"]', el); if (!lbl || !shd || el._setText) return;
+      var tl;
+      var build = function () {
+        shd.style.display = 'block';
+        var a = chars(lbl), b = chars(shd);
+        gsap.set(a, { yPercent: 0 }); gsap.set(b, { yPercent: 100 });
+        tl = gsap.timeline({ paused: true });
+        tl.to(a, { yPercent: -100, duration: durS, stagger: { amount: 0.075 }, ease: 'InOut' }, 0)
+          .to(b, { yPercent: 0, duration: durS, stagger: { amount: 0.075 }, ease: 'InOut' }, 0);
+      };
+      build();
+      var trig = el.closest('[data-link-trigger]') || el;
+      trig.addEventListener('mouseenter', function () { tl.play(); });
+      trig.addEventListener('mouseleave', function () { tl.reverse(); });
+      el._setText = function (t) { tl.kill(); lbl._chars = shd._chars = null; lbl.textContent = t; shd.textContent = t; build(); };
+    });
+  }
+
+  /* ---------------------------------------------------------------- Menu dropdown (initNavDropdown): staircase tiles clip in from the top */
+  function initNav() {
+    var btn = $('[data-nav="button"]'), group = $('[data-nav="link-group"]'), links = $$('[data-nav="link"]', group), archives = $$('[data-nav-link="archive"]', group), inner = $('.link-inner', btn);
+    var hid = function () { return mobile ? 'inset(0% 0% 0% 100%)' : 'inset(0% 0% 100% 0%)'; };
+    gsap.set(group, { display: 'none' }); gsap.set(links, { clipPath: hid() }); gsap.set(archives, { yPercent: 100 });
+    var open = false, tl = null, y0 = 0;
+    var setLabel = function (t) { inner._setText ? inner._setText(t) : $$('[data-nav="label"]', btn).forEach(function (l) { l.textContent = t; }); };
+    window.closeMenu = function () {
+      if (!open) return; open = false; setLabel('Menu'); tl && tl.kill();
+      tl = gsap.timeline();
+      tl.to(archives, { yPercent: 100, duration: durS, ease: 'In' }, 0)
+        .to(links, { clipPath: hid(), duration: durS, ease: 'In', stagger: { each: stagger, from: mobile ? 'end' : 'start' } }, 0)
+        .set(group, { display: 'none' });
+    };
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      if (open) return window.closeMenu();
+      open = true; y0 = scrollY(); setLabel('Close'); tl && tl.kill();
+      tl = gsap.timeline();
+      tl.set(group, { display: 'flex' })
+        .to(links, { clipPath: 'inset(0% 0% 0% 0%)', duration: durM, ease: 'Out', overwrite: 'auto', stagger: { amount: stagger * links.length, from: mobile ? 'start' : 'end' } })
+        .to(archives, { yPercent: 0, duration: durM, ease: 'Out', overwrite: 'auto' }, '-=' + 0.5 * durM);
+    });
+    onScroll(function () { if (open && Math.abs(scrollY() - y0) > 10) window.closeMenu(); });
+    /* current-page indicator, one page so it follows the section in view */
+    [['.intro', '.is-home'], ['#work', '.is-works'], ['#contact', '.is-contact']].forEach(function (pair) {
+      var ind = $(pair[1] + ' [data-nav="indicator"]');
+      ScrollTrigger.create({ trigger: pair[0], start: 'top 50%', end: 'bottom 50%', endTrigger: pair[0] === '#work' ? '#all-works' : null, onToggle: function (s) { ind.classList.toggle('is-current', s.isActive); } });
+    });
+  }
+
+  /* ---------------------------------------------------------------- theme picker (initThemeMode + initTotemActivation) */
+  var THEMES = { base: '#ffffff', 1: '#bec1ca', 2: '#ff633d', 3: '#919e44', 4: '#c31f26', dark: '#111111' };
+  function initTheme() {
+    var key = 'theme-mode', cur = null;
+    try { cur = sessionStorage.getItem(key); } catch (e) {}
+    cur = THEMES[cur] ? cur : 'base';
+    var apply = function (m) { document.documentElement.className = 'theme-mode-' + m; try { sessionStorage.setItem(key, m); } catch (e) {} };
+    apply(cur);
+    var tiles = $$('[data-theme-mode]'), big = mobile ? '2.0356rem' : '0.555rem', small = mobile ? '0.0636rem' : '0.0694rem';
+    tiles.forEach(function (t) { gsap.set(t, { borderWidth: t.dataset.themeMode === cur ? big : small }); });
+    var wipe = $('#theme-wipe'), totem = $('.totem-wrap');
+    tiles.forEach(function (t) {
+      var pick = function (e) {
+        var m = t.dataset.themeMode; if (m === cur) return;
+        var old = cur; cur = m;
+        tiles.forEach(function (x) { gsap.to(x, { borderWidth: x === t ? big : small, duration: durS, ease: 'Out', overwrite: 'auto' }); });
+        if (reduced) { apply(m); return; }
+        /* the old colour stays outside a hole that grows from the click point; the source draws this edge with an fbm noise shader */
+        var x = e.clientX || innerWidth / 2, y = e.clientY || innerHeight / 2, o = { r: 0 };
+        var R = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y)) + 80;
+        wipe.style.background = THEMES[old]; wipe.style.display = 'block'; apply(m);
+        gsap.to(o, { r: R, duration: 1.5, ease: 'Out',
+          onUpdate: function () { var g = 'radial-gradient(circle at ' + x + 'px ' + y + 'px, transparent ' + Math.max(0, o.r - 14) + 'px, #000 ' + (o.r + 14) + 'px)'; wipe.style.webkitMaskImage = g; wipe.style.maskImage = g; },
+          onComplete: function () { wipe.style.display = 'none'; } });
+        /* totem spin, the bundle's exact polynomial */
+        gsap.killTweensOf(totem); var s = { t: 40 };
+        gsap.set(totem, { display: 'block', opacity: 1, transformPerspective: 600, transformOrigin: '50% 50%', force3D: true });
+        gsap.to(s, { t: 0, duration: 2, ease: 'none',
+          onUpdate: function () {
+            var n = s.t / 40, i = n * n, r = n * i, a = (10.25 * r * i - 24.95 * i * i + 25.5 * r - 13.8 * i + 4 * n) * Math.PI;
+            var sc = (50 + 175 * Math.sin(a)) / 225, l = 1 - n, z = 10 * Math.sin(l * Math.PI * 2) * Math.sin(l * Math.PI);
+            gsap.set(totem, { scale: Math.max(sc, 0.001), rotationY: 720 * Math.abs(Math.sin(a)), rotationZ: z });
+          },
+          onComplete: function () { gsap.set(totem, { display: 'none', clearProps: 'transform,opacity' }); } });
+      };
+      t.addEventListener('click', pick);
+      t.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(e); } });
+    });
+  }
+
+  /* ---------------------------------------------------------------- preloader (initPreloader) */
+  function preloader(done) {
+    var prog = $('[data-preloader="progress"]'), count = $('[data-preloader="count"]'), t1 = $('[data-preloader="text-1"]'), t2 = $$('[data-preloader="text-2"]');
+    var grid = $('[data-nav="grid"]'), btn = $('[data-nav="button"]'), sticky = $$('[data-sticky-name]');
+    if (reduced) {
+      count.style.display = 'none';
+      gsap.set([prog, t1].concat(t2).concat(sticky).concat([grid, btn]), { visibility: 'visible', opacity: 1 });
+      gsap.set(prog, { height: '100%' });
+      done(); return;
+    }
+    lenis && lenis.stop();
+    gsap.set([count, t1].concat(t2), { visibility: 'visible', opacity: 1 }); gsap.set(prog, { visibility: 'visible' });
+    var u = mobile ? 25 : 5;
+    gsap.set(grid, { visibility: 'visible', x: -u + 'vw', y: -u + 'vw' }); gsap.set(btn, { visibility: 'visible', x: u + 'vw', y: -u + 'vw' });
+    textReveal(count, 'reveal', 0); textReveal(t1, 'reveal', 0); textReveal(t2, 'reveal', 0);
+    var line = lines(count)[0];
+    gsap.to(prog, { height: '100%', duration: 4, ease: 'InOut' });
+    gsap.to({ v: 0 }, { v: 100, duration: 2, ease: 'InOut',
+      onUpdate: function () { line.textContent = Math.round(this.targets()[0].v) + '%'; },
+      onComplete: function () {
+        textReveal(count, 'hide', 0);
+        gsap.to([grid, btn], { x: 0, y: 0, duration: durM, ease: 'Out' });
+        gsap.set(sticky, { visibility: 'visible' }); textReveal(sticky, 'reveal', 0);
+        gsap.delayedCall(durS + 0.5 * stagger, function () { lenis && lenis.start(); done(); });
+      } });
+  }
+
+  /* ---------------------------------------------------------------- logo morph (initLogoMorph): clip down, then rectangle to monogram */
+  function initLogoMorph() {
+    var p = $('[data-morph-final]'), wrap = $('.icon-wrap.is-logo'); if (!p) return;
+    var fin = p.dataset.morphFinal;
+    if (reduced) { p.setAttribute('d', fin); gsap.set(wrap, { visibility: 'visible' }); return; }
+    gsap.set(wrap, { visibility: 'visible', clipPath: 'inset(0% 0% 100% 0%)' });
+    gsap.to(wrap, { clipPath: 'inset(0% 0% 0% 0%)', duration: durM, ease: 'Out', onComplete: function () { gsap.to(p, { morphSVG: fin, duration: durL, ease: 'Out' }); } });
+  }
+
+  /* ---------------------------------------------------------------- sticky wordmark (initStickyNameReveal) */
+  function initSticky() {
+    var inner = $('.sticky-name-inner'), meta = $$('[data-sticky-meta="text"]'), parts = $$('[data-sticky-name] .h1'); if (!inner || mobile) return;
+    gsap.set(meta, { visibility: 'visible' }); textReveal(meta, 'initial');
+    var joined = parts[0].offsetWidth + parts[1].offsetWidth + 'px', triggered = false;
+    var tl = gsap.timeline({ paused: true, onReverseComplete: function () { textReveal(meta, 'initial'); } })
+      .fromTo(inner, { width: '100%' }, { width: joined, duration: durM, ease: 'InOut' })
+      .fromTo(inner, { opacity: 0.1 }, { opacity: 1, duration: durS, ease: 'InOut' }, '-=' + durS)
+      .add(function () { if (!tl.reversed()) textReveal(meta, 'reveal', 0); });
+    var check = function () {
+      var lim = scrollLimit(), at = lim <= 2 || scrollY() >= lim - 2;
+      if (at && !triggered) { triggered = true; tl.play(); }
+      else if (!at && triggered) { triggered = false; textReveal(meta, 'hide'); tl.reverse(); }
+    };
+    onScroll(check); gsap.delayedCall(0.15, check);
+  }
+
+  /* ---------------------------------------------------------------- custom scrollbar, dev grid, footer clock and logo cycle, awards hover, works cards */
+  function initScrollbar() {
+    var wrap = $('.scrollbar-wrap'), thumb = $('.scrollbar-thumb'); if (mobile || !wrap) return;
+    var hideT = null, shown = false;
+    var show = function (v) { if (shown === v) return; shown = v; gsap.to(wrap, { autoAlpha: v ? 1 : 0, duration: 0.3, overwrite: 'auto' }); };
+    gsap.set(wrap, { autoAlpha: 0 });
+    onScroll(function () {
+      var lim = scrollLimit(); if (lim <= 0) return;
+      gsap.set(thumb, { y: gsap.utils.clamp(0, 1, scrollY() / lim) * (wrap.clientHeight - thumb.offsetHeight - 8) });
+      show(true); clearTimeout(hideT); hideT = setTimeout(function () { show(false); }, 1000);
+    });
+  }
+  function initDevGrid() {
+    var b = $('.nav-grid'), w = $('.grid-wrap'), cols = $$('.grid-column'); if (!b) return;
+    var tl = gsap.timeline({ paused: true, onStart: function () { w.style.display = 'flex'; }, onReverseComplete: function () { w.style.display = 'none'; } })
+      .fromTo(cols, { width: 0 }, { width: '11.25rem', duration: durS, ease: 'InOut' });
+    b.addEventListener('click', function () { (tl.reversed() || (tl.paused() && tl.progress() === 0)) ? tl.play() : tl.reverse(); });
+  }
+  function initFooter() {
+    var h = $('[data-footer-time="hours"]'), m = $('[data-footer-time="minutes"]'), pad = function (n) { return String(n).padStart(2, '0'); };
+    var tick = function () { var d = new Date(); h.textContent = pad(d.getHours()); m.textContent = pad(d.getMinutes()); };
+    tick(); setInterval(tick, 1000);
+    var items = $$('[data-footer-logo="item"]'), wrap = $('[data-footer-logo="wrap"]'), cur = 0, iv;
+    var showItem = function (i) { items[cur].style.cssText = 'position:absolute;display:none'; items[i].style.cssText = 'position:relative;display:block'; cur = i; };
+    var next = function () { showItem((cur + 1) % items.length); };
+    var arm = function () { clearInterval(iv); iv = setInterval(next, 5000); };
+    wrap.addEventListener('click', function () { next(); arm(); }); arm();
+  }
+  var zTop = 1;
+  function initAwards() {
+    if (mobile) return;
+    $$('[data-award="item"]').forEach(function (it) {
+      var c = $('[data-award="certificate"]', it); if (!c) return;
+      gsap.set(c, { display: 'block', clipPath: 'inset(100% 0% 0% 0%)', scale: 0.9 });
+      it.addEventListener('mouseenter', function () { gsap.set(c, { zIndex: ++zTop }); gsap.to(c, { clipPath: 'inset(0% 0% 0% 0%)', scale: 1, duration: durS, ease: 'Out', overwrite: 'auto' }); });
+      it.addEventListener('mouseleave', function () { gsap.to(c, { clipPath: 'inset(0% 0% 100% 0%)', scale: 0.9, duration: durS, ease: 'Out', overwrite: 'auto' }); });
+    });
+  }
+  function initWorks() {
+    $$('[data-works-item="wrap"]').forEach(function (w) {
+      var b = $('[data-works-item="button"]', w), card = $('[data-tilt="card"]', w);
+      if (b) {
+        gsap.set(b, { bottom: '-2.222rem' });
+        w.addEventListener('mouseenter', function () { gsap.to(b, { bottom: '1.111rem', duration: durM, ease: 'InOut', overwrite: 'auto' }); });
+        w.addEventListener('mouseleave', function () { gsap.to(b, { bottom: '-2.222rem', duration: durM, ease: 'InOut', overwrite: 'auto' }); });
+      }
+      if (card && !mobile && !reduced) {
+        gsap.set(card, { transformPerspective: 1000, transformStyle: 'preserve-3d' });
+        var rx = gsap.quickTo(card, 'rotationX', { duration: 0.6, ease: 'power3.out' }), ry = gsap.quickTo(card, 'rotationY', { duration: 0.6, ease: 'power3.out' });
+        w.addEventListener('mousemove', function (e) { var r = w.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height; ry(gsap.utils.mapRange(0, 1, -40, 40, x)); rx(gsap.utils.mapRange(0, 1, 25, -25, y)); });
+        w.addEventListener('mouseleave', function () { rx(0); ry(0); });
+      }
+    });
+  }
+
+  /* ---------------------------------------------------------------- featured heading spreads over the globe, then becomes "All Works" (initFeaturedHeadingWidth) */
+  function initFeatured() {
+    var head = $('[data-featured="heading"]'), globe = $('[data-featured="globe"]'), texts = $$('[data-featured="text"]'), link = $('[data-featured="link"]');
+    if (!head || mobile) return;
+    var natural = head.scrollWidth, full = head.parentElement.offsetWidth;
+    gsap.set(head, { width: natural });
+    gsap.timeline({ scrollTrigger: { trigger: globe, start: 'top 75%', end: 'bottom 25%', scrub: true, onUpdate: function (st) {
+      var end = st.progress >= 0.99;
+      texts.forEach(function (t) { t.style.display = end ? 'none' : ''; });
+      link.style.display = end ? 'block' : 'none';
+      head.style.flexDirection = end ? 'column' : ''; head.style.justifyContent = end ? 'center' : 'space-between';
+    } } }).to(head, { width: full, ease: 'none' }).to(head, { width: natural, ease: 'none' });
+  }
+
+  /* ---------------------------------------------------------------- works globe (_initGlobeReal), CSS 3D instead of three.js */
+  function initGlobe() {
+    var wrap = $('[data-globe="wrap"]'); if (!wrap || mobile) return;
+    var tiles = $$('.globe-tile', wrap), info = $('.globe-info', wrap), P = window.FEATURED_PROJECTS || [], n = tiles.length; if (!n) return;
+    /* fibonacci sphere, keep the band |y| < .55, as the bundle does */
+    var M = Math.ceil(2.5 * n), ga = Math.PI * (3 - Math.sqrt(5)), pts = [];
+    for (var k = 0; k < M; k++) { var y = 1 - k / (M - 1) * 2, r = Math.sqrt(1 - y * y), a = ga * k; pts.push({ x: Math.cos(a) * r, y: y, z: Math.sin(a) * r }); }
+    pts = pts.filter(function (p) { return Math.abs(p.y) < 0.55; }).slice(0, n);
+    var st = tiles.map(function (t, i) { var p = pts[i] || { x: 0, y: 0, z: 1 }; return { el: t, lat: Math.asin(p.y), lon: Math.atan2(p.x, p.z), r: reduced ? 1 : 0 }; });
+    var rot = 0, vel = 0, drag = false, moved = false, inside = false, lx = 0, hover = null, raf = null, t0 = 0;
+    var frame = function (now) {
+      raf = requestAnimationFrame(frame);
+      var dt = t0 ? Math.min((now - t0) / 1000, 0.05) : 0; t0 = now;
+      var n60 = 60 * dt;
+      if (!reduced && !drag && !inside) rot += 0.003 * n60;
+      vel *= Math.pow(0.94, n60); rot += vel * n60;
+      var R = wrap.clientWidth * 0.42, tm = now / 1000;
+      st.forEach(function (s) {
+        var lon = s.lon + rot, fz = Math.cos(lon) * Math.cos(s.lat);
+        var op = fz > 0.25 ? 1 : fz > 0 ? 0.1 + fz / 0.25 * 0.9 : 0.1;
+        var bob = (Math.sin(tm * 0.1 * Math.PI * 2 + s.lat * 1.5) + 1) * 0.5 * 0.1 * R;
+        var hov = s.el === hover;
+        s.el.style.opacity = (hov ? 1 : op) * Math.min(1, s.r * 2);
+        s.el.style.transform = 'translate(-50%,-50%) rotateY(' + lon * 180 / Math.PI + 'deg) rotateX(' + (-s.lat * 180 / Math.PI) + 'deg) translateZ(' + (R + bob) + 'px) scale(' + s.r * (hov ? 2.2 : 1) + ')';
+        s.el.style.zIndex = 100 + Math.round(fz * 100) + (hov ? 200 : 0);
+      });
+    };
+    var start = function () { if (raf == null) { t0 = 0; raf = requestAnimationFrame(frame); } };
+    var stop = function () { if (raf != null) { cancelAnimationFrame(raf); raf = null; } };
+    wrap.addEventListener('mouseenter', function () { inside = true; });
+    wrap.addEventListener('mouseleave', function () { inside = false; });
+    wrap.addEventListener('mousedown', function (e) { drag = true; moved = false; lx = e.clientX; wrap.style.cursor = 'grabbing'; });
+    addEventListener('mousemove', function (e) { if (!drag) return; var dx = e.clientX - lx; lx = e.clientX; if (Math.abs(dx) > 3) moved = true; vel = gsap.utils.clamp(-0.11, 0.11, vel + dx * 0.013); });
+    addEventListener('mouseup', function () { drag = false; wrap.style.cursor = 'grab'; });
+    divReveal(info, 'initial');
+    tiles.forEach(function (t, i) {
+      t.addEventListener('mouseenter', function () { hover = t; var p = P[i]; if (p) { info.innerHTML = esc(p.title) + '. ' + esc(firstSentence(p.description)); divReveal(info, 'reveal', 0); } });
+      t.addEventListener('mouseleave', function () { hover = null; divReveal(info, 'hide', 0); });
+      t.addEventListener('click', function (e) { if (moved) e.preventDefault(); });
+    });
+    var revealed = false;
+    new IntersectionObserver(function (en) {
+      if (en[0].isIntersecting) {
+        start();
+        if (!revealed && !reduced) { revealed = true; gsap.to(gsap.utils.shuffle(st.slice()), { r: 1, duration: 1.4, ease: 'Out', stagger: 0.015 }); }
+      } else stop();
+    }, { rootMargin: '50% 0% 50% 0%' }).observe(wrap);
+  }
+
+  /* ---------------------------------------------------------------- hero orbit tiles (initOrbitTiles), ported constants */
+  function initOrbit() {
+    var root = $('[data-orbit-tiles-init]'); if (!root || mobile || reduced) return;
+    var coll = $('.orbit-tiles__collection', root), list = $('.orbit-tiles__list', root), items = $$('.orbit-tiles__item', root), N = items.length; if (N < 2) return;
+    gsap.set(coll, { display: 'flex' });
+    var xF = 1, yF = 0, blurF = 0.04, minS = 0.2, minB = 0.3, dur = 2.5, stag = 0.03 * 2.5, spin = 24;
+    var st = items.map(function () { return { progress: 0 }; }), tl = null, running = false, active = -1;
+    var dist = function (a, b) { var d = ((a - b) % N + N) % N; return Math.min(d, N - d); };
+    var closest = function () { var best = 0; st.forEach(function (s, i) { if (dist(i, s.progress) < dist(best, st[best].progress)) best = i; }); return best; };
+    var render = function () {
+      var W = items[0].offsetWidth, a = closest();
+      if (a !== active) { active = a; items.forEach(function (it, i) { it.setAttribute('data-orbit-tiles-item-status', i === a ? 'active' : 'not-active'); }); }
+      items.forEach(function (it, i) {
+        var r = (i - st[i].progress) / N * Math.PI * 2, s = Math.pow((Math.cos(r) + 1) / 2, 1.3);
+        gsap.set(it, { x: Math.sin(r) * W * xF, y: Math.cos(r) * W * yF, scale: gsap.utils.interpolate(minS, 1, s),
+          filter: 'blur(' + gsap.utils.interpolate(W * blurF, 0, s) + 'px) brightness(' + gsap.utils.interpolate(minB, 1, s) + ')', zIndex: Math.round(1000 * s) });
+      });
+    };
+    var cycle = function () {
+      if (!running) return;
+      var a = closest();
+      var order = st.map(function (s, i) { return { s: s, off: (i - a + N) % N }; }).sort(function (p, q) { return p.off - q.off; });
+      tl = gsap.timeline({ paused: true, onComplete: function () { running && cycle(); } });
+      order.forEach(function (o, k) { tl.to(o.s, { progress: o.s.progress + 1, duration: dur, ease: 'osmo', onUpdate: render }, k * stag); });
+      tl.play();
+    };
+    var spins = [gsap.to(list, { rotate: 360, duration: spin, ease: 'none', repeat: -1, paused: true }), gsap.to(items, { rotate: -360, duration: spin, ease: 'none', repeat: -1, paused: true })];
+    render();
+    ScrollTrigger.create({ trigger: root, start: 'top bottom', end: 'bottom top', onToggle: function (s) {
+      if (s.isActive) { running = true; spins.forEach(function (t) { t.play(); }); (tl && tl.progress() < 1) ? tl.play() : cycle(); }
+      else { running = false; tl && tl.pause(); spins.forEach(function (t) { t.pause(); }); }
+    } });
+  }
+
+  /* ---------------------------------------------------------------- wipe-to-reveal canvas (initFluidReveal): the source runs a WebGL2 fluid sim,
+     here a 2D canvas painted in the page colour that the pointer erases and that heals back over a few seconds */
+  function initFluid() {
+    var block = $('[data-fluid-reveal]'), cv = $('[data-fluid-canvas]', block); if (!block || mobile || reduced) return;
+    var ctx = cv.getContext('2d'), W = 0, H = 0, last = null, raf = null, bg = '#fff';
+    var color = function () { bg = getComputedStyle(document.documentElement).getPropertyValue('--bg').trim() || '#fff'; };
+    var size = function () { var r = block.getBoundingClientRect(); W = cv.width = Math.round(r.width); H = cv.height = Math.round(r.height); ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); };
+    color(); size();
+    new ResizeObserver(size).observe(block);
+    new MutationObserver(function () { color(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    var hole = function (x, y) {
+      var R = Math.max(W, H) * 0.06, g = ctx.createRadialGradient(x, y, R * 0.55, x, y, R);
+      g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.globalCompositeOperation = 'destination-out'; ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y, R, 0, Math.PI * 2); ctx.fill(); ctx.globalCompositeOperation = 'source-over';
+    };
+    block.addEventListener('mousemove', function (e) {
+      if (!loaded) return;
+      var r = block.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+      if (last) { var d = Math.hypot(x - last.x, y - last.y), n = Math.max(1, Math.ceil(d / 8)); for (var i = 1; i <= n; i++) hole(last.x + (x - last.x) * i / n, last.y + (y - last.y) * i / n); }
+      else hole(x, y);
+      last = { x: x, y: y };
+    });
+    block.addEventListener('mouseleave', function () { last = null; });
+    var heal = function () { raf = requestAnimationFrame(heal); ctx.globalAlpha = 0.025; ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H); ctx.globalAlpha = 1; };
+    new IntersectionObserver(function (en) { if (en[0].isIntersecting) { if (raf == null) heal(); } else { cancelAnimationFrame(raf); raf = null; } }).observe(block);
+  }
+
+  /* ---------------------------------------------------------------- in-page anchors */
+  function initAnchors() {
+    $$('a[href^="#"]').forEach(function (a) {
+      a.addEventListener('click', function (e) { var t = $(a.getAttribute('href')); if (!t) return; e.preventDefault(); window.closeMenu && window.closeMenu(); scrollToEl(t); });
+    });
+  }
+
+  /* ---------------------------------------------------------------- boot */
+  var boot = function () {
+    renderContent();
+    initLinks(); initNav(); initTheme(); initDevGrid(); initScrollbar(); initAwards(); initWorks(); initFooter(); initFeatured(); initGlobe(); initAnchors();
+    initFluid(); /* paints the page colour over the block at once, as the source does; pointer erasing waits for `loaded` */
+    preloader(function () {
+      loaded = true;
+      initReveals(); initLogoMorph(); initOrbit(); initSticky();
+      ScrollTrigger.refresh();
+    });
+  };
+  var wait = function (ms) { return new Promise(function (r) { setTimeout(r, ms); }); };
+  var fontsReady = document.fonts && document.fonts.ready ? Promise.race([document.fonts.ready, wait(1200)]) : Promise.resolve();
+  fontsReady.then(boot);
+})();
+</script>
+</body>
+</html>

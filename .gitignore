@@ -20,13 +20,5 @@ node_modules/
 /dist/
 /.astro/
 
-# Test output
-test-results/
-playwright-report/
-harness/__parity__/
-tests/fixtures/**/.tmp/
-tests/fixtures/**/dist/
-tests/fixtures/**/.astro/
-
-# Local documentation and planning notes; existing CI script/templates remain tracked
+# Local documentation and planning notes; existing tracked files remain tracked
 /docs/

@@ -1,6 +1,5 @@
 // The one vendor table (Spec 1 D5, §8): one row per served third-party file.
-// Consumers: scripts/vendor.mjs (`npm run vendor`), the harness normalizer
-// (rule 6, CDN URL -> publicPath) and harness/scripts.ts (check 5).
+// Consumer: scripts/vendor.mjs (`npm run vendor`).
 // Boxicons rows carry no npmPath: they are committed copies of the pinned CDN
 // build, because its npm package pulls React. mermaid, Plotly, js-yaml, marked
 // and highlight.js runtime JS are deliberately absent (D5/D6).

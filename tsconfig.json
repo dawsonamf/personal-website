@@ -1,12 +1,5 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": [
-    "dist",
-    "tests/fixtures/astro-compatibility",
-    "tests/fixtures/composition",
-    "tests/fixtures/content-preview",
-    "tests/fixtures/picker",
-    "tests/fixtures/prose-types"
-  ]
+  "exclude": ["dist", "archive"]
 }

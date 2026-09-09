@@ -1,5 +1,5 @@
 // The colour ramp: the single port of theme-bootstrap.js:744-774 (hexToHsl + the
-// per-role emission loop). Byte contract: harness/fixtures/baseline/theme-html.json.
+// per-role emission loop).
 //
 // D33 / §5.4 CONSTRAINT: `rampDeclarations` must stay SELF-CONTAINED. The pre-paint
 // `is:inline` script and scripts/build-picker.mjs inline it via

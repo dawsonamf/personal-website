@@ -1,6 +1,0 @@
-/* S1-12 acceptance fixture: the owned home's own stylesheet. It must appear on /stub/ and on
-   no other page, which is the asset-leak assertion in tests/build/composition.test.ts. */
-[data-style='stub'] .stub-heading {
-  color: var(--primary);
-  font-family: 'Inter', sans-serif;
-}

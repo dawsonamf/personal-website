@@ -34,9 +34,9 @@
    Stillness is off and tilt is off: the marquees and the drift are the
    motion, and a 3D card lean would fight flat poster geometry.
 
-   Scoping rules and JS contracts: see docs/theme-explorations.html. The
-   code-block ground, the tilt pins, and the mobile fixes come from
-   css/themes/theme-base.css.
+   Scoping rules and JS contracts: see
+   archive/themes/prototypes/theme-explorations.html. The code-block ground,
+   the tilt pins, and the mobile fixes come from css/themes/theme-base.css.
 
    Line policy: rules and fills derive from the alpha ramps so the palette
    toy keeps working. Bands use --primary (the ink role) so a shuffled

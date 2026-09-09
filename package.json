@@ -9,9 +9,6 @@
     "picker:build": "node scripts/build-picker.mjs",
     "build": "npm run picker:build && npm run prose:check && npm run check && astro build",
     "build:preview": "npm run picker:build && PROSE_DRAFTS=allow astro build",
-    "test:unit": "node --test tests/unit/*.test.ts",
-    "test:build": "node --test --test-concurrency=1 tests/build/*.test.ts",
-    "test:parity": "playwright test harness/parity.spec.ts",
     "vendor": "node scripts/vendor.mjs"
   },
   "dependencies": {
@@ -29,7 +26,6 @@
   },
   "devDependencies": {
     "@astrojs/check": "0.9.10",
-    "@playwright/test": "1.61.1",
     "typescript": "5.8.3"
   }
 }

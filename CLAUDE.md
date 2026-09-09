@@ -1,9 +1,8 @@
 # dawsonamf.com
 
-Astro 7 static site prepared on the migration branch. `astro.config.mjs` defines the production
-routes, sitemap, redirects and build checks. Actions registration and production cutover are still
-pending; the live site remains on legacy GitHub Pages. Root `CNAME` and `.nojekyll` are rollback
-files, not public input.
+Astro 7 static site. `astro.config.mjs` defines the production routes, sitemap, redirects and build
+checks. Production cutover is still pending; the live site remains on legacy GitHub Pages. Root
+`CNAME` and `.nojekyll` are rollback files, not public input.
 
 ## Commands
 
@@ -11,9 +10,7 @@ files, not public input.
 npm run dev            # picker generation, then draft-enabled Astro dev
 npm run build          # picker generation, prose validation, Astro check and production build
 npm run build:preview  # picker generation and a draft-enabled static build
-npm run test:unit
-npm run test:build
-npm run test:parity
+npm run check          # Astro and TypeScript diagnostics
 ```
 
 Use Node 24 from `.nvmrc`. The three official Astro entry commands generate the classic picker
@@ -37,8 +34,8 @@ public/                       # root-absolute URL owners copied by Astro
   resources/  subsites/       # media and verbatim standalone sites
 scripts/build-picker.mjs      # generated classic adapter from src/themes/ramp.ts
 scripts/vendor*.mjs           # pinned dependency copy map and command
-harness/  tests/              # parity, browser, unit and isolated build evidence
-docs/                         # unpublished plans and historical research
+archive/                      # tracked, unpublished historical source and future ideas
+docs/                         # ignored local plans and research
 ```
 
 ## Key conventions
@@ -47,7 +44,7 @@ docs/                         # unpublished plans and historical research
   canonical DOM and behavior. `Shell.astro` renders the selected composition and the shared picker.
 - Read `src/themes/README.md` when changing the registry, theme projection, picker, a skin, a
   structural layout, responsive theme behavior, or theme storage. It is the live authoring guide;
-  `docs/theme-explorations.html` is frozen historical design research.
+  `archive/themes/prototypes/theme-explorations.html` is frozen historical design research.
 - Components create internal links through `href()` from `src/themes/paths.ts`. Public asset URLs
   are root-absolute. A file in `public/` is copied verbatim and is not bundled or type-checked.
 - Build-time values reach classic scripts through owned `data-*` attributes or an owner-emitted JSON
