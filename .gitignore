@@ -20,5 +20,5 @@ node_modules/
 /dist/
 /.astro/
 
-# Local documentation and planning notes; existing tracked files remain tracked
+# Local documentation and planning notes
 /docs/
