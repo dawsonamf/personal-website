@@ -10,7 +10,7 @@ copied into the built site.
   harness.
 - `posts/` holds planned, unpublished post drafts, including the AI job-market research bundle and
   its weekly data refresh tooling.
-- `ideas/` holds deferred interface and site-roadmap notes.
+- `todo.md` records deferred site work.
 
 Treat these files as references. Reintroducing an item means adapting it to the current contracts
 documented in `src/themes/README.md` and the current content approval policy in `CLAUDE.md`.

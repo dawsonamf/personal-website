@@ -1,6 +1,15 @@
 # Deferred site ideas
 
-Preserved from `docs/TODO.md` during the migration cleanup.
+Deferred work, including ideas preserved from `docs/TODO.md` during the migration cleanup.
+
+## Theme engine
+
+- Add reskins of any base theme, including themes with their own structural layouts. A reskin
+  should reuse its base theme's layout and behavior while supplying its own visual styling.
+  Each reskin appears as a separate selectable theme in the existing picker, with no separate
+  base-theme/skin selection step. Owner requested this on 2026-09-09 and explicitly deferred
+  implementation until after the current cleanup and production cutover preparation; it is not
+  a cutover requirement.
 
 ## Site and content
 

@@ -1,22 +1,41 @@
 # dawsonamf.com
 
-Astro 7 static site. `astro.config.mjs` defines the production routes, sitemap, redirects and build
-checks. Production cutover is still pending; the live site remains on legacy GitHub Pages. Root
-`CNAME` and `.nojekyll` are rollback files, not public input.
+`AGENTS.md` is a relative symlink to `CLAUDE.md`. Editing either name updates these same instructions;
+preserve the symlink when editing.
+
+Astro 7 static site. `astro.config.mjs` defines production routes, sitemap, redirects and build
+checks. The Pages workflow is registered and its build-only rehearsal passed. Production cutover
+still awaits the owner's instruction; the live site remains on legacy GitHub Pages. Continue work
+on `engine-rewrite` until cutover is authorized. Root `CNAME` and `.nojekyll` are legacy files outside
+Astro's public input.
 
 ## Commands
 
 ```bash
-npm run dev            # picker generation, then draft-enabled Astro dev
+npm run dev -- --host 127.0.0.1 --port 8766  # owner-started, draft-enabled preview
 npm run build          # picker generation, prose validation, Astro check and production build
 npm run build:preview  # picker generation and a draft-enabled static build
 npm run check          # Astro and TypeScript diagnostics
 ```
 
-Use Node 24 from `.nvmrc`. The three official Astro entry commands generate the classic picker
-adapter before Astro reads `public/`. `src/themes/ramp.ts` is the sole authored color-ramp formula;
-run `npm run picker:build` after changing it and never hand-edit the marked generated region in
-`public/js/theme-cycler.js`.
+Use Node 24 from `.nvmrc`; the Pages workflow reads this file directly. On this machine, Homebrew's
+Node 24 is at `/opt/homebrew/opt/node@24/bin`. If the shell selects another Node version, prefix npm
+commands with `PATH="/opt/homebrew/opt/node@24/bin:$PATH"`.
+
+The three official Astro entry commands generate the classic picker adapter before Astro reads
+`public/`. `src/themes/ramp.ts` is the sole authored color-ramp formula; run `npm run picker:build`
+after changing it and never hand-edit the marked generated region in `public/js/theme-cycler.js`.
+
+The owner starts persistent preview/dev servers. Automated listeners must terminate themselves
+within a bounded time and bind only `127.0.0.1`.
+
+## Verification
+
+- For documentation, file moves and simple cleanup, inspect the affected paths and diff.
+- For runtime, content or build-configuration changes, run `npm run build`. It includes the prose
+  approval gate, Astro diagnostics and the existing route/asset build checks.
+- The owner retired the migration tests, parity harness and Playwright setup. Keep checks brief;
+  add or restore automated test suites only when requested.
 
 ## Project structure
 
@@ -34,8 +53,10 @@ public/                       # root-absolute URL owners copied by Astro
   resources/  subsites/       # media and verbatim standalone sites
 scripts/build-picker.mjs      # generated classic adapter from src/themes/ramp.ts
 scripts/vendor*.mjs           # pinned dependency copy map and command
-archive/                      # tracked, unpublished historical source and future ideas
+archive/                      # tracked, unpublished prototypes, retired skins and planned posts
+archive/todo.md                # deferred site work, including structural-theme reskins
 docs/                         # ignored local plans and research
+.github/workflows/            # Pages deployment and weekly archived chart-data refresh
 ```
 
 ## Key conventions
@@ -54,6 +75,21 @@ docs/                         # ignored local plans and research
 - Dependency versions are pinned. Preserve classic-script load order and verify any new external URL.
 - Images stay near 2x display size and at or below 500 KB where practical; use JPEG for photos and
   place shared media under `public/resources/`.
+- Record deferred work in `archive/todo.md`. Structural-theme reskins remain deferred; that file
+  records their intended behavior. Read `archive/README.md` when restoring archived material.
+  Archive files stay outside production inputs; `docs/` remains local and ignored.
+
+## Deployment and chart refreshes
+
+`.github/workflows/deploy.yml` runs the production build and uploads `dist/`. A manual dispatch
+with `deploy=false` builds without deploying; a push to `main` triggers production deployment.
+For cutover or rollback, read that workflow and the local runbook, when available:
+`docs/intents/2026-09-05-theme-engine-rewrite/research/deploy/README.md`. Changing Pages settings or
+merging the rewrite into `main` requires the owner's final cutover instruction.
+
+`.github/workflows/refresh-chart-data.yml` keeps the unpublished AI job-market snapshots under
+`archive/posts/ai-job-market/data/` current weekly and on manual runs. Its generator lives beside
+them in `scripts/`. These archive updates do not dispatch a site deployment.
 
 ## Blog posts
 
