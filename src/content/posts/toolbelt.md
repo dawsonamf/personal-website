@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 4
+listingOrder: 6
 title: { s: "Toolbelt: Giving AI Clients a Way Into Your Environment" }
 date: March 2026
 description: { l: "Turn your local machine into a remote MCP server so any AI client can access your skills setup and take actions on your machine." }

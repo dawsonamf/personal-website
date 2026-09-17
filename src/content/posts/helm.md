@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 3
+listingOrder: 5
 title: { s: "Helm: A Workspace Switcher for VS Code and Cursor" }
 date: March 2026
 description: { l: "Building a Cursor/VSCode extension that brings Arc Browser style space and workspace management to your IDE sidebar." }

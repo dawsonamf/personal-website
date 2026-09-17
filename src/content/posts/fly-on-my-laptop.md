@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 0
+listingOrder: 1
 title: { s: "There is a fly on my laptop and it runs away" }
 date: August 2026
 description: { l: "How inverting a kernel from gather to scatter and porting from WebGPU to Metal cut per step work by 560x and lets me run a complete insect brain on my laptop." }

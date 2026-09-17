@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 1
+listingOrder: 2
 title: { s: "The Art Nobody Looks At" }
 date: July 2026
 description: { l: "A gallery of works of art currently sitting in storage at some of the world's most popular art museums." }

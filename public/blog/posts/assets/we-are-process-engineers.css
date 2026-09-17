@@ -1,0 +1,19 @@
+#post-content details {
+  margin: 1.5em 0;
+  padding: 0.5em 0.75em;
+  border: 0;
+  border-radius: var(--border-radius, 12px);
+  background: color-mix(in srgb, currentColor 5%, transparent);
+}
+
+#post-content details > summary {
+  cursor: pointer;
+}
+
+#post-content details[open] > summary {
+  margin-bottom: 0.5em;
+}
+
+#post-content details > :last-child {
+  margin-bottom: 0;
+}

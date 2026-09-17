@@ -36,9 +36,9 @@
     requestAnimationFrame(animate);
   })();
 
-  // Any anchor or button expands the cursor. .job-menu-item is a non-anchor
-  // <li> that behaves as a clickable, so it's kept explicit.
-  const hoverSelectors = 'a, button, .job-menu-item';
+  // Any anchor, button or summary expands the cursor. .job-menu-item is a
+  // non-anchor <li> that behaves as a clickable, so it's kept explicit.
+  const hoverSelectors = 'a, button, summary, .job-menu-item';
   document.addEventListener('mouseover', (e) => {
     if (e.target.closest(hoverSelectors)) cursor.classList.add('cursor-follow-clickable');
   });

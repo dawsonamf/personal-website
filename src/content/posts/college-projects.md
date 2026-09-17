@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 9
+listingOrder: 11
 title: { s: "Highlights from My CS Degree" }
 date: May 2022
 description: { l: "A collection of projects from my Computer Science undergrad, consolidated from an older version of this site." }

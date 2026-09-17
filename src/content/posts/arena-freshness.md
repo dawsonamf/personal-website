@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 2
+listingOrder: 4
 title: { s: "Arena.ai Leaderboard Update Badges" }
 date: May 2026
 description: { l: "How a Tampermonkey script, regexing RSC payload streams, and React hydration injection make the case for an open web." }

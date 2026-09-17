@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 5
+listingOrder: 7
 title: { s: "Building a Coding Agent in Embedded Swift" }
 date: February 2026
 description: { l: "Building a fully featured coding agent in Embedded Swift that compiles to a 195 KB binary and boots in 120ms." }

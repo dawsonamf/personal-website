@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 6
+listingOrder: 8
 title: { s: "How Fast Are Agents Improving?" }
 date: February 2026
 description: { l: "An analysis of METR-Horizon benchmark data showing AI agent capability doubling times, with interactive projections through 2033." }

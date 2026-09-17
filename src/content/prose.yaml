@@ -299,7 +299,13 @@ blog:
 
 canonical:                                             # strings only the canonical layout uses
   masthead:                                            # terminal lines in order; steps derived (D36)
-    home:                                              # 9 sequences, default pause 1500 ms
+    home:                                              # 11 sequences, default pause 1500 ms
+      - lines:
+          - "Hi,\nI'm Dawson,\nAI Engineer."
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
+      - lines:
+          - "Hi,\nI'm Dawson,\nAI Engineer."
+          - "Hi,\nI'm Dawson,\nsoftware engineer."
       - lines:
           - "Hi,\nI'm Dawson,\nweb developer."
           - "Hi,\nI'm Dawson,\niOS developer."

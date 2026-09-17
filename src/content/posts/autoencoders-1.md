@@ -1,6 +1,6 @@
 ---
 publication: external
-listingOrder: 8
+listingOrder: 10
 title: { s: "Autoencoders – Part 1" }
 date: January 2024
 description: { l: "Building intuition for autoencoders: how they compress data into lower-dimensional representations and what makes them useful." }
