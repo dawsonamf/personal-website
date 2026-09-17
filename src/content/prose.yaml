@@ -299,7 +299,7 @@ blog:
 
 canonical:                                             # strings only the canonical layout uses
   masthead:                                            # terminal lines in order; steps derived (D36)
-    home:                                              # 11 sequences, default pause 1500 ms
+    home:                                              # 12 sequences, default pause 1500 ms
       - lines:
           - "Hi,\nI'm Dawson,\nAI Engineer."
           - "Hi,\nI'm Dawson,\nsoftware engineer."
@@ -334,7 +334,10 @@ canonical:                                             # strings only the canoni
       - lines:
           - "Hey,\nI'm Dawson,\nagentic engineer."
           - "Hey,\nI'm Dawson,\nsoftware engineer."
-    listing:                                           # 7 sequences, default pause 800 ms
+      - lines:
+          - "Hey,\nI'm Dawson,\ngraph engineer."
+          - "Hey,\nI'm Dawson,\nsoftware engineer."
+    listing:                                           # 8 sequences, default pause 800 ms
       - lines:
           - "Cool things I've built."
           - "Blog."
@@ -355,6 +358,9 @@ canonical:                                             # strings only the canoni
           - "Blog."
       - lines:
           - "Side quests."
+          - "Blog."
+      - lines:
+          - "Random thoughts."
           - "Blog."
 
 picker:                                                # the theme picker's own UI strings (js/theme-cycler.js)
