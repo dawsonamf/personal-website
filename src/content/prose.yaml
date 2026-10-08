@@ -164,6 +164,20 @@ jobs:                                                  # `id` is a content key o
         - "Mentor 3 students each semester on topics including career preparedness, leadership, product design, and system architecture."
 
 projects:                                              # legacy FEATURED_PROJECTS order; independent of post publication
+  - id: roomsmith
+    title: { xs: Roomsmith }
+    description:
+      l: |-
+        Generated images are awesome for picking an aesthetic for a room, but they can't tell you how feasible building it actually is. Most professional room planning software is tedious to work with and slow to iterate on.
+
+        Roomsmith is driven entirely by your agent. Scan a room with your iPhone and describe what you want. The agent proposes layouts/aesthetics by finding real products, pulling in or building their 3D models directly from the listings, and placing them in the scan. A checker flags overlaps, blocked doors/windows, tight walkways, etc. Watch each change live in a 3D viewer that you can orbit, walk inside of, and measure. Once a layout fits, the agent can generate images from the render and real product photos to show you what the room would actually look like. This app has come in handy many times for me, I encourage you to give it a try! The era of personal software really is here.
+    image: /resources/Roomsmith_Media.jpg
+    accentColor: "#61ffda"
+    tech: [ TypeScript, Bun, Three.js, RoomPlan, Playwright ]
+    ctas:
+      - label: { xs: View on GitHub }
+        href: https://github.com/dawsonamf/roomsmith
+        external: true
   - id: gemma4-heretic-ara
     title: { xs: Gemma 4 MoE Heretic-ARA }
     description:
