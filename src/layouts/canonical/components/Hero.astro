@@ -17,10 +17,11 @@ interface Props {
 const { theme, page } = Astro.props;
 void page;
 const alt = prose.text('home.heroAlt', 'xs');
-const subtitle = prose.data.home.skills.groups
-  .map((_group, index) => prose.text(`home.skills.groups.${index}.name`, 'xs'))
-  .filter(Boolean)
-  .join('\u00a0|\u00a0');
+const subtitle = (variant: 'desktop' | 'mobile') => prose.textList(`home.skills.hero.${variant}`, 'xs')
+  .map((label) => label.replace(/ /g, '\u00a0'))
+  .join(' | ');
+const desktopSubtitle = subtitle('desktop');
+const mobileSubtitle = subtitle('mobile');
 const mastheadSequences = prose.data.canonical.masthead.home.map((sequence) =>
   deriveMastheadSteps(sequence.lines, sequence.pause ?? 1500),
 );
@@ -32,7 +33,10 @@ const mastheadJson = JSON.stringify(mastheadSequences).replace(/</g, '\\u003c');
   </div>
   <div id="typing-left">
     <h1 id="typing-text"></h1>
-    {subtitle && <p id="sub-text">{subtitle}</p>}
+    {(desktopSubtitle || mobileSubtitle) && <p id="sub-text">
+      <span class="hero-subtitle-desktop">{desktopSubtitle}</span>
+      <span class="hero-subtitle-mobile">{mobileSubtitle}</span>
+    </p>}
   </div>
   <Socials theme={theme} mount="home" />
 </div>

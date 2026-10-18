@@ -205,6 +205,7 @@ document. Structural owned pages load none of the canonical-only modules.
 | Module | Owner and DOM/data inputs | Dependencies | Initialization and lifecycle |
 |---|---|---|---|
 | `anim-utils.js` | canonical animation helpers; animation targets and section-header DOM | DOM, RAF, `matchMedia`, optional `IntersectionObserver` | plain script; initializes at DOM ready, exposes three helpers, then owns observer/scroll/resize/RAF work |
+| `disclosure.js` | canonical Home Skills accordion; label-only summaries, build-rendered `details[name] > .disclosure-panel` and its close button | DOM, Web Animations, `matchMedia` | deferred; moves `name` to `data-disclosure`, reveals the close buttons, moves focus into opened content and back to the summary on close; delegated click, capture `toggle` and reduced-motion listeners live for the document; height and control crossfades share a reversible 200ms timeline |
 | `cursor-follow.js` | canonical cursor chrome | DOM, RAF | deferred IIFE; no-op without cursor nodes; delegated pointer listeners and RAF live for the document |
 | `featured-carousel.js` | canonical carousel interaction; build-rendered cards/dots | `VanillaTilt`, DOM, RAF/timers | Home/listing caller invokes once; click/scroll/wheel listeners live for the document |
 | `nav-behavior.js` | canonical moving nav and Calendly anchors | DOM/CSS roles, optional `Calendly` | deferred immediate init; node flags prevent duplicate binding; click/scroll listeners live for the document |

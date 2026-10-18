@@ -1642,17 +1642,9 @@
 }
 
 /* The about/skills row is a stretch flexbox, so both panels take the taller
-   one's height. On every narrow-column skin the two blocks come out roughly
-   level; here the page is full width, and skills — three headed sections
-   set one under another against about's single continuous run — came to
-   about twice the about panel's height, with a few hundred px of empty
-   frame standing beside it.
-
-   The width is the fix, not the copy. A full-width sheet has room to set the
-   three skill sections side by side instead of stacked, which drops the
-   panel to roughly the height of the about text next to it and lets both
-   frames close on the same line again. Forced breaks put one section per
-   column, so the balancer can't split a paragraph across two.
+   one's height. Skills groups now open in place and start closed, so the
+   stacked panel lands near the about panel's height; a column layout would
+   reshuffle groups between columns each time one opened, so they stay stacked.
 
    Scoped to #about: the contact row below is a different pair and keeps the
    ragged bottom. */
@@ -1679,42 +1671,6 @@
   [data-style="marquee"] #about .double-view-right {
     width: 69%;
     max-width: none;
-    column-count: 3;
-    column-gap: 40px;
-    column-rule: 1px solid var(--bg20);
-  }
-
-  /* The panel label belongs above the columns, not inside the first one. */
-  [data-style="marquee"] #about .skills-header {
-    column-span: all;
-  }
-
-  [data-style="marquee"] #about .skills-section-header {
-    break-after: avoid;
-    break-inside: avoid;
-  }
-
-  [data-style="marquee"] #about .skills-section-header:nth-of-type(n + 2) {
-    break-before: column;
-  }
-
-  /* The column is the measure now; the 68ch cap would never bind and only
-     confuses the balancer. */
-  [data-style="marquee"] #about .skills-text {
-    break-inside: avoid;
-    max-width: none;
-  }
-
-  /* The site draws a rule under each skill section to separate it from the
-     next one down. Set side by side there is no next one down: the column
-     rule between them already does the separating, and the underline just
-     printed a stray bar at the foot of two of the three columns, at whatever
-     height the balancer happened to end that column. Stacked (below the
-     breakpoint, where the sections do run one under another) it still earns
-     its keep, so this stays inside the wide-sheet query. */
-  [data-style="marquee"] #about .skills-text {
-    border-bottom: none;
-    padding-bottom: 0;
   }
 }
 

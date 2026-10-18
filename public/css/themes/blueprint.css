@@ -457,7 +457,7 @@
   border-top: 1px dashed var(--text50);
 }
 
-[data-style="blueprint"] .skills-section-header:first-of-type {
+[data-style="blueprint"] .skills-group:first-of-type .skills-section-header {
   margin-top: 0.4em;
 }
 

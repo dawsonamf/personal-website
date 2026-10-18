@@ -94,23 +94,56 @@ export const siteProseSchema = z.strictObject({
     about: z.strictObject({ title: sizedText, body: sizedText }),
     skills: z.strictObject({
       title: sizedText,
-      // The three group names also compose the hero subtitle (D17), so it is not stored.
-      groups: z.array(z.strictObject({ id: z.string(), name: sizedText, body: sizedText })),
+      // The hero has its own concise labels and order. Each body passage owns its approval;
+      // `continues` joins its first paragraph to the preceding passage's last paragraph.
+      hero: z.strictObject({ desktop: labelList, mobile: labelList }),
+      groups: z.array(
+        z.strictObject({
+          id: z.string(),
+          name: sizedText,
+          summary: sizedText,
+          body: z.array(z.strictObject({ text: sizedText, continues: z.boolean().optional() })),
+        }),
+      ),
     }),
+    // The Skills accordion's closed-state cue in a summary and the close button at the bottom
+    // of open content.
+    disclosure: z.strictObject({ more: sizedText, less: sizedText }),
     contact: z.strictObject({ body: sizedText, mapAlt: sizedText }),
     seeAllPosts: sizedText,
   }),
 
   // `id` is a content key only; the jobs panel's DOM keys stay positional (D17).
   jobs: z.array(
-    z.strictObject({
-      id: z.string(),
-      company: sizedText,
-      role: sizedText,
-      url: url.optional(),
-      dates: sizedText,
-      bullets: sizedList,
-    }),
+    z
+      .strictObject({
+        id: z.string(),
+        company: sizedText,
+        role: sizedText,
+        url: url.optional(),
+        dates: sizedText,
+        // Optional subsection headings, in render order. When present, every group names one.
+        sections: z.array(z.strictObject({ id: z.string(), title: sizedText })).optional(),
+        // One group per project or responsibility, in render order. Canonical Home lists every
+        // bullet with the title as a bold lead-in on the group's first one; `summary` is retained
+        // authored copy that the canonical list does not render.
+        groups: z.array(
+          z.strictObject({
+            id: z.string(),
+            section: z.string().optional(),
+            title: sizedText,
+            summary: sizedText,
+            bullets: sizedList,
+          }),
+        ),
+      })
+      .refine(
+        (job) =>
+          job.sections === undefined
+            ? job.groups.every((group) => group.section === undefined)
+            : job.groups.every((group) => job.sections!.some((section) => section.id === group.section)),
+        { message: 'with `sections`, every group names one of them in `section`; without, none does' },
+      ),
   ),
 
   // Independent of post publication (§4.1): a project card outlives its post's draft state.

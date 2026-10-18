@@ -18,14 +18,33 @@ void page;
 const sectionKey = 'jobs';
 const sectionNumber = String(sectionIndex + 1).padStart(2, '0');
 const sectionLabel = prose.text(`home.sections.${sectionKey}`, 'xs');
-const jobs = prose.data.jobs.map((job, index) => ({
-  domId: `job-${index + 1}`,
-  company: prose.text(`jobs.${index}.company`, 'xs'),
-  role: prose.text(`jobs.${index}.role`, 'xs'),
-  dates: prose.text(`jobs.${index}.dates`, 'xs'),
-  bullets: prose.list(`jobs.${index}.bullets`, 'l'),
-  url: job.url,
-})).filter((job) => job.company);
+// Each job lists every bullet, resume style. A group's title is a bold lead-in on its first
+// bullet; its stored summary is not rendered here. A job with `sections` lists its groups under
+// one small heading per section, in section order.
+type Bullet = { lead: string; html: string };
+const jobs = prose.data.jobs.map((job, index) => {
+  const groups = job.groups.map((group, groupIndex) => {
+    const title = prose.get(`jobs.${index}.groups.${groupIndex}.title`, 'xs');
+    const bullets: Bullet[] = prose
+      .list(`jobs.${index}.groups.${groupIndex}.bullets`, 'l')
+      .map((html, bulletIndex) => ({ lead: bulletIndex === 0 ? title : '', html }));
+    return { section: group.section, bullets };
+  });
+  const sections = job.sections
+    ? job.sections.map((section, sectionIndex) => ({
+        title: prose.get(`jobs.${index}.sections.${sectionIndex}.title`, 'xs'),
+        bullets: groups.filter((group) => group.section === section.id).flatMap((group) => group.bullets),
+      }))
+    : [{ title: '', bullets: groups.flatMap((group) => group.bullets) }];
+  return {
+    domId: `job-${index + 1}`,
+    company: prose.text(`jobs.${index}.company`, 'xs'),
+    role: prose.text(`jobs.${index}.role`, 'xs'),
+    dates: prose.text(`jobs.${index}.dates`, 'xs'),
+    sections: sections.filter((section) => section.bullets.length > 0),
+    url: job.url,
+  };
+}).filter((job) => job.company);
 ---
 <section class="jobs-section-container"
   data-aos="fade-up"
@@ -65,11 +84,16 @@ const jobs = prose.data.jobs.map((job, index) => ({
             </h3>
           )}
           {job.dates && <div class="job-dates">{job.dates}</div>}
-          {job.bullets.length > 0 && (
-            <ul class="job-bullets">
-              {job.bullets.map((bullet) => <li set:html={bullet} />)}
-            </ul>
-          )}
+          {job.sections.map((section) => (
+            <>
+              {section.title && <h4 class="job-section-title" set:html={section.title} />}
+              <ul class="job-bullets">
+                {section.bullets.map((bullet) => (
+                  <li>{bullet.lead && <><strong class="job-lead" set:html={`${bullet.lead}.`} />{' '}</>}<Fragment set:html={bullet.html} /></li>
+                ))}
+              </ul>
+            </>
+          ))}
         </div>
       ))}
     </div>

@@ -399,6 +399,10 @@ h1, h2, h3, h4 {
   margin-bottom: 0;
 }
 
+.hero-subtitle-mobile {
+  display: none;
+}
+
 @keyframes fadein {
   from { visibility: visible; opacity: 0; }
   to   { visibility: visible; opacity: 1; }
@@ -522,6 +526,132 @@ h1, h2, h3, h4 {
 .skills-text:last-child {
   border-bottom: none;
   padding-bottom: 0;
+}
+
+/* Skills groups wrap a native <details name> accordion. A group carries
+   .skills-text so each skin's separator and type apply to the whole group.
+   Open content sits in .disclosure-panel and ends in a close button;
+   /js/disclosure.js reveals that button and animates the height. Cues,
+   buttons and focus rings take the surrounding text colour, which every skin
+   keeps readable. */
+.skills-group.skills-text {
+  margin-top: 0;
+}
+
+.disclosure-cue {
+  cursor: pointer;
+  list-style: none;
+  border-radius: 4px;
+}
+
+.disclosure-cue::-webkit-details-marker {
+  display: none;
+}
+
+.disclosure-cue:focus-visible,
+.disclosure-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.skills-group .skills-section-header {
+  margin-bottom: 6px;
+}
+
+.disclosure-cue,
+.disclosure-close {
+  display: inline-block;
+  position: relative;
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: inherit;
+}
+
+.disclosure-close {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+/* During the transition the top control fades without shifting the panel. */
+details[data-disclosure] {
+  position: relative;
+  /* Keep the paragraph's top margin inside the animated height. */
+  display: flow-root;
+}
+
+details[data-disclosure][open] > .disclosure-cue {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+details[data-disclosure][open]:not(.disclosure-closing) > .disclosure-cue {
+  pointer-events: none;
+}
+
+.disclosure-close[hidden],
+.disclosure-native-close,
+details[data-disclosure][open]:not(.disclosure-animating) > .disclosure-cue,
+details:not([data-disclosure])[open] > summary .disclosure-more {
+  display: none;
+}
+
+details:not([data-disclosure])[open] > summary .disclosure-native-close {
+  display: inline;
+}
+
+.skills-detail {
+  margin: 12px 0 0;
+}
+
+/* While /js/disclosure.js animates a group's border-box height, it clips the
+   overflow. clip, unlike hidden, starts no formatting context, so margins
+   collapse exactly as they do at rest. The panel is hidden only for one
+   synchronous measurement of the closed height. */
+.disclosure-animating {
+  overflow: hidden;
+  overflow: clip;
+  box-sizing: border-box;
+}
+
+.disclosure-measuring > .disclosure-panel {
+  display: none;
+}
+
+details[data-disclosure].disclosure-measuring > .disclosure-cue {
+  position: relative;
+}
+
+/* Jobs list every bullet, resume style. A job with sections sets a small
+   heading over each section's list, and a group's title leads its first bullet
+   in bold. Preview draft marks keep the panel's text colour. */
+.job-section-title {
+  margin: 14px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: inherit;
+}
+
+.job-section-title + .job-bullets {
+  margin-top: 4px;
+}
+
+.job-bullets + .job-section-title {
+  margin-top: 0;
+}
+
+.job-lead {
+  font-weight: 600;
+}
+
+.job-content .prose-draft {
+  color: inherit;
 }
 
 .section-spacer {
@@ -840,7 +970,9 @@ h1, h2, h3, h4 {
   z-index: 2;
 }
 
-.text-link::before {
+.text-link::before,
+.disclosure-cue::before,
+.disclosure-close::before {
   content: '';
   position: absolute;
   bottom: -1px;
@@ -852,8 +984,24 @@ h1, h2, h3, h4 {
   transition: width 0.25s ease-in-out;
 }
 
-.text-link:hover::before {
+.disclosure-cue::before,
+.disclosure-close::before {
+  background-color: currentColor;
+}
+
+.text-link:hover::before,
+.disclosure-cue:hover::before,
+.disclosure-cue:focus-visible::before,
+.disclosure-close:hover::before,
+.disclosure-close:focus-visible::before {
   width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .disclosure-cue::before,
+  .disclosure-close::before {
+    transition: none;
+  }
 }
 
 

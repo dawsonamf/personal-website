@@ -143,6 +143,14 @@
     font-family: var(--font-mono);
   }
 
+  .hero-subtitle-desktop {
+    display: none;
+  }
+
+  .hero-subtitle-mobile {
+    display: inline;
+  }
+
   #socials-list {
     display: none;
   }
