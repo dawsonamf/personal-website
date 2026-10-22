@@ -125,14 +125,12 @@ export const siteProseSchema = z.strictObject({
         // Optional subsection headings, in render order. When present, every group names one.
         sections: z.array(z.strictObject({ id: z.string(), title: sizedText })).optional(),
         // One group per project or responsibility, in render order. Canonical Home lists every
-        // bullet with the title as a bold lead-in on the group's first one; `summary` is retained
-        // authored copy that the canonical list does not render.
+        // bullet with the title as a bold lead-in on the group's first one.
         groups: z.array(
           z.strictObject({
             id: z.string(),
             section: z.string().optional(),
             title: sizedText,
-            summary: sizedText,
             bullets: sizedList,
           }),
         ),

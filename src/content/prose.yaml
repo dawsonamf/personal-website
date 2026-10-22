@@ -164,12 +164,11 @@ home:
 jobs:                                                  # `id` is a content key only; the DOM keys stay positional (D17)
                                                        # every `dates` value is verbatim, dash included
 # Each job is an ordered list of groups, one per project or responsibility. Canonical Home lists
-# every bullet, with the group title as a bold lead-in on the group's first bullet; `summary` is
-# kept but not rendered there. A job may declare `sections`, and then each group names one of
-# them in `section`. Add a new thing as one more group.
+# every bullet, with the group title as a bold lead-in on the group's first bullet. A job may
+# declare `sections`, and then each group names one in `section`. Add a new thing as one more group.
   - id: about-objects
     company: { xs: About Objects }
-    role: { xs: { draft: AI Engineer / Software Engineer } }
+    role: { xs: AI Engineer / Software Engineer }
     url: https://www.aboutobjects.com/
     dates: { xs: July 2023 – Present }
     sections:
@@ -181,35 +180,30 @@ jobs:                                                  # `id` is a content key o
       - id: ai-assistant
         section: ai
         title: { xs: Agent harness }
-        summary: { s: { draft: "A Swift agent harness for iOS and visionOS." } }
         bullets:
           l:
             - "Architected and built a Swift agent harness for iOS and visionOS with on device and cloud models, screen aware dynamic tool loading, context engineering through progressive disclosure, and voice control with interruption handling and under 100 ms time to first audio."
       - id: document-ingestion
         section: ai
         title: { xs: Unstructured document ingestion }
-        summary: { s: { draft: "A rebuilt AI pipeline for long documents on AWS." } }
         bullets:
           l:
             - "Evaluated and rebuilt an AI document ingestion pipeline using AWS CDK infrastructure and autoscaling ECS/Fargate workers. Supports 100+ page documents with higher fidelity. Benchmarked 4× faster at one eighth the model API cost."
       - id: engineering-process
         section: ai
         title: { xs: AI assisted SDLC redesign }
-        summary: { s: { draft: "Rebuilt the company's SDLC around AI assisted delivery." } }
         bullets:
           l:
             - "Worked closely with leadership to rebuild the company's SDLC around AI assisted delivery, establishing impact metrics, an eval driven self improving review feedback loop, and a company wide skills repository that embeds engineering and project management workflows into agent behavior."
       - id: computer-vision
         section: ai
         title: { xs: 3D computer vision pipeline }
-        summary: { s: { draft: "3D object recognition for an industrial manufacturer." } }
         bullets:
           l:
             - "Led development of a 3D ML object recognition pipeline, enabling rotation inference from 200 images. Supported an industrial oil drill manufacturer in analyzing drill bit component history and repairs."
       - id: event-platform
         section: software
         title: { xs: Event management platform }
-        summary: { s: { draft: "An iPad, iPhone and Vision Pro platform for government clients." } }
         bullets:
           l:
             - "Developed a multi-platform (iPad, iPhone, and Vision Pro) event management platform for government clients, featuring real-time resource tracking and 3D visualizations with RealityKit. Featured in Apple's enterprise showcase."
@@ -217,21 +211,18 @@ jobs:                                                  # `id` is a content key o
       - id: company-website
         section: software
         title: { xs: Corporate website overhaul }
-        summary: { s: { draft: "An overhaul of the About Objects website." } }
         bullets:
           l:
             - "Led the company website overhaul with custom WordPress plugins and a PHP backend."
       - id: internal-tools
         section: software
         title: { xs: Internal tools }
-        summary: { s: { draft: "A Jira MCP server and billing automation." } }
         bullets:
           l:
             - "Worked on several internal projects, including building an MCP server to help PMs with Jira project administration and building pipelines to automate billing processes."
       - id: engineering-delivery
         section: software
         title: { xs: Engineering delivery }
-        summary: { s: { draft: "CI/CD, mentoring, and the company AI blog." } }
         bullets:
           l:
             - "Scaled a CI/CD pipeline with GitHub Actions and automated TestFlight builds as the team quadrupled in size. Mentored junior engineers and interns."
@@ -244,13 +235,11 @@ jobs:                                                  # `id` is a content key o
     groups:
       - id: interpreter-prep
         title: { xs: null }
-        summary: { s: { draft: "Tools that help interpreters prepare for lectures and meetings." } }
         bullets:
           l:
             - "Led the development of internal tools that helped interpreters more efficiently prepare for high stakes lectures and meetings, including a knowledge base prep portal that integrated various internal systems, a vocabulary practice app, a custom MCP server, and a skill pack for agents."
       - id: statistics-teaching
         title: { xs: null }
-        summary: { s: { draft: "Statistics lectures and training materials for interpreters." } }
         bullets:
           l:
             - "Presented to interpreters on statistical concepts to enhance research interpretation, covering topics from fundamentals to the central limit theorem and multiple linear regression."
@@ -262,27 +251,23 @@ jobs:                                                  # `id` is a content key o
     groups:
       - id: business-growth
         title: { xs: null }
-        summary: { s: { draft: "Founding and growing an interpreting and transliteration agency." } }
         bullets:
           l:
             - "Co-founder of an agency that provides signed language interpreting and cued language transliteration services, successfully securing contracts with the MD and VA state governments, and serving over two dozen clients in the DMV area with an average contract value of over $90,000."
             - Grew the business from founding to several million dollars in revenue.
       - id: operations
         title: { xs: null }
-        summary: { s: { draft: "Payment, payroll and scheduling, plus training and hiring." } }
         bullets:
           l:
             - "Led the automation and integration of client payment, payroll, and scheduling software to streamline operations."
             - "Responsible for coordinating scheduling with school officials and other interpreters and transliterators, as well as preparing and leading language and policy training sessions. Assisted with recruiting, onboarding, and sales."
       - id: provider-matching
         title: { xs: null }
-        summary: { s: { draft: "How we screened people and contracts and matched clients with providers." } }
         bullets:
           l:
             - "Developed methodology to screen employees, clients, and contracts, as well as match clients with service providers."
       - id: transliteration
         title: { xs: null }
-        summary: { s: { draft: "Providing transliteration services directly in the early days." } }
         bullets:
           l:
             - "In the early days, served directly as a cued language transliterator when needed, directly providing interpretation/transliteration services to consumers."
@@ -294,14 +279,12 @@ jobs:                                                  # `id` is a content key o
     groups:
       - id: ventures
         title: { xs: null }
-        summary: { s: { draft: "Product work for ventures in UMD's startup incubator." } }
         bullets:
           l:
             - "Startup Shell is UMD’s student-run startup incubator, founding home of ventures collectively worth over $1 billion."
             - "As a fellow, assisted with product development for a variety of ventures including a patient management platform for underfunded hospitals in Africa, a farmland valuation AI model, and a prompt engineering website with over 400,000 monthly visitors and a discord server with over 50,000 active members."
       - id: mentorship
         title: { xs: null }
-        summary: { s: { draft: "Mentoring students each semester." } }
         bullets:
           l:
             - "Mentor 3 students each semester on topics including career preparedness, leadership, product design, and system architecture."

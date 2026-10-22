@@ -19,8 +19,7 @@ const sectionKey = 'jobs';
 const sectionNumber = String(sectionIndex + 1).padStart(2, '0');
 const sectionLabel = prose.text(`home.sections.${sectionKey}`, 'xs');
 // Each job lists every bullet, resume style. A group's title is a bold lead-in on its first
-// bullet; its stored summary is not rendered here. A job with `sections` lists its groups under
-// one small heading per section, in section order.
+// bullet. A job with `sections` lists its groups under one small heading per section, in order.
 type Bullet = { lead: string; html: string };
 const jobs = prose.data.jobs.map((job, index) => {
   const groups = job.groups.map((group, groupIndex) => {
