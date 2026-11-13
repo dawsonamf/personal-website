@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 0
+listingOrder: 1
 title: { s: "We are process engineers" }
 date: September 2026
 description: { l: "Intelligence is the substrate we work with now; the code it produces is just a byproduct." }

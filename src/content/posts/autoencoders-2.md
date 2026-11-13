@@ -1,6 +1,6 @@
 ---
 publication: external
-listingOrder: 9
+listingOrder: 10
 title: { s: "Autoencoders – Part 2" }
 date: April 2024
 description: { l: "Using autoencoders in practice: outlier detection, variational autoencoders for data generation, denoising, and the CLIP model." }

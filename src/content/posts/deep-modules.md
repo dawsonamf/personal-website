@@ -1,6 +1,6 @@
 ---
 publication: published
-listingOrder: 3
+listingOrder: 4
 title: { s: "Deep modules" }
 date: June 2026
 description: { l: "How to trust large amounts of LLM generated code and merge lots of PRs very quickly without accumulating cognitive debt or causing codebase entropy." }
